@@ -51,7 +51,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                         "/spring-security-rest/api/swagger-ui.html", "/encrypt").permitAll()
                 .and()
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)
-                .addFilterAfter(responseFilter, OTPFilter.class)
                 .cors()
                 .configurationSource(corsConfig())
                 .and()
