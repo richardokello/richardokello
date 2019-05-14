@@ -14,7 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * @author ASUS
@@ -44,6 +46,8 @@ public class UfsOrganizationUnits implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(mappedBy = "tenantId")
+    private Collection<UfsCustomerType> ufsCustomerTypeCollection;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
     private List<UfsGeographicalRegion> ufsGeographicalRegionList;
@@ -221,29 +225,6 @@ public class UfsOrganizationUnits implements Serializable {
         return "ke.tracom.ufs.entities.UfsOrganizationUnits[ id=" + id + " ]";
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     @XmlTransient
     public List<UfsGeographicalRegion> getUfsGeographicalRegionList() {
@@ -296,5 +277,40 @@ public class UfsOrganizationUnits implements Serializable {
 
     public void setChildren(List<UfsOrganizationUnits> children) {
         this.children = children;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomerType> getUfsCustomerTypeCollection() {
+        return ufsCustomerTypeCollection;
+    }
+
+    public void setUfsCustomerTypeCollection(Collection<UfsCustomerType> ufsCustomerTypeCollection) {
+        this.ufsCustomerTypeCollection = ufsCustomerTypeCollection;
     }
 }
