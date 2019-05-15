@@ -8,7 +8,9 @@ package ke.tra.ufs.webportal.entities;
 import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,12 +20,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -43,12 +48,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "UfsCustomerType.findByIntrash", query = "SELECT u FROM UfsCustomerType u WHERE u.intrash = :intrash")})
 public class UfsCustomerType implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -58,18 +57,26 @@ public class UfsCustomerType implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
     @Size(max = 20)
-    @Column(name = "ACTION",insertable = false)
+    @Column(name = "ACTION")
     private String action;
     @Size(max = 20)
-    @Filter
-    @Column(name = "ACTION_STATUS",insertable = false)
+    @Column(name = "ACTION_STATUS")
     private String actionStatus;
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "typeId")
+    private List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    private Long id;
     @Column(name = "CREATION_DATE",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
-    @Size(max = 3)
-    @Column(name = "INTRASH",insertable = false)
-    private String intrash;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
     @ManyToOne
     private UfsOrganizationUnits tenantId;
@@ -94,29 +101,6 @@ public class UfsCustomerType implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -134,13 +118,6 @@ public class UfsCustomerType implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     public UfsOrganizationUnits getTenantId() {
         return tenantId;
@@ -173,6 +150,48 @@ public class UfsCustomerType implements Serializable {
     @Override
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerType[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<UfsCustomerTypeRuleMap> getUfsCustomerTypeRuleMapList() {
+        return ufsCustomerTypeRuleMapList;
+    }
+
+    public void setUfsCustomerTypeRuleMapList(List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList) {
+        this.ufsCustomerTypeRuleMapList = ufsCustomerTypeRuleMapList;
     }
     
 }

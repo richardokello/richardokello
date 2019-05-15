@@ -108,23 +108,6 @@ public class UfsOrganizationHierarchy implements Serializable {
     }
     
     
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-   
-
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
 
     @XmlTransient
@@ -161,7 +144,21 @@ public class UfsOrganizationHierarchy implements Serializable {
         return "ke.tracom.ufs.entities.UfsOrganizationHierarchy[ id=" + id + " ]";
     }
 
-    
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }   
 
     
 }

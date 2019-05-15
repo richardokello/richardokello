@@ -3,6 +3,10 @@
   <persistence-unit name="ke.tra.ufs_webportal_jar_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>ke.tra.ufs.webportal.entities.UfsCustomerType</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerTypeRuleMap</class>
+    <class>ke.tra.ufs.webportal.entities.UfsTieredCommissionAmount</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerTypeRules</class>
+    <class>ke.tra.ufs.webportal.entities.UfsRevenueEntities</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.1.172:1521:trcm"/>
       <property name="javax.persistence.jdbc.user" value="UFS_SMART_SUITE"/>

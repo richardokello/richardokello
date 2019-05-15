@@ -47,6 +47,16 @@ public class UfsOrganizationUnits implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(mappedBy = "tenantId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsTieredCommissionAmount> ufsTieredCommissionAmountList;
+    @OneToMany(mappedBy = "tenantId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsRevenueEntities> ufsRevenueEntitiesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsCustomerTypeRules> ufsCustomerTypeRulesList;
+    @OneToMany(mappedBy = "tenantId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Collection<UfsCustomerType> ufsCustomerTypeCollection;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
@@ -279,6 +289,17 @@ public class UfsOrganizationUnits implements Serializable {
         this.children = children;
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomerType> getUfsCustomerTypeCollection() {
+        return ufsCustomerTypeCollection;
+    }
+
+    public void setUfsCustomerTypeCollection(Collection<UfsCustomerType> ufsCustomerTypeCollection) {
+        this.ufsCustomerTypeCollection = ufsCustomerTypeCollection;
+    }
+
     public String getName() {
         return name;
     }
@@ -295,7 +316,6 @@ public class UfsOrganizationUnits implements Serializable {
         this.action = action;
     }
 
-
     public String getIntrash() {
         return intrash;
     }
@@ -306,11 +326,31 @@ public class UfsOrganizationUnits implements Serializable {
 
     @XmlTransient
     @JsonIgnore
-    public Collection<UfsCustomerType> getUfsCustomerTypeCollection() {
-        return ufsCustomerTypeCollection;
+    public List<UfsTieredCommissionAmount> getUfsTieredCommissionAmountList() {
+        return ufsTieredCommissionAmountList;
     }
 
-    public void setUfsCustomerTypeCollection(Collection<UfsCustomerType> ufsCustomerTypeCollection) {
-        this.ufsCustomerTypeCollection = ufsCustomerTypeCollection;
+    public void setUfsTieredCommissionAmountList(List<UfsTieredCommissionAmount> ufsTieredCommissionAmountList) {
+        this.ufsTieredCommissionAmountList = ufsTieredCommissionAmountList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<UfsRevenueEntities> getUfsRevenueEntitiesList() {
+        return ufsRevenueEntitiesList;
+    }
+
+    public void setUfsRevenueEntitiesList(List<UfsRevenueEntities> ufsRevenueEntitiesList) {
+        this.ufsRevenueEntitiesList = ufsRevenueEntitiesList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<UfsCustomerTypeRules> getUfsCustomerTypeRulesList() {
+        return ufsCustomerTypeRulesList;
+    }
+
+    public void setUfsCustomerTypeRulesList(List<UfsCustomerTypeRules> ufsCustomerTypeRulesList) {
+        this.ufsCustomerTypeRulesList = ufsCustomerTypeRulesList;
     }
 }
