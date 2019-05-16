@@ -40,7 +40,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http
+        /*http
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isCorsRequest).permitAll()
                 //                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -58,6 +58,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .accessDeniedHandler(accessDeniedHandler);
         //                .and().addFilterBefore(new WebSecurityCorsFilter(), ChannelProcessingFilter.class);
         ;
+        */
+
+        http.authorizeRequests().anyRequest().permitAll();
     }
 
 
