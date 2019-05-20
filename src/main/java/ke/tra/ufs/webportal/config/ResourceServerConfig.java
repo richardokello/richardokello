@@ -40,7 +40,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        /*http
+       http
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isCorsRequest).permitAll()
                 //                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -48,7 +48,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/gender", "/user-loggedin").permitAll()
                 .antMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                         "/swagger-resources/**", "/v2/api-docs/**", "/images/**",
-                        "/spring-security-rest/api/swagger-ui.html", "/encrypt").permitAll()
+                        "/spring-security-rest/api/swagger-ui.html", "/encrypt", "/**").permitAll()
                 .and()
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)
                 .cors()
@@ -58,9 +58,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .accessDeniedHandler(accessDeniedHandler);
         //                .and().addFilterBefore(new WebSecurityCorsFilter(), ChannelProcessingFilter.class);
         ;
-        */
 
-        http.authorizeRequests().anyRequest().permitAll();
+
+
     }
 
 

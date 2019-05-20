@@ -20,6 +20,7 @@ HELP.md
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
+/logs/
 /dist/
 /nbdist/
 /.nb-gradle/

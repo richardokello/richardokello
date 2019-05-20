@@ -6,7 +6,9 @@
 package ke.tra.ufs.webportal.entities;
 
 import com.cm.projects.spring.resource.chasis.annotations.Filter;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -28,24 +30,24 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
- *
  * @author Kenny
  */
 @Entity
 @Table(name = "UFS_CUSTOMER_TYPE")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsCustomerType.findAll", query = "SELECT u FROM UfsCustomerType u"),
-    @NamedQuery(name = "UfsCustomerType.findById", query = "SELECT u FROM UfsCustomerType u WHERE u.id = :id"),
-    @NamedQuery(name = "UfsCustomerType.findByName", query = "SELECT u FROM UfsCustomerType u WHERE u.name = :name"),
-    @NamedQuery(name = "UfsCustomerType.findByDescription", query = "SELECT u FROM UfsCustomerType u WHERE u.description = :description"),
-    @NamedQuery(name = "UfsCustomerType.findByAction", query = "SELECT u FROM UfsCustomerType u WHERE u.action = :action"),
-    @NamedQuery(name = "UfsCustomerType.findByActionStatus", query = "SELECT u FROM UfsCustomerType u WHERE u.actionStatus = :actionStatus"),
-    @NamedQuery(name = "UfsCustomerType.findByCreationDate", query = "SELECT u FROM UfsCustomerType u WHERE u.creationDate = :creationDate"),
-    @NamedQuery(name = "UfsCustomerType.findByIntrash", query = "SELECT u FROM UfsCustomerType u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsCustomerType.findAll", query = "SELECT u FROM UfsCustomerType u"),
+        @NamedQuery(name = "UfsCustomerType.findById", query = "SELECT u FROM UfsCustomerType u WHERE u.id = :id"),
+        @NamedQuery(name = "UfsCustomerType.findByName", query = "SELECT u FROM UfsCustomerType u WHERE u.name = :name"),
+        @NamedQuery(name = "UfsCustomerType.findByDescription", query = "SELECT u FROM UfsCustomerType u WHERE u.description = :description"),
+        @NamedQuery(name = "UfsCustomerType.findByAction", query = "SELECT u FROM UfsCustomerType u WHERE u.action = :action"),
+        @NamedQuery(name = "UfsCustomerType.findByActionStatus", query = "SELECT u FROM UfsCustomerType u WHERE u.actionStatus = :actionStatus"),
+        @NamedQuery(name = "UfsCustomerType.findByCreationDate", query = "SELECT u FROM UfsCustomerType u WHERE u.creationDate = :creationDate"),
+        @NamedQuery(name = "UfsCustomerType.findByIntrash", query = "SELECT u FROM UfsCustomerType u WHERE u.intrash = :intrash")})
 public class UfsCustomerType implements Serializable {
 
     @Basic(optional = false)
@@ -74,12 +76,14 @@ public class UfsCustomerType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
-    @Column(name = "CREATION_DATE",insertable = false, updatable = false)
+    @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     private UfsOrganizationUnits tenantId;
+    @Column(name = "TENANT_ID")
+    private BigDecimal tenantIds;
 
     public UfsCustomerType() {
     }
@@ -125,6 +129,14 @@ public class UfsCustomerType implements Serializable {
 
     public void setTenantId(UfsOrganizationUnits tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public BigDecimal getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(BigDecimal tenantIds) {
+        this.tenantIds = tenantIds;
     }
 
     @Override
@@ -193,5 +205,5 @@ public class UfsCustomerType implements Serializable {
     public void setUfsCustomerTypeRuleMapList(List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList) {
         this.ufsCustomerTypeRuleMapList = ufsCustomerTypeRuleMapList;
     }
-    
+
 }
