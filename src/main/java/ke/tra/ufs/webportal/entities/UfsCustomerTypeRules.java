@@ -6,6 +6,7 @@
 package ke.tra.ufs.webportal.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -25,25 +26,26 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
- *
  * @author ojuma
  */
 @Entity
 @Table(name = "UFS_CUSTOMER_TYPE_RULES")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsCustomerTypeRules.findAll", query = "SELECT u FROM UfsCustomerTypeRules u")
-    , @NamedQuery(name = "UfsCustomerTypeRules.findById", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.id = :id")
-    , @NamedQuery(name = "UfsCustomerTypeRules.findByName", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.name = :name")
-    , @NamedQuery(name = "UfsCustomerTypeRules.findByDescription", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.description = :description")
-    , @NamedQuery(name = "UfsCustomerTypeRules.findByTextType", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.textType = :textType")
-    , @NamedQuery(name = "UfsCustomerTypeRules.findByAction", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.action = :action")
-    , @NamedQuery(name = "UfsCustomerTypeRules.findByActionStatus", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.actionStatus = :actionStatus")
-    , @NamedQuery(name = "UfsCustomerTypeRules.findByCreationDate", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.creationDate = :creationDate")
-    , @NamedQuery(name = "UfsCustomerTypeRules.findByIntrash", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsCustomerTypeRules.findAll", query = "SELECT u FROM UfsCustomerTypeRules u")
+        , @NamedQuery(name = "UfsCustomerTypeRules.findById", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsCustomerTypeRules.findByName", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.name = :name")
+        , @NamedQuery(name = "UfsCustomerTypeRules.findByDescription", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.description = :description")
+        , @NamedQuery(name = "UfsCustomerTypeRules.findByTextType", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.textType = :textType")
+        , @NamedQuery(name = "UfsCustomerTypeRules.findByAction", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsCustomerTypeRules.findByActionStatus", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsCustomerTypeRules.findByCreationDate", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.creationDate = :creationDate")
+        , @NamedQuery(name = "UfsCustomerTypeRules.findByIntrash", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.intrash = :intrash")})
 public class UfsCustomerTypeRules implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -67,9 +69,11 @@ public class UfsCustomerTypeRules implements Serializable {
     private String textType;
     @Size(max = 20)
     @Column(name = "ACTION")
+    @Filter
     private String action;
     @Size(max = 20)
     @Column(name = "ACTION_STATUS")
+    @Filter
     private String actionStatus;
     @Column(name = "CREATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
@@ -80,10 +84,16 @@ public class UfsCustomerTypeRules implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ruleId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsOrganizationUnits tenantId;
+    @Column(name = "TENANT_ID")
+    @Filter
+    private BigDecimal tenantIds;
+    @Column(name = "ACTIVE")
+    @Filter
+    private Short active;
 
     public UfsCustomerTypeRules() {
     }
@@ -162,6 +172,22 @@ public class UfsCustomerTypeRules implements Serializable {
         this.intrash = intrash;
     }
 
+    public BigDecimal getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(BigDecimal tenantIds) {
+        this.tenantIds = tenantIds;
+    }
+
+    public Short getActive() {
+        return active;
+    }
+
+    public void setActive(Short active) {
+        this.active = active;
+    }
+
     @XmlTransient
     @JsonIgnore
     public List<UfsCustomerTypeRuleMap> getUfsCustomerTypeRuleMapList() {
@@ -204,5 +230,5 @@ public class UfsCustomerTypeRules implements Serializable {
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerTypeRules[ id=" + id + " ]";
     }
-    
+
 }
