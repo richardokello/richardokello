@@ -6,6 +6,7 @@
 package ke.tra.ufs.webportal.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -38,8 +39,18 @@ public class UfsCurrency implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "ID")
+    @GenericGenerator(
+            name = "UFS_CURRENCY_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_CURRENCY_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_CURRENCY_SEQ")
     private BigDecimal id;
     @Basic(optional = false)
     @NotNull
@@ -73,10 +84,13 @@ public class UfsCurrency implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     @JsonIgnore
     private UfsOrganizationUnits tenantId;
+
+    @Column(name = "TENANT_ID")
+    private BigDecimal tenantIds;
 
     public UfsCurrency() {
     }
@@ -172,6 +186,14 @@ public class UfsCurrency implements Serializable {
 
     public void setTenantId(UfsOrganizationUnits tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public BigDecimal getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(BigDecimal tenantIds) {
+        this.tenantIds = tenantIds;
     }
 
     @Override

@@ -5,18 +5,16 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -30,8 +28,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * @author Kenny
@@ -49,6 +47,23 @@ import org.codehaus.jackson.annotate.JsonIgnore;
         @NamedQuery(name = "UfsCustomerType.findByCreationDate", query = "SELECT u FROM UfsCustomerType u WHERE u.creationDate = :creationDate"),
         @NamedQuery(name = "UfsCustomerType.findByIntrash", query = "SELECT u FROM UfsCustomerType u WHERE u.intrash = :intrash")})
 public class UfsCustomerType implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "UFS_CUSTOMER_TYPE_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_CUSTOMER_TYPE_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_CUSTOMER_TYPE_SEQ")
+    @Column(name = "ID")
+    private BigDecimal id;
 
     @Basic(optional = false)
     @NotNull
@@ -67,15 +82,7 @@ public class UfsCustomerType implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "typeId")
-    private List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList;
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
@@ -88,20 +95,20 @@ public class UfsCustomerType implements Serializable {
     public UfsCustomerType() {
     }
 
-    public UfsCustomerType(Long id) {
+    public UfsCustomerType(BigDecimal id) {
         this.id = id;
     }
 
-    public UfsCustomerType(Long id, String name) {
+    public UfsCustomerType(BigDecimal id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Long getId() {
+    public BigDecimal getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(BigDecimal id) {
         this.id = id;
     }
 
@@ -188,6 +195,8 @@ public class UfsCustomerType implements Serializable {
         this.action = action;
     }
 
+ 
+
     public String getIntrash() {
         return intrash;
     }
@@ -196,14 +205,6 @@ public class UfsCustomerType implements Serializable {
         this.intrash = intrash;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<UfsCustomerTypeRuleMap> getUfsCustomerTypeRuleMapList() {
-        return ufsCustomerTypeRuleMapList;
-    }
 
-    public void setUfsCustomerTypeRuleMapList(List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList) {
-        this.ufsCustomerTypeRuleMapList = ufsCustomerTypeRuleMapList;
-    }
 
 }

@@ -5,19 +5,12 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -45,7 +38,17 @@ public class UfsTieredCommissionAmount implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GenericGenerator(
+            name = "TIERED_COMMISSION_AMOUNT_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "TIERED_COMMISSION_AMOUNT_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "TIERED_COMMISSION_AMOUNT_SEQ")
     @Column(name = "ID")
     private Long id;
     @Size(max = 20)
@@ -75,9 +78,12 @@ public class UfsTieredCommissionAmount implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne
     private UfsOrganizationUnits tenantId;
+    @Column(name = "TENANT_ID")
+    private BigDecimal tenantIds;
+
 
     public UfsTieredCommissionAmount() {
     }
@@ -171,6 +177,14 @@ public class UfsTieredCommissionAmount implements Serializable {
 
     public void setTenantId(UfsOrganizationUnits tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public BigDecimal getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(BigDecimal tenantIds) {
+        this.tenantIds = tenantIds;
     }
 
     @Override

@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * @author ASUS
@@ -77,7 +78,17 @@ public class UfsOrganizationUnits implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GenericGenerator(
+            name = "UFS_ORGANIZATION_UNITS_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_ORGANIZATION_UNITS_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_ORGANIZATION_UNITS_SEQ")
     @Column(name = "ID")
     private BigDecimal id;
     @Column(name = "IS_PARENT")

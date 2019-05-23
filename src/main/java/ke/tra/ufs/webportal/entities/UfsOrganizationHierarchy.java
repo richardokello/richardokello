@@ -5,6 +5,8 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -49,7 +51,17 @@ public class UfsOrganizationHierarchy implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GenericGenerator(
+            name = "UFS_ORGANIZATION_HIERARCHY_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_ORGANIZATION_HIERARCHY_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_ORGANIZATION_HIERARCHY_SEQ")
     @Column(name = "ID")
     private BigDecimal id;
     @Column(name = "LEVEL_NO")
