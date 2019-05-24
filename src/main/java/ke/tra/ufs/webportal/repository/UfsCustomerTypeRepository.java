@@ -9,11 +9,13 @@ import ke.tra.ufs.webportal.entities.UfsCustomerType;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author Tracom
  */
 @Repository
-public interface UfsCustomerTypeRepository extends CrudRepository<UfsCustomerType, Long>{
+public interface UfsCustomerTypeRepository extends CrudRepository<UfsCustomerType, BigDecimal>{
     
 }
