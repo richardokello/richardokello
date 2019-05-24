@@ -7,22 +7,35 @@ package ke.tra.ufs.webportal.resources;
 
 import com.cm.projects.spring.resource.chasis.ChasisResource;
 import com.cm.projects.spring.resource.chasis.utils.LoggerService;
+
 import javax.persistence.EntityManager;
+import javax.validation.Valid;
+
+import com.cm.projects.spring.resource.chasis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsCustomerType;
 import ke.tra.ufs.webportal.entities.UfsEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- *
  * @author Kenny
  */
 @Controller
 @RequestMapping(value = "/customer-type")
-public class UfsCustomerTypeController extends ChasisResource<UfsCustomerType, Long, UfsEntity>{
+public class UfsCustomerTypeController extends ChasisResource<UfsCustomerType, Long, UfsEntity> {
 
     public UfsCustomerTypeController(LoggerService loggerService, EntityManager entityManager) {
         super(loggerService, entityManager);
     }
-    
+
+    @Override
+    public ResponseEntity<ResponseWrapper<UfsCustomerType>> create(@Valid UfsCustomerType ufsCustomerType) {
+        ResponseEntity<ResponseWrapper<UfsCustomerType>> response = super.create(ufsCustomerType);
+
+
+
+
+        return response;
+    }
 }

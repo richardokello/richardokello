@@ -15,8 +15,6 @@ import javax.persistence.EntityManager;
 @RequestMapping("/customer-class")
 public class UfsCustomerClassResource extends ChasisResource<UfsCustomerClass, Long, UfsEdittedRecord> {
 
-
-
     public UfsCustomerClassResource(LoggerService loggerService, EntityManager entityManager) {
         super(loggerService, entityManager);
 

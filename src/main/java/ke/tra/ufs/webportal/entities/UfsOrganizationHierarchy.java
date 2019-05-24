@@ -162,7 +162,7 @@ public class UfsOrganizationHierarchy implements Serializable {
 
     public void setAction(String action) {
         this.action = action;
-    }
+    } 
 
     public String getIntrash() {
         return intrash;

@@ -311,29 +311,6 @@ public class UfsOrganizationUnits implements Serializable {
         this.ufsCustomerTypeCollection = ufsCustomerTypeCollection;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     @XmlTransient
     @JsonIgnore
@@ -363,5 +340,29 @@ public class UfsOrganizationUnits implements Serializable {
 
     public void setUfsCustomerTypeRulesList(List<UfsCustomerTypeRules> ufsCustomerTypeRulesList) {
         this.ufsCustomerTypeRulesList = ufsCustomerTypeRulesList;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
     }
 }

@@ -48,12 +48,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
         , @NamedQuery(name = "UfsCustomerTypeRules.findByIntrash", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.intrash = :intrash")})
 public class UfsCustomerTypeRules implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
@@ -69,18 +63,27 @@ public class UfsCustomerTypeRules implements Serializable {
     private String textType;
     @Size(max = 20)
     @Column(name = "ACTION")
-    @Filter
     private String action;
     @Size(max = 20)
     @Column(name = "ACTION_STATUS")
-    @Filter
     private String actionStatus;
-    @Column(name = "CREATION_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "ACTIVE")
+    private short active;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "ID")
+    private Long id;
+    @Column(name = "CREATION_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ruleId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList;
@@ -91,9 +94,6 @@ public class UfsCustomerTypeRules implements Serializable {
     @Column(name = "TENANT_ID")
     @Filter
     private BigDecimal tenantIds;
-    @Column(name = "ACTIVE")
-    @Filter
-    private Short active;
 
     public UfsCustomerTypeRules() {
     }
@@ -116,21 +116,6 @@ public class UfsCustomerTypeRules implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String getTextType() {
         return textType;
@@ -140,13 +125,6 @@ public class UfsCustomerTypeRules implements Serializable {
         this.textType = textType;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -164,13 +142,6 @@ public class UfsCustomerTypeRules implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     public BigDecimal getTenantIds() {
         return tenantIds;
@@ -180,13 +151,6 @@ public class UfsCustomerTypeRules implements Serializable {
         this.tenantIds = tenantIds;
     }
 
-    public Short getActive() {
-        return active;
-    }
-
-    public void setActive(Short active) {
-        this.active = active;
-    }
 
     @XmlTransient
     @JsonIgnore
@@ -229,6 +193,46 @@ public class UfsCustomerTypeRules implements Serializable {
     @Override
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerTypeRules[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
+    public short getActive() {
+        return active;
+    }
+
+    public void setActive(short active) {
+        this.active = active;
     }
 
 }

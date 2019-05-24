@@ -5,16 +5,10 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,15 +26,25 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "UfsCustomerTypeRuleMap.findByIntrash", query = "SELECT u FROM UfsCustomerTypeRuleMap u WHERE u.intrash = :intrash")})
 public class UfsCustomerTypeRuleMap implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private Long id;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "UFS_CUSTOMER_TYPE_RULE_MAP_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_CUSTOMER_TYPE_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    @GeneratedValue(generator = "UFS_CUSTOMER_TYPE_RULE_MAP_SEQ")
+    @Column(name = "ID")
+    private Long id;
     @JoinColumn(name = "TYPE_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     @com.fasterxml.jackson.annotation.JsonIgnore
@@ -64,13 +68,6 @@ public class UfsCustomerTypeRuleMap implements Serializable {
         this.id = id;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     public UfsCustomerType getTypeId() {
         return typeId;
@@ -111,6 +108,14 @@ public class UfsCustomerTypeRuleMap implements Serializable {
     @Override
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerTypeRuleMap[ id=" + id + " ]";
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
     }
     
 }
