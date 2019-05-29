@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -62,6 +63,7 @@ public class UfsCustomerType implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 20)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)

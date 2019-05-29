@@ -70,6 +70,7 @@ public class UfsCustomerTypeRules implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 20)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)

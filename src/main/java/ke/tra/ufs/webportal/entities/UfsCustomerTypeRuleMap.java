@@ -8,6 +8,7 @@ package ke.tra.ufs.webportal.entities;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,9 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "UfsCustomerTypeRuleMap.findByIntrash", query = "SELECT u FROM UfsCustomerTypeRuleMap u WHERE u.intrash = :intrash")})
 public class UfsCustomerTypeRuleMap implements Serializable {
 
-    @Size(max = 3)
-    @Column(name = "INTRASH")
-    private String intrash;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -45,13 +43,24 @@ public class UfsCustomerTypeRuleMap implements Serializable {
     @GeneratedValue(generator = "UFS_CUSTOMER_TYPE_RULE_MAP_SEQ")
     @Column(name = "ID")
     private Long id;
-    @JoinColumn(name = "TYPE_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TYPE_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsCustomerType typeId;
-    @JoinColumn(name = "RULE_ID", referencedColumnName = "ID")
+
+    @Column(name = "TYPE_ID")
+    private BigDecimal typeIds;
+
+    @JoinColumn(name = "RULE_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsCustomerTypeRules ruleId;
+
+    @Column(name = "RULE_ID")
+    private BigDecimal ruleIds;
+
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
 
     public UfsCustomerTypeRuleMap() {
     }
@@ -83,6 +92,22 @@ public class UfsCustomerTypeRuleMap implements Serializable {
 
     public void setRuleId(UfsCustomerTypeRules ruleId) {
         this.ruleId = ruleId;
+    }
+
+    public BigDecimal getTypeIds() {
+        return typeIds;
+    }
+
+    public void setTypeIds(BigDecimal typeIds) {
+        this.typeIds = typeIds;
+    }
+
+    public BigDecimal getRuleIds() {
+        return ruleIds;
+    }
+
+    public void setRuleIds(BigDecimal ruleIds) {
+        this.ruleIds = ruleIds;
     }
 
     @Override
