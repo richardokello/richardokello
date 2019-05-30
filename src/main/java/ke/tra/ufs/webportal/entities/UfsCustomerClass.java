@@ -86,11 +86,11 @@ public class UfsCustomerClass implements Serializable {
     @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
     @Size(max = 3)
-    @Column(name = "INTRASH")
+    @Column(name = "INTRASH",insertable = false)
     private String intrash;
     @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne

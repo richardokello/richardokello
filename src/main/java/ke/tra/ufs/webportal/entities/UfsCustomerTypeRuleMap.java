@@ -59,7 +59,7 @@ public class UfsCustomerTypeRuleMap implements Serializable {
     private BigDecimal ruleIds;
 
     @Size(max = 3)
-    @Column(name = "INTRASH")
+    @Column(name = "INTRASH", insertable = false)
     private String intrash;
 
     public UfsCustomerTypeRuleMap() {
