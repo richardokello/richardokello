@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "UfsCustomerTypeRuleMap.findAll", query = "SELECT u FROM UfsCustomerTypeRuleMap u")
     , @NamedQuery(name = "UfsCustomerTypeRuleMap.findById", query = "SELECT u FROM UfsCustomerTypeRuleMap u WHERE u.id = :id")
+    , @NamedQuery(name = "UfsCustomerTypeRuleMap.findAllByTypeIds", query = "SELECT u FROM UfsCustomerTypeRuleMap u WHERE u.typeIds = :typeIds")
     , @NamedQuery(name = "UfsCustomerTypeRuleMap.findByIntrash", query = "SELECT u FROM UfsCustomerTypeRuleMap u WHERE u.intrash = :intrash")})
 public class UfsCustomerTypeRuleMap implements Serializable {
 

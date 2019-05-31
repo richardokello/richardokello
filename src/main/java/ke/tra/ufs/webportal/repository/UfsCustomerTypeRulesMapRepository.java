@@ -10,6 +10,9 @@ import ke.tra.ufs.webportal.entities.UfsCustomerTypeRuleMap;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 /**
  *
  * @author Tracom
@@ -17,5 +20,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UfsCustomerTypeRulesMapRepository extends CrudRepository<UfsCustomerTypeRuleMap, Long>{
 
-    
+    public List<UfsCustomerTypeRuleMap> findAllByTypeIds(BigDecimal typeIds);
 }
