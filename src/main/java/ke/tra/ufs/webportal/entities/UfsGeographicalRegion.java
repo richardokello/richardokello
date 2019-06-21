@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author ASUS
@@ -37,13 +38,6 @@ import java.util.List;
         , @NamedQuery(name = "UfsGeographicalRegion.findByIntrash", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.intrash = :intrash")})
 public class UfsGeographicalRegion implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private BigDecimal id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -52,11 +46,6 @@ public class UfsGeographicalRegion implements Serializable {
     @Size(max = 20)
     @Column(name = "CODE")
     private String code;
-    @Column(name = "IS_PARENT")
-    private Short isParent;
-    @Column(name = "CREATION_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
     @Size(max = 15)
     @Column(name = "ACTION")
     private String action;
@@ -66,6 +55,21 @@ public class UfsGeographicalRegion implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "geographicalRegionId")
+    private Set<UfsBankBranches> ufsBankBranchesSet;
+
+    private static final long serialVersionUID = 1L;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "ID")
+    private BigDecimal id;
+    @Column(name = "IS_PARENT")
+    private Short isParent;
+    @Column(name = "CREATION_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
     @OneToMany(mappedBy = "parentId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<UfsGeographicalRegion> ufsGeographicalRegionList;
@@ -113,13 +117,6 @@ public class UfsGeographicalRegion implements Serializable {
         this.regionName = regionName;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public Short getIsParent() {
         return isParent;
@@ -137,13 +134,6 @@ public class UfsGeographicalRegion implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -153,13 +143,6 @@ public class UfsGeographicalRegion implements Serializable {
         this.actionStatus = actionStatus;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
 
     public BigDecimal getParentIds() {
@@ -235,6 +218,40 @@ public class UfsGeographicalRegion implements Serializable {
     @Override
     public String toString() {
         return "ke.tracom.ufs.entities.UfsGeographicalRegion[ id=" + id + " ]";
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsBankBranches> getUfsBankBranchesSet() {
+        return ufsBankBranchesSet;
+    }
+
+    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
+        this.ufsBankBranchesSet = ufsBankBranchesSet;
     }
 
 }

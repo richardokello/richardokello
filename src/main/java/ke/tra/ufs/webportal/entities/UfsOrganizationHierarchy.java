@@ -156,6 +156,14 @@ public class UfsOrganizationHierarchy implements Serializable {
         return "ke.tracom.ufs.entities.UfsOrganizationHierarchy[ id=" + id + " ]";
     }
 
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    } 
+
     public String getAction() {
         return action;
     }
@@ -163,6 +171,14 @@ public class UfsOrganizationHierarchy implements Serializable {
     public void setAction(String action) {
         this.action = action;
     } 
+
+    public String getActionStatus() {
+        return actionStatus;
+    }
+
+    public void setActionStatus(String actionStatus) {
+        this.actionStatus = actionStatus;
+    }
 
     public String getIntrash() {
         return intrash;

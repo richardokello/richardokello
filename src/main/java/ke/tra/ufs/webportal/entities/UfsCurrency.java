@@ -14,6 +14,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Set;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -35,32 +37,18 @@ import java.math.BigDecimal;
     , @NamedQuery(name = "UfsCurrency.findByIntrash", query = "SELECT u FROM UfsCurrency u WHERE u.intrash = :intrash")})
 public class UfsCurrency implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Id
-    @Basic(optional = false)
-    @Column(name = "ID")
-    @GenericGenerator(
-            name = "UFS_CURRENCY_SEQ",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_CURRENCY_SEQ"),
-                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
-                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
-            }
-    )
-
-    @GeneratedValue(generator = "UFS_CURRENCY_SEQ")
-    private BigDecimal id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String name;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Size(min = 1, max = 10)
-    @Column(name = "CODE")
+    @Column(
+            name = "CODE")
+
     private String code;
     @Basic(optional = false)
     @NotNull
@@ -84,6 +72,24 @@ public class UfsCurrency implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(mappedBy = "settlementCurrency")
+    private Set<UfsBanks> ufsBanksSet;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @Column(name = "ID")
+    @GenericGenerator(
+            name = "UFS_CURRENCY_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_CURRENCY_SEQ"),
+                @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    
+    @GeneratedValue(generator = "UFS_CURRENCY_SEQ")
+    private BigDecimal id;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     @JsonIgnore
@@ -114,6 +120,61 @@ public class UfsCurrency implements Serializable {
 
     public void setId(BigDecimal id) {
         this.id = id;
+    }
+
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public BigDecimal getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(BigDecimal tenantIds) {
+        this.tenantIds = tenantIds;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof UfsCurrency)) {
+            return false;
+        }
+        UfsCurrency other = (UfsCurrency) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ke.tracom.ufs.entities.UfsCurrency[ id=" + id + " ]";
+    }
+
+
+
+
+
+    @XmlTransient
+    @org.codehaus.jackson.annotate.JsonIgnore
+    public Set<UfsBanks> getUfsBanksSet() {
+        return ufsBanksSet;
+    }
+
+    public void setUfsBanksSet(Set<UfsBanks> ufsBanksSet) {
+        this.ufsBanksSet = ufsBanksSet;
     }
 
     public String getName() {
@@ -178,47 +239,6 @@ public class UfsCurrency implements Serializable {
 
     public void setIntrash(String intrash) {
         this.intrash = intrash;
-    }
-
-    public UfsOrganizationUnits getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UfsOrganizationUnits tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public BigDecimal getTenantIds() {
-        return tenantIds;
-    }
-
-    public void setTenantIds(BigDecimal tenantIds) {
-        this.tenantIds = tenantIds;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UfsCurrency)) {
-            return false;
-        }
-        UfsCurrency other = (UfsCurrency) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "ke.tracom.ufs.entities.UfsCurrency[ id=" + id + " ]";
     }
     
 }

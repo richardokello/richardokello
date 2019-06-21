@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -47,6 +48,8 @@ public class UfsOrganizationUnits implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
+    private Set<UfsBanks> ufsBanksSet;
     @OneToMany(mappedBy = "tenantId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<UfsTieredCommissionAmount> ufsTieredCommissionAmountList;
@@ -342,6 +345,17 @@ public class UfsOrganizationUnits implements Serializable {
         this.ufsCustomerTypeRulesList = ufsCustomerTypeRulesList;
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsBanks> getUfsBanksSet() {
+        return ufsBanksSet;
+    }
+
+    public void setUfsBanksSet(Set<UfsBanks> ufsBanksSet) {
+        this.ufsBanksSet = ufsBanksSet;
+    }
+
     public String getName() {
         return name;
     }
@@ -356,6 +370,14 @@ public class UfsOrganizationUnits implements Serializable {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public String getActionStatus() {
+        return actionStatus;
+    }
+
+    public void setActionStatus(String actionStatus) {
+        this.actionStatus = actionStatus;
     }
 
     public String getIntrash() {

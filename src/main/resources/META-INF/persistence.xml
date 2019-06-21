@@ -11,6 +11,10 @@
     <class>ke.tra.ufs.webportal.entities.UfsRevenueEntities_1</class>
     <class>ke.tra.ufs.webportal.entities.UfsOrganizationHierarchy_1</class>
     <class>ke.tra.ufs.webportal.entities.UfsCustomerClass</class>
+    <class>ke.tra.ufs.webportal.entities.UfsBanks</class>
+    <class>ke.tra.ufs.webportal.entities.UfsBankBranches</class>
+    <class>ke.tra.ufs.webportal.entities.UfsBankBins</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCountries</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.1.172:1521:trcm"/>
       <property name="javax.persistence.jdbc.user" value="UFS_SMART_SUITE"/>
