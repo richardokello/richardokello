@@ -9,19 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -29,6 +17,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * @author ojuma
@@ -48,6 +37,22 @@ import org.codehaus.jackson.annotate.JsonIgnore;
         , @NamedQuery(name = "UfsCustomerTypeRules.findByIntrash", query = "SELECT u FROM UfsCustomerTypeRules u WHERE u.intrash = :intrash")})
 public class UfsCustomerTypeRules implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "CUSTOMER_TYPE_RULES_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "CUSTOMER_TYPE_RULES_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    @GeneratedValue(generator = "CUSTOMER_TYPE_RULES_SEQ")
+    @Column(name = "ID")
+    private Long id;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
@@ -65,22 +70,16 @@ public class UfsCustomerTypeRules implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 20)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "ACTIVE")
+    @Column(name = "ACTIVE",insertable = false)
     private short active;
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private Long id;
     @Column(name = "CREATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;

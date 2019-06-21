@@ -5,6 +5,8 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -57,6 +59,7 @@ public class UfsSysConfig implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 10)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     private static final long serialVersionUID = 1L;

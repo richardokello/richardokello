@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -36,27 +37,6 @@ import org.hibernate.annotations.GenericGenerator;
         @NamedQuery(name = "UfsCustomerType.findByIntrash", query = "SELECT u FROM UfsCustomerType u WHERE u.intrash = :intrash")})
 public class UfsCustomerType implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "NAME")
-    private String name;
-    @Size(max = 100)
-    @Column(name = "DESCRIPTION")
-    private String description;
-    @Size(max = 20)
-    @Column(name = "ACTION")
-    private String action;
-    @Size(max = 20)
-    @Column(name = "ACTION_STATUS")
-    private String actionStatus;
-    @Size(max = 3)
-    @Column(name = "INTRASH")
-    private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "typeId")
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList;
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -72,7 +52,23 @@ public class UfsCustomerType implements Serializable {
     @GeneratedValue(generator = "UFS_CUSTOMER_TYPE_SEQ")
     @Column(name = "ID")
     private BigDecimal id;
-
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "NAME")
+    private String name;
+    @Size(max = 100)
+    @Column(name = "DESCRIPTION")
+    private String description;
+    @Size(max = 20)
+    @Column(name = "ACTION")
+    private String action;
+    @Size(max = 20)
+    @Filter
+    @Column(name = "ACTION_STATUS")
+    private String actionStatus;
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
 
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -83,6 +79,7 @@ public class UfsCustomerType implements Serializable {
     @Column(name = "TENANT_ID")
     private BigDecimal tenantIds;
     @Transient
+    @NotNull
     private List<Long> ruleIds;
 
     public UfsCustomerType() {
@@ -90,11 +87,6 @@ public class UfsCustomerType implements Serializable {
 
     public UfsCustomerType(BigDecimal id) {
         this.id = id;
-    }
-
-    public UfsCustomerType(BigDecimal id, String name) {
-        this.id = id;
-        this.name = name;
     }
 
     public BigDecimal getId() {
@@ -147,31 +139,6 @@ public class UfsCustomerType implements Serializable {
         this.ruleIds = ruleIds;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UfsCustomerType)) {
-            return false;
-        }
-        UfsCustomerType other = (UfsCustomerType) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "ke.tra.ufs.webportal.entities.UfsCustomerType[ id=" + id + " ]";
-    }
-
     public String getName() {
         return name;
     }
@@ -204,15 +171,29 @@ public class UfsCustomerType implements Serializable {
         this.intrash = intrash;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public List<UfsCustomerTypeRuleMap> getUfsCustomerTypeRuleMapList() {
-        return ufsCustomerTypeRuleMapList;
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
 
-    public void setUfsCustomerTypeRuleMapList(List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList) {
-        this.ufsCustomerTypeRuleMapList = ufsCustomerTypeRuleMapList;
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof UfsCustomerType)) {
+            return false;
+        }
+        UfsCustomerType other = (UfsCustomerType) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
+    @Override
+    public String toString() {
+        return "ke.tra.ufs.webportal.entities.UfsCustomerType[ id=" + id + " ]";
+    }
 
 }
