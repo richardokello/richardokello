@@ -48,6 +48,8 @@ public class UfsOrganizationUnits implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(mappedBy = "tenantId")
+    private Collection<UfsCustomer> ufsCustomerCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
     private Set<UfsBanks> ufsBanksSet;
     @OneToMany(mappedBy = "tenantId")
@@ -372,13 +374,6 @@ public class UfsOrganizationUnits implements Serializable {
         this.action = action;
     }
 
-    public String getActionStatus() {
-        return actionStatus;
-    }
-
-    public void setActionStatus(String actionStatus) {
-        this.actionStatus = actionStatus;
-    }
 
     public String getIntrash() {
         return intrash;
@@ -386,5 +381,15 @@ public class UfsOrganizationUnits implements Serializable {
 
     public void setIntrash(String intrash) {
         this.intrash = intrash;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomer> getUfsCustomerCollection() {
+        return ufsCustomerCollection;
+    }
+
+    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
+        this.ufsCustomerCollection = ufsCustomerCollection;
     }
 }

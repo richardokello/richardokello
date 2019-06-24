@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +55,8 @@ public class UfsBankRegion implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
+    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
     private Set<UfsBankBranches> ufsBankBranchesSet;
     @JoinColumn(name = "BANK_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
@@ -78,7 +81,7 @@ public class UfsBankRegion implements Serializable {
     private BigDecimal id;
     @Column(name = "IS_PARENT")
     private Short isParent;
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
     @OneToMany(mappedBy = "parentId")
@@ -215,6 +218,27 @@ public class UfsBankRegion implements Serializable {
         return "ke.tracom.ufs.entities.UfsBankRegion[ id=" + id + " ]";
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsBankBranches> getUfsBankBranchesSet() {
+        return ufsBankBranchesSet;
+    }
+
+    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
+        this.ufsBankBranchesSet = ufsBankBranchesSet;
+    }
+
+    public UfsBanks getBankId() {
+        return bankId;
+    }
+
+    public void setBankId(UfsBanks bankId) {
+        this.bankId = bankId;
+    }
+
+
+
     public String getCode() {
         return code;
     }
@@ -241,20 +265,12 @@ public class UfsBankRegion implements Serializable {
 
     @XmlTransient
     @JsonIgnore
-    public Set<UfsBankBranches> getUfsBankBranchesSet() {
-        return ufsBankBranchesSet;
+    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
+        return ufsCustomerOutletCollection;
     }
 
-    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
-        this.ufsBankBranchesSet = ufsBankBranchesSet;
-    }
-
-    public UfsBanks getBankId() {
-        return bankId;
-    }
-
-    public void setBankId(UfsBanks bankId) {
-        this.bankId = bankId;
+    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
+        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
     }
 
 }

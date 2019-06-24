@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -24,6 +25,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -76,18 +78,28 @@ public class UfsCountries implements Serializable {
     private String intrash;
     @Basic(optional = false)
     @NotNull()
-    @Column(name = "CREATED_AT")
+    @Column(name = "CREATED_AT", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "UPDATED_AT")
+    @Column(name = "UPDATED_AT",insertable = false,updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+        @GenericGenerator(
+            name = "UFS_COUNTRIES_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_COUNTRIES_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_COUNTRIES_SEQ")
     @Column(name = "ID")
     private BigDecimal id;
     @OneToMany(mappedBy = "country")
@@ -219,6 +231,7 @@ public class UfsCountries implements Serializable {
     public void setIntrash(String intrash) {
         this.intrash = intrash;
     }
+
 
     
 }

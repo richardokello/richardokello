@@ -50,22 +50,6 @@ import org.hibernate.annotations.GenericGenerator;
     @NamedQuery(name = "UfsCustomerClass.findByIntrash", query = "SELECT u FROM UfsCustomerClass u WHERE u.intrash = :intrash")})
 public class UfsCustomerClass implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @GenericGenerator(
-            name = "UFS_CUSTOMER_CLASS_SEQ",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_CUSTOMER_CLASS_SEQ"),
-                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
-                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
-            }
-    )
-
-    @GeneratedValue(generator = "UFS_CUSTOMER_CLASS_SEQ")
-    @Column(name = "ID")
-    private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
@@ -83,15 +67,35 @@ public class UfsCustomerClass implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 20)
-    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
+    @OneToMany(mappedBy = "classTypeId")
+    private Collection<UfsCustomer> ufsCustomerCollection;
+    @OneToMany(mappedBy = "parentId")
+    private Collection<UfsCustomerClass> ufsCustomerClassCollection;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "UFS_CUSTOMER_CLASS_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_CUSTOMER_CLASS_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_CUSTOMER_CLASS_SEQ")
+    @Column(name = "ID")
+    private Long id;
     @Column(name = "CREATION_DATE",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
-    @Size(max = 3)
-    @Column(name = "INTRASH",insertable = false)
-    private String intrash;
     @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
     private UfsCustomerClass parentId;
@@ -123,21 +127,6 @@ public class UfsCustomerClass implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String getClassValues() {
         return classValues;
@@ -147,13 +136,6 @@ public class UfsCustomerClass implements Serializable {
         this.classValues = classValues;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -171,13 +153,6 @@ public class UfsCustomerClass implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     public UfsCustomerClass getParentId() {
         return parentId;
@@ -236,6 +211,59 @@ public class UfsCustomerClass implements Serializable {
     @Override
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerClass[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomer> getUfsCustomerCollection() {
+        return ufsCustomerCollection;
+    }
+
+    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
+        this.ufsCustomerCollection = ufsCustomerCollection;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomerClass> getUfsCustomerClassCollection() {
+        return ufsCustomerClassCollection;
+    }
+
+    public void setUfsCustomerClassCollection(Collection<UfsCustomerClass> ufsCustomerClassCollection) {
+        this.ufsCustomerClassCollection = ufsCustomerClassCollection;
     }
     
 }

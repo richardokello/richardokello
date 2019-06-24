@@ -16,9 +16,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * @author ASUS
@@ -55,6 +57,8 @@ public class UfsGeographicalRegion implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(mappedBy = "geographicalRegId")
+    private Collection<UfsCustomer> ufsCustomerCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "geographicalRegionId")
     private Set<UfsBankBranches> ufsBankBranchesSet;
 
@@ -62,12 +66,21 @@ public class UfsGeographicalRegion implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
-    @NotNull
+        @GenericGenerator(
+            name = "UFS_GEOGRAPHICAL_REGION_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_GEOGRAPHICAL_REGION_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    @GeneratedValue(generator = "UFS_GEOGRAPHICAL_REGION_SEQ")
     @Column(name = "ID")
     private BigDecimal id;
     @Column(name = "IS_PARENT")
     private Short isParent;
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE",insertable = false , updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
     @OneToMany(mappedBy = "parentId")
@@ -220,6 +233,19 @@ public class UfsGeographicalRegion implements Serializable {
         return "ke.tracom.ufs.entities.UfsGeographicalRegion[ id=" + id + " ]";
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsBankBranches> getUfsBankBranchesSet() {
+        return ufsBankBranchesSet;
+    }
+
+    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
+        this.ufsBankBranchesSet = ufsBankBranchesSet;
+    }
+
+ 
+
     public String getCode() {
         return code;
     }
@@ -246,12 +272,12 @@ public class UfsGeographicalRegion implements Serializable {
 
     @XmlTransient
     @JsonIgnore
-    public Set<UfsBankBranches> getUfsBankBranchesSet() {
-        return ufsBankBranchesSet;
+    public Collection<UfsCustomer> getUfsCustomerCollection() {
+        return ufsCustomerCollection;
     }
 
-    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
-        this.ufsBankBranchesSet = ufsBankBranchesSet;
+    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
+        this.ufsCustomerCollection = ufsCustomerCollection;
     }
 
 }

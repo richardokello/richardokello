@@ -16,6 +16,9 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.cm.projects.spring.resource.chasis.annotations.Filter;
+import java.util.Collection;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -35,6 +38,26 @@ import org.hibernate.annotations.GenericGenerator;
         @NamedQuery(name = "UfsCustomerType.findByIntrash", query = "SELECT u FROM UfsCustomerType u WHERE u.intrash = :intrash")})
 public class UfsCustomerType implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "NAME")
+    private String name;
+    @Size(max = 100)
+    @Column(name = "DESCRIPTION")
+    private String description;
+    @Size(max = 20)
+    @Column(name = "ACTION")
+    private String action;
+    @Size(max = 20)
+    @Column(name = "ACTION_STATUS")
+    private String actionStatus;
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "typeId")
+    private Collection<UfsCustomerClass> ufsCustomerClassCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -50,23 +73,6 @@ public class UfsCustomerType implements Serializable {
     @GeneratedValue(generator = "UFS_CUSTOMER_TYPE_SEQ")
     @Column(name = "ID")
     private BigDecimal id;
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "NAME")
-    private String name;
-    @Size(max = 100)
-    @Column(name = "DESCRIPTION")
-    private String description;
-    @Size(max = 20)
-    @Column(name = "ACTION")
-    private String action;
-    @Size(max = 20)
-    @Filter
-    @Column(name = "ACTION_STATUS")
-    private String actionStatus;
-    @Size(max = 3)
-    @Column(name = "INTRASH")
-    private String intrash;
 
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -137,37 +143,6 @@ public class UfsCustomerType implements Serializable {
         this.ruleIds = ruleIds;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     @Override
     public int hashCode() {
@@ -192,6 +167,47 @@ public class UfsCustomerType implements Serializable {
     @Override
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerType[ id=" + id + " ]";
+    }
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomerClass> getUfsCustomerClassCollection() {
+        return ufsCustomerClassCollection;
+    }
+    public void setUfsCustomerClassCollection(Collection<UfsCustomerClass> ufsCustomerClassCollection) {
+        this.ufsCustomerClassCollection = ufsCustomerClassCollection;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
     }
 
 }

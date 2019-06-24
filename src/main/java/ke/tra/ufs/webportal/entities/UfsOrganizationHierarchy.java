@@ -14,7 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -46,6 +48,8 @@ public class UfsOrganizationHierarchy implements Serializable {
     @Size(max = 2)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(mappedBy = "levelId")
+    private Collection<UfsOrganizationUnits> ufsOrganizationUnitsCollection;
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -156,14 +160,6 @@ public class UfsOrganizationHierarchy implements Serializable {
         return "ke.tracom.ufs.entities.UfsOrganizationHierarchy[ id=" + id + " ]";
     }
 
-    public String getLevelName() {
-        return levelName;
-    }
-
-    public void setLevelName(String levelName) {
-        this.levelName = levelName;
-    } 
-
     public String getAction() {
         return action;
     }
@@ -172,14 +168,6 @@ public class UfsOrganizationHierarchy implements Serializable {
         this.action = action;
     } 
 
-    public String getActionStatus() {
-        return actionStatus;
-    }
-
-    public void setActionStatus(String actionStatus) {
-        this.actionStatus = actionStatus;
-    }
-
     public String getIntrash() {
         return intrash;
     }
@@ -187,6 +175,16 @@ public class UfsOrganizationHierarchy implements Serializable {
     public void setIntrash(String intrash) {
         this.intrash = intrash;
     }   
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsOrganizationUnits> getUfsOrganizationUnitsCollection() {
+        return ufsOrganizationUnitsCollection;
+    }
+
+    public void setUfsOrganizationUnitsCollection(Collection<UfsOrganizationUnits> ufsOrganizationUnitsCollection) {
+        this.ufsOrganizationUnitsCollection = ufsOrganizationUnitsCollection;
+    }
 
     
 }

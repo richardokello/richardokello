@@ -6,6 +6,7 @@
 package ke.tra.ufs.webportal.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
@@ -73,10 +74,10 @@ public class UfsBanks implements Serializable {
     private String intrash;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
     private Set<UfsBankBins> ufsBankBinsSet;
-    @JoinColumn(name = "COUNTRY", referencedColumnName = "ID")
+    @JoinColumn(name = "COUNTRY", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne
     private UfsCountries country;
-    @JoinColumn(name = "SETTLEMENT_CURRENCY", referencedColumnName = "ID")
+    @JoinColumn(name = "SETTLEMENT_CURRENCY", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne
     private UfsCurrency settlementCurrency;
 
@@ -106,17 +107,18 @@ public class UfsBanks implements Serializable {
     private BigInteger settlementCurrencys;
     @Column(name = "COUNTRY")
     private Long countrys;
-    @Column(name = "CREATED_AT")
+    @Column(name = "CREATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
     private Set<UfsBankBranches> ufsBankBranchesSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
     private Set<UfsBankRegion> ufsBankRegionSet;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
-
+    @Column(name = "TENANT_ID")
+    private BigDecimal tenantIds;
     public UfsBanks() {
     }
 
@@ -235,6 +237,15 @@ public class UfsBanks implements Serializable {
         this.countrys = countrys;
     }
 
+    public BigDecimal getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(BigDecimal tenantIds) {
+        this.tenantIds = tenantIds;
+    }
+    
+    
 
 
     @Override
@@ -302,13 +313,6 @@ public class UfsBanks implements Serializable {
         this.commisionDefinition = commisionDefinition;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -318,13 +322,6 @@ public class UfsBanks implements Serializable {
         this.actionStatus = actionStatus;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     @XmlTransient
     @JsonIgnore
@@ -334,6 +331,24 @@ public class UfsBanks implements Serializable {
 
     public void setUfsBankBinsSet(Set<UfsBankBins> ufsBankBinsSet) {
         this.ufsBankBinsSet = ufsBankBinsSet;
+    }
+
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
     }
 
     

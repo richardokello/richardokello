@@ -9,11 +9,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * @author ojuma
@@ -32,22 +35,6 @@ import javax.xml.bind.annotation.XmlRootElement;
         , @NamedQuery(name = "UfsBankBranches.findByIntrash", query = "SELECT u FROM UfsBankBranches u WHERE u.intrash = :intrash")})
 public class UfsBankBranches implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @GenericGenerator(
-            name = "UFS_BANK_BRANCHES_SEQ",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_BANK_BRANCHES_SEQ"),
-                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
-                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
-            }
-    )
-
-    @GeneratedValue(generator = "UFS_BANK_BRANCHES_SEQ")
-    @Column(name = "ID")
-    private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
@@ -64,25 +51,48 @@ public class UfsBankBranches implements Serializable {
     @Size(max = 15)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
-    @Column(name = "CREATED_AT")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankBranchId")
+    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "UFS_BANK_BRANCHES_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_BANK_BRANCHES_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_BANK_BRANCHES_SEQ")
+    @Column(name = "ID")
+    private Long id;
+    @Column(name = "CREATED_AT", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
     @JoinColumn(name = "BANK_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     @JsonIgnore
     private UfsBanks bankId;
     @Column(name = "BANK_ID")
     private Long bankIds;
-    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     @JsonIgnore
     private UfsBankRegion bankRegionId;
-    @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID")
+    @Column(name = "BANK_REGION_ID" )
+    private BigDecimal bankRegionIds;
+    @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsGeographicalRegion geographicalRegionId;
+    @Column(name = "GEOGRAPHICAL_REGION_ID" )
+    private BigDecimal geographicalRegionIds;
 
     public UfsBankBranches() {
     }
@@ -105,29 +115,6 @@ public class UfsBankBranches implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -145,13 +132,6 @@ public class UfsBankBranches implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     public UfsBanks getBankId() {
         return bankId;
@@ -208,6 +188,66 @@ public class UfsBankBranches implements Serializable {
     @Override
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsBankBranches[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
+    public BigDecimal getBankRegionIds() {
+        return bankRegionIds;
+    }
+
+    public void setBankRegionIds(BigDecimal bankRegionIds) {
+        this.bankRegionIds = bankRegionIds;
+    }
+
+    public BigDecimal getGeographicalRegionIds() {
+        return geographicalRegionIds;
+    }
+
+    public void setGeographicalRegionIds(BigDecimal geographicalRegionIds) {
+        this.geographicalRegionIds = geographicalRegionIds;
+    }
+    
+    
+
+    @XmlTransient
+    @org.codehaus.jackson.annotate.JsonIgnore
+    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
+        return ufsCustomerOutletCollection;
+    }
+
+    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
+        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
     }
 
 }

@@ -104,6 +104,7 @@ public class UfsCurrency implements Serializable {
     public UfsCurrency(BigDecimal id) {
         this.id = id;
     }
+    
 
     public UfsCurrency(BigDecimal id, String name, String code, String symbol, short decimalValue, short numericValue) {
         this.id = id;
@@ -177,6 +178,32 @@ public class UfsCurrency implements Serializable {
         this.ufsBanksSet = ufsBanksSet;
     }
 
+
+    public short getDecimalValue() {
+        return decimalValue;
+    }
+
+    public void setDecimalValue(short decimalValue) {
+        this.decimalValue = decimalValue;
+    }
+
+    public short getNumericValue() {
+        return numericValue;
+    }
+
+    public void setNumericValue(short numericValue) {
+        this.numericValue = numericValue;
+    }
+
+
+    public String getActionStatus() {
+        return actionStatus;
+    }
+
+    public void setActionStatus(String actionStatus) {
+        this.actionStatus = actionStatus;
+    }
+
     public String getName() {
         return name;
     }
@@ -201,21 +228,6 @@ public class UfsCurrency implements Serializable {
         this.symbol = symbol;
     }
 
-    public short getDecimalValue() {
-        return decimalValue;
-    }
-
-    public void setDecimalValue(short decimalValue) {
-        this.decimalValue = decimalValue;
-    }
-
-    public short getNumericValue() {
-        return numericValue;
-    }
-
-    public void setNumericValue(short numericValue) {
-        this.numericValue = numericValue;
-    }
 
     public String getAction() {
         return action;
@@ -225,13 +237,6 @@ public class UfsCurrency implements Serializable {
         this.action = action;
     }
 
-    public String getActionStatus() {
-        return actionStatus;
-    }
-
-    public void setActionStatus(String actionStatus) {
-        this.actionStatus = actionStatus;
-    }
 
     public String getIntrash() {
         return intrash;
