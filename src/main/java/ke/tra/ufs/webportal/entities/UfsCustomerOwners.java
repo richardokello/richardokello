@@ -6,22 +6,10 @@
 package ke.tra.ufs.webportal.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -97,9 +85,12 @@ public class UfsCustomerOwners implements Serializable {
     @ManyToOne
     private UfsCustomer customerId;
     @Column(name = "CUSTOMER_ID")
-    private UfsCustomer customerIds;
+    private BigDecimal customerIds;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerOwnerId")
     private Collection<CustomerOwnersCrime> customerOwnersCrimeCollection;
+
+    @Transient
+    private CustomerOwnersCrime ownersCrime;
 
     public UfsCustomerOwners() {
     }
@@ -194,15 +185,21 @@ public class UfsCustomerOwners implements Serializable {
         this.customerId = customerId;
     }
 
-    public UfsCustomer getCustomerIds() {
+    public BigDecimal getCustomerIds() {
         return customerIds;
     }
 
-    public void setCustomerIds(UfsCustomer customerIds) {
+    public void setCustomerIds(BigDecimal customerIds) {
         this.customerIds = customerIds;
     }
-    
-    
+
+    public CustomerOwnersCrime getOwnersCrime() {
+        return ownersCrime;
+    }
+
+    public void setOwnersCrime(CustomerOwnersCrime ownersCrime) {
+        this.ownersCrime = ownersCrime;
+    }
 
     @XmlTransient
     @JsonIgnore

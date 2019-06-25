@@ -69,6 +69,13 @@ public class CustomerOwnersCrime implements Serializable {
     private UfsCustomerOwners customerOwnerId;
     @Column(name = "CUSTOMER_OWNER_ID")
     private BigDecimal customerOwnerIds;
+    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne(optional = false)
+    private UfsCustomer customerId;
+    @Column(name = "CUSTOMER_ID")
+    private BigDecimal customerIds;
+
+
     public CustomerOwnersCrime() {
     }
 
@@ -123,7 +130,22 @@ public class CustomerOwnersCrime implements Serializable {
     public void setCustomerOwnerIds(BigDecimal customerOwnerIds) {
         this.customerOwnerIds = customerOwnerIds;
     }
-    
+
+    public UfsCustomer getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(UfsCustomer customerId) {
+        this.customerId = customerId;
+    }
+
+    public BigDecimal getCustomerIds() {
+        return customerIds;
+    }
+
+    public void setCustomerIds(BigDecimal customerIds) {
+        this.customerIds = customerIds;
+    }
 
     @Override
     public int hashCode() {
