@@ -86,8 +86,7 @@ public class UfsCustomerOwners implements Serializable {
     private UfsCustomer customerId;
     @Column(name = "CUSTOMER_ID")
     private BigDecimal customerIds;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerOwnerId")
-    private Collection<CustomerOwnersCrime> customerOwnersCrimeCollection;
+
 
     @Transient
     private CustomerOwnersCrime ownersCrime;
@@ -201,15 +200,7 @@ public class UfsCustomerOwners implements Serializable {
         this.ownersCrime = ownersCrime;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public Collection<CustomerOwnersCrime> getCustomerOwnersCrimeCollection() {
-        return customerOwnersCrimeCollection;
-    }
 
-    public void setCustomerOwnersCrimeCollection(Collection<CustomerOwnersCrime> customerOwnersCrimeCollection) {
-        this.customerOwnersCrimeCollection = customerOwnersCrimeCollection;
-    }
 
     @Override
     public int hashCode() {
