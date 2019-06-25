@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import com.cm.projects.spring.resource.chasis.annotations.TreeRoot;
 
 import javax.persistence.*;
@@ -43,6 +44,7 @@ public class UfsOrganizationUnits implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
@@ -360,6 +362,17 @@ public class UfsOrganizationUnits implements Serializable {
         this.ufsBanksSet = ufsBanksSet;
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomer> getUfsCustomerCollection() {
+        return ufsCustomerCollection;
+    }
+
+    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
+        this.ufsCustomerCollection = ufsCustomerCollection;
+    }
+
     public String getName() {
         return name;
     }
@@ -376,22 +389,11 @@ public class UfsOrganizationUnits implements Serializable {
         this.action = action;
     }
 
-
     public String getIntrash() {
         return intrash;
     }
 
     public void setIntrash(String intrash) {
         this.intrash = intrash;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsCustomer> getUfsCustomerCollection() {
-        return ufsCustomerCollection;
-    }
-
-    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
-        this.ufsCustomerCollection = ufsCustomerCollection;
     }
 }

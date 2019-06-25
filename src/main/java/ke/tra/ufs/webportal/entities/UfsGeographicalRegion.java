@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import com.cm.projects.spring.resource.chasis.annotations.TreeRoot;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,13 +53,12 @@ public class UfsGeographicalRegion implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(mappedBy = "geographicalRegId")
-    private Collection<UfsCustomer> ufsCustomerCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "geographicalRegionId")
     private Set<UfsBankBranches> ufsBankBranchesSet;
 
@@ -244,7 +244,6 @@ public class UfsGeographicalRegion implements Serializable {
         this.ufsBankBranchesSet = ufsBankBranchesSet;
     }
 
- 
 
     public String getCode() {
         return code;
@@ -268,16 +267,6 @@ public class UfsGeographicalRegion implements Serializable {
 
     public void setIntrash(String intrash) {
         this.intrash = intrash;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsCustomer> getUfsCustomerCollection() {
-        return ufsCustomerCollection;
-    }
-
-    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
-        this.ufsCustomerCollection = ufsCustomerCollection;
     }
 
 }

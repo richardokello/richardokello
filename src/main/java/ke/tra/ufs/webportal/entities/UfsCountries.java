@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -64,7 +65,7 @@ public class UfsCountries implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Basic(optional = false)
-    @NotNull
+    @Filter
     @Size(min = 1, max = 15)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
@@ -77,13 +78,11 @@ public class UfsCountries implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @Basic(optional = false)
-    @NotNull()
-    @Column(name = "CREATED_AT", insertable = false, updatable = false)
+    @Column(name = "CREATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "UPDATED_AT",insertable = false,updatable = false)
+    @Column(name = "UPDATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     private static final long serialVersionUID = 1L;
@@ -232,7 +231,5 @@ public class UfsCountries implements Serializable {
     public void setIntrash(String intrash) {
         this.intrash = intrash;
     }
-
-
     
 }
