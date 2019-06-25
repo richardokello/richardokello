@@ -9,6 +9,7 @@ import com.cm.projects.spring.resource.chasis.exceptions.GeneralBadRequest;
 import com.cm.projects.spring.resource.chasis.utils.SharedMethods;
 import com.cm.projects.spring.resource.chasis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.utils.CustomEntry;
+import ke.tra.ufs.webportal.utils.exceptions.ItemNotFoundException;
 import ke.tra.ufs.webportal.utils.exceptions.RunTimeBadRequest;
 import org.apache.tomcat.util.http.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.slf4j.Logger;
@@ -214,5 +215,14 @@ public class ExceptionTranslator {
         response.setCode(HttpStatus.NOT_IMPLEMENTED.value());
         response.setMessage("Sorry the requested resource is not yet implemented");
         return new ResponseEntity(response, HttpStatus.NOT_IMPLEMENTED);
+    }
+
+
+    @ExceptionHandler(ItemNotFoundException.class)
+    public ResponseEntity<ResponseWrapper> itemNotFoundException(ItemNotFoundException ex) {
+        ResponseWrapper response = new ResponseWrapper();
+        response.setCode(HttpStatus.NOT_FOUND.value());
+        response.setMessage(ex.getMessage());
+        return new ResponseEntity(response, HttpStatus.NOT_FOUND);
     }
 }

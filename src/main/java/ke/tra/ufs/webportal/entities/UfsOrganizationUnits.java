@@ -49,8 +49,10 @@ public class UfsOrganizationUnits implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(mappedBy = "tenantId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Collection<UfsCustomer> ufsCustomerCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsBanks> ufsBanksSet;
     @OneToMany(mappedBy = "tenantId")
     @com.fasterxml.jackson.annotation.JsonIgnore

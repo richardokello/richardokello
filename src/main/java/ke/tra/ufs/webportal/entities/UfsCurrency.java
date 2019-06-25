@@ -73,6 +73,7 @@ public class UfsCurrency implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(mappedBy = "settlementCurrency")
+    @JsonIgnore
     private Set<UfsBanks> ufsBanksSet;
     private static final long serialVersionUID = 1L;
     @Id

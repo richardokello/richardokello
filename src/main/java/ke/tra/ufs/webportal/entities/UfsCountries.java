@@ -103,6 +103,7 @@ public class UfsCountries implements Serializable {
     @Column(name = "ID")
     private BigDecimal id;
     @OneToMany(mappedBy = "country")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsBanks> ufsBanksSet;
 
     public UfsCountries() {

@@ -55,11 +55,14 @@ public class UfsBankRegion implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsBankBranches> ufsBankBranchesSet;
     @JoinColumn(name = "BANK_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsBanks bankId;
 
     private static final long serialVersionUID = 1L;

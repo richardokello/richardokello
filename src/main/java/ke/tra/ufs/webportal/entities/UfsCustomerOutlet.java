@@ -23,6 +23,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -101,6 +103,7 @@ public class UfsCustomerOutlet implements Serializable {
     private String intrash;
     @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
+    @JsonIgnore
     private UfsBankBranches bankBranchId;
     @Column(name = "BANK_BRANCH_ID")
     private BigDecimal bankBranchIds;
