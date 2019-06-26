@@ -55,8 +55,7 @@ public class UfsCustomerType implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "typeId")
-    private Collection<UfsCustomerClass> ufsCustomerClassCollection;
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -168,14 +167,7 @@ public class UfsCustomerType implements Serializable {
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerType[ id=" + id + " ]";
     }
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsCustomerClass> getUfsCustomerClassCollection() {
-        return ufsCustomerClassCollection;
-    }
-    public void setUfsCustomerClassCollection(Collection<UfsCustomerClass> ufsCustomerClassCollection) {
-        this.ufsCustomerClassCollection = ufsCustomerClassCollection;
-    }
+
 
     public String getName() {
         return name;
