@@ -1,6 +1,6 @@
 package ke.tra.ufs.webportal.utils.exceptions;
 
-import com.cm.projects.spring.resource.chasis.wrappers.ResponseWrapper;
+import ke.axle.chassis.wrappers.ResponseWrapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

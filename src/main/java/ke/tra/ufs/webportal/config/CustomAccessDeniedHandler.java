@@ -5,8 +5,8 @@
  */
 package ke.tra.ufs.webportal.config;
 
-import com.cm.projects.spring.resource.chasis.wrappers.ResponseWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ke.axle.chassis.wrappers.ResponseWrapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;

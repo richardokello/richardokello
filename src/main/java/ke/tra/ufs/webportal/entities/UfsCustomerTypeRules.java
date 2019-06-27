@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
+import ke.axle.chassis.annotations.Filter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -77,7 +77,7 @@ public class UfsCustomerTypeRules implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @Basic(optional = false)
-    @Column(name = "ACTIVE",insertable = false)
+    @Column(name = "ACTIVE", insertable = false)
     private short active;
 
     @Column(name = "CREATION_DATE")

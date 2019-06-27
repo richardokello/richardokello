@@ -1,8 +1,9 @@
 package ke.tra.ufs.webportal.resources;
 
-import com.cm.projects.spring.resource.chasis.ChasisResource;
-import com.cm.projects.spring.resource.chasis.utils.LoggerService;
-import com.cm.projects.spring.resource.chasis.wrappers.ResponseWrapper;
+
+import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.utils.LoggerService;
+import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsBankBins;
 import ke.tra.ufs.webportal.entities.UfsBanks;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;

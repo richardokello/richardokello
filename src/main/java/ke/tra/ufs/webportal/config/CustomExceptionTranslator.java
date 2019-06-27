@@ -1,6 +1,6 @@
 package ke.tra.ufs.webportal.config;
 
-import com.cm.projects.spring.resource.chasis.wrappers.ResponseWrapper;
+import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.utils.exceptions.RunTimeBadRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

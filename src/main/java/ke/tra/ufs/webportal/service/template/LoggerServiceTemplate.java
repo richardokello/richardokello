@@ -1,6 +1,6 @@
 package ke.tra.ufs.webportal.service.template;
 
-import com.cm.projects.spring.resource.chasis.utils.LoggerService;
+import ke.axle.chassis.utils.LoggerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -5,9 +5,9 @@
  */
 package ke.tra.ufs.webportal.config;
 
-import com.cm.projects.spring.resource.chasis.exceptions.GeneralBadRequest;
-import com.cm.projects.spring.resource.chasis.utils.SharedMethods;
-import com.cm.projects.spring.resource.chasis.wrappers.ResponseWrapper;
+import ke.axle.chassis.exceptions.GeneralBadRequest;
+import ke.axle.chassis.utils.SharedMethods;
+import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.utils.CustomEntry;
 import ke.tra.ufs.webportal.utils.exceptions.ItemNotFoundException;
 import ke.tra.ufs.webportal.utils.exceptions.RunTimeBadRequest;

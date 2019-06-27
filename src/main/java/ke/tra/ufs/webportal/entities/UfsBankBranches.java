@@ -90,6 +90,7 @@ public class UfsBankBranches implements Serializable {
     private BigDecimal bankRegionIds;
     @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
+    @JsonIgnore
     private UfsGeographicalRegion geographicalRegionId;
     @Column(name = "GEOGRAPHICAL_REGION_ID" )
     private BigDecimal geographicalRegionIds;

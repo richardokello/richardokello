@@ -5,7 +5,6 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import com.cm.projects.spring.resource.chasis.annotations.TreeRoot;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,6 +16,8 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import ke.axle.chassis.annotations.TreeRoot;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 

@@ -15,9 +15,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlTransient;
+
+import ke.axle.chassis.annotations.Filter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -81,6 +82,7 @@ public class UfsCustomerType implements Serializable {
     @ManyToOne
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
+    @Filter
     private BigDecimal tenantIds;
     @Transient
     @NotNull

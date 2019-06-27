@@ -5,8 +5,8 @@
  */
 package ke.tra.ufs.webportal.resources;
 
-import com.cm.projects.spring.resource.chasis.ChasisResource;
-import com.cm.projects.spring.resource.chasis.utils.LoggerService;
+import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.utils.LoggerService;
 import ke.tra.ufs.webportal.entities.UfsEntity;
 import ke.tra.ufs.webportal.entities.UfsTieredCommissionAmount;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ import javax.persistence.EntityManager;
  */
 @Controller
 @RequestMapping(value = "/tiered-commission-amount")
-public class TieredCommissionAmountResource extends ChasisResource<UfsTieredCommissionAmount, Long, UfsEntity>{
+public class TieredCommissionAmountResource extends ChasisResource<UfsTieredCommissionAmount, Long, UfsEntity> {
 
     public TieredCommissionAmountResource(LoggerService loggerService, EntityManager entityManager) {
         super(loggerService, entityManager);

@@ -56,9 +56,9 @@
             <version>1</version>
         </dependency>
         <dependency>
-            <groupId>com.tracom</groupId>
-            <artifactId>chasis</artifactId>
-            <version>1.2.3</version>
+            <groupId>io.github.jayjieh</groupId>
+            <artifactId>SpringResourceChasis</artifactId>
+            <version>1.2.6</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>

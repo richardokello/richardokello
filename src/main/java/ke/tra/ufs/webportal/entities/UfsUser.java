@@ -5,8 +5,8 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
-import com.cm.projects.spring.resource.chasis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;

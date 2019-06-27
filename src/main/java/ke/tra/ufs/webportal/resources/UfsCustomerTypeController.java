@@ -5,13 +5,13 @@
  */
 package ke.tra.ufs.webportal.resources;
 
-import com.cm.projects.spring.resource.chasis.ChasisResource;
-import com.cm.projects.spring.resource.chasis.utils.LoggerService;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
 
-import com.cm.projects.spring.resource.chasis.wrappers.ResponseWrapper;
+import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.utils.LoggerService;
+import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsCustomerType;
 import ke.tra.ufs.webportal.entities.UfsCustomerTypeRuleMap;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class UfsCustomerTypeController extends ChasisResource<UfsCustomerType, B
     }
 
     /*Getting Customer Type Rules */
-    @RequestMapping("/type-rules/{id}")
+    @RequestMapping(value = "/type-rules/{id}", method = RequestMethod.GET)
     public ResponseEntity<ResponseWrapper> typeRules(@PathVariable("id") BigDecimal id) {
         ResponseWrapper response = new ResponseWrapper();
         List<Object> customerTypeRuleMap = new ArrayList();

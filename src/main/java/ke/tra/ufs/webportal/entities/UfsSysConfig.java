@@ -5,7 +5,8 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
+
+import ke.axle.chassis.annotations.Filter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

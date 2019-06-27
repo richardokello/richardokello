@@ -1,7 +1,7 @@
 package ke.tra.ufs.webportal.resources;
 
-import com.cm.projects.spring.resource.chasis.ChasisResource;
-import com.cm.projects.spring.resource.chasis.utils.LoggerService;
+import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.utils.LoggerService;
 import ke.tra.ufs.webportal.entities.UfsCustomerClass;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import org.springframework.stereotype.Controller;

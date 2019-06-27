@@ -5,8 +5,8 @@
  */
 package ke.tra.ufs.webportal.utils.filters;
 
-import com.cm.projects.spring.resource.chasis.wrappers.ResponseWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.security.OTPAuthentication;
 import ke.tra.ufs.webportal.security.OtpOAuth2AccessToken;
 import org.slf4j.Logger;
@@ -73,7 +73,6 @@ public class OTPFilter extends OAuth2ClientAuthenticationProcessingFilter {
             fi.getHttpResponse().getWriter().write(responseMsg);
 
         }
-
     }
 
     @Override
