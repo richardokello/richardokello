@@ -5,11 +5,9 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -17,6 +15,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import ke.axle.chassis.annotations.Filter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
@@ -44,7 +43,6 @@ public class UfsOrganizationHierarchy implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
-    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 2)
@@ -171,8 +169,7 @@ public class UfsOrganizationHierarchy implements Serializable {
 
     public void setUfsOrganizationUnitsCollection(Collection<UfsOrganizationUnits> ufsOrganizationUnitsCollection) {
         this.ufsOrganizationUnitsCollection = ufsOrganizationUnitsCollection;
-    }
-
+    } 
 
     public String getAction() {
         return action;

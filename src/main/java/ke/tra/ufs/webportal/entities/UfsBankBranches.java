@@ -5,7 +5,6 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -13,11 +12,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import ke.axle.chassis.annotations.Filter;
 
 /**
  * @author ojuma
@@ -50,12 +51,14 @@ public class UfsBankBranches implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
-    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(mappedBy = "bankBranchId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Set<UfsGls> ufsGlsSet;
     
 
     private static final long serialVersionUID = 1L;
@@ -79,19 +82,16 @@ public class UfsBankBranches implements Serializable {
     private Date createdAt;
     @JoinColumn(name = "BANK_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    @JsonIgnore
     private UfsBanks bankId;
     @Column(name = "BANK_ID")
     private Long bankIds;
     @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    @JsonIgnore
     private UfsBankRegion bankRegionId;
     @Column(name = "BANK_REGION_ID" )
     private BigDecimal bankRegionIds;
     @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    @JsonIgnore
     private UfsGeographicalRegion geographicalRegionId;
     @Column(name = "GEOGRAPHICAL_REGION_ID" )
     private BigDecimal geographicalRegionIds;
@@ -233,13 +233,22 @@ public class UfsBankBranches implements Serializable {
         this.action = action;
     }
 
-
     public String getIntrash() {
         return intrash;
     }
 
     public void setIntrash(String intrash) {
         this.intrash = intrash;
+    }
+
+    @XmlTransient
+    @org.codehaus.jackson.annotate.JsonIgnore
+    public Set<UfsGls> getUfsGlsSet() {
+        return ufsGlsSet;
+    }
+
+    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
+        this.ufsGlsSet = ufsGlsSet;
     }
 
 

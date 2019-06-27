@@ -5,11 +5,9 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.*;
@@ -17,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import ke.axle.chassis.annotations.Filter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -69,12 +68,14 @@ public class UfsBanks implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
-    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Set<UfsGls> ufsGlsSet;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
     private Set<UfsBankBins> ufsBankBinsSet;
@@ -115,6 +116,7 @@ public class UfsBanks implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsBankBranches> ufsBankBranchesSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
     private Set<UfsBankRegion> ufsBankRegionSet;
@@ -345,9 +347,22 @@ public class UfsBanks implements Serializable {
         this.action = action;
     }
 
+    public String getIntrash() {
+        return intrash;
+    }
 
     public void setIntrash(String intrash) {
         this.intrash = intrash;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsGls> getUfsGlsSet() {
+        return ufsGlsSet;
+    }
+
+    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
+        this.ufsGlsSet = ufsGlsSet;
     }
 
     

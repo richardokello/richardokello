@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.TreeRoot;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
@@ -44,12 +45,15 @@ public class UfsOrganizationUnits implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
-    @Filter
     @Column(name = "ACTION_STATUS")
+    @Filter
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Set<UfsGls> ufsGlsSet;
     @OneToMany(mappedBy = "tenantId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Collection<UfsCustomer> ufsCustomerCollection;
@@ -362,6 +366,17 @@ public class UfsOrganizationUnits implements Serializable {
         this.ufsBanksSet = ufsBanksSet;
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomer> getUfsCustomerCollection() {
+        return ufsCustomerCollection;
+    }
+
+    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
+        this.ufsCustomerCollection = ufsCustomerCollection;
+    }
+
     public String getName() {
         return name;
     }
@@ -378,7 +393,6 @@ public class UfsOrganizationUnits implements Serializable {
         this.action = action;
     }
 
-
     public String getIntrash() {
         return intrash;
     }
@@ -389,11 +403,11 @@ public class UfsOrganizationUnits implements Serializable {
 
     @XmlTransient
     @JsonIgnore
-    public Collection<UfsCustomer> getUfsCustomerCollection() {
-        return ufsCustomerCollection;
+    public Set<UfsGls> getUfsGlsSet() {
+        return ufsGlsSet;
     }
 
-    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
-        this.ufsCustomerCollection = ufsCustomerCollection;
+    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
+        this.ufsGlsSet = ufsGlsSet;
     }
 }

@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.TreeRoot;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
@@ -49,7 +50,6 @@ public class UfsBankRegion implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
-    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
@@ -242,6 +242,17 @@ public class UfsBankRegion implements Serializable {
     }
 
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
+        return ufsCustomerOutletCollection;
+    }
+
+    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
+        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
+    }
+
     public String getCode() {
         return code;
     }
@@ -264,16 +275,6 @@ public class UfsBankRegion implements Serializable {
 
     public void setIntrash(String intrash) {
         this.intrash = intrash;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
-        return ufsCustomerOutletCollection;
-    }
-
-    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
-        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
     }
 
 }

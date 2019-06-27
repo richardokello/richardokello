@@ -5,26 +5,16 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import ke.axle.chassis.annotations.Filter;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.hibernate.annotations.GenericGenerator;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  *
@@ -46,30 +36,17 @@ import org.hibernate.annotations.GenericGenerator;
     @NamedQuery(name = "UfsGls.findByIntrash", query = "SELECT u FROM UfsGls u WHERE u.intrash = :intrash")})
 public class UfsGls implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-            @GenericGenerator(
-            name = "UFS_GLS_SEQ",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_GLS_SEQ"),
-                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
-                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
-            }
-    )
-
-    @GeneratedValue(generator = "UFS_GLS_SEQ")
-    @Column(name = "ID")
-    private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "GL_NAME")
     private String glName;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
+    @NotNull()
+            @Size(
+            min = 1,
+            max = 20)
+
     @Column(name = "GL_CODE")
     private String glCode;
     @Basic(optional = false)
@@ -83,22 +60,44 @@ public class UfsGls implements Serializable {
     @Column(name = "GL_LOCATION")
     private String glLocation;
     @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 15)
     @Column(name = "ACTION")
     private String action;
     @Basic(optional = false)
-    @Filter
+    @NotNull
     @Size(min = 1, max = 15)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Basic(optional = false)
-    @Column(name = "CREATED_AT",insertable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Basic(optional = false)
+    @NotNull()
     @Size(min = 1, max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @ManyToOne(optional = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private UfsOrganizationUnits tenantId;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "UFS_GLS_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_GLS_SEQ"),
+                @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    
+    @GeneratedValue(generator = "UFS_GLS_SEQ")
+    @Column(name = "ID")
+    private Long id;
+    @Basic(optional = false)
+    @Column(name = "CREATED_AT",insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
     @JoinColumn(name = "BANK_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsBanks bankId;
@@ -109,6 +108,10 @@ public class UfsGls implements Serializable {
     private UfsBankBranches bankBranchId;
     @Column(name = "BANK_BRANCH_ID")
     private BigDecimal bankBranchIds;
+
+
+
+
 
     public UfsGls() {
     }
@@ -169,13 +172,6 @@ public class UfsGls implements Serializable {
         this.glLocation = glLocation;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -193,13 +189,6 @@ public class UfsGls implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     public UfsBanks getBankId() {
         return bankId;
@@ -257,6 +246,30 @@ public class UfsGls implements Serializable {
     @Override
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsGls[ id=" + id + " ]";
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
     }
     
 }

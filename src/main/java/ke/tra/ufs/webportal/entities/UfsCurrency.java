@@ -5,7 +5,6 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -17,6 +16,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
+import ke.axle.chassis.annotations.Filter;
 
 /**
  *
@@ -68,8 +68,8 @@ public class UfsCurrency implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
-    @Filter
     @Column(name = "ACTION_STATUS")
+    @Filter
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
