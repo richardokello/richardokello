@@ -52,6 +52,7 @@ public class UfsGeographicalRegion implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)

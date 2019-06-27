@@ -70,10 +70,6 @@ public class UfsCustomerClass implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(mappedBy = "classTypeId")
-    private Collection<UfsCustomer> ufsCustomerCollection;
-    @OneToMany(mappedBy = "parentId")
-    private Collection<UfsCustomerClass> ufsCustomerClassCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -244,24 +240,5 @@ public class UfsCustomerClass implements Serializable {
         this.intrash = intrash;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsCustomer> getUfsCustomerCollection() {
-        return ufsCustomerCollection;
-    }
-
-    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
-        this.ufsCustomerCollection = ufsCustomerCollection;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsCustomerClass> getUfsCustomerClassCollection() {
-        return ufsCustomerClassCollection;
-    }
-
-    public void setUfsCustomerClassCollection(Collection<UfsCustomerClass> ufsCustomerClassCollection) {
-        this.ufsCustomerClassCollection = ufsCustomerClassCollection;
-    }
     
 }

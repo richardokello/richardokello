@@ -22,6 +22,7 @@
     <class>ke.tra.ufs.webportal.entities.CustomerOwnersCrime</class>
     <class>ke.tra.ufs.webportal.entities.UfsCustomer_1</class>
     <class>ke.tra.ufs.webportal.entities.UfsGeographicalRegion_1</class>
+    <class>ke.tra.ufs.webportal.entities.UfsGls</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.1.172:1521:trcm"/>
       <property name="javax.persistence.jdbc.user" value="UFS_SMART_SUITE"/>

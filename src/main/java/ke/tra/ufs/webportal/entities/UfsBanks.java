@@ -5,9 +5,11 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.*;
@@ -67,11 +69,13 @@ public class UfsBanks implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
     private Set<UfsBankBins> ufsBankBinsSet;
     @JoinColumn(name = "COUNTRY", referencedColumnName = "ID",insertable = false, updatable = false)
@@ -333,7 +337,6 @@ public class UfsBanks implements Serializable {
         this.ufsBankBinsSet = ufsBankBinsSet;
     }
 
-
     public String getAction() {
         return action;
     }
@@ -342,10 +345,6 @@ public class UfsBanks implements Serializable {
         this.action = action;
     }
 
-
-    public String getIntrash() {
-        return intrash;
-    }
 
     public void setIntrash(String intrash) {
         this.intrash = intrash;

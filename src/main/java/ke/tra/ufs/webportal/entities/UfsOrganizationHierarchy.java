@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -43,6 +44,7 @@ public class UfsOrganizationHierarchy implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 2)
@@ -160,6 +162,18 @@ public class UfsOrganizationHierarchy implements Serializable {
         return "ke.tracom.ufs.entities.UfsOrganizationHierarchy[ id=" + id + " ]";
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsOrganizationUnits> getUfsOrganizationUnitsCollection() {
+        return ufsOrganizationUnitsCollection;
+    }
+
+    public void setUfsOrganizationUnitsCollection(Collection<UfsOrganizationUnits> ufsOrganizationUnitsCollection) {
+        this.ufsOrganizationUnitsCollection = ufsOrganizationUnitsCollection;
+    }
+
+
     public String getAction() {
         return action;
     }
@@ -174,16 +188,6 @@ public class UfsOrganizationHierarchy implements Serializable {
 
     public void setIntrash(String intrash) {
         this.intrash = intrash;
-    }   
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsOrganizationUnits> getUfsOrganizationUnitsCollection() {
-        return ufsOrganizationUnitsCollection;
-    }
-
-    public void setUfsOrganizationUnitsCollection(Collection<UfsOrganizationUnits> ufsOrganizationUnitsCollection) {
-        this.ufsOrganizationUnitsCollection = ufsOrganizationUnitsCollection;
     }
 
     

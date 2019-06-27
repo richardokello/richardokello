@@ -49,6 +49,7 @@ public class UfsBankRegion implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
@@ -239,7 +240,6 @@ public class UfsBankRegion implements Serializable {
     public void setBankId(UfsBanks bankId) {
         this.bankId = bankId;
     }
-
 
 
     public String getCode() {

@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.cm.projects.spring.resource.chasis.annotations.Filter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -49,13 +50,13 @@ public class UfsBankBranches implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankBranchId")
-    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
+    
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -191,6 +192,23 @@ public class UfsBankBranches implements Serializable {
         return "ke.tra.ufs.webportal.entities.UfsBankBranches[ id=" + id + " ]";
     }
 
+
+    public BigDecimal getBankRegionIds() {
+        return bankRegionIds;
+    }
+
+    public void setBankRegionIds(BigDecimal bankRegionIds) {
+        this.bankRegionIds = bankRegionIds;
+    }
+
+    public BigDecimal getGeographicalRegionIds() {
+        return geographicalRegionIds;
+    }
+
+    public void setGeographicalRegionIds(BigDecimal geographicalRegionIds) {
+        this.geographicalRegionIds = geographicalRegionIds;
+    }
+
     public String getName() {
         return name;
     }
@@ -215,6 +233,7 @@ public class UfsBankBranches implements Serializable {
         this.action = action;
     }
 
+
     public String getIntrash() {
         return intrash;
     }
@@ -223,32 +242,5 @@ public class UfsBankBranches implements Serializable {
         this.intrash = intrash;
     }
 
-    public BigDecimal getBankRegionIds() {
-        return bankRegionIds;
-    }
-
-    public void setBankRegionIds(BigDecimal bankRegionIds) {
-        this.bankRegionIds = bankRegionIds;
-    }
-
-    public BigDecimal getGeographicalRegionIds() {
-        return geographicalRegionIds;
-    }
-
-    public void setGeographicalRegionIds(BigDecimal geographicalRegionIds) {
-        this.geographicalRegionIds = geographicalRegionIds;
-    }
-    
-    
-
-    @XmlTransient
-    @org.codehaus.jackson.annotate.JsonIgnore
-    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
-        return ufsCustomerOutletCollection;
-    }
-
-    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
-        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
-    }
 
 }
