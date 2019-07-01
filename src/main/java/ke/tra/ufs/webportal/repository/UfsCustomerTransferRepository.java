@@ -5,7 +5,8 @@
  */
 package ke.tra.ufs.webportal.repository;
 
-import ke.tra.ufs.webportal.resources.UfsCustomerTransferResource;
+
+import ke.tra.ufs.webportal.entities.UfsCustomerTransfer;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +15,6 @@ import org.springframework.stereotype.Repository;
  * @author Tracom
  */
 @Repository
-public interface UfsCustomerTransferRepository extends CrudRepository<UfsCustomerTransferResource, Long>{
+public interface UfsCustomerTransferRepository extends CrudRepository<UfsCustomerTransfer, Long>{
     
 }
