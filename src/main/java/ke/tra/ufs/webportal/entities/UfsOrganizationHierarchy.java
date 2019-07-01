@@ -43,13 +43,13 @@ public class UfsOrganizationHierarchy implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 2)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(mappedBy = "levelId")
-    private Collection<UfsOrganizationUnits> ufsOrganizationUnitsCollection;
+    
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -160,16 +160,6 @@ public class UfsOrganizationHierarchy implements Serializable {
         return "ke.tracom.ufs.entities.UfsOrganizationHierarchy[ id=" + id + " ]";
     }
 
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsOrganizationUnits> getUfsOrganizationUnitsCollection() {
-        return ufsOrganizationUnitsCollection;
-    }
-
-    public void setUfsOrganizationUnitsCollection(Collection<UfsOrganizationUnits> ufsOrganizationUnitsCollection) {
-        this.ufsOrganizationUnitsCollection = ufsOrganizationUnitsCollection;
-    } 
 
     public String getAction() {
         return action;

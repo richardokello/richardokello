@@ -25,6 +25,11 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Collection;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
+import ke.axle.chassis.annotations.Filter;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -49,29 +54,13 @@ import org.hibernate.annotations.GenericGenerator;
     @NamedQuery(name = "UfsCustomerOutlet.findByIntrash", query = "SELECT u FROM UfsCustomerOutlet u WHERE u.intrash = :intrash")})
 public class UfsCustomerOutlet implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-        @Basic(optional = false)
-        @GenericGenerator(
-            name = "CUSTOMER_OUTLET_SEQ",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "CUSTOMER_OUTLET_SEQ"),
-                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
-                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
-            }
-    )
-    @GeneratedValue(generator = "CUSTOMER_OUTLET_SEQ")
-
-    @Column(name = "ID")
-    private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 30)
     @Column(name = "OUTLET_NAME")
     private String outletName;
     @Size(max = 15)
-    @Column(name = "OUTLET_CODE")
+        @Column(name = "OUTLET_CODE")
     private String outletCode;
     @Basic(optional = false)
     @NotNull
@@ -85,22 +74,40 @@ public class UfsCustomerOutlet implements Serializable {
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Size(min = 1, max = 20)
     @Column(name = "ASSISTANT_ROLE")
     private String assistantRole;
-    @Column(name = "CREATED_AT",insertable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
     @Size(max = 15)
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "CUSTOMER_OUTLET_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                @org.hibernate.annotations.Parameter(name = "sequence_name", value = "CUSTOMER_OUTLET_SEQ"),
+                @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    @GeneratedValue(generator = "CUSTOMER_OUTLET_SEQ")
+    
+    @Column(name = "ID")
+    private Long id;
+    @Column(name = "CREATED_AT",insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
     @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
     @JsonIgnore
@@ -201,13 +208,6 @@ public class UfsCustomerOutlet implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -217,13 +217,6 @@ public class UfsCustomerOutlet implements Serializable {
         this.actionStatus = actionStatus;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     public UfsBankBranches getBankBranchId() {
         return bankBranchId;
@@ -314,5 +307,23 @@ public class UfsCustomerOutlet implements Serializable {
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerOutlet[ id=" + id + " ]";
     }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
     
 }

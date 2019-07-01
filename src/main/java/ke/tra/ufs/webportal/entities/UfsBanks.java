@@ -68,6 +68,7 @@ public class UfsBanks implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
@@ -339,21 +340,6 @@ public class UfsBanks implements Serializable {
         this.ufsBankBinsSet = ufsBankBinsSet;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     @XmlTransient
     @JsonIgnore
@@ -363,6 +349,25 @@ public class UfsBanks implements Serializable {
 
     public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
         this.ufsGlsSet = ufsGlsSet;
+    }
+
+  
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
     }
 
     

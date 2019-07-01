@@ -7,7 +7,6 @@ package ke.tra.ufs.webportal.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -18,15 +17,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import ke.axle.chassis.annotations.Filter;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -65,11 +62,13 @@ public class UfsCustomerClass implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 20)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -231,6 +230,7 @@ public class UfsCustomerClass implements Serializable {
     public void setAction(String action) {
         this.action = action;
     }
+
 
     public String getIntrash() {
         return intrash;

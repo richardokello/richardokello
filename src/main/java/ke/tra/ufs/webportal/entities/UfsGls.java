@@ -43,10 +43,7 @@ public class UfsGls implements Serializable {
     private String glName;
     @Basic(optional = false)
     @NotNull()
-            @Size(
-            min = 1,
-            max = 20)
-
+    @Size(min = 1,max = 20)
     @Column(name = "GL_CODE")
     private String glCode;
     @Basic(optional = false)
@@ -60,19 +57,17 @@ public class UfsGls implements Serializable {
     @Column(name = "GL_LOCATION")
     private String glLocation;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 15)
-    @Column(name = "ACTION")
+    @Column(name = "ACTION", insertable = false)
     private String action;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 15)
-    @Column(name = "ACTION_STATUS")
+    @Filter
+    @Column(name = "ACTION_STATUS", insertable = false)
     private String actionStatus;
     @Basic(optional = false)
-    @NotNull()
     @Size(min = 1, max = 3)
-    @Column(name = "INTRASH")
+    @Column(name = "INTRASH", insertable = false)
     private String intrash;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)

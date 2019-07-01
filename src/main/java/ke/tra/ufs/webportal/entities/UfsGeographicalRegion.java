@@ -53,13 +53,13 @@ public class UfsGeographicalRegion implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(mappedBy = "geographicalRegId")
-    private Collection<UfsCustomer> ufsCustomerCollection;
+   
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "geographicalRegionId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsBankBranches> ufsBankBranchesSet;
@@ -246,18 +246,7 @@ public class UfsGeographicalRegion implements Serializable {
         this.ufsBankBranchesSet = ufsBankBranchesSet;
     }
 
- 
 
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsCustomer> getUfsCustomerCollection() {
-        return ufsCustomerCollection;
-    }
-
-    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
-        this.ufsCustomerCollection = ufsCustomerCollection;
-    }
 
     public String getCode() {
         return code;
@@ -275,6 +264,7 @@ public class UfsGeographicalRegion implements Serializable {
         this.action = action;
     }
 
+
     public String getIntrash() {
         return intrash;
     }
@@ -282,5 +272,7 @@ public class UfsGeographicalRegion implements Serializable {
     public void setIntrash(String intrash) {
         this.intrash = intrash;
     }
+
+ 
 
 }

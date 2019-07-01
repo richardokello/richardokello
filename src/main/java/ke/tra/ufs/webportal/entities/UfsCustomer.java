@@ -7,8 +7,10 @@ package ke.tra.ufs.webportal.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,12 +19,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import ke.axle.chassis.annotations.Filter;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -49,6 +55,37 @@ import org.hibernate.annotations.GenericGenerator;
     @NamedQuery(name = "UfsCustomer.findByBusinessLicenceNumber", query = "SELECT u FROM UfsCustomer u WHERE u.businessLicenceNumber = :businessLicenceNumber")})
 public class UfsCustomer implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 30)
+    @Column(name = "ACCOUNT_NUMBER")
+    private String accountNumber;
+    @Size(max = 20)
+    @Column(name = "PIN")
+    private String pin;
+    @Size(max = 30)
+    @Column(name = "LOCAL_REG_NUMBER")
+    private String localRegNumber;
+    @Size(max = 15)
+    @Column(name = "ADDRESS")
+    private String address;
+    @Size(max = 15)
+    @Column(name = "PHONENUMBER")
+    private String phonenumber;
+    @Size(max = 15)
+    @Column(name = "ACTION")
+    private String action;
+    @Size(max = 15)
+    @Filter
+    @Column(name = "ACTION_STATUS")
+    private String actionStatus;
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
+    @Size(max = 20)
+    @Column(name = "BUSINESS_LICENCE_NUMBER")
+    private String businessLicenceNumber;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -64,44 +101,15 @@ public class UfsCustomer implements Serializable {
     @GeneratedValue(generator = "UFS_CUSTOMER_SEQ")
     @Column(name = "ID")
     private Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 30)
-    @Column(name = "ACCOUNT_NUMBER")
-    private String accountNumber;
-    @Size(max = 20)
-    @Column(name = "PIN")
-    private String pin;
-    @Size(max = 30)
-    @Column(name = "LOCAL_REG_NUMBER")
-    private String localRegNumber;
     @Column(name = "DATE_ISSUED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateIssued;
     @Column(name = "VALID_TO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date validTo;
-    @Size(max = 15)
-    @Column(name = "ADDRESS")
-    private String address;
-    @Size(max = 15)
-    @Column(name = "PHONENUMBER")
-    private String phonenumber;
     @Column(name = "CREATED_AT",insertable = false,updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Size(max = 15)
-    @Column(name = "ACTION")
-    private String action;
-    @Size(max = 15)
-    @Column(name = "ACTION_STATUS")
-    private String actionStatus;
-    @Size(max = 3)
-    @Column(name = "INTRASH")
-    private String intrash;
-    @Size(max = 20)
-    @Column(name = "BUSINESS_LICENCE_NUMBER")
-    private String businessLicenceNumber;
     @JoinColumn(name = "CLASS_TYPE_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
     private UfsCustomerClass classTypeId;
@@ -117,6 +125,9 @@ public class UfsCustomer implements Serializable {
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
     private BigDecimal tenantIds;
+
+    @Column(name = "CUSTOMER_NAME")
+    private String customerName;
 
     public UfsCustomer() {
     }
@@ -146,13 +157,6 @@ public class UfsCustomer implements Serializable {
         this.accountNumber = accountNumber;
     }
 
-    public String getPin() {
-        return pin;
-    }
-
-    public void setPin(String pin) {
-        this.pin = pin;
-    }
 
     public String getLocalRegNumber() {
         return localRegNumber;
@@ -178,21 +182,6 @@ public class UfsCustomer implements Serializable {
         this.validTo = validTo;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPhonenumber() {
-        return phonenumber;
-    }
-
-    public void setPhonenumber(String phonenumber) {
-        this.phonenumber = phonenumber;
-    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -202,13 +191,6 @@ public class UfsCustomer implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -218,13 +200,6 @@ public class UfsCustomer implements Serializable {
         this.actionStatus = actionStatus;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     public String getBusinessLicenceNumber() {
         return businessLicenceNumber;
@@ -281,8 +256,14 @@ public class UfsCustomer implements Serializable {
     public void setTenantIds(BigDecimal tenantIds) {
         this.tenantIds = tenantIds;
     }
-    
-    
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
     @Override
     public int hashCode() {
@@ -308,5 +289,49 @@ public class UfsCustomer implements Serializable {
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomer[ id=" + id + " ]";
     }
+
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
+    }
+
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
     
 }
