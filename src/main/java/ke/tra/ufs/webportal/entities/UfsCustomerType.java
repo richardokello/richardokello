@@ -18,8 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -79,6 +79,7 @@ public class UfsCustomerType implements Serializable {
     private Date creationDate;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
     @Filter

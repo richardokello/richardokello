@@ -54,7 +54,6 @@ public class UfsCustomerTypeRuleMap implements Serializable {
 
     @JoinColumn(name = "RULE_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsCustomerTypeRules ruleId;
 
     @Column(name = "RULE_ID")

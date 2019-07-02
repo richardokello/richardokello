@@ -26,7 +26,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -92,6 +93,7 @@ public class UfsCustomerClass implements Serializable {
     private Date creationDate;
     @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsCustomerClass parentId;
     @Column(name = "PARENT_ID")
     private BigDecimal parentIds;

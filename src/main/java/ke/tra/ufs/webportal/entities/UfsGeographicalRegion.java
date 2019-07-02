@@ -59,6 +59,7 @@ public class UfsGeographicalRegion implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(mappedBy = "geographicalRegId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Collection<UfsCustomer> ufsCustomerCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "geographicalRegionId")
     @com.fasterxml.jackson.annotation.JsonIgnore
