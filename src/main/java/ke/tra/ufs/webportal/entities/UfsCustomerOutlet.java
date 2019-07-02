@@ -118,6 +118,7 @@ public class UfsCustomerOutlet implements Serializable {
     @ManyToOne
     private UfsCustomer customerId;
     @Column(name = "CUSTOMER_ID")
+    @Filter
     private BigDecimal customerIds;
     @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
