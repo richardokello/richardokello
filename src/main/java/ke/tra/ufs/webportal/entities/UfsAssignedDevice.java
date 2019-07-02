@@ -85,7 +85,6 @@ public class UfsAssignedDevice implements Serializable {
     @Column(name = "ESTATE_ID")
     private Long estateId;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "ACTION")
     private String action;
