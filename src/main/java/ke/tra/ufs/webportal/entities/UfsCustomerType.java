@@ -51,11 +51,13 @@ public class UfsCustomerType implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 20)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+    
 
 
     private static final long serialVersionUID = 1L;
@@ -204,5 +206,6 @@ public class UfsCustomerType implements Serializable {
     public void setIntrash(String intrash) {
         this.intrash = intrash;
     }
+
 
 }

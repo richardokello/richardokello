@@ -73,7 +73,6 @@ public class UfsCustomerOutlet implements Serializable {
     private String outletName;
     @Size(max = 15)
     @Column(name = "OUTLET_CODE")
-    @Filter
     private String outletCode;
     @Basic(optional = false)
     @NotNull
@@ -96,11 +95,10 @@ public class UfsCustomerOutlet implements Serializable {
     private Date createdAt;
     @Size(max = 15)
     @Column(name = "ACTION")
-    @Filter
     private String action;
     @Size(max = 15)
-    @Column(name = "ACTION_STATUS")
     @Filter
+    @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
@@ -120,7 +118,6 @@ public class UfsCustomerOutlet implements Serializable {
     @ManyToOne
     private UfsCustomer customerId;
     @Column(name = "CUSTOMER_ID")
-    @Filter
     private BigDecimal customerIds;
     @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)

@@ -9,10 +9,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -43,6 +45,7 @@ public class UfsBankBins implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+   
     @JoinColumn(name = "BANK_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     @JsonIgnore
@@ -124,21 +127,6 @@ public class UfsBankBins implements Serializable {
         this.binType = binType;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     public UfsBanks getBankId() {
         return bankId;
@@ -155,4 +143,21 @@ public class UfsBankBins implements Serializable {
     public void setBankIds(long bankIds) {
         this.bankIds = bankIds;
     }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
 }

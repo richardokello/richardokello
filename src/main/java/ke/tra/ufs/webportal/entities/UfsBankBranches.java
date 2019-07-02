@@ -51,6 +51,7 @@ public class UfsBankBranches implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
@@ -208,6 +209,14 @@ public class UfsBankBranches implements Serializable {
     public void setGeographicalRegionIds(BigDecimal geographicalRegionIds) {
         this.geographicalRegionIds = geographicalRegionIds;
     }
+    @XmlTransient
+    @org.codehaus.jackson.annotate.JsonIgnore
+    public Set<UfsGls> getUfsGlsSet() {
+        return ufsGlsSet;
+    }
+    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
+        this.ufsGlsSet = ufsGlsSet;
+    }
 
     public String getName() {
         return name;
@@ -233,6 +242,7 @@ public class UfsBankBranches implements Serializable {
         this.action = action;
     }
 
+
     public String getIntrash() {
         return intrash;
     }
@@ -241,15 +251,7 @@ public class UfsBankBranches implements Serializable {
         this.intrash = intrash;
     }
 
-    @XmlTransient
-    @org.codehaus.jackson.annotate.JsonIgnore
-    public Set<UfsGls> getUfsGlsSet() {
-        return ufsGlsSet;
-    }
 
-    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
-        this.ufsGlsSet = ufsGlsSet;
-    }
 
 
 }

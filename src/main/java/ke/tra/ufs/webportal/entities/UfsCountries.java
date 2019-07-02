@@ -60,21 +60,18 @@ public class UfsCountries implements Serializable {
     @Column(name = "CODE")
     private String code;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 15)
     @Column(name = "ACTION")
     private String action;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 15)
-    @Column(name = "ACTION_STATUS")
     @Filter
+    @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 10)
     @Column(name = "STATUS")
     private String status;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 3)
     @Column(name = "INTRASH")
     private String intrash;

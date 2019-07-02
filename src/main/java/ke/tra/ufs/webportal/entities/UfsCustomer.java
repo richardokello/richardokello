@@ -23,8 +23,6 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -116,10 +114,12 @@ public class UfsCustomer implements Serializable {
     private BigDecimal geographicalRegIds;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
-    @JsonIgnore
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
     private BigDecimal tenantIds;
+
+    @Column(name = "CUSTOMER_NAME")
+    private String customerName;
 
     public UfsCustomer() {
     }
@@ -284,8 +284,14 @@ public class UfsCustomer implements Serializable {
     public void setTenantIds(BigDecimal tenantIds) {
         this.tenantIds = tenantIds;
     }
-    
-    
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
     @Override
     public int hashCode() {

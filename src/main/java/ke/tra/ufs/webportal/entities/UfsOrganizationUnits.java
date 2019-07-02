@@ -7,7 +7,6 @@ package ke.tra.ufs.webportal.entities;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -16,8 +15,8 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
 import ke.axle.chassis.annotations.Filter;
+
 import ke.axle.chassis.annotations.TreeRoot;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
@@ -45,8 +44,8 @@ public class UfsOrganizationUnits implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
-    @Column(name = "ACTION_STATUS")
     @Filter
+    @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
@@ -377,6 +376,17 @@ public class UfsOrganizationUnits implements Serializable {
         this.ufsCustomerCollection = ufsCustomerCollection;
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsGls> getUfsGlsSet() {
+        return ufsGlsSet;
+    }
+
+    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
+        this.ufsGlsSet = ufsGlsSet;
+    }
+
     public String getName() {
         return name;
     }
@@ -393,6 +403,7 @@ public class UfsOrganizationUnits implements Serializable {
         this.action = action;
     }
 
+
     public String getIntrash() {
         return intrash;
     }
@@ -401,13 +412,5 @@ public class UfsOrganizationUnits implements Serializable {
         this.intrash = intrash;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public Set<UfsGls> getUfsGlsSet() {
-        return ufsGlsSet;
-    }
-
-    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
-        this.ufsGlsSet = ufsGlsSet;
-    }
+  
 }
