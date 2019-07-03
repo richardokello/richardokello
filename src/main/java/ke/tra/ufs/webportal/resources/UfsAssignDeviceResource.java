@@ -48,6 +48,7 @@ public class UfsAssignDeviceResource extends ChasisResource<UfsAssignedDevice, L
         assignDevice.getAssignedSimDetails().stream().forEach(assignDeviceObject ->{
 
             UfsAssignedSimdetails assignedSimdetails = new UfsAssignedSimdetails();
+            assignedSimdetails.setSimProviders(assignDeviceObject.getSimProviders());
             assignedSimdetails.setAssignedDeviceIds(new BigDecimal(assignDevice.getId()));
             assignedSimdetails.setPhoneNumber(assignDeviceObject.getPhoneNumber());
             assignedSimdetails.setSerialNumber(assignDeviceObject.getSerialNumber());
