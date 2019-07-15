@@ -7,6 +7,7 @@ package ke.tra.ufs.webportal.entities;
 
 
 import ke.axle.chassis.annotations.Filter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -66,7 +67,17 @@ public class UfsSysConfig implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GenericGenerator(
+            name = "UFS_SYS_CONFIG_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_SYS_CONFIG_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_SYS_CONFIG_SEQ")
     @Column(name = "ID")
     private BigDecimal id;
 
