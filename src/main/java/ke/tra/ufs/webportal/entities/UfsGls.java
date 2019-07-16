@@ -79,6 +79,7 @@ public class UfsGls implements Serializable {
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsOrganizationUnits tenantId;
     @Column( name = "TENANT_ID")
+    @ModifiableField
     private BigDecimal tenantIds;
 
     private static final long serialVersionUID = 1L;
@@ -105,11 +106,13 @@ public class UfsGls implements Serializable {
     @ManyToOne(optional = false)
     private UfsBanks bankId;
     @Column(name = "BANK_ID")
+    @ModifiableField
     private BigDecimal bankIds;
     @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne
     private UfsBankBranches bankBranchId;
     @Column(name = "BANK_BRANCH_ID")
+    @ModifiableField
     private BigDecimal bankBranchIds;
 
 
