@@ -5,6 +5,9 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Unique;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
@@ -52,6 +55,8 @@ public class UfsTieredCommissionAmount implements Serializable {
     @Column(name = "ID")
     private Long id;
     @Size(max = 20)
+    @Unique
+    @ModifiableField
     @Column(name = "LIMIT_TYPE")
     private String limitType;
     @Basic(optional = false)
@@ -70,9 +75,10 @@ public class UfsTieredCommissionAmount implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 20)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
     @Size(max = 3)

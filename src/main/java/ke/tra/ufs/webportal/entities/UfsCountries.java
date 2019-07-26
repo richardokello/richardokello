@@ -25,6 +25,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Unique;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -50,12 +52,16 @@ public class UfsCountries implements Serializable {
 
     @Basic(optional = false)
     @NotNull
+    @Unique
+    @ModifiableField
     @Size(min = 1, max = 40)
     @Column(name = "NAME")
     private String name;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @NotNull()
+    @Unique
+    @ModifiableField
     @Size(min = 1, max = 40)
     @Column(name = "CODE")
     private String code;

@@ -36,7 +36,6 @@ import java.util.Map;
  * @author Kenny
  */
 @Controller
-@Transactional
 @RequestMapping(value = "/customer-type")
 public class UfsCustomerTypeController extends ChasisResource<UfsCustomerType, BigDecimal, UfsEdittedRecord> {
 
@@ -51,6 +50,7 @@ public class UfsCustomerTypeController extends ChasisResource<UfsCustomerType, B
     }
 
     @Override
+    @Transactional
     public ResponseEntity<ResponseWrapper<UfsCustomerType>> create(@Valid @RequestBody UfsCustomerType ufsCustomerType) {
         ResponseEntity<ResponseWrapper<UfsCustomerType>> response = super.create(ufsCustomerType);
 
