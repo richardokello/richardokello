@@ -10,6 +10,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 
 @SpringBootApplication
 @EnableEurekaClient
@@ -30,5 +31,15 @@ public class WebportalApplication {
         MappingJackson2HttpMessageConverter converter
                 = new MappingJackson2HttpMessageConverter(mapper);
         return converter;
+    }
+
+    @Primary
+    @Bean
+    public RemoteTokenServices tokenService() {
+        RemoteTokenServices tokenService = new RemoteTokenServices();
+        tokenService.setCheckTokenEndpointUrl("http://192.168.1.175:8003/ufs-common-modules/api/v1/oauth/check_token");
+        tokenService.setClientId("common_module_client");
+        tokenService.setClientSecret("secret");
+        return tokenService;
     }
 }
