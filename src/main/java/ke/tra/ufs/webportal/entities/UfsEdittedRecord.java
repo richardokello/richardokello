@@ -8,6 +8,7 @@ package ke.tra.ufs.webportal.entities;
 import ke.axle.chassis.annotations.EditDataWrapper;
 import ke.axle.chassis.annotations.EditEntity;
 import ke.axle.chassis.annotations.EditEntityId;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,7 +22,7 @@ import java.util.Date;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_EDITTED_RECORD")
+@Table(name = "UFS_EDITTED_RECORD", catalog = "", schema = "UFS_SMART_SUITE")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsEdittedRecord.findAll", query = "SELECT u FROM UfsEdittedRecord u")
@@ -32,28 +33,36 @@ import java.util.Date;
     , @NamedQuery(name = "UfsEdittedRecord.findByCreationDate", query = "SELECT u FROM UfsEdittedRecord u WHERE u.creationDate = :creationDate")})
 public class UfsEdittedRecord implements Serializable {
 
+    @EditEntity
     @Size(max = 50)
     @Column(name = "UFS_ENTITY")
-    @EditEntity
     private String ufsEntity;
     @Size(max = 20)
-    @Column(name = "ENTITY_ID")
     @EditEntityId
+    @Column(name = "ENTITY_ID")
     private String entityId;
     @Size(max = 4000)
-    @Column(name = "DATA")
     @EditDataWrapper
+    @Column(name = "DATA")
     private String data;
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE",insertable = false,updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GenericGenerator(
+            name = "UFS_EDITTED_RECORD_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_EDITTED_RECORD_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    @GeneratedValue(generator = "UFS_EDITTED_RECORD_SEQ")
     @Column(name = "ID")
     private Long id;
 

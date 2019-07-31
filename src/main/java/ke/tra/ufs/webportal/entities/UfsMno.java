@@ -77,8 +77,7 @@ public class UfsMno implements Serializable {
     @Size(max = 5)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "simProvider")
-    private Collection<UfsAssignedSimdetails> ufsAssignedSimdetailsCollection;
+
 
     public UfsMno() {
     }
@@ -141,15 +140,6 @@ public class UfsMno implements Serializable {
         this.intrash = intrash;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsAssignedSimdetails> getUfsAssignedSimdetailsCollection() {
-        return ufsAssignedSimdetailsCollection;
-    }
-
-    public void setUfsAssignedSimdetailsCollection(Collection<UfsAssignedSimdetails> ufsAssignedSimdetailsCollection) {
-        this.ufsAssignedSimdetailsCollection = ufsAssignedSimdetailsCollection;
-    }
 
     @Override
     public int hashCode() {

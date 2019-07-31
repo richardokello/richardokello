@@ -6,6 +6,7 @@
 package ke.tra.ufs.webportal.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -80,9 +81,11 @@ public class UfsCustomerHistory implements Serializable {
     @Column(name = "TIMESTAMP",insertable = false,updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne(optional = false)
     private UfsCustomer customerId;
+    @Column(name = "CUSTOMER_ID")
+    private BigDecimal customerIds;
 
     public UfsCustomerHistory() {
     }
@@ -153,6 +156,14 @@ public class UfsCustomerHistory implements Serializable {
 
     public void setCustomerId(UfsCustomer customerId) {
         this.customerId = customerId;
+    }
+
+    public BigDecimal getCustomerIds() {
+        return customerIds;
+    }
+
+    public void setCustomerIds(BigDecimal customerIds) {
+        this.customerIds = customerIds;
     }
 
     @Override

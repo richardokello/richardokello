@@ -7,6 +7,8 @@ package ke.tra.ufs.webportal.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Unique;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -38,6 +40,8 @@ public class UfsCustomerClass implements Serializable {
 
     @Basic(optional = false)
     @NotNull
+    @ModifiableField
+    @Unique
     @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String name;

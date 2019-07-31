@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Unique;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -41,10 +43,13 @@ public class UfsCustomerType implements Serializable {
 
     @Basic(optional = false)
     @NotNull
+    @ModifiableField
+    @Unique
     @Size(min = 1, max = 50)
     @Column(name = "NAME")
     private String name;
     @Size(max = 100)
+    @ModifiableField
     @Column(name = "DESCRIPTION")
     private String description;
     @Size(max = 20)
@@ -87,7 +92,6 @@ public class UfsCustomerType implements Serializable {
     @Filter
     private BigDecimal tenantIds;
     @Transient
-    @NotNull
     private List<Long> ruleIds;
 
     public UfsCustomerType() {

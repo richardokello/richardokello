@@ -23,6 +23,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import ke.axle.chassis.annotations.Filter;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -66,6 +68,7 @@ public class UfsCustomer implements Serializable {
     private Long id;
     @Basic(optional = false)
     @NotNull
+    @Filter
     @Size(min = 1, max = 30)
     @Column(name = "ACCOUNT_NUMBER")
     private String accountNumber;
@@ -94,6 +97,7 @@ public class UfsCustomer implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)

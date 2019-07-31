@@ -6,6 +6,7 @@
 package ke.tra.ufs.webportal.entities;
 
 import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -38,21 +39,25 @@ public class UfsGls implements Serializable {
 
     @Basic(optional = false)
     @NotNull
+    @ModifiableField
     @Size(min = 1, max = 20)
     @Column(name = "GL_NAME")
     private String glName;
     @Basic(optional = false)
     @NotNull()
+    @ModifiableField
     @Size(min = 1,max = 20)
     @Column(name = "GL_CODE")
     private String glCode;
     @Basic(optional = false)
     @NotNull
+    @ModifiableField
     @Size(min = 1, max = 30)
     @Column(name = "GL_ACCOUNT_NUMBER")
     private String glAccountNumber;
     @Basic(optional = false)
     @NotNull
+    @ModifiableField
     @Size(min = 1, max = 20)
     @Column(name = "GL_LOCATION")
     private String glLocation;
@@ -69,10 +74,14 @@ public class UfsGls implements Serializable {
     @Size(min = 1, max = 3)
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsOrganizationUnits tenantId;
+    @Column( name = "TENANT_ID")
+    @ModifiableField
+    private BigDecimal tenantIds;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -97,11 +106,13 @@ public class UfsGls implements Serializable {
     @ManyToOne(optional = false)
     private UfsBanks bankId;
     @Column(name = "BANK_ID")
+    @ModifiableField
     private BigDecimal bankIds;
     @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne
     private UfsBankBranches bankBranchId;
     @Column(name = "BANK_BRANCH_ID")
+    @ModifiableField
     private BigDecimal bankBranchIds;
 
 
@@ -216,8 +227,15 @@ public class UfsGls implements Serializable {
     public void setBankBranchIds(BigDecimal bankBranchIds) {
         this.bankBranchIds = bankBranchIds;
     }
-    
-    
+
+    public BigDecimal getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(BigDecimal tenantIds) {
+        this.tenantIds = tenantIds;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
