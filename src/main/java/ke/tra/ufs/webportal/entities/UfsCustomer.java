@@ -25,6 +25,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -73,21 +74,27 @@ public class UfsCustomer implements Serializable {
     @Column(name = "ACCOUNT_NUMBER")
     private String accountNumber;
     @Size(max = 20)
+    @ModifiableField
     @Column(name = "PIN")
     private String pin;
     @Size(max = 30)
+    @ModifiableField
     @Column(name = "LOCAL_REG_NUMBER")
     private String localRegNumber;
+    @ModifiableField
     @Column(name = "DATE_ISSUED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateIssued;
+    @ModifiableField
     @Column(name = "VALID_TO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date validTo;
+    @ModifiableField
     @Size(max = 15)
     @Column(name = "ADDRESS")
     private String address;
     @Size(max = 15)
+    @ModifiableField
     @Column(name = "PHONENUMBER")
     private String phonenumber;
     @Column(name = "CREATED_AT",insertable = false,updatable = false)
@@ -104,24 +111,28 @@ public class UfsCustomer implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @Size(max = 20)
+    @ModifiableField
     @Column(name = "BUSINESS_LICENCE_NUMBER")
     private String businessLicenceNumber;
     @JoinColumn(name = "CLASS_TYPE_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
     private UfsCustomerClass classTypeId;
+    @ModifiableField
     @Column(name = "CLASS_TYPE_ID")
     private BigDecimal classTypeIds;
     @JoinColumn(name = "GEOGRAPHICAL_REG_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
     private UfsGeographicalRegion geographicalRegId;
     @Column(name = "GEOGRAPHICAL_REG_ID")
+    @ModifiableField
     private BigDecimal geographicalRegIds;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
+    @ModifiableField
     private BigDecimal tenantIds;
-
+    @ModifiableField
     @Column(name = "CUSTOMER_NAME")
     private String customerName;
 
