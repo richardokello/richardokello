@@ -41,7 +41,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isCorsRequest).permitAll()
-                .antMatchers("/**").fullyAuthenticated()
+                //.antMatchers("/**").fullyAuthenticated()
+                .antMatchers("/**").permitAll()
                 .and()
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)
                 .cors()
