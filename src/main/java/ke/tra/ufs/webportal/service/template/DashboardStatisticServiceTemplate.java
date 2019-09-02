@@ -2,12 +2,13 @@ package ke.tra.ufs.webportal.service.template;
 
 
 import ke.tra.ufs.webportal.entities.*;
-import ke.tra.ufs.webportal.entities.wrapper.DashboardStatistics;
+import ke.tra.ufs.webportal.entities.wrapper.DashboardItemsWrapper;
 import ke.tra.ufs.webportal.repository.*;
 import ke.tra.ufs.webportal.service.DashboardStatisticService;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -74,18 +75,19 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
     }
 
     @Override
-    public DashboardStatistics getDashboardStatistics() {
-        DashboardStatistics dashboardStatistics = new DashboardStatistics();
-        dashboardStatistics.setAgents(getTotalAgents(AppConstants.NO));
-        dashboardStatistics.setBankBranches(getTotalBankBranches(AppConstants.NO));
-        dashboardStatistics.setBankRegions(getTotalBankRegions(AppConstants.NO));
-        dashboardStatistics.setAgentsAssignedDevices(getTotalAssignedDeviceAgents(AppConstants.NO));
-        dashboardStatistics.setAgentOutlets(getTotalOutlets(AppConstants.NO));
-        dashboardStatistics.setAgentSupervisors(getTotalTypeUsers(AppConstants.USER_TYPE_AGENT_SUPERVISOR,AppConstants.NO));
-        dashboardStatistics.setBackOfficeUsers(getTotalTypeUsers(AppConstants.USER_TYPE_BACKOFFICE_USER,AppConstants.NO));
-        dashboardStatistics.setHeadOfDistributions(getTotalTypeUsers(AppConstants.USER_TYPE_HEAD_OF_DISTRIBUTION,AppConstants.NO));
-        dashboardStatistics.setBranchManagers(getTotalTypeUsers(AppConstants.USER_TYPE_BRANCH_MANAGER,AppConstants.NO));
-        dashboardStatistics.setRegionalManagers(getTotalTypeUsers(AppConstants.USER_TYPE_REGIONAL_MANAGER,AppConstants.NO));
-        return dashboardStatistics;
+    public List<DashboardItemsWrapper> getDashboardStatistics() {
+
+        List<DashboardItemsWrapper> single = new ArrayList<>();
+        single.add(new DashboardItemsWrapper("Total Customers",getTotalAgents(AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("Total Bank Branches",getTotalBankBranches(AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("Total Bank Regions",getTotalBankRegions(AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("Agents Assigned Device",getTotalAssignedDeviceAgents(AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("Total Outlets",getTotalOutlets(AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("Agent Supervisors",getTotalTypeUsers(AppConstants.USER_TYPE_AGENT_SUPERVISOR,AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("BackOffice Users",getTotalTypeUsers(AppConstants.USER_TYPE_BACKOFFICE_USER,AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("Head Of Distribution",getTotalTypeUsers(AppConstants.USER_TYPE_HEAD_OF_DISTRIBUTION,AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("Branch Managers",getTotalTypeUsers(AppConstants.USER_TYPE_BRANCH_MANAGER,AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("Regional Managers",getTotalTypeUsers(AppConstants.USER_TYPE_REGIONAL_MANAGER,AppConstants.NO)));
+        return single;
     }
 }
