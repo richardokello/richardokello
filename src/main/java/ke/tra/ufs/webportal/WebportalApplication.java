@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -15,6 +16,9 @@ import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 @SpringBootApplication
 @EnableEurekaClient
 public class WebportalApplication {
+
+    @Value("${baseUrl}")
+    private String baseUrl;
 
     public static void main(String[] args) {
         SpringApplication.run(WebportalApplication.class, args);
@@ -37,7 +41,7 @@ public class WebportalApplication {
     @Bean
     public RemoteTokenServices tokenService() {
         RemoteTokenServices tokenService = new RemoteTokenServices();
-        tokenService.setCheckTokenEndpointUrl("http://192.168.1.175:8003/ufs-common-modules/api/v1/oauth/check_token");
+        tokenService.setCheckTokenEndpointUrl(baseUrl + "ufs-common-modules/api/v1/oauth/check_token");
         tokenService.setClientId("common_module_client");
         tokenService.setClientSecret("secret");
         return tokenService;

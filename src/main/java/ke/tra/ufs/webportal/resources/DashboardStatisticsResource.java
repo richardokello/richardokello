@@ -1,7 +1,6 @@
 package ke.tra.ufs.webportal.resources;
 
 import ke.axle.chassis.wrappers.ResponseWrapper;
-import ke.tra.ufs.webportal.entities.wrapper.DashboardStatistics;
 import ke.tra.ufs.webportal.service.DashboardStatisticService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
