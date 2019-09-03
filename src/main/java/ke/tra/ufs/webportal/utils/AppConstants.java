@@ -56,10 +56,11 @@ public class AppConstants {
 
 
     //    USER TYPES
-    public static final String USER_TYPE_TRADER = "Trader";
-    public static final String USER_TYPE_MANUFACTURER = "Manufacturer";
-    public static final String USER_TYPE_SUPPLIER = "Supplier";
-    public static final String USER_TYPE_INTERNAL_FACING = "Internal Facing";
+    public static final String USER_TYPE_BACKOFFICE_USER = "Back Office User";
+    public static final String USER_TYPE_REGIONAL_MANAGER = "Regional Manager";
+    public static final String USER_TYPE_AGENT_SUPERVISOR = "Agent Supervisor";
+    public static final String USER_TYPE_HEAD_OF_DISTRIBUTION = "Head Of Distribution";
+    public static final String USER_TYPE_BRANCH_MANAGER = "Branch Manager";
 
     //    AUTHENTICATION TYPES
     public static final String AUTH_TYPE_PASSWORD = "PASSWORD";

@@ -105,7 +105,6 @@ public class UfsCustomerOutlet implements Serializable {
     private String intrash;
     @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    @JsonIgnore
     private UfsBankBranches bankBranchId;
     @Column(name = "BANK_BRANCH_ID")
     private BigDecimal bankBranchIds;
