@@ -43,7 +43,7 @@ public class UfsBankBins implements Serializable {
     @Column(name = "VALUE")
     private String value;
     @Size(max = 3)
-    @Column(name = "INTRASH")
+    @Column(name = "INTRASH",insertable = false)
     private String intrash;
    
     @JoinColumn(name = "BANK_ID", referencedColumnName = "ID", insertable = false, updatable = false)

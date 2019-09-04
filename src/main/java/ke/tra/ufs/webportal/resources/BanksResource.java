@@ -10,6 +10,7 @@ import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.service.BankService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/banks")
@@ -32,14 +34,17 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
     @Override
     public ResponseEntity<ResponseWrapper<UfsBanks>> create(@Valid @RequestBody UfsBanks ufsBanks) {
         ResponseEntity response = super.create(ufsBanks);
-        if ((!response.getStatusCode().equals(HttpStatus.CREATED)) || (ufsBanks.getUfsBankBinsSet() == null) || ufsBanks.getUfsBankBinsSet().isEmpty()) {
+        if ((!response.getStatusCode().equals(HttpStatus.CREATED)) || ufsBanks.getUfsBankBins().size() < 0 || Objects.isNull(ufsBanks.getUfsBankBins())) {
             return response;
         }
 
         List<UfsBankBins> bins = new ArrayList<>();
-        ufsBanks.getUfsBankBinsSet().forEach(bin -> {
-            bin.setId(null);
-            bins.add(bin);
+        ufsBanks.getUfsBankBins().forEach(bin -> {
+            UfsBankBins bankBins = new UfsBankBins();
+            bankBins.setBinType(bin.getBinType());
+            bankBins.setBankIds(ufsBanks.getId());
+            bankBins.setValue(bin.getValue());
+            bins.add(bankBins);
         });
         bankService.saveAllBins(bins);
         return response;
