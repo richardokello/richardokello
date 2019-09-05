@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import org.hibernate.annotations.GenericGenerator;
@@ -116,18 +117,21 @@ public class UfsCustomer implements Serializable {
     private String businessLicenceNumber;
     @JoinColumn(name = "CLASS_TYPE_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsCustomerClass classTypeId;
     @ModifiableField
     @Column(name = "CLASS_TYPE_ID")
     private BigDecimal classTypeIds;
     @JoinColumn(name = "GEOGRAPHICAL_REG_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsGeographicalRegion geographicalRegId;
     @Column(name = "GEOGRAPHICAL_REG_ID")
     @ModifiableField
     private BigDecimal geographicalRegIds;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
     @ModifiableField
