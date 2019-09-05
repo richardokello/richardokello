@@ -7,28 +7,27 @@ import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsBankBins;
 import ke.tra.ufs.webportal.entities.UfsBanks;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
+import ke.tra.ufs.webportal.repository.UfsBankBinsRepository;
 import ke.tra.ufs.webportal.service.BankService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/banks")
 public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedRecord> {
     private final BankService bankService;
+    private final UfsBankBinsRepository bankBinsRepository;
 
-    public BanksResource(LoggerService loggerService, EntityManager entityManager, BankService bankService) {
+    public BanksResource(LoggerService loggerService, EntityManager entityManager, BankService bankService,UfsBankBinsRepository bankBinsRepository) {
         super(loggerService, entityManager);
         this.bankService = bankService;
+        this.bankBinsRepository = bankBinsRepository;
     }
 
     @Override
@@ -48,5 +47,20 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
         });
         bankService.saveAllBins(bins);
         return response;
+    }
+
+    /*Getting Bank Bins */
+    @RequestMapping(value = "/bank-bins/{id}", method = RequestMethod.GET)
+    public ResponseEntity<ResponseWrapper> typeRules(@PathVariable("id") Long id) {
+        ResponseWrapper response = new ResponseWrapper();
+         List<UfsBankBins> bankBins = bankBinsRepository.findAllByBankIds(id);
+
+        if (bankBins.isEmpty()) {
+
+            response.setData(bankBins);
+            return ResponseEntity.ok(response);
+        }
+       response.setData(bankBins);
+        return ResponseEntity.ok(response);
     }
 }
