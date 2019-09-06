@@ -2,12 +2,16 @@ package ke.tra.ufs.webportal.resources;
 
 
 import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.exceptions.ExpectationFailed;
+import ke.axle.chassis.utils.AppConstants;
 import ke.axle.chassis.utils.LoggerService;
+import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsBankBins;
 import ke.tra.ufs.webportal.entities.UfsBanks;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.repository.UfsBankBinsRepository;
+import ke.tra.ufs.webportal.repository.UfsBankRepository;
 import ke.tra.ufs.webportal.service.BankService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
@@ -23,11 +29,14 @@ import java.util.*;
 public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedRecord> {
     private final BankService bankService;
     private final UfsBankBinsRepository bankBinsRepository;
+    private final UfsBankRepository ufsBankRepository;
 
-    public BanksResource(LoggerService loggerService, EntityManager entityManager, BankService bankService,UfsBankBinsRepository bankBinsRepository) {
+    public BanksResource(LoggerService loggerService, EntityManager entityManager, BankService bankService,UfsBankBinsRepository bankBinsRepository,
+                         UfsBankRepository ufsBankRepository) {
         super(loggerService, entityManager);
         this.bankService = bankService;
         this.bankBinsRepository = bankBinsRepository;
+        this.ufsBankRepository = ufsBankRepository;
     }
 
     @Override
@@ -62,5 +71,88 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
         }
        response.setData(bankBins);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseWrapper> approveActions(@Valid ActionWrapper<Long> actions) throws ExpectationFailed {
+
+        for(Long id: actions.getIds()){
+            Optional<UfsBanks> b = ufsBankRepository.findById(id);
+
+            if(b.isPresent()){
+                if(b.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && b.get().getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
+                        try {
+                            UfsBanks entity = supportRepo.mergeChanges(id, b.get());
+
+                            List<UfsBankBins> existingBankBins = new ArrayList<>();
+                            List<UfsBankBins> newBankBins = entity.getUfsBankBins();
+
+
+                             /*Getting the existing bankbins from the database and add them to existingBankBins list*/
+                            bankBinsRepository.findAllByBankIds(id).forEach(bankBinFromDb->{
+                                existingBankBins.add(bankBinFromDb);
+                            });
+
+                            List<UfsBankBins> isPresentObject = new ArrayList<>();
+                            List<UfsBankBins> toDeleteObject = new ArrayList<>();
+                            List<UfsBankBins> toCreateObject = new ArrayList<>();
+
+
+
+                            /*Using objects*/
+                            existingBankBins.forEach(obj->{
+                                if(newBankBins.contains(obj)){
+                                    isPresentObject.add(obj);
+                                }
+
+                                if(!newBankBins.contains(obj)){
+                                    toDeleteObject.add(obj);
+                                }
+                            });
+
+                            /*Ids of the bankBins to delete*/
+                            List<Long> toDelete = new ArrayList<>();
+                            for(UfsBankBins deleteBankBin : toDeleteObject){
+                                toDelete.add(deleteBankBin.getId());
+                            }
+
+                            /*getting new bankBins object to create*/
+                            newBankBins.forEach(obj -> {
+                                if (!isPresentObject.contains(obj) && !toDeleteObject.contains(obj)) {
+                                    toCreateObject.add(obj);
+                                }
+                            });
+
+                            if (!toDeleteObject.isEmpty()) {
+                                List<UfsBankBins> waitingDeletion = bankBinsRepository.findAllByBankIdsAndIdIn(id,toDelete);
+                                log.info(" >>>>>>>>>>>>>>>>>>>>>>>>> size {}", waitingDeletion.size());
+                                bankBinsRepository.deleteAll(waitingDeletion);
+                            }
+
+                            if (!toCreateObject.isEmpty()) {
+                                List<UfsBankBins> items = new ArrayList<>();
+
+                                toCreateObject.forEach(obj -> {
+                                    UfsBankBins map = new UfsBankBins();
+                                    map.setBankIds(id);
+                                    map.setValue(obj.getValue());
+                                    map.setBinType(obj.getBinType());
+
+                                    items.add(map);
+                                });
+
+                                bankBinsRepository.saveAll(items);
+                            }
+
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                }
+            }
+
+        }
+        return super.approveActions(actions);
     }
 }

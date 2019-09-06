@@ -8,4 +8,5 @@ import java.util.List;
 public interface UfsBankBinsRepository extends CrudRepository<UfsBankBins, Long> {
 
     public List<UfsBankBins> findAllByBankIds(Long bankIds);
+    List<UfsBankBins> findAllByBankIdsAndIdIn(Long bankIds, List<Long> list);
 }
