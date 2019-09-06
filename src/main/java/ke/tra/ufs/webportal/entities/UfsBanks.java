@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -78,8 +79,9 @@ public class UfsBanks implements Serializable {
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsGls> ufsGlsSet;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
-    private Set<UfsBankBins> ufsBankBinsSet;
+    @Transient
+    private List<UfsBankBins> ufsBankBins;
+
     @JoinColumn(name = "COUNTRY", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne
     private UfsCountries country;
@@ -333,12 +335,12 @@ public class UfsBanks implements Serializable {
 
     @XmlTransient
     @JsonIgnore
-    public Set<UfsBankBins> getUfsBankBinsSet() {
-        return ufsBankBinsSet;
+    public List<UfsBankBins> getUfsBankBins() {
+        return ufsBankBins;
     }
 
-    public void setUfsBankBinsSet(Set<UfsBankBins> ufsBankBinsSet) {
-        this.ufsBankBinsSet = ufsBankBinsSet;
+    public void setUfsBankBinsSet(List<UfsBankBins> ufsBankBins) {
+        this.ufsBankBins = ufsBankBins;
     }
 
 

@@ -1,5 +1,7 @@
 package ke.tra.ufs.webportal.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -55,6 +57,7 @@ public class TmsDevice implements Serializable {
 
     @JoinColumn(name = "ESTATE_ID", referencedColumnName = "UNIT_ITEM_ID")
     @ManyToOne
+    @JsonIgnore
     private TmsEstateItem estateId;
     @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
@@ -64,15 +67,18 @@ public class TmsDevice implements Serializable {
     private UfsBankRegion bankRegionId;
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsCustomer customerId;
     @JoinColumn(name = "OUTLET_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsCustomerOutlet outletId;
     @JoinColumn(name = "MODEL_ID", referencedColumnName = "MODEL_ID")
     @ManyToOne(optional = false)
     private UfsDeviceModel modelId;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsOrganizationUnits tenantId;
 
     @Column(name = "TENANT_ID")
