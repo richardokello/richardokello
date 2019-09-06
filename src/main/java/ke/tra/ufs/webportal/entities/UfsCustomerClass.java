@@ -8,6 +8,7 @@ package ke.tra.ufs.webportal.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.TreeRoot;
 import ke.axle.chassis.annotations.Unique;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -18,24 +19,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
- *
  * @author Tracom
  */
 @Entity
 @Table(name = "UFS_CUSTOMER_CLASS")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsCustomerClass.findAll", query = "SELECT u FROM UfsCustomerClass u"),
-    @NamedQuery(name = "UfsCustomerClass.findById", query = "SELECT u FROM UfsCustomerClass u WHERE u.id = :id"),
-    @NamedQuery(name = "UfsCustomerClass.findByName", query = "SELECT u FROM UfsCustomerClass u WHERE u.name = :name"),
-    @NamedQuery(name = "UfsCustomerClass.findByDescription", query = "SELECT u FROM UfsCustomerClass u WHERE u.description = :description"),
-    @NamedQuery(name = "UfsCustomerClass.findByClassValues", query = "SELECT u FROM UfsCustomerClass u WHERE u.classValues = :classValues"),
-    @NamedQuery(name = "UfsCustomerClass.findByAction", query = "SELECT u FROM UfsCustomerClass u WHERE u.action = :action"),
-    @NamedQuery(name = "UfsCustomerClass.findByActionStatus", query = "SELECT u FROM UfsCustomerClass u WHERE u.actionStatus = :actionStatus"),
-    @NamedQuery(name = "UfsCustomerClass.findByCreationDate", query = "SELECT u FROM UfsCustomerClass u WHERE u.creationDate = :creationDate"),
-    @NamedQuery(name = "UfsCustomerClass.findByIntrash", query = "SELECT u FROM UfsCustomerClass u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsCustomerClass.findAll", query = "SELECT u FROM UfsCustomerClass u"),
+        @NamedQuery(name = "UfsCustomerClass.findById", query = "SELECT u FROM UfsCustomerClass u WHERE u.id = :id"),
+        @NamedQuery(name = "UfsCustomerClass.findByName", query = "SELECT u FROM UfsCustomerClass u WHERE u.name = :name"),
+        @NamedQuery(name = "UfsCustomerClass.findByDescription", query = "SELECT u FROM UfsCustomerClass u WHERE u.description = :description"),
+        @NamedQuery(name = "UfsCustomerClass.findByClassValues", query = "SELECT u FROM UfsCustomerClass u WHERE u.classValues = :classValues"),
+        @NamedQuery(name = "UfsCustomerClass.findByAction", query = "SELECT u FROM UfsCustomerClass u WHERE u.action = :action"),
+        @NamedQuery(name = "UfsCustomerClass.findByActionStatus", query = "SELECT u FROM UfsCustomerClass u WHERE u.actionStatus = :actionStatus"),
+        @NamedQuery(name = "UfsCustomerClass.findByCreationDate", query = "SELECT u FROM UfsCustomerClass u WHERE u.creationDate = :creationDate"),
+        @NamedQuery(name = "UfsCustomerClass.findByIntrash", query = "SELECT u FROM UfsCustomerClass u WHERE u.intrash = :intrash")})
 public class UfsCustomerClass implements Serializable {
 
     @Basic(optional = false)
@@ -81,20 +82,28 @@ public class UfsCustomerClass implements Serializable {
     @GeneratedValue(generator = "UFS_CUSTOMER_CLASS_SEQ")
     @Column(name = "ID")
     private Long id;
-    @Column(name = "CREATION_DATE",insertable = false, updatable = false)
+    @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
-    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID",insertable = false,updatable = false)
+    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     @JsonIgnore
     private UfsCustomerClass parentId;
     @Column(name = "PARENT_ID")
+    @TreeRoot
     private BigDecimal parentIds;
-    @JoinColumn(name = "TYPE_ID", referencedColumnName = "ID",insertable = false,updatable = false)
+    @JoinColumn(name = "TYPE_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsCustomerType typeId;
     @Column(name = "TYPE_ID")
     private BigDecimal typeIds;
+    @Transient
+    private List<UfsCustomerClass> children;
+    @Transient
+    private String text;
+    @OneToMany(mappedBy = "parentId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsCustomerClass> customerClassesList;
 
     public UfsCustomerClass() {
     }
@@ -175,8 +184,30 @@ public class UfsCustomerClass implements Serializable {
     public void setTypeIds(BigDecimal typeIds) {
         this.typeIds = typeIds;
     }
-    
-    
+
+    public List<UfsCustomerClass> getChildren() {
+        return this.getCustomerClassesList();
+    }
+
+    public void setChildren(List<UfsCustomerClass> children) {
+        this.children = children;
+    }
+
+    public String getText() {
+        return this.getName();
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public List<UfsCustomerClass> getCustomerClassesList() {
+        return customerClassesList;
+    }
+
+    public void setCustomerClassesList(List<UfsCustomerClass> customerClassesList) {
+        this.customerClassesList = customerClassesList;
+    }
 
     @Override
     public int hashCode() {
@@ -236,5 +267,5 @@ public class UfsCustomerClass implements Serializable {
         this.intrash = intrash;
     }
 
-    
+
 }

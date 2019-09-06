@@ -20,5 +20,4 @@ public class UfsCustomerClassResource extends ChasisResource<UfsCustomerClass, L
 
     }
 
-
 }
