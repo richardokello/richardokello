@@ -83,7 +83,7 @@ public class UfsBankRegion implements Serializable {
     private BigDecimal id;
     @Column(name = "IS_PARENT")
     private Short isParent;
-    @Column(name = "CREATION_DATE",insertable = false, updatable = false)
+    @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
     @OneToMany(mappedBy = "parentId")
@@ -102,6 +102,10 @@ public class UfsBankRegion implements Serializable {
     private Long parentIds;
     @Column(name = "TENANT_ID")
     private Long tenantIds;
+    @Transient
+    private List<UfsBankRegion> children;
+    @Transient
+    private String text;
 
     public UfsBankRegion() {
     }
@@ -195,6 +199,22 @@ public class UfsBankRegion implements Serializable {
         this.tenantIds = tenantIds;
     }
 
+    public List<UfsBankRegion> getChildren() {
+        return this.getUfsBankRegionList();
+    }
+
+    public void setChildren(List<UfsBankRegion> children) {
+        this.children = children;
+    }
+
+    public String getText() {
+        return this.getBranchName();
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -238,7 +258,6 @@ public class UfsBankRegion implements Serializable {
     public void setBankId(UfsBanks bankId) {
         this.bankId = bankId;
     }
-
 
 
     public String getCode() {
