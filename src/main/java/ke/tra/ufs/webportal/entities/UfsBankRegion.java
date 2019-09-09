@@ -41,8 +41,8 @@ import java.util.Set;
 public class UfsBankRegion implements Serializable {
 
     @Size(max = 100)
-    @Column(name = "BRANCH_NAME")
-    private String branchName;
+    @Column(name = "REGION_NAME")
+    private String regionName;
     @Size(max = 20)
     @Column(name = "CODE")
     private String code;
@@ -59,10 +59,12 @@ public class UfsBankRegion implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsBankBranches> ufsBankBranchesSet;
-    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne(optional = false)
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsBanks bankId;
+    @Column(name = "BANK_ID")
+    private BigDecimal bankIds;
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -122,12 +124,12 @@ public class UfsBankRegion implements Serializable {
         this.id = id;
     }
 
-    public String getBranchName() {
-        return branchName;
+    public String getRegionName() {
+        return regionName;
     }
 
-    public void setBranchName(String branchName) {
-        this.branchName = branchName;
+    public void setRegionName(String branchName) {
+        this.regionName = regionName;
     }
 
 
@@ -208,11 +210,19 @@ public class UfsBankRegion implements Serializable {
     }
 
     public String getText() {
-        return this.getBranchName();
+        return this.getRegionName();
     }
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public BigDecimal getBankIds() {
+        return bankIds;
+    }
+
+    public void setBankIds(BigDecimal bankIds) {
+        this.bankIds = bankIds;
     }
 
     @Override
