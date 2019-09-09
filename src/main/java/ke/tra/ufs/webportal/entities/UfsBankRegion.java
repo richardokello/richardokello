@@ -128,7 +128,7 @@ public class UfsBankRegion implements Serializable {
         return regionName;
     }
 
-    public void setRegionName(String branchName) {
+    public void setRegionName(String regionName) {
         this.regionName = regionName;
     }
 
