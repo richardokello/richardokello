@@ -31,7 +31,7 @@ import java.util.Set;
 @NamedQueries({
         @NamedQuery(name = "UfsBankRegion.findAll", query = "SELECT u FROM UfsBankRegion u")
         , @NamedQuery(name = "UfsBankRegion.findById", query = "SELECT u FROM UfsBankRegion u WHERE u.id = :id")
-        , @NamedQuery(name = "UfsBankRegion.findByBranchName", query = "SELECT u FROM UfsBankRegion u WHERE u.branchName = :branchName")
+        , @NamedQuery(name = "UfsBankRegion.findByRegionName", query = "SELECT u FROM UfsBankRegion u WHERE u.regionName = :regionName")
         , @NamedQuery(name = "UfsBankRegion.findByCode", query = "SELECT u FROM UfsBankRegion u WHERE u.code = :code")
         , @NamedQuery(name = "UfsBankRegion.findByIsParent", query = "SELECT u FROM UfsBankRegion u WHERE u.isParent = :isParent")
         , @NamedQuery(name = "UfsBankRegion.findByCreationDate", query = "SELECT u FROM UfsBankRegion u WHERE u.creationDate = :creationDate")
