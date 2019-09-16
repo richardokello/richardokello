@@ -117,14 +117,14 @@ public class UfsCustomer implements Serializable {
     private String businessLicenceNumber;
     @JoinColumn(name = "CLASS_TYPE_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
-    @JsonIgnore
+    //@JsonIgnore
     private UfsCustomerClass classTypeId;
     @ModifiableField
     @Column(name = "CLASS_TYPE_ID")
     private BigDecimal classTypeIds;
     @JoinColumn(name = "GEOGRAPHICAL_REG_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
-    @JsonIgnore
+    //@JsonIgnore
     private UfsGeographicalRegion geographicalRegId;
     @Column(name = "GEOGRAPHICAL_REG_ID")
     @ModifiableField
