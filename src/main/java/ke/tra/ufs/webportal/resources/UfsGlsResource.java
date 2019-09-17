@@ -11,13 +11,17 @@ import ke.tra.ufs.webportal.repository.UfsGlsRepository;
 import ke.tra.ufs.webportal.service.SysConfigService;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.utils.SharedMethods;
+import ke.tra.ufs.webportal.utils.exports.CsvFlexView;
+import ke.tra.ufs.webportal.wrappers.UfsGlsDetails;
 import ke.tra.ufs.webportal.wrappers.UfsGlsWrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -98,5 +102,15 @@ public class UfsGlsResource extends ChasisResource<UfsGls, Long, UfsEdittedRecor
             }
         }
         return ufsgls;
+    }
+
+    @Transactional
+    @RequestMapping(method = RequestMethod.GET,path = "gls-template.csv")
+    public ModelAndView exportGlsTemplate(HttpServletRequest request) {
+        CsvFlexView view;
+        String fileName = "Gls Template";
+        view = new CsvFlexView(UfsGlsDetails.class, new ArrayList(),
+                fileName);
+        return new ModelAndView(view);
     }
 }
