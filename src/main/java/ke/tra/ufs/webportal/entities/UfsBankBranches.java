@@ -30,6 +30,7 @@ import ke.axle.chassis.annotations.Filter;
 @NamedQueries({
         @NamedQuery(name = "UfsBankBranches.findAll", query = "SELECT u FROM UfsBankBranches u")
         , @NamedQuery(name = "UfsBankBranches.findById", query = "SELECT u FROM UfsBankBranches u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsBankBranches.findByBranchId", query = "SELECT u FROM UfsBankBranches u WHERE u.id = :id")
         , @NamedQuery(name = "UfsBankBranches.findByName", query = "SELECT u FROM UfsBankBranches u WHERE u.name = :name")
         , @NamedQuery(name = "UfsBankBranches.findByCode", query = "SELECT u FROM UfsBankBranches u WHERE u.code = :code")
         , @NamedQuery(name = "UfsBankBranches.findByAction", query = "SELECT u FROM UfsBankBranches u WHERE u.action = :action")

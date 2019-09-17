@@ -29,6 +29,7 @@ public class AppConstants {
     public static final String ACTIVITY_INITIATING = "Initiating";
     public static final String ACTIVITY_AUTHENTICATION = "Authentication";
     public static final String ACTIVITY_STATUS_FAILED = "Failed";
+    public static final String ACTIVITY_SUSPEND = "Suspend";
 
     public static final String ACTIVITY_UNLOCK = "Unlock";
     public static final String ACTIVITY_LOCK = "Lock";
