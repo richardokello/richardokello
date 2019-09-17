@@ -52,6 +52,7 @@ public class UfsBankBranches implements Serializable {
     @Column(name = "CODE")
     private String code;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
