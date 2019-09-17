@@ -116,9 +116,6 @@ public class UfsGls implements Serializable {
     @ModifiableField
     private BigDecimal bankBranchIds;
 
-    @Transient
-    private MultipartFile file;
-
     public UfsGls() {
     }
 
@@ -176,14 +173,6 @@ public class UfsGls implements Serializable {
 
     public void setGlLocation(String glLocation) {
         this.glLocation = glLocation;
-    }
-
-    public MultipartFile getFile() {
-        return file;
-    }
-
-    public void setFile(MultipartFile file) {
-        this.file = file;
     }
 
     public String getActionStatus() {

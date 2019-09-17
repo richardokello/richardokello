@@ -1,6 +1,7 @@
 package ke.tra.ufs.webportal.resources;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ke.axle.chassis.ChasisResource;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ResponseWrapper;
@@ -10,6 +11,7 @@ import ke.tra.ufs.webportal.repository.UfsGlsRepository;
 import ke.tra.ufs.webportal.service.SysConfigService;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.utils.SharedMethods;
+import ke.tra.ufs.webportal.wrappers.UfsGlsWrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,15 +42,15 @@ public class UfsGlsResource extends ChasisResource<UfsGls, Long, UfsEdittedRecor
 
 
     @Transactional
-    @Override
-    public ResponseEntity<ResponseWrapper<UfsGls>> create(UfsGls ufsGls) {
+    @RequestMapping(method = RequestMethod.POST,path = "upload")
+    public ResponseEntity<ResponseWrapper<UfsGls>> create(UfsGlsWrapper ufsGlsWrapper) {
         ResponseEntity<ResponseWrapper<UfsGls>> ufsgls = null;
-        if (ufsGls.getFile() != null) {
+        if (ufsGlsWrapper.getFile() != null) {
             ResponseWrapper response = new ResponseWrapper();
             //Validate file extension
-            if (!(ufsGls.getFile().getContentType().equalsIgnoreCase("text/csv")
-                    || ufsGls.getFile().getContentType().equalsIgnoreCase("application/vnd.ms-excel")
-                    || ufsGls.getFile().getContentType().equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))) {
+            if (!(ufsGlsWrapper.getFile().getContentType().equalsIgnoreCase("text/csv")
+                    || ufsGlsWrapper.getFile().getContentType().equalsIgnoreCase("application/vnd.ms-excel")
+                    || ufsGlsWrapper.getFile().getContentType().equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))) {
                 response.setCode(400);
                 response.setMessage("Unsupported file type. Expects a CSV file");
                 return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
@@ -56,28 +58,30 @@ public class UfsGlsResource extends ChasisResource<UfsGls, Long, UfsEdittedRecor
 
             String fileName = configService.fetchSysConfigById(new BigDecimal(24)).getValue();
             try {
-                sharedMethods.store(ufsGls.getFile(), fileName);
-                if (ufsGls.getFile().getContentType().equalsIgnoreCase("text/csv")) {
+                sharedMethods.store(ufsGlsWrapper.getFile(), fileName);
+                log.info("Content Type {}", ufsGlsWrapper.getFile().getContentType());
+                if (ufsGlsWrapper.getFile().getContentType().equalsIgnoreCase("text/csv")) {
                     List<UfsGls> ufsGlsList = new ArrayList<>();
-                    List<UfsGls> entities = sharedMethods.convertCsv(UfsGls.class, ufsGls.getFile());
+                    List<UfsGlsWrapper> entities = sharedMethods.convertCsv(UfsGlsWrapper.class, ufsGlsWrapper.getFile());
                     long failed = 0;
                     long success = 0;
-                    System.out.println("Running...........................");
-                    for (UfsGls entity : entities) {
+                    for (UfsGlsWrapper entity : entities) {
                         UfsGls ufsGls1 = ufsGlsRepository.findByGlCodeAndIntrash(entity.getGlCode(), AppConstants.NO);
                         if (ufsGls1 != null) {
                             failed++;
                             continue;
                         }
+                        log.info("Entities.............. {}", new ObjectMapper().writeValueAsString(entity));
+                        UfsGls ufsGls = new UfsGls();
+                        ufsGls.setGlName(entity.getGlName());
+                        ufsGls.setGlCode(entity.getGlCode());
+                        ufsGls.setGlAccountNumber(entity.getGlAccountNumber());
+                        ufsGls.setGlLocation(entity.getGlLocation());
+                        ufsGls.setBankIds(entity.getBankIds());
+                        ufsGls.setBankBranchIds(entity.getBankBranchIds());
+                        ufsGls.setTenantIds(entity.getTenantIds());
 
-                        ufsGls1.setGlName(entity.getGlName());
-                        ufsGls1.setGlCode(entity.getGlCode());
-                        ufsGls1.setGlAccountNumber(entity.getGlAccountNumber());
-                        ufsGls1.setGlLocation(entity.getGlLocation());
-                        ufsGls1.setBankIds(entity.getBankIds());
-                        ufsGls1.setBankBranchIds(entity.getBankBranchIds());
-
-                        ufsGlsList.add(ufsGls1);
+                        ufsGlsList.add(ufsGls);
 
                         success++;
                     }
@@ -87,14 +91,12 @@ public class UfsGlsResource extends ChasisResource<UfsGls, Long, UfsEdittedRecor
                     response.setMessage("Content Saved Successfully");
                     response.setData(ufsGlsRepository.saveAll(ufsGlsList));
 
-                    return new ResponseEntity<>(response,HttpStatus.OK);
+                    return new ResponseEntity<>(response, HttpStatus.OK);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else {
-            ufsgls =  super.create(ufsGls);
         }
-            return  ufsgls;
-        }
+        return ufsgls;
     }
+}
