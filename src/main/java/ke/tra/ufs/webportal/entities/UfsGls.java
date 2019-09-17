@@ -8,6 +8,7 @@ package ke.tra.ufs.webportal.entities;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -115,9 +116,8 @@ public class UfsGls implements Serializable {
     @ModifiableField
     private BigDecimal bankBranchIds;
 
-
-
-
+    @Transient
+    private MultipartFile file;
 
     public UfsGls() {
     }
@@ -178,6 +178,13 @@ public class UfsGls implements Serializable {
         this.glLocation = glLocation;
     }
 
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
 
     public String getActionStatus() {
         return actionStatus;

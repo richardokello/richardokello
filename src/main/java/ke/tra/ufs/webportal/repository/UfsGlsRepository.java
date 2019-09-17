@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UfsGlsRepository extends CrudRepository<UfsGls, Long> {
 
+    UfsGls findByGlCodeAndIntrash(String code, String intrash);
 }
