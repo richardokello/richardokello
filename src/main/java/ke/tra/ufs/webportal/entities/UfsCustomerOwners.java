@@ -90,6 +90,10 @@ public class UfsCustomerOwners implements Serializable {
     @Column(name = "CUSTOMER_ID")
     private BigDecimal customerIds;
 
+    @Filter
+    @Column(name = "CUSTOMER_ID",insertable = false,updatable = false)
+    private String customerIdsStr;
+
 
     @Transient
     private CustomerOwnersCrime ownersCrime;
@@ -203,7 +207,13 @@ public class UfsCustomerOwners implements Serializable {
         this.ownersCrime = ownersCrime;
     }
 
+    public String getCustomerIdsStr() {
+        return customerIdsStr;
+    }
 
+    public void setCustomerIdsStr(String customerIdsStr) {
+        this.customerIdsStr = customerIdsStr;
+    }
 
     @Override
     public int hashCode() {

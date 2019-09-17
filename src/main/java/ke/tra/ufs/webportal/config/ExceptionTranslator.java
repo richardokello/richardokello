@@ -11,6 +11,7 @@ import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.utils.CustomEntry;
 import ke.tra.ufs.webportal.utils.exceptions.ItemNotFoundException;
 import ke.tra.ufs.webportal.utils.exceptions.RunTimeBadRequest;
+import ke.tra.ufs.webportal.utils.exceptions.UnapprovedActionsException;
 import org.apache.tomcat.util.http.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,5 +225,13 @@ public class ExceptionTranslator {
         response.setCode(HttpStatus.NOT_FOUND.value());
         response.setMessage(ex.getMessage());
         return new ResponseEntity(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UnapprovedActionsException.class)
+    public ResponseEntity<ResponseWrapper> unapprovedActionsException(UnapprovedActionsException ex) {
+        ResponseWrapper response = new ResponseWrapper();
+        response.setCode(417);
+        response.setMessage("Sorry resource contains unapproved actions");
+        return new ResponseEntity(response, HttpStatus.valueOf(417));
     }
 }
