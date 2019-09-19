@@ -6,6 +6,7 @@ package ke.tra.ufs.webportal.resources;
 
 import io.swagger.annotations.ApiOperation;
 import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
@@ -92,5 +93,42 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
 
+        ResponseWrapper response =  new ResponseWrapper<>();
+        Arrays.stream(actions.getIds()).forEach(id->{
+            UfsBankBranches bankBranch = this.bankBranchesService.findByBranchId(id);
+            if((bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
+                    (bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
+                    (bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
+                    (bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_SUSPEND) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))){
+
+                bankBranch.setActionStatus(AppConstants.STATUS_APPROVED);
+                this.bankBranchesService.saveBranch(bankBranch);
+                loggerService.log("Successfully Approved Bank Branch",
+                        UfsBankBranches.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+
+
+                if(bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
+                    loggerService.log("Successfully Approved Bank Branch",
+                            UfsBankBranches.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+                    bankBranch.setActionStatus(AppConstants.STATUS_APPROVED);
+                    bankBranch.setIntrash(AppConstants.INTRASH_YES);
+                    this.bankBranchesService.saveBranch(bankBranch);
+                }
+
+            }else {
+
+                loggerService.log("Failed To Approve Bank Branch",
+                        UfsBankBranches.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, actions.getNotes());
+            }
+
+        });
+
+        response.setCode(200);
+        response.setMessage("Bank Branch Approved Successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
