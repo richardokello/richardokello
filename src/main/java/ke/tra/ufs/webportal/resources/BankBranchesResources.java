@@ -112,11 +112,12 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
 
 
                 if(bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
-                    loggerService.log("Successfully Approved Bank Branch",
-                            UfsBankBranches.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
                     bankBranch.setActionStatus(AppConstants.STATUS_APPROVED);
                     bankBranch.setIntrash(AppConstants.INTRASH_YES);
                     this.bankBranchesService.saveBranch(bankBranch);
+
+                    loggerService.log("Successfully Approved Bank Branch",
+                            UfsBankBranches.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
                 }
 
             }else {
