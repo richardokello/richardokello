@@ -1,0 +1,4 @@
+glName,glCode,glAccountNumber,glLocation,bankIds,bankBranchIds,tenantIds
+TEST33,003,0755546655465,NAIROBI WEST,22,23,1
+Test,1234,1234,Headquater,22,23,1
+Test gls,21,113323333,Nairobi,22,23,1

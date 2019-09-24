@@ -3,6 +3,7 @@ package ke.tra.ufs.webportal.wrappers;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class UfsGlsWrapper {
@@ -14,6 +15,7 @@ public class UfsGlsWrapper {
     private BigDecimal bankBranchIds;
     private BigDecimal tenantIds;
     @Transient
+    @NotNull
     private MultipartFile file;
 
     public UfsGlsWrapper() {

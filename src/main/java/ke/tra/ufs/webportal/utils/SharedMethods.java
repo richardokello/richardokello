@@ -110,13 +110,15 @@ public class SharedMethods {
 
     public String store(MultipartFile resource, String uploadPath) throws FileNotFoundException, IOException {
         log.info("Processing file storage for file " + resource.getOriginalFilename());
+        AppCommons appCommons = new AppCommons();
+        String generatedFileName = appCommons.getRandomFileName(resource.getOriginalFilename());
 
         File directory = new File(uploadPath);
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
-        String fileUrl = uploadPath + resource.getOriginalFilename();
+        String fileUrl = uploadPath + generatedFileName;
 
         log.info("Path  " + fileUrl);
 

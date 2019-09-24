@@ -23,14 +23,14 @@ import java.util.List;
 @Table(name = "UFS_GENDER", catalog = "", schema = "UFS_SMART_SUITE")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsGender.findAll", query = "SELECT u FROM UfsGender u")
-    , @NamedQuery(name = "UfsGender.findByGenderId", query = "SELECT u FROM UfsGender u WHERE u.genderId = :genderId")
-    , @NamedQuery(name = "UfsGender.findByGender", query = "SELECT u FROM UfsGender u WHERE u.gender = :gender")
-    , @NamedQuery(name = "UfsGender.findByDescription", query = "SELECT u FROM UfsGender u WHERE u.description = :description")
-    , @NamedQuery(name = "UfsGender.findByAction", query = "SELECT u FROM UfsGender u WHERE u.action = :action")
-    , @NamedQuery(name = "UfsGender.findByActionStatus", query = "SELECT u FROM UfsGender u WHERE u.actionStatus = :actionStatus")
-    , @NamedQuery(name = "UfsGender.findByCreationDate", query = "SELECT u FROM UfsGender u WHERE u.creationDate = :creationDate")
-    , @NamedQuery(name = "UfsGender.findByIntrash", query = "SELECT u FROM UfsGender u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsGender.findAll", query = "SELECT u FROM UfsGender u")
+        , @NamedQuery(name = "UfsGender.findByGenderId", query = "SELECT u FROM UfsGender u WHERE u.genderId = :genderId")
+        , @NamedQuery(name = "UfsGender.findByGender", query = "SELECT u FROM UfsGender u WHERE u.gender = :gender")
+        , @NamedQuery(name = "UfsGender.findByDescription", query = "SELECT u FROM UfsGender u WHERE u.description = :description")
+        , @NamedQuery(name = "UfsGender.findByAction", query = "SELECT u FROM UfsGender u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsGender.findByActionStatus", query = "SELECT u FROM UfsGender u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsGender.findByCreationDate", query = "SELECT u FROM UfsGender u WHERE u.creationDate = :creationDate")
+        , @NamedQuery(name = "UfsGender.findByIntrash", query = "SELECT u FROM UfsGender u WHERE u.intrash = :intrash")})
 public class UfsGender implements Serializable {
 
     @Basic(optional = false)
@@ -171,5 +171,5 @@ public class UfsGender implements Serializable {
     public void setIntrash(String intrash) {
         this.intrash = intrash;
     }
-    
+
 }

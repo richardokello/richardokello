@@ -26,14 +26,14 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 @Table(name = "UFS_ORGANIZATION_HIERARCHY", catalog = "", schema = "UFS_SMART_SUITE")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsOrganizationHierarchy.findAll", query = "SELECT u FROM UfsOrganizationHierarchy u")
-    , @NamedQuery(name = "UfsOrganizationHierarchy.findById", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.id = :id")
-    , @NamedQuery(name = "UfsOrganizationHierarchy.findByLevelName", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.levelName = :levelName")
-    , @NamedQuery(name = "UfsOrganizationHierarchy.findByLevelNo", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.levelNo = :levelNo")
-    , @NamedQuery(name = "UfsOrganizationHierarchy.findByIsRootTenant", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.isRootTenant = :isRootTenant")
-    , @NamedQuery(name = "UfsOrganizationHierarchy.findByAction", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.action = :action")
-    , @NamedQuery(name = "UfsOrganizationHierarchy.findByActionStatus", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.actionStatus = :actionStatus")
-    , @NamedQuery(name = "UfsOrganizationHierarchy.findByIntrash", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsOrganizationHierarchy.findAll", query = "SELECT u FROM UfsOrganizationHierarchy u")
+        , @NamedQuery(name = "UfsOrganizationHierarchy.findById", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsOrganizationHierarchy.findByLevelName", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.levelName = :levelName")
+        , @NamedQuery(name = "UfsOrganizationHierarchy.findByLevelNo", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.levelNo = :levelNo")
+        , @NamedQuery(name = "UfsOrganizationHierarchy.findByIsRootTenant", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.isRootTenant = :isRootTenant")
+        , @NamedQuery(name = "UfsOrganizationHierarchy.findByAction", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsOrganizationHierarchy.findByActionStatus", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsOrganizationHierarchy.findByIntrash", query = "SELECT u FROM UfsOrganizationHierarchy u WHERE u.intrash = :intrash")})
 public class UfsOrganizationHierarchy implements Serializable {
 
     @Size(max = 20)
@@ -49,7 +49,7 @@ public class UfsOrganizationHierarchy implements Serializable {
     @Size(max = 2)
     @Column(name = "INTRASH")
     private String intrash;
-    
+
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -122,8 +122,8 @@ public class UfsOrganizationHierarchy implements Serializable {
     public void setActionStatus(String actionStatus) {
         this.actionStatus = actionStatus;
     }
-    
-    
+
+
 
 
     @XmlTransient
@@ -167,7 +167,7 @@ public class UfsOrganizationHierarchy implements Serializable {
 
     public void setAction(String action) {
         this.action = action;
-    } 
+    }
 
     public String getIntrash() {
         return intrash;
@@ -177,5 +177,5 @@ public class UfsOrganizationHierarchy implements Serializable {
         this.intrash = intrash;
     }
 
-    
+
 }

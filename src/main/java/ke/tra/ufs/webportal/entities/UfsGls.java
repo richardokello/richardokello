@@ -116,6 +116,13 @@ public class UfsGls implements Serializable {
     @ModifiableField
     private BigDecimal bankBranchIds;
 
+    @JoinColumn(name = "BATCH_ID", referencedColumnName = "BATCH_ID", updatable = false, insertable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private UfsGlsBatch batch;
+
+    @Column(name = "BATCH_ID")
+    private Long batchs;
+
     public UfsGls() {
     }
 
@@ -123,16 +130,39 @@ public class UfsGls implements Serializable {
         this.id = id;
     }
 
-    public UfsGls(Long id, String glName, String glCode, String glAccountNumber, String glLocation, String action, String actionStatus, Date createdAt, String intrash) {
-        this.id = id;
+    public UfsGls(@NotNull @Size(min = 1, max = 20) String glName, @NotNull() @Size(min = 1, max = 20) String glCode, @NotNull @Size(min = 1, max = 30) String glAccountNumber, @NotNull @Size(min = 1, max = 20) String glLocation, @Size(min = 1, max = 15) String action, @Size(min = 1, max = 15) String actionStatus, @Size(min = 1, max = 3) String intrash, UfsOrganizationUnits tenantId, BigDecimal tenantIds, Date createdAt, UfsBanks bankId, BigDecimal bankIds, UfsBankBranches bankBranchId, BigDecimal bankBranchIds, UfsGlsBatch batch, Long batchs) {
         this.glName = glName;
         this.glCode = glCode;
         this.glAccountNumber = glAccountNumber;
         this.glLocation = glLocation;
         this.action = action;
         this.actionStatus = actionStatus;
-        this.createdAt = createdAt;
         this.intrash = intrash;
+        this.tenantId = tenantId;
+        this.tenantIds = tenantIds;
+        this.createdAt = createdAt;
+        this.bankId = bankId;
+        this.bankIds = bankIds;
+        this.bankBranchId = bankBranchId;
+        this.bankBranchIds = bankBranchIds;
+        this.batch = batch;
+        this.batchs = batchs;
+    }
+
+    public UfsGlsBatch getBatch() {
+        return batch;
+    }
+
+    public void setBatch(UfsGlsBatch batch) {
+        this.batch = batch;
+    }
+
+    public Long getBatchs() {
+        return batchs;
+    }
+
+    public void setBatchs(Long batchs) {
+        this.batchs = batchs;
     }
 
     public Long getId() {

@@ -25,14 +25,14 @@ import java.util.List;
 @Table(name = "UFS_DEPARTMENT")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsDepartment.findAll", query = "SELECT u FROM UfsDepartment u")
-    , @NamedQuery(name = "UfsDepartment.findById", query = "SELECT u FROM UfsDepartment u WHERE u.id = :id")
-    , @NamedQuery(name = "UfsDepartment.findByDepartmentName", query = "SELECT u FROM UfsDepartment u WHERE u.departmentName = :departmentName")
-    , @NamedQuery(name = "UfsDepartment.findByDescription", query = "SELECT u FROM UfsDepartment u WHERE u.description = :description")
-    , @NamedQuery(name = "UfsDepartment.findByCreationDate", query = "SELECT u FROM UfsDepartment u WHERE u.creationDate = :creationDate")
-    , @NamedQuery(name = "UfsDepartment.findByAction", query = "SELECT u FROM UfsDepartment u WHERE u.action = :action")
-    , @NamedQuery(name = "UfsDepartment.findByActionStatus", query = "SELECT u FROM UfsDepartment u WHERE u.actionStatus = :actionStatus")
-    , @NamedQuery(name = "UfsDepartment.findByIntrash", query = "SELECT u FROM UfsDepartment u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsDepartment.findAll", query = "SELECT u FROM UfsDepartment u")
+        , @NamedQuery(name = "UfsDepartment.findById", query = "SELECT u FROM UfsDepartment u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsDepartment.findByDepartmentName", query = "SELECT u FROM UfsDepartment u WHERE u.departmentName = :departmentName")
+        , @NamedQuery(name = "UfsDepartment.findByDescription", query = "SELECT u FROM UfsDepartment u WHERE u.description = :description")
+        , @NamedQuery(name = "UfsDepartment.findByCreationDate", query = "SELECT u FROM UfsDepartment u WHERE u.creationDate = :creationDate")
+        , @NamedQuery(name = "UfsDepartment.findByAction", query = "SELECT u FROM UfsDepartment u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsDepartment.findByActionStatus", query = "SELECT u FROM UfsDepartment u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsDepartment.findByIntrash", query = "SELECT u FROM UfsDepartment u WHERE u.intrash = :intrash")})
 public class UfsDepartment implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -183,5 +183,5 @@ public class UfsDepartment implements Serializable {
     public String toString() {
         return "ke.tracom.ufs.entities.UfsDepartment[ id=" + id + " ]";
     }
-    
+
 }

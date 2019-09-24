@@ -412,5 +412,5 @@ public class UfsOrganizationUnits implements Serializable {
         this.intrash = intrash;
     }
 
-  
+
 }
