@@ -1,5 +1,7 @@
 package ke.tra.ufs.webportal.wrappers;
 
+import ke.tra.ufs.webportal.repository.AuthenticationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,7 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 
 /*
-@Author eli.muraya
+@Author Kenny
 
 - service used to set extra log parameters that arent provided.
 - used in logger service implementation
@@ -20,8 +22,8 @@ public class LogExtras {
     private String url;
     @Value("${client-id}")
     private String clientId;
-//    @Autowired
-//    AuthenticationRepository urepo;
+    @Autowired
+    AuthenticationRepository urepo;
 
     //    Authentication auth;
     private final HttpServletRequest request;
@@ -36,9 +38,8 @@ public class LogExtras {
     source - source of the request eg, browser, postman
      */
     public String getSource() {
-//        String source = org.thymeleaf.util.StringUtils.abbreviate(request.getHeader("user-agent"), 100);
-//        return source;
-        return null;
+        String source = org.thymeleaf.util.StringUtils.abbreviate(request.getHeader("user-agent"), 100);
+        return source;
     }
 
     /*
@@ -50,7 +51,7 @@ public class LogExtras {
     }
 
     /*
-    -client id is the oauth2 clint id assigned to the maker of the request
+    -client id is the oauth2 client id assigned to the maker of the request
      */
     public String getClientId() {
         return clientId;
@@ -58,7 +59,7 @@ public class LogExtras {
 
     /*
     - id of the currently logged in user
-    - id of msker
+    - id of maker
      */
     public Long getUserId() {
 
@@ -71,9 +72,6 @@ public class LogExtras {
         }
 
         System.out.println("LOGGED IN USER : " + username);
-//        return urepo.findByusernameIgnoreCase(username).getUserId();
-        return null;
+        return urepo.findByusernameIgnoreCase(username).getUserId();
     }
-
-
 }
