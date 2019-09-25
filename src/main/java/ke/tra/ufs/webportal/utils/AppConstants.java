@@ -30,10 +30,13 @@ public class AppConstants {
     public static final String ACTIVITY_AUTHENTICATION = "Authentication";
     public static final String ACTIVITY_STATUS_FAILED = "Failed";
     public static final String ACTIVITY_SUSPEND = "Suspend";
-
+    public static final String ACTIVITY_TERMINATION = "Termination";
     public static final String ACTIVITY_UNLOCK = "Unlock";
     public static final String ACTIVITY_LOCK = "Lock";
     public static final String ACTIVITY_AMEND = "Amend";
+
+
+    //status
     public static final String STATUS_INACTIVE = "Inactive";
     public static final String STATUS_DISABLED = "Disabled";
     public static final String STATUS_COMPLETED = "Completed";

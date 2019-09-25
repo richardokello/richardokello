@@ -9,6 +9,7 @@ import ke.axle.chassis.exceptions.GeneralBadRequest;
 import ke.axle.chassis.utils.SharedMethods;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.utils.CustomEntry;
+import ke.tra.ufs.webportal.utils.exceptions.AgentAssignedException;
 import ke.tra.ufs.webportal.utils.exceptions.ItemNotFoundException;
 import ke.tra.ufs.webportal.utils.exceptions.RunTimeBadRequest;
 import ke.tra.ufs.webportal.utils.exceptions.UnapprovedActionsException;
@@ -233,5 +234,13 @@ public class ExceptionTranslator {
         response.setCode(417);
         response.setMessage("Sorry resource contains unapproved actions");
         return new ResponseEntity(response, HttpStatus.valueOf(417));
+    }
+
+    @ExceptionHandler(AgentAssignedException.class)
+    public ResponseEntity<ResponseWrapper> alreadyAssignedDeviceException(AgentAssignedException ex) {
+        ResponseWrapper response = new ResponseWrapper();
+        response.setCode(422);
+        response.setMessage("Customer Already Assigned Device.");
+        return new ResponseEntity(response, HttpStatus.valueOf(422));
     }
 }

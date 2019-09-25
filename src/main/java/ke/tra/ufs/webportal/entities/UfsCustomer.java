@@ -39,6 +39,7 @@ import org.hibernate.annotations.GenericGenerator;
 @NamedQueries({
     @NamedQuery(name = "UfsCustomer.findAll", query = "SELECT u FROM UfsCustomer u"),
     @NamedQuery(name = "UfsCustomer.findById", query = "SELECT u FROM UfsCustomer u WHERE u.id = :id"),
+    @NamedQuery(name = "UfsCustomer.findByCustomerId", query = "SELECT u FROM UfsCustomer u WHERE u.id = :id"),
     @NamedQuery(name = "UfsCustomer.findByAccountNumber", query = "SELECT u FROM UfsCustomer u WHERE u.accountNumber = :accountNumber"),
     @NamedQuery(name = "UfsCustomer.findByPin", query = "SELECT u FROM UfsCustomer u WHERE u.pin = :pin"),
     @NamedQuery(name = "UfsCustomer.findByLocalRegNumber", query = "SELECT u FROM UfsCustomer u WHERE u.localRegNumber = :localRegNumber"),

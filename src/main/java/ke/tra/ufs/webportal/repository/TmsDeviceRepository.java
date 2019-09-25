@@ -11,4 +11,8 @@ import java.util.List;
 public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecimal> {
 
     public List<TmsDevice> findByIntrash(String intrash);
+
+    public TmsDevice findByDeviceId(BigDecimal deviceId);
+
+    public TmsDevice findByCustomerIds(BigDecimal customerIds);
 }
