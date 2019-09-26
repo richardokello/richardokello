@@ -11,7 +11,12 @@ import java.util.Set;
 @Repository
 public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecimal> {
 
-    List<TmsDevice> findByIntrash(String intrash);
 
     Set<TmsDevice> findAllByGeographicalRegionIds(BigDecimal ids);
+
+    public List<TmsDevice> findByIntrash(String intrash);
+
+    public TmsDevice findByDeviceId(BigDecimal deviceId);
+
+    public TmsDevice findByCustomerIds(BigDecimal customerIds);
 }
