@@ -6,9 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecimal> {
 
-    public List<TmsDevice> findByIntrash(String intrash);
+    List<TmsDevice> findByIntrash(String intrash);
+
+    Set<TmsDevice> findAllByGeographicalRegionIds(BigDecimal ids);
 }
