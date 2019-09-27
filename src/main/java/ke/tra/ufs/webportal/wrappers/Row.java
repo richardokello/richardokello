@@ -1,6 +1,7 @@
 
 package ke.tra.ufs.webportal.wrappers;
 
+import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 
@@ -9,24 +10,35 @@ import com.google.gson.annotations.Expose;
 public class Row {
 
     @Expose
-    private String type;
+    private Withdrawal withdrawal;
+
     @Expose
-    private Values values;
+    private Deposit deposit;
 
-    public String getType() {
-        return type;
+    @Expose
+    private Total total;
+
+    public Withdrawal getWithdrawal() {
+        return withdrawal;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setWithdrawal(Withdrawal withdrawal) {
+        this.withdrawal = withdrawal;
     }
 
-    public Values getValues() {
-        return values;
+    public Deposit getDeposit() {
+        return deposit;
     }
 
-    public void setValues(Values values) {
-        this.values = values;
+    public void setDeposit(Deposit deposit) {
+        this.deposit = deposit;
     }
 
+    public Total getTotal() {
+        return total;
+    }
+
+    public void setTotal(Total total) {
+        this.total = total;
+    }
 }

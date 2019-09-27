@@ -29,5 +29,4 @@ public class ReportData {
     public void setRows(List<Row> rows) {
         this.rows = rows;
     }
-
 }

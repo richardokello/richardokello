@@ -9,16 +9,18 @@ import com.google.gson.annotations.Expose;
 public class Values {
 
     @Expose
-    private Long amount;
+    private Long amount = 0L;
     @Expose
-    private Long count;
+    private Long count = 0L;
 
     public Long getAmount() {
         return amount;
     }
 
     public void setAmount(Long amount) {
-        this.amount = amount;
+        if (amount != null) {
+            this.amount = amount;
+        }
     }
 
     public Long getCount() {
@@ -26,7 +28,8 @@ public class Values {
     }
 
     public void setCount(Long count) {
-        this.count = count;
+        if (count != null) {
+            this.count = count;
+        }
     }
-
 }
