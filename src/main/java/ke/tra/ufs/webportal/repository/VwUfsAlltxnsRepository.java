@@ -16,4 +16,6 @@ public interface VwUfsAlltxnsRepository extends JpaRepository<VwUfsAlltxns, BigI
 
     List<VwUfsAlltxns> findAllByTidInAndTransactiontypeIsNotNull(Set<String> tids);
 
+    List<VwUfsAlltxns> findAllByTidInAndTransactiontype(Set<String> tids, String transactionType);
+
 }

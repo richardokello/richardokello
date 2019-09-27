@@ -11,7 +11,7 @@ public class Values {
     @Expose
     private Long amount = 0L;
     @Expose
-    private Long count = 0L;
+    private Integer count = 0;
 
     public Long getAmount() {
         return amount;
@@ -23,11 +23,11 @@ public class Values {
         }
     }
 
-    public Long getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(Long count) {
+    public void setCount(Integer count) {
         if (count != null) {
             this.count = count;
         }

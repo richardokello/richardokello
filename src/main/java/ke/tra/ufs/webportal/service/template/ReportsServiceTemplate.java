@@ -3,12 +3,10 @@ package ke.tra.ufs.webportal.service.template;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.TmsDevice;
 import ke.tra.ufs.webportal.entities.TmsDeviceTids;
+import ke.tra.ufs.webportal.entities.TransactionTypes;
 import ke.tra.ufs.webportal.entities.UfsGeographicalRegion;
 import ke.tra.ufs.webportal.entities.views.VwUfsAlltxns;
-import ke.tra.ufs.webportal.repository.TmsDeviceRepository;
-import ke.tra.ufs.webportal.repository.TmsDeviceTidRepository;
-import ke.tra.ufs.webportal.repository.UfsGeographicalRegionRepository;
-import ke.tra.ufs.webportal.repository.VwUfsAlltxnsRepository;
+import ke.tra.ufs.webportal.repository.*;
 import ke.tra.ufs.webportal.service.ReportsService;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.wrappers.*;
@@ -25,45 +23,45 @@ public class ReportsServiceTemplate implements ReportsService {
     private final TmsDeviceTidRepository tmsDeviceTidRepository;
     private final VwUfsAlltxnsRepository vwUfsAlltxnsRepository;
     private final UfsGeographicalRegionRepository ufsGeographicalRegionRepository;
+    private final TransactionTypeRepository transactionTypeRepository;
 
-    public ReportsServiceTemplate(TmsDeviceRepository tmsDeviceRepository, TmsDeviceTidRepository tmsDeviceTidRepository, VwUfsAlltxnsRepository vwUfsAlltxnsRepository, UfsGeographicalRegionRepository ufsGeographicalRegionRepository) {
+    public ReportsServiceTemplate(TmsDeviceRepository tmsDeviceRepository, TmsDeviceTidRepository tmsDeviceTidRepository, VwUfsAlltxnsRepository vwUfsAlltxnsRepository, UfsGeographicalRegionRepository ufsGeographicalRegionRepository, TransactionTypeRepository transactionTypeRepository) {
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.tmsDeviceTidRepository = tmsDeviceTidRepository;
         this.vwUfsAlltxnsRepository = vwUfsAlltxnsRepository;
         this.ufsGeographicalRegionRepository = ufsGeographicalRegionRepository;
+        this.transactionTypeRepository = transactionTypeRepository;
     }
 
     @Override
     public ResponseWrapper generateGeographicalReports() {
         ResponseWrapper responseWrapper = new ResponseWrapper();
         ReportData reportData = new ReportData();
-        Row row = new Row();
-        List<Values> valuesList = new ArrayList<>();
-        List<Values> valuesList1 = new ArrayList<>();
-        List<Values> valuesList2 = new ArrayList<>();
+
         List<Header> headerList = new ArrayList<>();
         List<Row> rowList = new ArrayList<>();
 
         //find all tmsDevice for a particular region
         List<UfsGeographicalRegion> ufsGeographicalRegionList = ufsGeographicalRegionRepository.findAll();
+        Set<UfsGeographicalRegion> ufsGeographicalRegionSet = new HashSet(ufsGeographicalRegionList);
         Total total = new Total();
 
-        for (UfsGeographicalRegion ids:ufsGeographicalRegionList)  {
+        /*
+        for (UfsGeographicalRegion ids : ufsGeographicalRegionList) {
 
             AtomicReference<Long> totalamout = new AtomicReference<>(0L);
             AtomicReference<Long> totalCount = new AtomicReference<>(0L);
 
-            Header header = new Header();
-            header.setTitle(ids.getRegionName());
+
 
             Set<TmsDevice> tmsDeviceList = tmsDeviceRepository.findAllByGeographicalRegionIds(ids.getId());
-            Set<Long> deviceIdsSet = tmsDeviceList.stream().map(x-> x.getDeviceId().longValue()).collect(Collectors.toSet());//get all device Id
+            Set<Long> deviceIdsSet = tmsDeviceList.stream().map(x -> x.getDeviceId().longValue()).collect(Collectors.toSet());//get all device Id
             Set<TmsDeviceTids> tmsDeviceTidsList = tmsDeviceTidRepository.findAllByDeviceIdsIn(deviceIdsSet);
             Set<String> tidSet = tmsDeviceTidsList.stream().map(TmsDeviceTids::getTid).collect(Collectors.toSet());// get all Tids
             List<VwUfsAlltxns> vwUfsAlltxnsList = vwUfsAlltxnsRepository.findAllByTidInAndTransactiontypeIsNotNull(tidSet);
 
-            Map<String,Long> map1 =vwUfsAlltxnsList.stream().collect(Collectors.groupingBy(VwUfsAlltxns::getTransactiontype,Collectors.counting()));//count all per transaction types
-            Map<String,Long> map2 = vwUfsAlltxnsList.stream().collect(Collectors.groupingBy(VwUfsAlltxns::getTransactiontype,Collectors.summingLong(x -> Long.parseLong(x.getAmount()))));// count all per amount
+            Map<String, Long> map1 = vwUfsAlltxnsList.stream().collect(Collectors.groupingBy(VwUfsAlltxns::getTransactiontype, Collectors.counting()));//count all per transaction types
+            Map<String, Long> map2 = vwUfsAlltxnsList.stream().collect(Collectors.groupingBy(VwUfsAlltxns::getTransactiontype, Collectors.summingLong(x -> Long.parseLong(x.getAmount()))));// count all per amount
 
 
             Values values = new Values();
@@ -101,10 +99,60 @@ public class ReportsServiceTemplate implements ReportsService {
 
             headerList.add(header);
 
-        };
 
-        rowList.add(row);
+        };*/
+        //totals
+        Row totals = new Row();
+        totals.setTransactionType("Totals");
+        List<Values> values_total = new ArrayList<>();
 
+        //get transactions types
+        Iterable<TransactionTypes> transactionTypes = transactionTypeRepository.findAll();
+        transactionTypes.forEach(trans -> {
+            Row rw = new Row();
+            rw.setTransactionType(trans.getTxnName());
+            List<Values> val = new ArrayList<>();
+
+            Values valueTotal = new Values();
+
+            int totalCount = 0;
+            //loop regions
+            for (UfsGeographicalRegion region : ufsGeographicalRegionSet) {
+                //Add Header title
+                Header header = new Header();
+                header.setTitle(region.getRegionName());
+                headerList.add(header);
+                //get devices per region
+                Set<Long> deviceIds = tmsDeviceRepository.findAllByGeographicalRegionIds(region.getId()).stream().map(x -> x.getDeviceId().longValue()).collect(Collectors.toSet());
+
+                //fetch TIDS required
+                Set<String> tids = tmsDeviceTidRepository.findAllByDeviceIdsIn(deviceIds).stream().map(TmsDeviceTids::getTid).collect(Collectors.toSet());
+
+                //fetch transactions by type and tids
+                List<VwUfsAlltxns> transactionsByTypes = vwUfsAlltxnsRepository.findAllByTidInAndTransactiontype(tids, trans.getTxnName());
+
+                //Set values transactions
+                Optional<Long> amount = transactionsByTypes.stream().map(x -> Long.valueOf(x.getAmount())).reduce(Long::sum);
+                int count = transactionsByTypes.size();
+                Values values = new Values();
+                values.setCount(count);
+                totalCount += count;
+
+                if (amount.isPresent()) {
+                    values.setAmount(amount.get());
+                } else {
+                    values.setAmount(0L);
+                }
+                val.add(values);
+
+
+            }
+            rw.setValues(val);
+            rowList.add(rw);
+        });
+
+
+//        rowList.add(totals);
         reportData.setRows(rowList);
         reportData.setHeader(headerList);
 
