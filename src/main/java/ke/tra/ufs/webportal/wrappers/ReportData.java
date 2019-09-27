@@ -1,24 +1,26 @@
 
 package ke.tra.ufs.webportal.wrappers;
 
-import java.util.List;
-import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
+
+import javax.annotation.Generated;
+import java.util.List;
+import java.util.Set;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
 public class ReportData {
 
     @Expose
-    private List<Header> header;
+    private Set<Header> header;
     @Expose
     private List<Row> rows;
 
-    public List<Header> getHeader() {
+    public Set<Header> getHeader() {
         return header;
     }
 
-    public void setHeader(List<Header> header) {
+    public void setHeader(Set<Header> header) {
         this.header = header;
     }
 
