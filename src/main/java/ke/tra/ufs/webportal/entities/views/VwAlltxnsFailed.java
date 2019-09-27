@@ -3,45 +3,37 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ke.tra.ufs.webportal.entities;
+package ke.tra.ufs.webportal.entities.views;
 
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Kenny
  */
 @Entity
-@Table(name = "VW_ONLINE_ACTIVITY_SUCCESS")
+@Table(name = "VW_ALLTXNS_FAILED")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "VwOnlineActivitySuccess.findAll", query = "SELECT v FROM VwOnlineActivitySuccess v"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findById", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.id = :id"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByMti", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.mti = :mti"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByProcode", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.procode = :procode"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByTransactiontype", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.transactiontype = :transactiontype"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByAmount", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.amount = :amount"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByStan", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.stan = :stan"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByTid", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.tid = :tid"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByMid", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.mid = :mid"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByReferenceNo", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.referenceNo = :referenceNo"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByResponsecode", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.responsecode = :responsecode"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByCurrencycode", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.currencycode = :currencycode"),
-    @NamedQuery(name = "VwOnlineActivitySuccess.findByTransactiondate", query = "SELECT v FROM VwOnlineActivitySuccess v WHERE v.transactiondate = :transactiondate")})
-public class VwOnlineActivitySuccess implements Serializable {
+    @NamedQuery(name = "VwAlltxnsFailed.findAll", query = "SELECT v FROM VwAlltxnsFailed v"),
+    @NamedQuery(name = "VwAlltxnsFailed.findById", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.id = :id"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByMti", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.mti = :mti"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByProcode", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.procode = :procode"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByTransactiontype", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.transactiontype = :transactiontype"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByAmount", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.amount = :amount"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByStan", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.stan = :stan"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByTid", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.tid = :tid"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByMid", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.mid = :mid"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByReferenceNo", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.referenceNo = :referenceNo"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByResponsecode", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.responsecode = :responsecode"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByCurrencycode", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.currencycode = :currencycode"),
+    @NamedQuery(name = "VwAlltxnsFailed.findByTransactiondate", query = "SELECT v FROM VwAlltxnsFailed v WHERE v.transactiondate = :transactiondate")})
+public class VwAlltxnsFailed implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)
@@ -78,12 +70,11 @@ public class VwOnlineActivitySuccess implements Serializable {
     @Size(max = 255)
     @Column(name = "CURRENCYCODE")
     private String currencycode;
-    @Basic(optional = false)
     @Column(name = "TRANSACTIONDATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date transactiondate;
 
-    public VwOnlineActivitySuccess() {
+    public VwAlltxnsFailed() {
     }
 
     public BigInteger getId() {

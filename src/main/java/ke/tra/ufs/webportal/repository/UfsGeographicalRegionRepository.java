@@ -1,6 +1,5 @@
 package ke.tra.ufs.webportal.repository;
 
-
 import ke.tra.ufs.webportal.entities.UfsGeographicalRegion;
 import org.springframework.data.repository.CrudRepository;
 
@@ -14,5 +13,6 @@ public interface UfsGeographicalRegionRepository extends CrudRepository<UfsGeogr
     Optional<UfsGeographicalRegion> findByregionNameAndIntrash(String name, String intrash);
 
     UfsGeographicalRegion findByGeographicalId(BigDecimal id);
+
 
 }

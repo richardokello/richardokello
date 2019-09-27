@@ -109,4 +109,8 @@ public class AppConstants {
     public static final String ENTITY_GLOBAL_INTEGRATION = "Global Configuration";
     public static final String ENTITY_MESSAGE_TEMPLATES = "Message Templates";
 
+    //transaction type
+    public static final String TRANSACTION_TYPE_WITHDRAWAL = "Withdrawal";
+    public static final String TRANSACTION_TYPE_DEPOSIT = "Deposit";
+
 }
