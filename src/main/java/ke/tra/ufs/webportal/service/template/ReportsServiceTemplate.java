@@ -38,12 +38,11 @@ public class ReportsServiceTemplate implements ReportsService {
         ResponseWrapper responseWrapper = new ResponseWrapper();
         ReportData reportData = new ReportData();
 
-        List<Header> headerList = new ArrayList<>();
+
         List<Row> rowList = new ArrayList<>();
 
         //find all tmsDevice for a particular region
-        List<UfsGeographicalRegion> ufsGeographicalRegionList = ufsGeographicalRegionRepository.findAll();
-        Set<UfsGeographicalRegion> ufsGeographicalRegionSet = new HashSet(ufsGeographicalRegionList);
+        Iterable<UfsGeographicalRegion> ufsGeographicalRegionList = ufsGeographicalRegionRepository.findAll();
         Total total = new Total();
 
         /*
@@ -112,12 +111,12 @@ public class ReportsServiceTemplate implements ReportsService {
             Row rw = new Row();
             rw.setTransactionType(trans.getTxnName());
             List<Values> val = new ArrayList<>();
-
+            Set<Header> headerList = new HashSet<>();
             Values valueTotal = new Values();
 
             int totalCount = 0;
             //loop regions
-            for (UfsGeographicalRegion region : ufsGeographicalRegionSet) {
+            for (UfsGeographicalRegion region : ufsGeographicalRegionList) {
                 //Add Header title
                 Header header = new Header();
                 header.setTitle(region.getRegionName());
@@ -147,6 +146,8 @@ public class ReportsServiceTemplate implements ReportsService {
 
 
             }
+
+            reportData.setHeader(headerList);
             rw.setValues(val);
             rowList.add(rw);
         });
@@ -154,7 +155,6 @@ public class ReportsServiceTemplate implements ReportsService {
 
 //        rowList.add(totals);
         reportData.setRows(rowList);
-        reportData.setHeader(headerList);
 
         responseWrapper.setData(reportData);
 
