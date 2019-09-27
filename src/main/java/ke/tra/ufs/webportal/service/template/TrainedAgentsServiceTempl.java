@@ -1,5 +1,6 @@
 package ke.tra.ufs.webportal.service.template;
 
+import ke.axle.chassis.utils.LoggerService;
 import ke.tra.ufs.webportal.entities.UfsTrainedAgents;
 import ke.tra.ufs.webportal.entities.UfsTrainedAgentsBatch;
 import ke.tra.ufs.webportal.entities.wrapper.UfsTrainedAgentsUpload;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.List;
 
@@ -22,11 +24,13 @@ public class TrainedAgentsServiceTempl implements TrainedAgentsService {
 
     private final UfsTrainedAgentsRepository trainedAgentsRepository;
     private final TrainedAgentsBatchRepository trainedAgentsBatchRepository;
+    private final LoggerService loggerService;
     private final Logger log = LoggerFactory.getLogger(TrainedAgentsServiceTempl.class);
 
-    public TrainedAgentsServiceTempl(UfsTrainedAgentsRepository trainedAgentsRepository,TrainedAgentsBatchRepository trainedAgentsBatchRepository) {
+    public TrainedAgentsServiceTempl(UfsTrainedAgentsRepository trainedAgentsRepository, TrainedAgentsBatchRepository trainedAgentsBatchRepository, LoggerService loggerService) {
         this.trainedAgentsRepository = trainedAgentsRepository;
         this.trainedAgentsBatchRepository = trainedAgentsBatchRepository;
+        this.loggerService = loggerService;
     }
 
     @Override
@@ -56,6 +60,8 @@ public class TrainedAgentsServiceTempl implements TrainedAgentsService {
                 ufsTrainedAgents.setDescription(entity.getDescription());
                 ufsTrainedAgents.setTrainingDate(entity.getTrainingDate());
                 trainedAgentsRepository.save(ufsTrainedAgents);
+                loggerService.log("Successfully Created Trained Agents",
+                        UfsTrainedAgents.class.getSimpleName(), ufsTrainedAgents.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Creation");
             }
             batch.setProcessingStatus(AppConstants.STATUS_COMPLETED);
 
