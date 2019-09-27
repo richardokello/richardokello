@@ -11,4 +11,6 @@ import java.util.List;
 public interface UserRepository extends CrudRepository<UfsUser, Long> {
 
     public List<UfsUser> findByUserTypeIdAndIntrash(BigDecimal userTypeId, String intrash);
+
+    public UfsUser findByUserId(Long userId);
 }

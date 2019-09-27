@@ -32,6 +32,7 @@ import org.hibernate.annotations.GenericGenerator;
 @NamedQueries({
         @NamedQuery(name = "UfsGeographicalRegion.findAll", query = "SELECT u FROM UfsGeographicalRegion u")
         , @NamedQuery(name = "UfsGeographicalRegion.findById", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsGeographicalRegion.findByGeographicalId", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.id = :id")
         , @NamedQuery(name = "UfsGeographicalRegion.findByRegionName", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.regionName = :regionName")
         , @NamedQuery(name = "UfsGeographicalRegion.findByCode", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.code = :code")
         , @NamedQuery(name = "UfsGeographicalRegion.findByIsParent", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.isParent = :isParent")

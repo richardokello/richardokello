@@ -103,6 +103,7 @@ public class UfsCustomer implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
@@ -140,6 +141,12 @@ public class UfsCustomer implements Serializable {
     @ModifiableField
     @Column(name = "CUSTOMER_NAME")
     private String customerName;
+    @Column(name = "TERMINATION_REASON")
+    private String terminationReason;
+
+    @Column(name = "TERMINATION_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date terminationDate;
 
     public UfsCustomer() {
     }
@@ -311,6 +318,22 @@ public class UfsCustomer implements Serializable {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public String getTerminationReason() {
+        return terminationReason;
+    }
+
+    public void setTerminationReason(String terminationReason) {
+        this.terminationReason = terminationReason;
+    }
+
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
+
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
     }
 
     @Override

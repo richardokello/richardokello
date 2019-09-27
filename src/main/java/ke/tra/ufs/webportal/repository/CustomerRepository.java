@@ -13,4 +13,6 @@ public interface CustomerRepository extends CrudRepository<UfsCustomer,Long> {
     public List<UfsCustomer> findByIntrash(String intrash);
 
     public UfsCustomer findByCustomerId(Long id);
+
+    public List<UfsCustomer> findByActionAndActionStatus(String action, String actionStatus);
 }
