@@ -2,6 +2,7 @@ package ke.tra.ufs.webportal.resources;
 
 import io.swagger.annotations.ApiOperation;
 import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.exceptions.NotFoundException;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsBankBranches;
@@ -31,6 +32,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/trained-agents")
@@ -65,14 +67,34 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @Transactional
     @ApiOperation(value = "Creating Training Report")
-    public ResponseEntity<ResponseWrapper> create(@Valid UfsTrainedAgentWrapper trainedAgent) {
+    public ResponseEntity<ResponseWrapper> create(@Valid UfsTrainedAgentWrapper trainedAgent) throws NotFoundException {
         ResponseWrapper response = new ResponseWrapper();
 
            UfsTrainedAgents ufsTrainedAgents = new UfsTrainedAgents();
-           ufsTrainedAgents.setAgentName(this.customerService.findByCustomerId(trainedAgent.getCustomerId()).getCustomerName());
-           ufsTrainedAgents.setRegion(this.geographicalRegionService.findByGeographicalId(trainedAgent.getGeographicalRegionId()).getRegionName());
-           ufsTrainedAgents.setOutletName(this.customerOutletService.findByCustomerId(new BigDecimal(trainedAgent.getCustomerId())).getOutletName());
-           ufsTrainedAgents.setAgentSupervisor(this.userService.findByUserId(trainedAgent.getAgentSupervisorId()).getFullName());
+           if(Objects.nonNull(this.customerService.findByCustomerId(trainedAgent.getCustomerId()))){
+            ufsTrainedAgents.setAgentName(this.customerService.findByCustomerId(trainedAgent.getCustomerId()).getCustomerName());
+           }else{
+               throw  new NotFoundException("Customer Does Not Exist in The System");
+           }
+
+           if(Objects.nonNull(this.geographicalRegionService.findByGeographicalId(trainedAgent.getGeographicalRegionId()))){
+               ufsTrainedAgents.setRegion(this.geographicalRegionService.findByGeographicalId(trainedAgent.getGeographicalRegionId()).getRegionName());
+           }else{
+               throw  new NotFoundException("Region Does Not Exist in The System");
+           }
+
+           if(Objects.nonNull(this.customerOutletService.findByCustomerId(new BigDecimal(trainedAgent.getCustomerId())))){
+               ufsTrainedAgents.setOutletName(this.customerOutletService.findByCustomerId(new BigDecimal(trainedAgent.getCustomerId())).getOutletName());
+           }else{
+               throw  new NotFoundException("Outlet Does Not Exist in The System");
+           }
+
+           if(Objects.nonNull(this.userService.findByUserId(trainedAgent.getAgentSupervisorId()))){
+               ufsTrainedAgents.setAgentSupervisor(this.userService.findByUserId(trainedAgent.getAgentSupervisorId()).getFullName());
+           }else{
+               throw  new NotFoundException("Agent Supervisor Does Not Exist in The System");
+           }
+
            ufsTrainedAgents.setTitle(trainedAgent.getTitle());
            ufsTrainedAgents.setDescription(trainedAgent.getDescription());
            ufsTrainedAgents.setTrainingDate(trainedAgent.getTrainingDate());

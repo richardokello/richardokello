@@ -20,33 +20,33 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author kmwangi
  */
 @Entity
-@Table(name = "UFS_TRAINED_AGENTS_BATCH")
+@Table(name = "UFS_CUSTOMER_COMPLAINTS_BATCH")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsTrainedAgentsBatch.findAll", query = "SELECT u FROM UfsTrainedAgentsBatch u")
-    , @NamedQuery(name = "UfsTrainedAgentsBatch.findByBatchId", query = "SELECT u FROM UfsTrainedAgentsBatch u WHERE u.batchId = :batchId")
-    , @NamedQuery(name = "UfsTrainedAgentsBatch.findByTimeUploaded", query = "SELECT u FROM UfsTrainedAgentsBatch u WHERE u.timeUploaded = :timeUploaded")
-    , @NamedQuery(name = "UfsTrainedAgentsBatch.findByFileName", query = "SELECT u FROM UfsTrainedAgentsBatch u WHERE u.fileName = :fileName")
-    , @NamedQuery(name = "UfsTrainedAgentsBatch.findByFilePath", query = "SELECT u FROM UfsTrainedAgentsBatch u WHERE u.filePath = :filePath")
-    , @NamedQuery(name = "UfsTrainedAgentsBatch.findByProcessingStatus", query = "SELECT u FROM UfsTrainedAgentsBatch u WHERE u.processingStatus = :processingStatus")
-    , @NamedQuery(name = "UfsTrainedAgentsBatch.findByTimeCompleted", query = "SELECT u FROM UfsTrainedAgentsBatch u WHERE u.timeCompleted = :timeCompleted")})
-public class UfsTrainedAgentsBatch implements Serializable {
+    @NamedQuery(name = "UfsCustomerComplaintsBatch.findAll", query = "SELECT u FROM UfsCustomerComplaintsBatch u")
+    , @NamedQuery(name = "UfsCustomerComplaintsBatch.findByBatchId", query = "SELECT u FROM UfsCustomerComplaintsBatch u WHERE u.batchId = :batchId")
+    , @NamedQuery(name = "UfsCustomerComplaintsBatch.findByTimeUploaded", query = "SELECT u FROM UfsCustomerComplaintsBatch u WHERE u.timeUploaded = :timeUploaded")
+    , @NamedQuery(name = "UfsCustomerComplaintsBatch.findByFileName", query = "SELECT u FROM UfsCustomerComplaintsBatch u WHERE u.fileName = :fileName")
+    , @NamedQuery(name = "UfsCustomerComplaintsBatch.findByFilePath", query = "SELECT u FROM UfsCustomerComplaintsBatch u WHERE u.filePath = :filePath")
+    , @NamedQuery(name = "UfsCustomerComplaintsBatch.findByProcessingStatus", query = "SELECT u FROM UfsCustomerComplaintsBatch u WHERE u.processingStatus = :processingStatus")
+    , @NamedQuery(name = "UfsCustomerComplaintsBatch.findByTimeCompleted", query = "SELECT u FROM UfsCustomerComplaintsBatch u WHERE u.timeCompleted = :timeCompleted")})
+public class UfsCustomerComplaintsBatch implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @GenericGenerator(
-            name = "TRAINED_AGENTS_BATCH_SEQ",
+            name = "CUSTOMER_COMPLAINTS_BATCH_SEQ",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
-                    @Parameter(name = "sequence_name", value = "TRAINED_AGENTS_BATCH_SEQ")
+                    @Parameter(name = "sequence_name", value = "CUSTOMER_COMPLAINTS_BATCH_SEQ")
                     ,
                     @Parameter(name = "initial_value", value = "1")
                     ,
                     @Parameter(name = "increment_size", value = "1")
             }
     )
-    @GeneratedValue(generator = "TRAINED_AGENTS_BATCH_SEQ")
+    @GeneratedValue(generator = "CUSTOMER_COMPLAINTS_BATCH_SEQ")
     @Column(name = "BATCH_ID")
     private Long batchId;
     @Column(name = "TIME_UPLOADED",insertable = false,updatable = false)
@@ -68,10 +68,10 @@ public class UfsTrainedAgentsBatch implements Serializable {
     @ManyToOne
     private UfsUser uploadedBy;
 
-    public UfsTrainedAgentsBatch() {
+    public UfsCustomerComplaintsBatch() {
     }
 
-    public UfsTrainedAgentsBatch(Long batchId) {
+    public UfsCustomerComplaintsBatch(Long batchId) {
         this.batchId = batchId;
     }
 
@@ -141,10 +141,10 @@ public class UfsTrainedAgentsBatch implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UfsTrainedAgentsBatch)) {
+        if (!(object instanceof UfsCustomerComplaintsBatch)) {
             return false;
         }
-        UfsTrainedAgentsBatch other = (UfsTrainedAgentsBatch) object;
+        UfsCustomerComplaintsBatch other = (UfsCustomerComplaintsBatch) object;
         if ((this.batchId == null && other.batchId != null) || (this.batchId != null && !this.batchId.equals(other.batchId))) {
             return false;
         }
@@ -153,7 +153,7 @@ public class UfsTrainedAgentsBatch implements Serializable {
 
     @Override
     public String toString() {
-        return "ke.tra.ufs.webportal.entities.UfsTrainedAgentsBatch[ batchId=" + batchId + " ]";
+        return "ke.tra.ufs.webportal.entities.UfsCustomerComplaintsBatch[ batchId=" + batchId + " ]";
     }
     
 }

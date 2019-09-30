@@ -1,5 +1,6 @@
 package ke.tra.ufs.webportal.service.template;
 
+import ke.axle.chassis.utils.LoggerService;
 import ke.tra.ufs.webportal.entities.UfsGls;
 import ke.tra.ufs.webportal.entities.UfsGlsBatch;
 import ke.tra.ufs.webportal.repository.UfsGlsBatchRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,10 +26,12 @@ public class GlsBatchUploadServiceTemplate implements GlsBatchUploadService {
     private final UfsGlsRepository ufsGlsRepository;
     private final UfsGlsBatchRepository ufsGlsBatchRepository;
     private final Logger log = LoggerFactory.getLogger(GlsBatchUploadServiceTemplate.class);
+    private final LoggerService loggerService;
 
-    public GlsBatchUploadServiceTemplate(UfsGlsRepository ufsGlsRepository, UfsGlsBatchRepository ufsGlsBatchRepository) {
+    public GlsBatchUploadServiceTemplate(UfsGlsRepository ufsGlsRepository, UfsGlsBatchRepository ufsGlsBatchRepository, LoggerService loggerService) {
         this.ufsGlsRepository = ufsGlsRepository;
         this.ufsGlsBatchRepository = ufsGlsBatchRepository;
+        this.loggerService = loggerService;
     }
 
     @Override
@@ -55,14 +59,17 @@ public class GlsBatchUploadServiceTemplate implements GlsBatchUploadService {
                 ufsGls.setBankIds(entity.getBankIds());
                 ufsGls.setBankBranchIds(entity.getBankBranchIds());
                 ufsGls.setTenantIds(entity.getTenantIds());
+                ufsGlsRepository.save(ufsGls);
+                loggerService.log("Successfully Created Gls",
+                        UfsGls.class.getSimpleName(),ufsGls.getId() , ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Creation");
 
-                ufsGlsList.add(ufsGls);
 
                 success++;
             }
             ufsGlsRepository.saveAll(ufsGlsList);
 
             batch.setProcessingStatus(AppConstants.STATUS_COMPLETED);
+            batch.setTimeCompleted(new Date());
         } catch (IOException ex) {
             ex.printStackTrace();
             log.error(AppConstants.AUDIT_LOG, "Processing GLS Devices upload failed", ex);
