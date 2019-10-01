@@ -157,7 +157,7 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
 
     @Transactional
     @RequestMapping(method = RequestMethod.GET, path = "trained-agents-template.csv")
-    public ModelAndView exportGlsTemplate(HttpServletRequest request) {
+    public ModelAndView exportTrainedAgentsTemplate(HttpServletRequest request) {
         CsvFlexView view;
         String fileName = "Trained Agents Template";
         view = new CsvFlexView(TrainedAgentsDetails.class, new ArrayList(),

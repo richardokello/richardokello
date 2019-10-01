@@ -142,7 +142,7 @@ public class UfsCustomerComplaintsResource extends ChasisResource<UfsCustomerCom
 
     @org.springframework.transaction.annotation.Transactional
     @RequestMapping(method = RequestMethod.GET, path = "customer-complaints-template.csv")
-    public ModelAndView exportGlsTemplate(HttpServletRequest request) {
+    public ModelAndView exportCustomerComplaintTemplate(HttpServletRequest request) {
         CsvFlexView view;
         String fileName = "Customer Complaints Template";
         view = new CsvFlexView(CustomerComplaintsDetails.class, new ArrayList(),
