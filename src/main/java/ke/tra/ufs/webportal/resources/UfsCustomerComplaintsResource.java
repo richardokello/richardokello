@@ -8,6 +8,7 @@ import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsCustomerComplaints;
 import ke.tra.ufs.webportal.entities.UfsCustomerComplaintsBatch;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
+import ke.tra.ufs.webportal.entities.wrapper.CustomerComplaintsDetails;
 import ke.tra.ufs.webportal.entities.wrapper.TrainedAgentsDetails;
 import ke.tra.ufs.webportal.entities.wrapper.UfsCustomerComplaintsUpload;
 import ke.tra.ufs.webportal.entities.wrapper.UfsCustomerComplaintsWrapper;
@@ -144,7 +145,7 @@ public class UfsCustomerComplaintsResource extends ChasisResource<UfsCustomerCom
     public ModelAndView exportGlsTemplate(HttpServletRequest request) {
         CsvFlexView view;
         String fileName = "Customer Complaints Template";
-        view = new CsvFlexView(TrainedAgentsDetails.class, new ArrayList(),
+        view = new CsvFlexView(CustomerComplaintsDetails.class, new ArrayList(),
                 fileName);
         return new ModelAndView(view);
     }

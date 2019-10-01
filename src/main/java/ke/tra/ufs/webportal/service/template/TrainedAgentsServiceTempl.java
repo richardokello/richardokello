@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;

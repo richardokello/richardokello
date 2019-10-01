@@ -88,7 +88,7 @@ public class UfsCustomerComplaints implements Serializable {
     @Column(name = "ACTION_STATUS",insertable = false)
     private String actionStatus;
     @JoinColumn(name = "BATCH_ID", referencedColumnName = "BATCH_ID", updatable = false, insertable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne
     private UfsCustomerComplaintsBatch batchId;
 
     @Column(name = "BATCH_ID")
