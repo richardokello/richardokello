@@ -113,4 +113,9 @@ public class AppConstants {
     public static final String TRANSACTION_TYPE_WITHDRAWAL = "Withdrawal";
     public static final String TRANSACTION_TYPE_DEPOSIT = "Deposit";
 
+    //commission Type
+    public static final String COMMISSION_TYPE_PERCENTAGE = "Percentage";
+    public static final String COMMISSION_TYPE_FIXED_AMOUNT = "FixedAmount";
+    public static final String COMMISSION_TYPE_TIERED = "Tiered";
+
 }

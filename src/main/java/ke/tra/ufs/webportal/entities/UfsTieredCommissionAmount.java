@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import ke.axle.chassis.annotations.Unique;
@@ -72,23 +73,31 @@ public class UfsTieredCommissionAmount implements Serializable {
     @Column(name = "TIERED_VALUE")
     private long tieredValue;
     @Size(max = 20)
-    @Column(name = "ACTION")
+    @Column(name = "ACTION",insertable = false)
     private String action;
     @Size(max = 20)
     @Filter
-    @Column(name = "ACTION_STATUS")
+    @Column(name = "ACTION_STATUS",insertable = false)
     private String actionStatus;
     @Column(name = "CREATION_DATE",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
     @Size(max = 3)
-    @Column(name = "INTRASH")
+    @Column(name = "INTRASH",insertable = false)
     private String intrash;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
     private BigDecimal tenantIds;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "CLASS_ID",insertable = false,updatable = false)
+    private UfsCustomerClass customerClass;
+
+    @Column(name = "CLASS_ID")
+    private Long customerClassId;
 
 
     public UfsTieredCommissionAmount() {
@@ -147,6 +156,14 @@ public class UfsTieredCommissionAmount implements Serializable {
 
     public String getAction() {
         return action;
+    }
+
+    public UfsCustomerClass getCustomerClass() {
+        return customerClass;
+    }
+
+    public void setCustomerClass(UfsCustomerClass customerClass) {
+        this.customerClass = customerClass;
     }
 
     public void setAction(String action) {
@@ -217,5 +234,12 @@ public class UfsTieredCommissionAmount implements Serializable {
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsTieredCommissionAmount[ id=" + id + " ]";
     }
-    
+
+    public Long getCustomerClassId() {
+        return customerClassId;
+    }
+
+    public void setCustomerClassId(Long customerClassId) {
+        this.customerClassId = customerClassId;
+    }
 }

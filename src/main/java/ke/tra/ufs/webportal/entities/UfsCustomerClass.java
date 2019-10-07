@@ -50,7 +50,6 @@ public class UfsCustomerClass implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 4000)
     @Column(name = "CLASS_VALUES")
     private String classValues;
@@ -105,6 +104,15 @@ public class UfsCustomerClass implements Serializable {
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<UfsCustomerClass> customerClassesList;
 
+    @OneToMany(mappedBy = "customerClass")
+    private List<UfsTieredCommissionAmount> tieredId;
+
+    @Column(name = "AMOUNT")
+    private BigDecimal amount;
+
+    @Column(name = "PERCENTAGE")
+    private BigDecimal percentage;
+
     public UfsCustomerClass() {
     }
 
@@ -118,6 +126,14 @@ public class UfsCustomerClass implements Serializable {
         this.classValues = classValues;
     }
 
+    public List<UfsTieredCommissionAmount> getTieredId() {
+        return tieredId;
+    }
+
+    public void setTieredId(List<UfsTieredCommissionAmount> tieredId) {
+        this.tieredId = tieredId;
+    }
+
     public Long getId() {
         return id;
     }
@@ -125,7 +141,6 @@ public class UfsCustomerClass implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public String getClassValues() {
         return classValues;
@@ -135,6 +150,21 @@ public class UfsCustomerClass implements Serializable {
         this.classValues = classValues;
     }
 
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(BigDecimal percentage) {
+        this.percentage = percentage;
+    }
 
     public String getActionStatus() {
         return actionStatus;

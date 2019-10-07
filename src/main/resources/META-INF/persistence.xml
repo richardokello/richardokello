@@ -36,6 +36,8 @@
     <class>ke.tra.ufs.webportal.entities.VwAlltxnsSuccessfailed</class>
     <class>ke.tra.ufs.webportal.entities.UfsGlsBatch</class>
     <class>ke.tra.ufs.webportal.entities.UfsTrainedAgents</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerClassMap</class>
+    <class>ke.tra.ufs.webportal.entities.Tiered</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.1.172:1521:trcm"/>
       <property name="javax.persistence.jdbc.user" value="UFS_SMART_SUITE"/>
