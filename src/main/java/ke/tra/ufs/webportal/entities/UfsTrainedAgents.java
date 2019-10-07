@@ -85,6 +85,15 @@ public class UfsTrainedAgents implements Serializable {
     @Searchable
     @Column(name = "DESCRIPTION")
     private String description;
+    @JoinColumn(name = "BATCH_ID", referencedColumnName = "BATCH_ID", updatable = false, insertable = false)
+    @ManyToOne
+    private UfsTrainedAgentsBatch batchId;
+
+    @Column(name = "BATCH_ID")
+    private Long batchIds;
+
+    @Column(name = "BATCH_ID", updatable = false, insertable = false)
+    private String batchIdsStr;
 
     public UfsTrainedAgents() {
     }
@@ -188,6 +197,30 @@ public class UfsTrainedAgents implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public UfsTrainedAgentsBatch getBatchId() {
+        return batchId;
+    }
+
+    public void setBatchId(UfsTrainedAgentsBatch batchId) {
+        this.batchId = batchId;
+    }
+
+    public Long getBatchIds() {
+        return batchIds;
+    }
+
+    public void setBatchIds(Long batchIds) {
+        this.batchIds = batchIds;
+    }
+
+    public String getBatchIdsStr() {
+        return batchIdsStr;
+    }
+
+    public void setBatchIdsStr(String batchIdsStr) {
+        this.batchIdsStr = batchIdsStr;
     }
 
     @Override
