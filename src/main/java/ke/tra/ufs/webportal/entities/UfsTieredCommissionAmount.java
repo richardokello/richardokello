@@ -91,15 +91,6 @@ public class UfsTieredCommissionAmount implements Serializable {
     @Column(name = "TENANT_ID")
     private BigDecimal tenantIds;
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "CLASS_ID",insertable = false,updatable = false)
-    private UfsCustomerClass customerClass;
-
-    @Column(name = "CLASS_ID")
-    private Long customerClassId;
-
-
     public UfsTieredCommissionAmount() {
     }
 
@@ -156,14 +147,6 @@ public class UfsTieredCommissionAmount implements Serializable {
 
     public String getAction() {
         return action;
-    }
-
-    public UfsCustomerClass getCustomerClass() {
-        return customerClass;
-    }
-
-    public void setCustomerClass(UfsCustomerClass customerClass) {
-        this.customerClass = customerClass;
     }
 
     public void setAction(String action) {
@@ -235,11 +218,4 @@ public class UfsTieredCommissionAmount implements Serializable {
         return "ke.tra.ufs.webportal.entities.UfsTieredCommissionAmount[ id=" + id + " ]";
     }
 
-    public Long getCustomerClassId() {
-        return customerClassId;
-    }
-
-    public void setCustomerClassId(Long customerClassId) {
-        this.customerClassId = customerClassId;
-    }
 }

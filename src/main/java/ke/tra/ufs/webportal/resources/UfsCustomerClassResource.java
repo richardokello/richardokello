@@ -23,34 +23,11 @@ import javax.validation.Valid;
 @RequestMapping("/customer-class")
 public class UfsCustomerClassResource extends ChasisResource<UfsCustomerClass, Long, UfsEdittedRecord> {
 
-    private final UfsTieredCommissionAmountRepository repository;
 
-    public UfsCustomerClassResource(LoggerService loggerService, EntityManager entityManager, UfsTieredCommissionAmountRepository repository) {
+
+    public UfsCustomerClassResource(LoggerService loggerService, EntityManager entityManager) {
         super(loggerService, entityManager);
-        this.repository = repository;
     }
 
-    @Override
-    @Transactional
-    public ResponseEntity<ResponseWrapper<UfsCustomerClass>> create(@Valid @RequestBody UfsCustomerClass ufsCustomerClass) {
-        ResponseEntity<ResponseWrapper<UfsCustomerClass>> response = super.create(ufsCustomerClass);
-        log.info("TIER SIZE " + ufsCustomerClass.getTieredId().size() );
-        if (!response.getStatusCode().equals(HttpStatus.CREATED) ||ufsCustomerClass.getTieredId().size() == 0 ) {
-            return response;
-        }
 
-            UfsCustomerClass customerClass = response.getBody().getData();
-            ufsCustomerClass.getTieredId().forEach(x -> {
-                UfsTieredCommissionAmount ufsTieredCommissionAmount = new UfsTieredCommissionAmount();
-                ufsTieredCommissionAmount.setLimitType(x.getLimitType());
-                ufsTieredCommissionAmount.setLowerLimit(x.getLowerLimit());
-                ufsTieredCommissionAmount.setUpperLimit(x.getUpperLimit());
-                ufsTieredCommissionAmount.setTieredValue(x.getTieredValue());
-                ufsTieredCommissionAmount.setCustomerClassId(customerClass.getId());
-
-                repository.save(ufsTieredCommissionAmount);
-            });
-
-        return response;
-    }
 }
