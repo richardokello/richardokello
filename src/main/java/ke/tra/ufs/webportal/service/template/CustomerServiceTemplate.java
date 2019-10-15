@@ -1,8 +1,10 @@
 package ke.tra.ufs.webportal.service.template;
 
 import ke.tra.ufs.webportal.entities.UfsCustomer;
+import ke.tra.ufs.webportal.entities.UfsCustomerOutlet;
 import ke.tra.ufs.webportal.entities.UfsCustomerOwners;
 import ke.tra.ufs.webportal.repository.CustomerRepository;
+import ke.tra.ufs.webportal.repository.UfsCustomerOutletRepository;
 import ke.tra.ufs.webportal.repository.UfsCustomerOwnerRepository;
 import ke.tra.ufs.webportal.service.CustomerService;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,13 @@ public class CustomerServiceTemplate implements CustomerService {
 
     private  final CustomerRepository customerRepository;
     private final UfsCustomerOwnerRepository customerOwnerRepository;
+    private final UfsCustomerOutletRepository customerOutletRepository;
 
-    public CustomerServiceTemplate(CustomerRepository customerRepository,UfsCustomerOwnerRepository customerOwnerRepository) {
+    public CustomerServiceTemplate(CustomerRepository customerRepository,UfsCustomerOwnerRepository customerOwnerRepository,
+                                   UfsCustomerOutletRepository customerOutletRepository) {
         this.customerRepository = customerRepository;
         this.customerOwnerRepository = customerOwnerRepository;
+        this.customerOutletRepository = customerOutletRepository;
     }
 
     @Override
@@ -40,5 +45,10 @@ public class CustomerServiceTemplate implements CustomerService {
     @Override
     public List<UfsCustomerOwners> getAllCustomerOwners() {
         return ((List<UfsCustomerOwners>) this.customerOwnerRepository.findAll());
+    }
+
+    @Override
+    public UfsCustomerOutlet findByOutletCode(String outletCode) {
+        return customerOutletRepository.findByOutletCode(outletCode);
     }
 }
