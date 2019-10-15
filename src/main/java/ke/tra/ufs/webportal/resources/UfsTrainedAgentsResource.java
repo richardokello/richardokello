@@ -5,11 +5,9 @@ import ke.axle.chassis.ChasisResource;
 import ke.axle.chassis.exceptions.NotFoundException;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ResponseWrapper;
-import ke.tra.ufs.webportal.entities.UfsBankBranches;
-import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
-import ke.tra.ufs.webportal.entities.UfsTrainedAgents;
-import ke.tra.ufs.webportal.entities.UfsTrainedAgentsBatch;
+import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.entities.wrapper.TrainedAgentsDetails;
+import ke.tra.ufs.webportal.entities.wrapper.UfsTrainedAgentMobileWrapper;
 import ke.tra.ufs.webportal.entities.wrapper.UfsTrainedAgentWrapper;
 import ke.tra.ufs.webportal.entities.wrapper.UfsTrainedAgentsUpload;
 import ke.tra.ufs.webportal.repository.UfsSysConfigRepository;
@@ -105,6 +103,57 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
            response.setCode(201);
            response.setMessage("Agents Trained Created Successfully");
            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+    }
+
+
+
+    @RequestMapping(value = "/mobile/add",method = RequestMethod.POST)
+    @Transactional
+    @ApiOperation(value = "Creating Training Agent Report")
+    public ResponseEntity<ResponseWrapper> createTrainedAgentsFromMobile(@Valid UfsTrainedAgentMobileWrapper trainedAgent) throws NotFoundException {
+        ResponseWrapper response = new ResponseWrapper();
+
+        UfsTrainedAgents ufsTrainedAgents = new UfsTrainedAgents();
+
+        if(Objects.nonNull(this.customerService.findByOutletCode(trainedAgent.getOutletCode()))){
+            UfsCustomerOutlet customerOutletDb = this.customerService.findByOutletCode(trainedAgent.getOutletCode());
+            //save customer Name
+            if(Objects.nonNull(this.customerService.findByCustomerId(customerOutletDb.getCustomerIds().longValue()))){
+                ufsTrainedAgents.setAgentName(this.customerService.findByCustomerId(customerOutletDb.getCustomerIds().longValue()).getCustomerName());
+            }else{
+                throw  new NotFoundException("Customer Does Not Exist in The System");
+            }
+
+            //save Geographical Region
+            if(Objects.nonNull(this.geographicalRegionService.findByGeographicalId(customerOutletDb.getGeographicalRegionIds()))){
+                ufsTrainedAgents.setRegion(this.geographicalRegionService.findByGeographicalId(customerOutletDb.getGeographicalRegionIds()).getRegionName());
+            }else{
+                throw  new NotFoundException("Region Does Not Exist in The System");
+            }
+            //save outlet name
+           ufsTrainedAgents.setOutletName(customerOutletDb.getOutletName());
+
+            //save agent supervisor
+            if(Objects.nonNull(this.userService.findByUserId(trainedAgent.getAgentSupervisorId()))){
+                ufsTrainedAgents.setAgentSupervisor(this.userService.findByUserId(trainedAgent.getAgentSupervisorId()).getFullName());
+            }else{
+                throw  new NotFoundException("Agent Supervisor Does Not Exist in The System");
+            }
+        }else{
+            throw  new NotFoundException("Outlet Code Does Not Exist in The System");
+        }
+
+        ufsTrainedAgents.setTitle(trainedAgent.getTitle());
+        ufsTrainedAgents.setDescription(trainedAgent.getDescription());
+        ufsTrainedAgents.setTrainingDate(trainedAgent.getTrainingDate());
+        trainedAgentsService.save(ufsTrainedAgents);
+        loggerService.log("Successfully Created Trained Agents",
+                UfsTrainedAgents.class.getSimpleName(), ufsTrainedAgents.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Creation");
+        response.setData(ufsTrainedAgents);
+        response.setCode(201);
+        response.setMessage("Agents Trained Created Successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
 
