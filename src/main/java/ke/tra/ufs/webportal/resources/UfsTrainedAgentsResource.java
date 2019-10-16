@@ -18,6 +18,7 @@ import ke.tra.ufs.webportal.utils.exports.CsvFlexView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -111,7 +112,7 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
     @RequestMapping(value = "/mobile/add",method = RequestMethod.POST)
     @Transactional
     @ApiOperation(value = "Creating Training Agent Report")
-    public ResponseEntity<ResponseWrapper> createTrainedAgentsFromMobile(@Valid UfsTrainedAgentMobileWrapper trainedAgent) throws NotFoundException {
+    public ResponseEntity<ResponseWrapper> createTrainedAgentsFromMobile(@Valid @RequestBody UfsTrainedAgentMobileWrapper trainedAgent) throws NotFoundException {
         ResponseWrapper response = new ResponseWrapper();
 
         UfsTrainedAgents ufsTrainedAgents = new UfsTrainedAgents();
@@ -148,8 +149,8 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
         ufsTrainedAgents.setDescription(trainedAgent.getDescription());
         ufsTrainedAgents.setTrainingDate(trainedAgent.getTrainingDate());
         trainedAgentsService.save(ufsTrainedAgents);
-        loggerService.log("Successfully Created Trained Agents",
-                UfsTrainedAgents.class.getSimpleName(), ufsTrainedAgents.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Creation");
+//        loggerService.log("Successfully Created Trained Agents",
+//                UfsTrainedAgents.class.getSimpleName(), ufsTrainedAgents.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Creation");
         response.setData(ufsTrainedAgents);
         response.setCode(201);
         response.setMessage("Agents Trained Created Successfully");
