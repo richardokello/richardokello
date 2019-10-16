@@ -149,8 +149,8 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
         ufsTrainedAgents.setDescription(trainedAgent.getDescription());
         ufsTrainedAgents.setTrainingDate(trainedAgent.getTrainingDate());
         trainedAgentsService.save(ufsTrainedAgents);
-//        loggerService.log("Successfully Created Trained Agents",
-//                UfsTrainedAgents.class.getSimpleName(), ufsTrainedAgents.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Creation");
+        loggerService.log("Successfully Created Trained Agents",
+                UfsTrainedAgents.class.getSimpleName(), ufsTrainedAgents.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Creation");
         response.setData(ufsTrainedAgents);
         response.setCode(201);
         response.setMessage("Agents Trained Created Successfully");
