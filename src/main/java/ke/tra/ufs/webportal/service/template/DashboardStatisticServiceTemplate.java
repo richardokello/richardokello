@@ -22,9 +22,9 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
 
-    public DashboardStatisticServiceTemplate(CustomerRepository customerRepository,UfsBankBranchesRepository bankBranchesRepository,
-                                             UfsBankRegionRepository bankRegionRepository,TmsDeviceRepository tmsDeviceRepository,
-                                             UserRepository userRepository,UfsCustomerOutletRepository customerOutletRepository,
+    public DashboardStatisticServiceTemplate(CustomerRepository customerRepository, UfsBankBranchesRepository bankBranchesRepository,
+                                             UfsBankRegionRepository bankRegionRepository, TmsDeviceRepository tmsDeviceRepository,
+                                             UserRepository userRepository, UfsCustomerOutletRepository customerOutletRepository,
                                              UserTypeRepository userTypeRepository) {
         this.customerRepository = customerRepository;
         this.bankBranchesRepository = bankBranchesRepository;
@@ -68,7 +68,7 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
     private Long getTotalTypeUsers(String userTypeName, String intrash) {
 
         UfsUserType userType = userTypeRepository.findByUserType(userTypeName);
-        List<UfsUser> resultList = userRepository.findByUserTypeIdAndIntrash(userType.getTypeId(),intrash);
+        List<UfsUser> resultList = userRepository.findByUserTypeIdAndIntrash(userType.getTypeId(), intrash);
         Integer size = resultList.size();
         return size.longValue();
 
@@ -78,16 +78,16 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
     public List<DashboardItemsWrapper> getDashboardStatistics() {
 
         List<DashboardItemsWrapper> single = new ArrayList<>();
-        single.add(new DashboardItemsWrapper("Total Customers",getTotalAgents(AppConstants.NO)));
-        single.add(new DashboardItemsWrapper("Total Bank Branches",getTotalBankBranches(AppConstants.NO)));
-        single.add(new DashboardItemsWrapper("Total Bank Regions",getTotalBankRegions(AppConstants.NO)));
-        single.add(new DashboardItemsWrapper("Agents Assigned Device",getTotalAssignedDeviceAgents(AppConstants.NO)));
-        single.add(new DashboardItemsWrapper("Total Outlets",getTotalOutlets(AppConstants.NO)));
-        single.add(new DashboardItemsWrapper("Agent Supervisors",getTotalTypeUsers(AppConstants.USER_TYPE_AGENT_SUPERVISOR,AppConstants.NO)));
-        single.add(new DashboardItemsWrapper("BackOffice Users",getTotalTypeUsers(AppConstants.USER_TYPE_BACKOFFICE_USER,AppConstants.NO)));
-        single.add(new DashboardItemsWrapper("Head Of Distribution",getTotalTypeUsers(AppConstants.USER_TYPE_HEAD_OF_DISTRIBUTION,AppConstants.NO)));
-        single.add(new DashboardItemsWrapper("Branch Managers",getTotalTypeUsers(AppConstants.USER_TYPE_BRANCH_MANAGER,AppConstants.NO)));
-        single.add(new DashboardItemsWrapper("Regional Managers",getTotalTypeUsers(AppConstants.USER_TYPE_REGIONAL_MANAGER,AppConstants.NO)));
+        single.add(new DashboardItemsWrapper("Total Customers", getTotalAgents(AppConstants.NO), "/agency-webportal/customers"));
+        single.add(new DashboardItemsWrapper("Total Bank Branches", getTotalBankBranches(AppConstants.NO), "/agency-webportal/bank-branches"));
+        single.add(new DashboardItemsWrapper("Total Bank Regions", getTotalBankRegions(AppConstants.NO), "/agency-webportal/bank-regions"));
+        single.add(new DashboardItemsWrapper("Agents Assigned Device", getTotalAssignedDeviceAgents(AppConstants.NO), "/devices/list"));
+        single.add(new DashboardItemsWrapper("Total Outlets", getTotalOutlets(AppConstants.NO), "/agency-webportal/customers"));
+        single.add(new DashboardItemsWrapper("Agent Supervisors", getTotalTypeUsers(AppConstants.USER_TYPE_AGENT_SUPERVISOR, AppConstants.NO), "/agency-webportal/customers"));
+        single.add(new DashboardItemsWrapper("BackOffice Users", getTotalTypeUsers(AppConstants.USER_TYPE_BACKOFFICE_USER, AppConstants.NO), "/agency-webportal/customers"));
+        single.add(new DashboardItemsWrapper("Head Of Distribution", getTotalTypeUsers(AppConstants.USER_TYPE_HEAD_OF_DISTRIBUTION, AppConstants.NO), "/agency-webportal/customers"));
+        single.add(new DashboardItemsWrapper("Branch Managers", getTotalTypeUsers(AppConstants.USER_TYPE_BRANCH_MANAGER, AppConstants.NO), "/agency-webportal/customers"));
+        single.add(new DashboardItemsWrapper("Regional Managers", getTotalTypeUsers(AppConstants.USER_TYPE_REGIONAL_MANAGER, AppConstants.NO), "/agency-webportal/customers"));
         return single;
     }
 }
