@@ -103,7 +103,7 @@ public class UfsBankRegion implements Serializable {
     @TreeRoot
     private Long parentIds;
     @Column(name = "TENANT_ID")
-    private Long tenantIds;
+    private String tenantIds;
     @Transient
     private List<UfsBankRegion> children;
     @Transient
@@ -193,11 +193,11 @@ public class UfsBankRegion implements Serializable {
         this.parentIds = parentIds;
     }
 
-    public Long getTenantIds() {
+    public String getTenantIds() {
         return tenantIds;
     }
 
-    public void setTenantIds(Long tenantIds) {
+    public void setTenantIds(String tenantIds) {
         this.tenantIds = tenantIds;
     }
 

@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface UfsBankRegionRepository extends CrudRepository<UfsBankRegion, BigDecimal> {
 
-    public List<UfsBankRegion> findByIntrash(String intrash);
+    List<UfsBankRegion> findByIntrash(String intrash);
 
 }
