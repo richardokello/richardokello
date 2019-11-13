@@ -84,7 +84,7 @@ public class UfsCustomerType implements Serializable {
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne
     @JsonIgnore
     private UfsOrganizationUnits tenantId;

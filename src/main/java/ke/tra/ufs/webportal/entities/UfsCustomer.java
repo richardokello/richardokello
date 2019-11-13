@@ -30,34 +30,33 @@ import ke.axle.chassis.annotations.ModifiableField;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
- *
  * @author Tracom
  */
 @Entity
 @Table(name = "UFS_CUSTOMER")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsCustomer.findAll", query = "SELECT u FROM UfsCustomer u"),
-    @NamedQuery(name = "UfsCustomer.findById", query = "SELECT u FROM UfsCustomer u WHERE u.id = :id"),
-    @NamedQuery(name = "UfsCustomer.findByCustomerId", query = "SELECT u FROM UfsCustomer u WHERE u.id = :id"),
-    @NamedQuery(name = "UfsCustomer.findByAccountNumber", query = "SELECT u FROM UfsCustomer u WHERE u.accountNumber = :accountNumber"),
-    @NamedQuery(name = "UfsCustomer.findByPin", query = "SELECT u FROM UfsCustomer u WHERE u.pin = :pin"),
-    @NamedQuery(name = "UfsCustomer.findByLocalRegNumber", query = "SELECT u FROM UfsCustomer u WHERE u.localRegNumber = :localRegNumber"),
-    @NamedQuery(name = "UfsCustomer.findByDateIssued", query = "SELECT u FROM UfsCustomer u WHERE u.dateIssued = :dateIssued"),
-    @NamedQuery(name = "UfsCustomer.findByValidTo", query = "SELECT u FROM UfsCustomer u WHERE u.validTo = :validTo"),
-    @NamedQuery(name = "UfsCustomer.findByAddress", query = "SELECT u FROM UfsCustomer u WHERE u.address = :address"),
-    @NamedQuery(name = "UfsCustomer.findByPhonenumber", query = "SELECT u FROM UfsCustomer u WHERE u.phonenumber = :phonenumber"),
-    @NamedQuery(name = "UfsCustomer.findByCreatedAt", query = "SELECT u FROM UfsCustomer u WHERE u.createdAt = :createdAt"),
-    @NamedQuery(name = "UfsCustomer.findByAction", query = "SELECT u FROM UfsCustomer u WHERE u.action = :action"),
-    @NamedQuery(name = "UfsCustomer.findByActionStatus", query = "SELECT u FROM UfsCustomer u WHERE u.actionStatus = :actionStatus"),
-    @NamedQuery(name = "UfsCustomer.findByIntrash", query = "SELECT u FROM UfsCustomer u WHERE u.intrash = :intrash"),
-    @NamedQuery(name = "UfsCustomer.findByBusinessLicenceNumber", query = "SELECT u FROM UfsCustomer u WHERE u.businessLicenceNumber = :businessLicenceNumber")})
+        @NamedQuery(name = "UfsCustomer.findAll", query = "SELECT u FROM UfsCustomer u"),
+        @NamedQuery(name = "UfsCustomer.findById", query = "SELECT u FROM UfsCustomer u WHERE u.id = :id"),
+        @NamedQuery(name = "UfsCustomer.findByCustomerId", query = "SELECT u FROM UfsCustomer u WHERE u.id = :id"),
+        @NamedQuery(name = "UfsCustomer.findByAccountNumber", query = "SELECT u FROM UfsCustomer u WHERE u.accountNumber = :accountNumber"),
+        @NamedQuery(name = "UfsCustomer.findByPin", query = "SELECT u FROM UfsCustomer u WHERE u.pin = :pin"),
+        @NamedQuery(name = "UfsCustomer.findByLocalRegNumber", query = "SELECT u FROM UfsCustomer u WHERE u.localRegNumber = :localRegNumber"),
+        @NamedQuery(name = "UfsCustomer.findByDateIssued", query = "SELECT u FROM UfsCustomer u WHERE u.dateIssued = :dateIssued"),
+        @NamedQuery(name = "UfsCustomer.findByValidTo", query = "SELECT u FROM UfsCustomer u WHERE u.validTo = :validTo"),
+        @NamedQuery(name = "UfsCustomer.findByAddress", query = "SELECT u FROM UfsCustomer u WHERE u.address = :address"),
+        @NamedQuery(name = "UfsCustomer.findByPhonenumber", query = "SELECT u FROM UfsCustomer u WHERE u.phonenumber = :phonenumber"),
+        @NamedQuery(name = "UfsCustomer.findByCreatedAt", query = "SELECT u FROM UfsCustomer u WHERE u.createdAt = :createdAt"),
+        @NamedQuery(name = "UfsCustomer.findByAction", query = "SELECT u FROM UfsCustomer u WHERE u.action = :action"),
+        @NamedQuery(name = "UfsCustomer.findByActionStatus", query = "SELECT u FROM UfsCustomer u WHERE u.actionStatus = :actionStatus"),
+        @NamedQuery(name = "UfsCustomer.findByIntrash", query = "SELECT u FROM UfsCustomer u WHERE u.intrash = :intrash"),
+        @NamedQuery(name = "UfsCustomer.findByBusinessLicenceNumber", query = "SELECT u FROM UfsCustomer u WHERE u.businessLicenceNumber = :businessLicenceNumber")})
 public class UfsCustomer implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-        @GenericGenerator(
+    @GenericGenerator(
             name = "UFS_CUSTOMER_SEQ",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
@@ -99,7 +98,7 @@ public class UfsCustomer implements Serializable {
     @ModifiableField
     @Column(name = "PHONENUMBER")
     private String phonenumber;
-    @Column(name = "CREATED_AT",insertable = false,updatable = false)
+    @Column(name = "CREATED_AT", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Size(max = 15)
@@ -117,21 +116,21 @@ public class UfsCustomer implements Serializable {
     @ModifiableField
     @Column(name = "BUSINESS_LICENCE_NUMBER")
     private String businessLicenceNumber;
-    @JoinColumn(name = "CLASS_TYPE_ID", referencedColumnName = "ID",insertable = false,updatable = false)
+    @JoinColumn(name = "CLASS_TYPE_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     //@JsonIgnore
     private UfsCustomerClass classTypeId;
     @ModifiableField
     @Column(name = "CLASS_TYPE_ID")
     private BigDecimal classTypeIds;
-    @JoinColumn(name = "GEOGRAPHICAL_REG_ID", referencedColumnName = "ID",insertable = false,updatable = false)
+    @JoinColumn(name = "GEOGRAPHICAL_REG_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     //@JsonIgnore
     private UfsGeographicalRegion geographicalRegId;
     @Column(name = "GEOGRAPHICAL_REG_ID")
     @ModifiableField
     private BigDecimal geographicalRegIds;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID",insertable = false,updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne
     @JsonIgnore
     private UfsOrganizationUnits tenantId;
@@ -360,5 +359,5 @@ public class UfsCustomer implements Serializable {
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomer[ id=" + id + " ]";
     }
-    
+
 }

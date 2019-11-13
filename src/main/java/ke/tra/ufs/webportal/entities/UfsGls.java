@@ -75,7 +75,7 @@ public class UfsGls implements Serializable {
     @Size(min = 1, max = 3)
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID",insertable = false, updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsOrganizationUnits tenantId;

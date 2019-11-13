@@ -5,6 +5,10 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import ke.axle.chassis.annotations.ChasisUUID;
+import ke.axle.chassis.annotations.TreeRoot;
+import ke.tra.ufs.webportal.service.template.BeanUtil;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -14,22 +18,17 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import ke.axle.chassis.annotations.Filter;
-
-import ke.axle.chassis.annotations.TreeRoot;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_ORGANIZATION_UNITS", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_ORGANIZATION_UNITS")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsOrganizationUnits.findAll", query = "SELECT u FROM UfsOrganizationUnits u")
-        , @NamedQuery(name = "UfsOrganizationUnits.findById", query = "SELECT u FROM UfsOrganizationUnits u WHERE u.id = :id")
         , @NamedQuery(name = "UfsOrganizationUnits.findByName", query = "SELECT u FROM UfsOrganizationUnits u WHERE u.name = :name")
         , @NamedQuery(name = "UfsOrganizationUnits.findByIsParent", query = "SELECT u FROM UfsOrganizationUnits u WHERE u.isParent = :isParent")
         , @NamedQuery(name = "UfsOrganizationUnits.findByAction", query = "SELECT u FROM UfsOrganizationUnits u WHERE u.action = :action")
@@ -44,18 +43,11 @@ public class UfsOrganizationUnits implements Serializable {
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
-    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private Set<UfsGls> ufsGlsSet;
-    @OneToMany(mappedBy = "tenantId")
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private Collection<UfsCustomer> ufsCustomerCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsBanks> ufsBanksSet;
@@ -90,19 +82,9 @@ public class UfsOrganizationUnits implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GenericGenerator(
-            name = "UFS_ORGANIZATION_UNITS_SEQ",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_ORGANIZATION_UNITS_SEQ"),
-                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
-                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
-            }
-    )
-
-    @GeneratedValue(generator = "UFS_ORGANIZATION_UNITS_SEQ")
-    @Column(name = "ID")
-    private BigDecimal id;
+    @ChasisUUID
+    @Column(name = "U_UID")
+    private String uuid;
     @Column(name = "IS_PARENT")
     private Short isParent;
     @OneToMany(mappedBy = "tenantId")
@@ -121,7 +103,7 @@ public class UfsOrganizationUnits implements Serializable {
     @OneToMany(mappedBy = "parentId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<UfsOrganizationUnits> ufsOrganizationUnitsList;
-    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "PARENT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsOrganizationUnits parentId;
@@ -132,21 +114,27 @@ public class UfsOrganizationUnits implements Serializable {
     private List<UfsOrganizationUnits> children;
     @Column(name = "PARENT_ID")
     @TreeRoot
-    private BigDecimal parentIds;
+    private String parentIds;
+    @Transient
+    private String text;
+    @Transient
+    private UfsOrganizationHierarchy currentLevelTenant;
+    @Transient
+    private UfsOrganizationHierarchy nextLevelTenant;
 
     public UfsOrganizationUnits() {
     }
 
-    public UfsOrganizationUnits(BigDecimal id) {
-        this.id = id;
+    public UfsOrganizationUnits(String uuid) {
+        this.uuid = uuid;
     }
 
-    public BigDecimal getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(BigDecimal id) {
-        this.id = id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public Short getIsParent() {
@@ -217,11 +205,11 @@ public class UfsOrganizationUnits implements Serializable {
         this.ufsUserList = ufsUserList;
     }
 
-    public BigDecimal getParentIds() {
+    public String getParentIds() {
         return parentIds;
     }
 
-    public void setParentIds(BigDecimal parentIds) {
+    public void setParentIds(String parentIds) {
         this.parentIds = parentIds;
     }
 
@@ -233,10 +221,25 @@ public class UfsOrganizationUnits implements Serializable {
         this.levelIds = levelIds;
     }
 
+    public String getText() {
+        try {
+            String _text = this.getName();
+            _text += "       :     " + this.getLevelId().getLevelName();
+            return _text;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (uuid != null ? uuid.hashCode() : 0);
         return hash;
     }
 
@@ -247,15 +250,31 @@ public class UfsOrganizationUnits implements Serializable {
             return false;
         }
         UfsOrganizationUnits other = (UfsOrganizationUnits) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.uuid == null && other.uuid != null) || (this.uuid != null && !this.uuid.equals(other.uuid))) {
             return false;
         }
         return true;
     }
 
+    public UfsOrganizationHierarchy getCurrentLevelTenant() {
+        return getLevelId();
+    }
+
+    public void setCurrentLevelTenant(UfsOrganizationHierarchy currentLevelTenant) {
+        this.currentLevelTenant = currentLevelTenant;
+    }
+
+    public UfsOrganizationHierarchy getNextLevelTenant() {
+        return nextLevelTenant;
+    }
+
+    public void setNextLevelTenant(UfsOrganizationHierarchy nextLevelTenant) {
+        this.nextLevelTenant = nextLevelTenant;
+    }
+
     @Override
     public String toString() {
-        return "ke.tracom.ufs.entities.UfsOrganizationUnits[ id=" + id + " ]";
+        return "ke.tracom.ufs.entities.UfsOrganizationUnits[ id=" + uuid + " ]";
     }
 
 
@@ -365,28 +384,6 @@ public class UfsOrganizationUnits implements Serializable {
         this.ufsBanksSet = ufsBanksSet;
     }
 
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsCustomer> getUfsCustomerCollection() {
-        return ufsCustomerCollection;
-    }
-
-    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
-        this.ufsCustomerCollection = ufsCustomerCollection;
-    }
-
-
-    @XmlTransient
-    @JsonIgnore
-    public Set<UfsGls> getUfsGlsSet() {
-        return ufsGlsSet;
-    }
-
-    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
-        this.ufsGlsSet = ufsGlsSet;
-    }
-
     public String getName() {
         return name;
     }
@@ -403,7 +400,6 @@ public class UfsOrganizationUnits implements Serializable {
         this.action = action;
     }
 
-
     public String getIntrash() {
         return intrash;
     }
@@ -411,6 +407,4 @@ public class UfsOrganizationUnits implements Serializable {
     public void setIntrash(String intrash) {
         this.intrash = intrash;
     }
-
-
 }

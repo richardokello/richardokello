@@ -65,7 +65,7 @@ public class UfsWorkgroup implements Serializable {
     private List<UfsWorkgroupRole> ufsWorkgroupRoleList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workgroup")
     private List<UfsUserWorkgroup> ufsUserWorkgroupList;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne
     private UfsOrganizationUnits tenantId;
 

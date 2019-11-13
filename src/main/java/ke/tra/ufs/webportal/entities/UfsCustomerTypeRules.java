@@ -86,7 +86,7 @@ public class UfsCustomerTypeRules implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ruleId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsOrganizationUnits tenantId;

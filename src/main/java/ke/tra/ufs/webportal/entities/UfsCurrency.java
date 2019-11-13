@@ -93,7 +93,7 @@ public class UfsCurrency implements Serializable {
     
     @GeneratedValue(generator = "UFS_CURRENCY_SEQ")
     private BigDecimal id;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne
     @JsonIgnore
     private UfsOrganizationUnits tenantId;

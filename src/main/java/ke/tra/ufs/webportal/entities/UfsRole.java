@@ -67,7 +67,7 @@ public class UfsRole implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "role")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<UfsRolePermission> ufsRolePermissionList;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsOrganizationUnits tenantId;

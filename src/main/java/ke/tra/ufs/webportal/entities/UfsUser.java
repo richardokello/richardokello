@@ -95,7 +95,7 @@ public class UfsUser implements Serializable {
     @JoinColumn(name = "GENDER", referencedColumnName = "GENDER_ID", insertable = false, updatable = false)
     @ManyToOne
     private UfsGender gender;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne
     private UfsOrganizationUnits tenantId;
     @JoinColumn(name = "USER_TYPE", referencedColumnName = "TYPE_ID", insertable = false, updatable = false)

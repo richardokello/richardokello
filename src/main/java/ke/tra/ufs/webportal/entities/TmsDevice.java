@@ -71,7 +71,7 @@ public class TmsDevice implements Serializable {
     @JoinColumn(name = "MODEL_ID", referencedColumnName = "MODEL_ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsDeviceModel modelId;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne
     private UfsOrganizationUnits tenantId;
 

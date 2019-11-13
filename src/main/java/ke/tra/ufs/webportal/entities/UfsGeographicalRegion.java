@@ -95,7 +95,7 @@ public class UfsGeographicalRegion implements Serializable {
     @ManyToOne
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsGeographicalRegion parentId;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
     @Column(name = "PARENT_ID")

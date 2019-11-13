@@ -124,7 +124,7 @@ public class UfsBanks implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsBankRegion> ufsBankRegionSet;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")

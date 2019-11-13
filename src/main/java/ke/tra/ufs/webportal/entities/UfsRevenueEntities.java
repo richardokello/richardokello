@@ -69,7 +69,7 @@ public class UfsRevenueEntities implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne
     private UfsOrganizationUnits tenantId;
 
