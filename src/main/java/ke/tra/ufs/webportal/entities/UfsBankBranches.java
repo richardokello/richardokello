@@ -19,13 +19,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
 import ke.axle.chassis.annotations.Filter;
 
 /**
  * @author ojuma
  */
 @Entity
-@Table(name = "UFS_BANK_BRANCHES", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_BANK_BRANCHES")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsBankBranches.findAll", query = "SELECT u FROM UfsBankBranches u")
@@ -65,7 +66,7 @@ public class UfsBankBranches implements Serializable {
     @OneToMany(mappedBy = "bankBranchId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsGls> ufsGlsSet;
-    
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -91,15 +92,16 @@ public class UfsBankBranches implements Serializable {
     private UfsBanks bankId;
     @Column(name = "BANK_ID")
     private Long bankIds;
-    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private UfsBankRegion bankRegionId;
-    @Column(name = "BANK_REGION_ID" )
+    //    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+//    @ManyToOne(optional = false)
+//    @JsonIgnore
+//    private UfsBankRegion bankRegionId;
+    @Column(name = "BANK_REGION_ID")
     private BigDecimal bankRegionIds;
     @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsGeographicalRegion geographicalRegionId;
-    @Column(name = "GEOGRAPHICAL_REGION_ID" )
+    @Column(name = "GEOGRAPHICAL_REGION_ID")
     private BigDecimal geographicalRegionIds;
 
     public UfsBankBranches() {
@@ -149,13 +151,13 @@ public class UfsBankBranches implements Serializable {
         this.bankId = bankId;
     }
 
-    public UfsBankRegion getBankRegionId() {
-        return bankRegionId;
-    }
-
-    public void setBankRegionId(UfsBankRegion bankRegionId) {
-        this.bankRegionId = bankRegionId;
-    }
+//    public UfsBankRegion getBankRegionId() {
+//        return bankRegionId;
+//    }
+//
+//    public void setBankRegionId(UfsBankRegion bankRegionId) {
+//        this.bankRegionId = bankRegionId;
+//    }
 
     public UfsGeographicalRegion getGeographicalRegionId() {
         return geographicalRegionId;
@@ -214,11 +216,13 @@ public class UfsBankBranches implements Serializable {
     public void setGeographicalRegionIds(BigDecimal geographicalRegionIds) {
         this.geographicalRegionIds = geographicalRegionIds;
     }
+
     @XmlTransient
     @org.codehaus.jackson.annotate.JsonIgnore
     public Set<UfsGls> getUfsGlsSet() {
         return ufsGlsSet;
     }
+
     public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
         this.ufsGlsSet = ufsGlsSet;
     }
@@ -255,8 +259,6 @@ public class UfsBankBranches implements Serializable {
     public void setIntrash(String intrash) {
         this.intrash = intrash;
     }
-
-
 
 
 }
