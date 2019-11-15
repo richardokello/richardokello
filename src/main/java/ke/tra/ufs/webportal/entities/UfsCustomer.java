@@ -91,7 +91,6 @@ public class UfsCustomer implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date validTo;
     @ModifiableField
-    @Size(max = 15)
     @Column(name = "ADDRESS")
     private String address;
     @Size(max = 15)
@@ -136,7 +135,7 @@ public class UfsCustomer implements Serializable {
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
     @ModifiableField
-    private BigDecimal tenantIds;
+    private String tenantIds;
     @ModifiableField
     @Column(name = "CUSTOMER_NAME")
     private String customerName;
@@ -303,11 +302,11 @@ public class UfsCustomer implements Serializable {
         this.geographicalRegIds = geographicalRegIds;
     }
 
-    public BigDecimal getTenantIds() {
+    public String getTenantIds() {
         return tenantIds;
     }
 
-    public void setTenantIds(BigDecimal tenantIds) {
+    public void setTenantIds(String tenantIds) {
         this.tenantIds = tenantIds;
     }
 
