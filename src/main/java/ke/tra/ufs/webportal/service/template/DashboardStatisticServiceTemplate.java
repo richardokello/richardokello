@@ -81,13 +81,13 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
         single.add(new DashboardItemsWrapper("Total Customers", getTotalAgents(AppConstants.NO), "/agency-webportal/customers"));
         single.add(new DashboardItemsWrapper("Total Bank Branches", getTotalBankBranches(AppConstants.NO), "/agency-webportal/bank-branches"));
         single.add(new DashboardItemsWrapper("Total Bank Regions", getTotalBankRegions(AppConstants.NO), "/agency-webportal/bank-regions"));
-        single.add(new DashboardItemsWrapper("Agents Assigned Device", getTotalAssignedDeviceAgents(AppConstants.NO), "/devices/list"));
-        single.add(new DashboardItemsWrapper("Total Outlets", getTotalOutlets(AppConstants.NO), "/agency-webportal/customers"));
-        single.add(new DashboardItemsWrapper("Agent Supervisors", getTotalTypeUsers(AppConstants.USER_TYPE_AGENT_SUPERVISOR, AppConstants.NO), "/agency-webportal/customers"));
-        single.add(new DashboardItemsWrapper("BackOffice Users", getTotalTypeUsers(AppConstants.USER_TYPE_BACKOFFICE_USER, AppConstants.NO), "/agency-webportal/customers"));
-        single.add(new DashboardItemsWrapper("Head Of Distribution", getTotalTypeUsers(AppConstants.USER_TYPE_HEAD_OF_DISTRIBUTION, AppConstants.NO), "/agency-webportal/customers"));
-        single.add(new DashboardItemsWrapper("Branch Managers", getTotalTypeUsers(AppConstants.USER_TYPE_BRANCH_MANAGER, AppConstants.NO), "/agency-webportal/customers"));
-        single.add(new DashboardItemsWrapper("Regional Managers", getTotalTypeUsers(AppConstants.USER_TYPE_REGIONAL_MANAGER, AppConstants.NO), "/agency-webportal/customers"));
+        single.add(new DashboardItemsWrapper("Agents Assigned Device", getTotalAssignedDeviceAgents(AppConstants.NO), "agency-webportal/device-management/assigned-devices-list"));
+        single.add(new DashboardItemsWrapper("Total Outlets", getTotalOutlets(AppConstants.NO), "agency-webportal/customer-outlets"));
+        single.add(new DashboardItemsWrapper("Agent Supervisors", getTotalTypeUsers(AppConstants.USER_TYPE_AGENT_SUPERVISOR, AppConstants.NO), "common-modules/users/agent-supervisors"));
+        single.add(new DashboardItemsWrapper("BackOffice Users", getTotalTypeUsers(AppConstants.USER_TYPE_BACKOFFICE_USER, AppConstants.NO), "/common-modules/users/back-office"));
+        single.add(new DashboardItemsWrapper("Head Of Distribution", getTotalTypeUsers(AppConstants.USER_TYPE_HEAD_OF_DISTRIBUTION, AppConstants.NO), "common-modules/users/hod"));
+        single.add(new DashboardItemsWrapper("Branch Managers", getTotalTypeUsers(AppConstants.USER_TYPE_BRANCH_MANAGER, AppConstants.NO), "'common-modules/users/branch-managers"));
+        single.add(new DashboardItemsWrapper("Regional Managers", getTotalTypeUsers(AppConstants.USER_TYPE_REGIONAL_MANAGER, AppConstants.NO), "common-modules/users/regional-managers"));
         return single;
     }
 }
