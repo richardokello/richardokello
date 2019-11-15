@@ -7,8 +7,10 @@ import ke.tra.ufs.webportal.repository.CustomerRepository;
 import ke.tra.ufs.webportal.repository.UfsCustomerOutletRepository;
 import ke.tra.ufs.webportal.repository.UfsCustomerOwnerRepository;
 import ke.tra.ufs.webportal.service.CustomerService;
+import ke.tra.ufs.webportal.utils.AppConstants;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -50,5 +52,15 @@ public class CustomerServiceTemplate implements CustomerService {
     @Override
     public UfsCustomerOutlet findByOutletCode(String outletCode) {
         return customerOutletRepository.findByOutletCode(outletCode);
+    }
+
+    @Override
+    public UfsCustomerOutlet findByCustomerIds(BigDecimal customerIds) {
+        return customerOutletRepository.findByCustomerIdsAndIntrash(customerIds, AppConstants.INTRASH_NO);
+    }
+
+    @Override
+    public void saveOutlet(UfsCustomerOutlet customerOutlet) {
+        customerOutletRepository.save(customerOutlet);
     }
 }
