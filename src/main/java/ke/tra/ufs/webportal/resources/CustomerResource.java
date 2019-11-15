@@ -177,7 +177,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         });
 
         response.setCode(200);
-        response.setMessage("Bank Branch Approved Successfully");
+        response.setMessage("Customer Approved Successfully");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
