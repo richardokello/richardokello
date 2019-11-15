@@ -103,14 +103,14 @@ public class UfsCustomerOutlet implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private UfsBankBranches bankBranchId;
+//    @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
+//    @ManyToOne(optional = false)
+//    private UfsBankBranches bankBranchId;
     @Column(name = "BANK_BRANCH_ID")
     private BigDecimal bankBranchIds;
-    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID",insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private UfsBankRegion bankRegionId;
+//    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID",insertable = false, updatable = false)
+//    @ManyToOne(optional = false)
+//    private UfsBankRegion bankRegionId;
     @Column(name = "BANK_REGION_ID")
     private BigDecimal bankRegionIds;
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID",insertable = false, updatable = false)
@@ -227,21 +227,21 @@ public class UfsCustomerOutlet implements Serializable {
         this.intrash = intrash;
     }
 
-    public UfsBankBranches getBankBranchId() {
-        return bankBranchId;
-    }
+//    public UfsBankBranches getBankBranchId() {
+//        return bankBranchId;
+//    }
+//
+//    public void setBankBranchId(UfsBankBranches bankBranchId) {
+//        this.bankBranchId = bankBranchId;
+//    }
 
-    public void setBankBranchId(UfsBankBranches bankBranchId) {
-        this.bankBranchId = bankBranchId;
-    }
-
-    public UfsBankRegion getBankRegionId() {
-        return bankRegionId;
-    }
-
-    public void setBankRegionId(UfsBankRegion bankRegionId) {
-        this.bankRegionId = bankRegionId;
-    }
+//    public UfsBankRegion getBankRegionId() {
+//        return bankRegionId;
+//    }
+//
+//    public void setBankRegionId(UfsBankRegion bankRegionId) {
+//        this.bankRegionId = bankRegionId;
+//    }
 
     public UfsCustomer getCustomerId() {
         return customerId;

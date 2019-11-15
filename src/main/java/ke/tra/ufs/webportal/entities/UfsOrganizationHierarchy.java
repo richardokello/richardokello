@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -16,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import ke.axle.chassis.annotations.Filter;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -73,6 +73,7 @@ public class UfsOrganizationHierarchy implements Serializable {
     @Column(name = "IS_ROOT_TENANT")
     private Short isRootTenant;
     @OneToMany(mappedBy = "levelId")
+    @JsonIgnore
     private List<UfsOrganizationUnits> ufsOrganizationUnitsList;
 
     public UfsOrganizationHierarchy() {

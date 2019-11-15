@@ -102,7 +102,7 @@ public class UfsGeographicalRegion implements Serializable {
     @TreeRoot
     private BigDecimal parentIds;
     @Column(name = "TENANT_ID")
-    private BigDecimal tenantIds;
+    private String tenantIds;
     @Transient
     private MultipartFile file;
 
@@ -171,11 +171,11 @@ public class UfsGeographicalRegion implements Serializable {
         this.parentIds = parentIds;
     }
 
-    public BigDecimal getTenantIds() {
+    public String getTenantIds() {
         return tenantIds;
     }
 
-    public void setTenantIds(BigDecimal tenantIds) {
+    public void setTenantIds(String tenantIds) {
         this.tenantIds = tenantIds;
     }
 

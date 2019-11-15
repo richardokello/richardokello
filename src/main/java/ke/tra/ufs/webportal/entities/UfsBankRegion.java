@@ -56,9 +56,9 @@ public class UfsBankRegion implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private Set<UfsBankBranches> ufsBankBranchesSet;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
+//    @com.fasterxml.jackson.annotation.JsonIgnore
+//    private Set<UfsBankBranches> ufsBankBranchesSet;
     @JoinColumn(name = "BANK_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne(optional = false)
     @com.fasterxml.jackson.annotation.JsonIgnore
@@ -251,15 +251,15 @@ public class UfsBankRegion implements Serializable {
     }
 
 
-    @XmlTransient
-    @JsonIgnore
-    public Set<UfsBankBranches> getUfsBankBranchesSet() {
-        return ufsBankBranchesSet;
-    }
-
-    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
-        this.ufsBankBranchesSet = ufsBankBranchesSet;
-    }
+//    @XmlTransient
+//    @JsonIgnore
+//    public Set<UfsBankBranches> getUfsBankBranchesSet() {
+//        return ufsBankBranchesSet;
+//    }
+//
+//    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
+//        this.ufsBankBranchesSet = ufsBankBranchesSet;
+//    }
 
     public UfsBanks getBankId() {
         return bankId;
