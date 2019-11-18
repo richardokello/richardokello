@@ -102,6 +102,7 @@ public class UfsBankRegion implements Serializable {
     @Column(name = "PARENT_ID")
     @TreeRoot
     private Long parentIds;
+    @Filter
     @Column(name = "TENANT_ID")
     private String tenantIds;
     @Transient

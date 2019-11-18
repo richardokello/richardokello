@@ -127,6 +127,7 @@ public class UfsBanks implements Serializable {
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
+    @Filter
     @Column(name = "TENANT_ID")
     private String tenantIds;
     public UfsBanks() {
