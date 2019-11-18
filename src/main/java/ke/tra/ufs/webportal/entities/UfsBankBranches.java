@@ -66,6 +66,13 @@ public class UfsBankBranches implements Serializable {
     @OneToMany(mappedBy = "bankBranchId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsGls> ufsGlsSet;
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
+    @ManyToOne(optional = false)
+    @JsonIgnore
+    private UfsOrganizationUnits tenantId;
+    @Column(name = "TENANT_ID")
+    @ModifiableField
+    private String tenantIds;
 
 
     private static final long serialVersionUID = 1L;
@@ -173,6 +180,22 @@ public class UfsBankBranches implements Serializable {
 
     public void setBankIds(Long bankIds) {
         this.bankIds = bankIds;
+    }
+
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(String tenantIds) {
+        this.tenantIds = tenantIds;
     }
 
     @Override
