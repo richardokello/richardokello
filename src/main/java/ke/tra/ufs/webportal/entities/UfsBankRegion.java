@@ -59,12 +59,12 @@ public class UfsBankRegion implements Serializable {
 //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
 //    @com.fasterxml.jackson.annotation.JsonIgnore
 //    private Set<UfsBankBranches> ufsBankBranchesSet;
-    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID",insertable = false,updatable = false)
-    @ManyToOne(optional = false)
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private UfsBanks bankId;
-    @Column(name = "BANK_ID")
-    private BigDecimal bankIds;
+//    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID",insertable = false,updatable = false)
+//    @ManyToOne(optional = true)
+//    @com.fasterxml.jackson.annotation.JsonIgnore
+//    private UfsBanks bankId;
+//    @Column(name = "BANK_ID")
+//    private BigDecimal bankIds;
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -217,13 +217,13 @@ public class UfsBankRegion implements Serializable {
         this.text = text;
     }
 
-    public BigDecimal getBankIds() {
-        return bankIds;
-    }
-
-    public void setBankIds(BigDecimal bankIds) {
-        this.bankIds = bankIds;
-    }
+//    public BigDecimal getBankIds() {
+//        return bankIds;
+//    }
+//
+//    public void setBankIds(BigDecimal bankIds) {
+//        this.bankIds = bankIds;
+//    }
 
     @Override
     public int hashCode() {
@@ -261,13 +261,13 @@ public class UfsBankRegion implements Serializable {
 //        this.ufsBankBranchesSet = ufsBankBranchesSet;
 //    }
 
-    public UfsBanks getBankId() {
-        return bankId;
-    }
-
-    public void setBankId(UfsBanks bankId) {
-        this.bankId = bankId;
-    }
+//    public UfsBanks getBankId() {
+//        return bankId;
+//    }
+//
+//    public void setBankId(UfsBanks bankId) {
+//        this.bankId = bankId;
+//    }
 
 
     public String getCode() {

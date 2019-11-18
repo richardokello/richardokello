@@ -121,14 +121,14 @@ public class UfsBanks implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsBankBranches> ufsBankBranchesSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private Set<UfsBankRegion> ufsBankRegionSet;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
+//    @com.fasterxml.jackson.annotation.JsonIgnore
+//    private Set<UfsBankRegion> ufsBankRegionSet;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
-    private BigDecimal tenantIds;
+    private String tenantIds;
     public UfsBanks() {
     }
 
@@ -200,15 +200,15 @@ public class UfsBanks implements Serializable {
         this.ufsBankBranchesSet = ufsBankBranchesSet;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public Set<UfsBankRegion> getUfsBankRegionSet() {
-        return ufsBankRegionSet;
-    }
-
-    public void setUfsBankRegionSet(Set<UfsBankRegion> ufsBankRegionSet) {
-        this.ufsBankRegionSet = ufsBankRegionSet;
-    }
+//    @XmlTransient
+//    @JsonIgnore
+//    public Set<UfsBankRegion> getUfsBankRegionSet() {
+//        return ufsBankRegionSet;
+//    }
+//
+//    public void setUfsBankRegionSet(Set<UfsBankRegion> ufsBankRegionSet) {
+//        this.ufsBankRegionSet = ufsBankRegionSet;
+//    }
 
     public UfsOrganizationUnits getTenantId() {
         return tenantId;
@@ -247,11 +247,11 @@ public class UfsBanks implements Serializable {
         this.countrys = countrys;
     }
 
-    public BigDecimal getTenantIds() {
+    public String getTenantIds() {
         return tenantIds;
     }
 
-    public void setTenantIds(BigDecimal tenantIds) {
+    public void setTenantIds(String tenantIds) {
         this.tenantIds = tenantIds;
     }
     

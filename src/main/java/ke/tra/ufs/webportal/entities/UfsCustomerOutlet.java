@@ -63,7 +63,6 @@ public class UfsCustomerOutlet implements Serializable {
             }
     )
     @GeneratedValue(generator = "CUSTOMER_OUTLET_SEQ")
-
     @Column(name = "ID")
     private Long id;
     @Basic(optional = false)
@@ -108,9 +107,9 @@ public class UfsCustomerOutlet implements Serializable {
 //    private UfsBankBranches bankBranchId;
     @Column(name = "BANK_BRANCH_ID")
     private BigDecimal bankBranchIds;
-//    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID",insertable = false, updatable = false)
-//    @ManyToOne(optional = false)
-//    private UfsBankRegion bankRegionId;
+    @JoinColumn(name = "BANK_REGION_ID",referencedColumnName = "ID",insertable = false, updatable = false)
+    @ManyToOne
+    private UfsBankRegion bankRegionId;
     @Column(name = "BANK_REGION_ID")
     private BigDecimal bankRegionIds;
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID",insertable = false, updatable = false)
@@ -235,13 +234,13 @@ public class UfsCustomerOutlet implements Serializable {
 //        this.bankBranchId = bankBranchId;
 //    }
 
-//    public UfsBankRegion getBankRegionId() {
-//        return bankRegionId;
-//    }
-//
-//    public void setBankRegionId(UfsBankRegion bankRegionId) {
-//        this.bankRegionId = bankRegionId;
-//    }
+    public UfsBankRegion getBankRegionId() {
+        return bankRegionId;
+    }
+
+    public void setBankRegionId(UfsBankRegion bankRegionId) {
+        this.bankRegionId = bankRegionId;
+    }
 
     public UfsCustomer getCustomerId() {
         return customerId;
