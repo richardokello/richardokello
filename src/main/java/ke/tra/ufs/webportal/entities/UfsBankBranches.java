@@ -71,6 +71,7 @@ public class UfsBankBranches implements Serializable {
     @JsonIgnore
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
+    @Filter
     @ModifiableField
     private String tenantIds;
 
