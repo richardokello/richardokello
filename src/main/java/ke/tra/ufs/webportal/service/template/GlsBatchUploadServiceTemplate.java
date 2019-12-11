@@ -72,7 +72,6 @@ public class GlsBatchUploadServiceTemplate implements GlsBatchUploadService {
             batch.setTimeCompleted(new Date());
         } catch (IOException ex) {
             ex.printStackTrace();
-            log.error(AppConstants.AUDIT_LOG, "Processing GLS Devices upload failed", ex);
             batch.setProcessingStatus(AppConstants.ACTIVITY_STATUS_FAILED);
         }
 
