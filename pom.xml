@@ -56,13 +56,8 @@
         </dependency>
         <dependency>
             <groupId>com.oracle</groupId>
-            <artifactId>jdbc7</artifactId>
-            <version>1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.jayjieh</groupId>
-            <artifactId>SpringResourceChasis</artifactId>
-            <version>1.3.2</version>
+            <artifactId>ojdbc7</artifactId>
+            <version>12.1.0</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
