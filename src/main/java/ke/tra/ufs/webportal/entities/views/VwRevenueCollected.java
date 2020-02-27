@@ -5,7 +5,6 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Date;
 
 @Data
 @Entity
@@ -24,6 +23,6 @@ public class VwRevenueCollected implements Serializable {
     private String amount;
 
     @Column(name = "TRX_DATE")
-//    @Temporal(TemporalType.DATE)
+//    @Temporal(TemporalType.TIMESTAMP)
     private String transactionDate;
 }
