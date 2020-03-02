@@ -1,11 +1,11 @@
 package ke.tra.ufs.webportal.entities.views;
 
+import ke.tra.ufs.webportal.utils.annotations.Filter;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Date;
 
 @Data
 @Entity
@@ -17,13 +17,16 @@ public class VwRevenueCollected implements Serializable {
     @Column(name = "ID")
     private BigInteger id;
 
+    @Filter
     @Column(name = "MID")
     private String merchantId;
 
+    @Filter
     @Column(name = "AMOUNT")
     private String amount;
 
+    @Filter
     @Column(name = "TRX_DATE")
-//    @Temporal(TemporalType.DATE)
+//    @Temporal(TemporalType.TIMESTAMP)
     private String transactionDate;
 }
