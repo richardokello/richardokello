@@ -1,5 +1,6 @@
 package ke.tra.ufs.webportal.entities.views;
 
+import ke.axle.chassis.annotations.Filter;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,9 +18,11 @@ public class VwMerchants implements Serializable {
     @Column(name = "ID")
     private BigInteger id;
 
+    @Filter
     @Column(name = "MERCHANT_NAME")
     private String merchantName;
 
+    @Filter
     @Column(name = "MID")
     private String merchantId;
 
@@ -29,9 +32,14 @@ public class VwMerchants implements Serializable {
     @Column(name = "AMOUNT")
     private String purchaseAmount;
 
+    @Column(name = "REVENUE")
+    private String revenueGenerated;
+
+    @Filter
     @Column(name = "LOCATION")
     private String location;
 
+    @Filter
     @Column(name = "STATUS")
     private String status;
 
