@@ -76,7 +76,7 @@ public class TmsDevice implements Serializable {
     private UfsOrganizationUnits tenantId;
 
     @Column(name = "TENANT_ID")
-    private BigDecimal tenantIds;
+    private String tenantIds;
     @Column(name = "BANK_BRANCH_ID")
     private BigDecimal bankBranchIds;
     @Column(name = "BANK_REGION_ID")
@@ -242,11 +242,11 @@ public class TmsDevice implements Serializable {
         this.tenantId = tenantId;
     }
 
-    public BigDecimal getTenantIds() {
+    public String getTenantIds() {
         return tenantIds;
     }
 
-    public void setTenantIds(BigDecimal tenantIds) {
+    public void setTenantIds(String tenantIds) {
         this.tenantIds = tenantIds;
     }
 
