@@ -20,7 +20,7 @@ import java.util.Date;
  * @author owori.juma
  */
 @Entity
-@Table(name = "UFS_OTP", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_OTP")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsOtp.findAll", query = "SELECT u FROM UfsOtp u")

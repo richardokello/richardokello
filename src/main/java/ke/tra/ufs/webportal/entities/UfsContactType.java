@@ -19,7 +19,7 @@ import java.util.List;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_CONTACT_TYPE", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_CONTACT_TYPE")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsContactType.findAll", query = "SELECT u FROM UfsContactType u")

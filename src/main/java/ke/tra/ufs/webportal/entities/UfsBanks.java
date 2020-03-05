@@ -25,7 +25,7 @@ import org.hibernate.annotations.GenericGenerator;
  * @author ojuma
  */
 @Entity
-@Table(name = "UFS_BANKS", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_BANKS")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsBanks.findAll", query = "SELECT u FROM UfsBanks u")

@@ -19,7 +19,7 @@ import java.util.List;
  * @author eli.muraya
  */
 @Entity
-@Table(name = "UFS_USER_TYPE", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_USER_TYPE")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsUserType.findAll", query = "SELECT u FROM UfsUserType u")

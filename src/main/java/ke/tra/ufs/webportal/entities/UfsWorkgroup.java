@@ -21,7 +21,7 @@ import java.util.List;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_WORKGROUP", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_WORKGROUP")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsWorkgroup.findAll", query = "SELECT u FROM UfsWorkgroup u")

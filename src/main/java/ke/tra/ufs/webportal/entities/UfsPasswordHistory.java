@@ -17,7 +17,7 @@ import java.util.Date;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_PASSWORD_HISTORY", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_PASSWORD_HISTORY")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsPasswordHistory.findAll", query = "SELECT u FROM UfsPasswordHistory u")
