@@ -18,7 +18,7 @@ import java.util.List;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_ENTITY_PERMISSION", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_ENTITY_PERMISSION")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsEntityPermission.findAll", query = "SELECT u FROM UfsEntityPermission u")

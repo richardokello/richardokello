@@ -31,7 +31,7 @@ import org.hibernate.annotations.GenericGenerator;
  * @author Tracom
  */
 @Entity
-@Table(name = "UFS_CUSTOMER_TRANSFER", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_CUSTOMER_TRANSFER")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsCustomerTransfer.findAll", query = "SELECT u FROM UfsCustomerTransfer u"),

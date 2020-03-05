@@ -17,7 +17,7 @@ import java.util.Date;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_ROLE_PERMISSION", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_ROLE_PERMISSION")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsRolePermission.findAll", query = "SELECT u FROM UfsRolePermission u")

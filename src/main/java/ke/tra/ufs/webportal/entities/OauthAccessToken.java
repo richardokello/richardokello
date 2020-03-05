@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author ASUS
  */
 @Entity
-@Table(name = "OAUTH_ACCESS_TOKEN", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "OAUTH_ACCESS_TOKEN")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "OauthAccessToken.findAll", query = "SELECT o FROM OauthAccessToken o")
