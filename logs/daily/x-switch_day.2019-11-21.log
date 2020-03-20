@@ -1,0 +1,778 @@
+08:55:24.563 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11210855518  21/11/19 08:55:24 562 +0300 
+08:55:24.565 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+08:55:24.565 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+08:55:24.565 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+08:55:24.565 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+08:55:24.565 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+08:55:24.565 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+08:55:24.567 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - checking connection to Flex :  
+08:55:24.567 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+08:55:24.567 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+08:55:24.572 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+08:55:24.577 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+08:55:55.458 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 14036 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+08:55:55.461 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+08:55:56.324 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+08:55:56.442 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 108ms. Found 7 repository interfaces. 
+08:55:56.709 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$553569c8] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+08:55:56.919 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+08:55:56.960 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+08:55:57.344 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+08:55:57.344 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+08:55:57.532 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+08:55:57.533 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2032 ms 
+08:55:57.868 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+08:55:58.276 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+08:55:58.424 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+08:55:58.425 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+08:55:58.553 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+08:55:58.739 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+08:56:01.272 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+08:56:01.414 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+08:56:01.741 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+08:56:01.884 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+08:56:02.120 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+08:56:02.159 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+08:56:02.176 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+08:56:02.179 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 7.168 seconds (JVM running for 7.972) 
+08:56:02.197 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+08:56:02.197 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+08:56:02.613 [RMI TCP Connection(2)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+08:56:02.613 [RMI TCP Connection(2)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+08:56:02.623 [RMI TCP Connection(2)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms 
+08:56:10.823 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11210856769  21/11/19 08:56:10 821 +0300 
+08:56:10.823 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+08:56:10.823 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+08:56:10.824 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+08:56:10.824 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+08:56:10.824 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+08:56:10.824 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+08:56:10.833 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - checking connection to Flex :  
+08:56:10.835 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+08:56:10.836 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+08:56:10.839 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+08:56:10.855 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+08:56:45.599 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 2244 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+08:56:45.602 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+08:56:46.439 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+08:56:46.572 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 121ms. Found 7 repository interfaces. 
+08:56:46.910 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$b587a424] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+08:56:47.110 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+08:56:47.139 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+08:56:47.531 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+08:56:47.531 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+08:56:47.706 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+08:56:47.706 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2062 ms 
+08:56:48.064 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+08:56:48.449 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+08:56:48.589 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+08:56:48.590 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+08:56:48.686 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+08:56:48.857 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+08:56:51.617 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+08:56:51.776 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+08:56:52.220 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+08:56:52.380 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+08:56:52.690 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+08:56:52.750 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+08:56:52.775 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+08:56:52.779 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 7.653 seconds (JVM running for 8.595) 
+08:56:52.801 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+08:56:52.801 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+08:56:53.214 [RMI TCP Connection(2)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+08:56:53.215 [RMI TCP Connection(2)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+08:56:53.225 [RMI TCP Connection(2)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms 
+09:07:16.756 [Thread-4] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
+09:07:16.759 [Thread-4] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+09:07:16.765 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+09:07:16.779 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+09:07:23.265 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 12104 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+09:07:23.268 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+09:07:24.106 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+09:07:24.229 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 112ms. Found 7 repository interfaces. 
+09:07:24.570 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$df26eeb] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+09:07:24.762 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+09:07:24.825 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+09:07:25.230 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+09:07:25.230 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+09:07:25.408 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+09:07:25.408 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2099 ms 
+09:07:25.762 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+09:07:26.156 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+09:07:26.280 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+09:07:26.281 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+09:07:26.395 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+09:07:26.561 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+09:07:29.152 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+09:07:29.316 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+09:07:29.679 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+09:07:29.862 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+09:07:30.135 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+09:07:30.204 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+09:07:30.223 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+09:07:30.225 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 7.332 seconds (JVM running for 8.194) 
+09:07:30.244 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+09:07:30.244 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+09:07:30.892 [RMI TCP Connection(4)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+09:07:30.893 [RMI TCP Connection(4)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+09:07:30.903 [RMI TCP Connection(4)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms 
+09:08:37.165 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11210908129  21/11/19 09:08:37 164 +0300 
+09:08:37.166 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+09:08:37.166 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+09:08:37.166 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+09:08:37.166 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+09:08:37.166 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+09:08:37.166 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+09:08:39.209 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+09:08:39.259 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+09:10:26.427 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11210910397  21/11/19 09:10:26 427 +0300 
+09:10:26.427 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+09:10:26.427 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+09:10:26.428 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+09:10:26.428 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+09:10:26.428 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+09:10:26.428 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+09:11:36.169 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+09:11:36.192 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+09:11:36.214 [Thread-4] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
+09:11:36.220 [Thread-4] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+09:11:36.225 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+09:11:36.234 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+09:12:00.074 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 9880 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+09:12:00.076 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+09:12:00.860 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+09:12:00.987 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 116ms. Found 7 repository interfaces. 
+09:12:01.273 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$e0ef70c5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+09:12:01.491 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+09:12:01.646 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+09:12:02.048 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+09:12:02.049 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+09:12:02.226 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+09:12:02.226 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2117 ms 
+09:12:02.584 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+09:12:03.002 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+09:12:03.176 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+09:12:03.177 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+09:12:03.277 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+09:12:03.459 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+09:12:06.040 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+09:12:06.179 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+09:12:06.492 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+09:12:06.653 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+09:12:06.975 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+09:12:07.025 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+09:12:07.047 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+09:12:07.050 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 7.536 seconds (JVM running for 8.962) 
+09:12:07.070 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+09:12:07.070 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+09:12:08.032 [RMI TCP Connection(5)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+09:12:08.033 [RMI TCP Connection(5)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+09:12:08.040 [RMI TCP Connection(5)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 7 ms 
+09:12:43.842 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11210912805  21/11/19 09:12:43 840 +0300 
+09:12:43.842 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+09:12:43.842 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+09:12:43.842 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+09:12:43.842 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+09:12:43.843 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+09:12:43.843 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+09:14:00.571 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 19020 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+09:14:00.573 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+09:14:01.467 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+09:14:01.593 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 115ms. Found 7 repository interfaces. 
+09:14:01.865 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$691e53ae] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+09:14:02.073 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+09:14:02.209 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+09:14:02.600 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+09:14:02.600 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+09:14:02.767 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+09:14:02.767 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2156 ms 
+09:14:03.100 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+09:14:03.496 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+09:14:03.619 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+09:14:03.621 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+09:14:03.710 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+09:14:03.872 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+09:14:06.430 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+09:14:06.555 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+09:14:06.895 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+09:14:07.048 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+09:14:07.291 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+09:14:07.331 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+09:14:07.349 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+09:14:07.351 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 7.14 seconds (JVM running for 7.949) 
+09:14:07.370 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+09:14:07.370 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+09:14:07.818 [RMI TCP Connection(1)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+09:14:07.820 [RMI TCP Connection(1)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+09:14:07.832 [RMI TCP Connection(1)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 12 ms 
+09:14:14.375 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11210914336  21/11/19 09:14:14 374 +0300 
+09:14:14.375 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+09:14:14.375 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+09:14:14.375 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+09:14:14.375 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+09:14:14.376 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+09:14:14.376 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+09:14:14.386 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - checking connection to Flex :  
+09:14:14.389 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+09:14:14.389 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+09:14:14.392 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+09:14:14.409 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+09:19:48.966 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 16044 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+09:19:48.970 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+09:19:49.844 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+09:19:49.972 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 116ms. Found 7 repository interfaces. 
+09:19:50.338 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$faa2e17a] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+09:19:50.569 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+09:19:50.623 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+09:19:51.013 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+09:19:51.013 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+09:19:51.195 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+09:19:51.195 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2174 ms 
+09:19:51.559 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+09:19:51.953 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+09:19:52.079 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+09:19:52.080 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+09:19:52.181 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+09:19:52.349 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+09:19:54.907 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+09:19:55.067 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+09:19:55.444 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+09:19:55.632 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+09:19:55.936 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+09:19:55.988 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+09:19:56.011 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+09:19:56.013 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 7.441 seconds (JVM running for 8.316) 
+09:19:56.033 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+09:19:56.033 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+09:19:56.619 [RMI TCP Connection(4)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+09:19:56.620 [RMI TCP Connection(4)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+09:19:56.631 [RMI TCP Connection(4)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 11 ms 
+09:20:42.962 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11210920927  21/11/19 09:20:42 960 +0300 
+09:20:42.962 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+09:20:42.962 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+09:20:42.962 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+09:20:42.963 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+09:20:42.963 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+09:20:42.963 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+09:20:52.820 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+09:20:55.428 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+09:24:18.315 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+09:24:18.367 [Thread-4] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
+09:24:18.371 [Thread-4] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+09:24:18.374 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+09:24:18.375 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+09:24:18.381 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+09:24:18.423 [ISOServer-ThreadPool.PooledThread-0-running] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+09:24:18.488 [ISOServer-ThreadPool.PooledThread-0-running] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+09:24:56.193 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 22216 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+09:24:56.200 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+09:24:58.161 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+09:24:58.311 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 137ms. Found 7 repository interfaces. 
+09:24:58.621 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$8cd2f51e] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+09:24:58.840 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+09:24:58.918 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+09:24:59.346 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+09:24:59.347 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+09:24:59.543 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+09:24:59.544 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 3239 ms 
+09:24:59.891 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+09:25:00.315 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+09:25:00.440 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+09:25:00.440 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+09:25:00.533 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+09:25:00.712 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+09:25:03.282 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+09:25:03.458 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+09:25:03.793 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+09:25:03.948 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+09:25:04.179 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+09:25:04.219 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+09:25:04.239 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+09:25:04.239 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 8.903 seconds (JVM running for 10.044) 
+09:25:04.248 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+09:25:04.248 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+09:25:04.799 [RMI TCP Connection(5)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+09:25:04.799 [RMI TCP Connection(5)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+09:25:04.809 [RMI TCP Connection(5)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms 
+09:25:31.073 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 1121092540   21/11/19 09:25:31 072 +0300 
+09:25:31.073 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+09:25:31.074 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+09:25:31.074 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+09:25:31.074 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+09:25:31.074 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+09:25:31.074 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+09:25:31.085 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+09:25:31.086 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+09:25:31.089 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+09:25:31.109 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+09:26:37.892 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 22380 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+09:26:37.892 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+09:26:38.631 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+09:26:38.763 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 116ms. Found 7 repository interfaces. 
+09:26:39.024 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$7b7463ea] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+09:26:39.228 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+09:26:39.453 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+09:26:39.835 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+09:26:39.835 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+09:26:39.991 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+09:26:39.991 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2061 ms 
+09:26:40.315 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+09:26:40.678 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+09:26:40.809 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+09:26:40.809 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+09:26:40.885 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+09:26:41.048 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+09:26:43.574 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+09:26:43.716 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+09:26:44.022 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+09:26:44.163 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+09:26:44.388 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+09:26:44.428 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+09:26:44.445 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+09:26:44.447 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 6.886 seconds (JVM running for 7.629) 
+09:26:44.464 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+09:26:44.464 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+09:26:45.431 [RMI TCP Connection(2)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+09:26:45.432 [RMI TCP Connection(2)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+09:26:45.440 [RMI TCP Connection(2)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms 
+09:27:10.460 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11210927419  21/11/19 09:27:10 459 +0300 
+09:27:10.460 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+09:27:10.460 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+09:27:10.461 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+09:27:10.461 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+09:27:10.461 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+09:27:10.461 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+09:27:10.476 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+10:03:23.954 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 3824 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:03:23.956 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:03:24.754 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:03:24.873 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 109ms. Found 7 repository interfaces. 
+10:03:25.133 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$481e03a4] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:03:25.330 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:03:25.489 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:03:25.868 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:03:25.868 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:03:26.031 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:03:26.031 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2034 ms 
+10:03:26.350 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:03:26.734 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:03:26.857 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:03:26.858 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:03:26.947 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:03:27.106 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:03:29.602 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:03:29.736 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:03:30.061 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:03:30.214 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:03:30.459 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:03:30.503 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:03:30.520 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:03:30.522 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 6.919 seconds (JVM running for 7.673) 
+10:03:30.540 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:03:30.540 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:03:31.730 [RMI TCP Connection(4)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:03:31.730 [RMI TCP Connection(4)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:03:31.738 [RMI TCP Connection(4)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 7 ms 
+10:05:37.947 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11211005900  21/11/19 10:05:37 947 +0300 
+10:05:37.947 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+10:05:37.947 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+10:05:37.947 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+10:05:37.947 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:05:37.947 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+10:05:37.947 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:05:37.962 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+10:05:37.962 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+10:05:37.962 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+10:05:37.978 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+10:07:21.634 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 14880 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:07:21.634 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:07:22.335 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:07:22.451 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 100ms. Found 7 repository interfaces. 
+10:07:22.705 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$aa37f3e0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:07:22.906 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:07:23.100 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:07:23.482 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:07:23.482 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:07:23.641 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:07:23.642 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1971 ms 
+10:07:23.952 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:07:24.315 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:07:24.446 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:07:24.446 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:07:24.534 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:07:24.706 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:07:27.146 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:07:27.269 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:07:27.589 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:07:27.720 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:07:27.950 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:07:27.997 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:07:28.019 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:07:28.019 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 6.702 seconds (JVM running for 7.911) 
+10:07:28.050 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:07:28.050 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:07:28.081 [RMI TCP Connection(1)-127.0.0.1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:07:28.081 [RMI TCP Connection(1)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:07:28.081 [RMI TCP Connection(1)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms 
+10:07:44.263 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11211007225  21/11/19 10:07:44 263 +0300 
+10:07:44.263 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+10:07:44.263 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+10:07:44.263 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+10:07:44.263 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:07:44.263 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+10:07:44.263 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:07:44.287 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+10:07:44.287 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+10:07:44.290 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+10:07:44.308 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+10:08:24.546 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 1196 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:08:24.548 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:08:25.441 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:08:25.562 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 111ms. Found 7 repository interfaces. 
+10:08:25.826 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$cc21548b] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:08:26.020 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:08:26.147 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:08:26.539 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:08:26.539 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:08:26.704 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:08:26.704 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2115 ms 
+10:08:27.033 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:08:27.420 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:08:27.541 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:08:27.542 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:08:27.628 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:08:27.786 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:08:30.303 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:08:30.431 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:08:30.743 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:08:30.891 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:08:31.143 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:08:31.190 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:08:31.206 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:08:31.206 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 6.984 seconds (JVM running for 7.73) 
+10:08:31.212 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:08:31.212 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:08:31.375 [RMI TCP Connection(3)-127.0.0.1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:08:31.375 [RMI TCP Connection(3)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:08:31.391 [RMI TCP Connection(3)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 16 ms 
+10:08:53.729 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11211008667  21/11/19 10:08:53 727 +0300 
+10:08:53.729 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+10:08:53.729 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+10:08:53.729 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+10:08:53.729 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:08:53.729 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+10:08:53.730 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:08:53.743 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+10:08:53.743 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+10:08:53.746 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+10:08:53.760 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+10:11:21.059 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 2540 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:11:21.062 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:11:21.767 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:11:21.882 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 105ms. Found 7 repository interfaces. 
+10:11:22.135 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$80e069dd] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:11:22.326 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:11:22.539 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:11:22.939 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:11:22.939 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:11:23.108 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:11:23.108 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2018 ms 
+10:11:23.426 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:11:23.796 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:11:23.914 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:11:23.916 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:11:24.000 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:11:24.165 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:11:26.568 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:11:26.696 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:11:27.002 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:11:27.146 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:11:27.394 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:11:27.434 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:11:27.451 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:11:27.453 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 6.858 seconds (JVM running for 8.097) 
+10:11:27.470 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:11:27.470 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:11:27.798 [RMI TCP Connection(1)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:11:27.799 [RMI TCP Connection(1)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:11:27.810 [RMI TCP Connection(1)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 11 ms 
+10:11:39.870 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11211011808  21/11/19 10:11:39 870 +0300 
+10:11:39.870 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+10:11:39.870 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+10:11:39.870 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+10:11:39.870 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:11:39.870 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+10:11:39.870 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:11:39.877 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+10:12:27.347 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+10:12:27.363 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+10:12:27.409 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+10:13:55.004 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11211013972  21/11/19 10:13:55 004 +0300 
+10:13:55.004 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+10:13:55.004 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+10:13:55.004 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+10:13:55.004 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:13:55.004 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+10:13:55.004 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:13:55.009 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+10:18:33.016 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 18188 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:18:33.019 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:18:33.739 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:18:33.855 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 105ms. Found 7 repository interfaces. 
+10:18:34.109 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$c90945c5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:18:34.307 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:18:34.514 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:18:34.896 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:18:34.896 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:18:35.066 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:18:35.066 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2011 ms 
+10:18:35.381 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:18:35.770 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:18:35.890 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:18:35.891 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:18:35.978 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:18:36.134 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:18:38.535 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:18:38.680 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:18:39.020 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:18:39.165 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:18:39.395 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:18:39.434 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:18:39.452 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:18:39.454 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 6.909 seconds (JVM running for 8.14) 
+10:18:39.472 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:18:39.472 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:18:40.462 [RMI TCP Connection(3)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:18:40.463 [RMI TCP Connection(3)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:18:40.473 [RMI TCP Connection(3)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms 
+10:19:07.108 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 1121101974   21/11/19 10:19:07 107 +0300 
+10:19:07.108 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+10:19:07.109 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+10:19:07.109 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+10:19:07.109 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:19:07.109 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+10:19:07.109 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:19:07.125 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+10:19:07.161 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+10:19:07.166 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+10:19:07.187 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+10:26:45.756 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 22156 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:26:45.758 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:26:46.607 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:26:46.731 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 114ms. Found 7 repository interfaces. 
+10:26:47.012 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$8c8768e5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:26:47.220 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:26:47.372 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:26:47.786 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:26:47.786 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:26:47.964 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:26:47.964 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2166 ms 
+10:26:48.297 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:26:48.696 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:26:48.835 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:26:48.836 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:26:48.936 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:26:49.099 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:26:51.647 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:26:51.789 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:26:52.088 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:26:52.229 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:26:52.463 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:26:52.510 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:26:52.525 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:26:52.525 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 7.094 seconds (JVM running for 7.894) 
+10:26:52.541 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:26:52.541 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:26:53.114 [RMI TCP Connection(1)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:26:53.115 [RMI TCP Connection(1)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:26:53.125 [RMI TCP Connection(1)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms 
+10:28:10.067 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 10972 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:28:10.071 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:28:10.889 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:28:11.010 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 110ms. Found 7 repository interfaces. 
+10:28:11.260 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$32b9f103] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:28:11.459 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:28:11.597 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:28:11.976 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:28:11.976 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:28:12.148 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:28:12.148 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2038 ms 
+10:28:12.447 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:28:12.832 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:28:12.952 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:28:12.953 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:28:13.044 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:28:13.201 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:28:15.632 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:28:15.762 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:28:16.066 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:28:16.207 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:28:16.433 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:28:16.472 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:28:16.489 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:28:16.491 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 6.787 seconds (JVM running for 7.544) 
+10:28:16.508 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:28:16.508 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:28:16.827 [RMI TCP Connection(1)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:28:16.827 [RMI TCP Connection(1)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:28:16.827 [RMI TCP Connection(1)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms 
+10:32:35.261 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11211032209  21/11/19 10:32:35 261 +0300 
+10:32:35.261 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+10:32:35.261 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+10:32:35.261 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+10:32:35.261 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:32:35.261 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+10:32:35.261 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:32:35.277 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+10:32:35.324 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+10:32:35.339 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+10:32:35.386 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+10:52:55.055 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 21548 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:52:55.056 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:52:55.835 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:52:55.959 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 114ms. Found 7 repository interfaces. 
+10:52:56.210 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$9b3596cc] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:52:56.409 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:52:56.578 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:52:56.955 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:52:56.955 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:52:57.118 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:52:57.119 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2030 ms 
+10:52:57.432 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:52:57.818 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:52:57.940 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:52:57.941 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:52:58.032 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:52:58.189 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:53:00.624 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:53:00.752 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:53:01.066 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:53:01.207 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:53:01.435 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:53:01.474 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:53:01.492 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:53:01.494 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 6.77 seconds (JVM running for 7.532) 
+10:53:01.511 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:53:01.511 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:53:02.050 [RMI TCP Connection(3)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:53:02.052 [RMI TCP Connection(3)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:53:02.062 [RMI TCP Connection(3)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms 
+10:53:13.975 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11211053938  21/11/19 10:53:13 973 +0300 
+10:53:13.975 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+10:53:13.975 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+10:53:13.975 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+10:53:13.976 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:53:13.976 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+10:53:13.976 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:53:13.995 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+10:53:14.021 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+10:53:48.088 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 16288 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:53:48.090 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:53:48.813 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:53:48.948 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 124ms. Found 7 repository interfaces. 
+10:53:49.211 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$723e6e3d] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:53:49.405 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:53:49.580 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:53:49.974 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:53:49.975 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:53:50.135 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:53:50.136 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2009 ms 
+10:53:50.474 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:53:50.854 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:53:50.984 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:53:50.984 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:53:51.074 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:53:51.234 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:53:53.970 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:53:54.099 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:53:54.471 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:53:54.614 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:53:54.908 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:53:54.957 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:53:54.975 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:53:54.978 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 7.264 seconds (JVM running for 8.632) 
+10:53:54.996 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:53:54.996 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:53:55.848 [RMI TCP Connection(5)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:53:55.849 [RMI TCP Connection(5)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:53:55.858 [RMI TCP Connection(5)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 9 ms 
+10:54:20.346 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11211054310  21/11/19 10:54:20 344 +0300 
+10:54:20.346 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+10:54:20.346 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+10:54:20.346 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+10:54:20.346 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:54:20.346 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+10:54:20.347 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:54:20.371 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+10:54:20.404 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+10:55:29.360 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 16232 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+10:55:29.362 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+10:55:30.131 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+10:55:30.252 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 110ms. Found 7 repository interfaces. 
+10:55:30.520 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$87e07ad7] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+10:55:30.718 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+10:55:30.875 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+10:55:31.269 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+10:55:31.269 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+10:55:31.439 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+10:55:31.439 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2026 ms 
+10:55:31.756 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+10:55:32.136 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+10:55:32.260 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+10:55:32.261 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+10:55:32.345 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+10:55:32.513 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10:55:34.966 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10:55:35.082 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+10:55:35.394 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+10:55:35.538 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+10:55:35.772 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+10:55:35.812 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+10:55:35.828 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+10:55:35.829 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 6.941 seconds (JVM running for 8.112) 
+10:55:35.847 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+10:55:35.847 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:55:36.365 [RMI TCP Connection(3)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+10:55:36.366 [RMI TCP Connection(3)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+10:55:36.376 [RMI TCP Connection(3)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms 
+12:54:36.647 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on LAPTOP-HOD8P60L with PID 19364 (C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway\target\classes started by Tracom in C:\Users\Tracom\Desktop\Projects\SBM\TYSNC\sbm_gateway) 
+12:54:36.650 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+12:54:38.309 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+12:54:38.468 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 146ms. Found 7 repository interfaces. 
+12:54:38.817 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$5fc174ff] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+12:54:39.092 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+12:54:39.141 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+12:54:39.563 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+12:54:39.564 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+12:54:39.782 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+12:54:39.782 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 3065 ms 
+12:54:40.224 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+12:54:40.847 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+12:54:41.011 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+12:54:41.012 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+12:54:41.141 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+12:54:41.337 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+12:54:44.092 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+12:54:44.247 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+12:54:44.573 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+12:54:44.785 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+12:54:45.102 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator' 
+12:54:45.148 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+12:54:45.166 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+12:54:45.169 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 9.323 seconds (JVM running for 10.655) 
+12:54:45.188 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+12:54:45.188 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+12:54:45.534 [RMI TCP Connection(6)-192.168.254.81] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+12:54:45.536 [RMI TCP Connection(6)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+12:54:45.544 [RMI TCP Connection(6)-192.168.254.81] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms 
+12:54:56.948 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : 11211254914  21/11/19 12:54:56 947 +0300 
+12:54:56.949 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 0200 
+12:54:56.949 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 310000 
+12:54:56.949 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI NO VALIFDATION  : 0200 
+12:54:56.949 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+12:54:56.949 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 310000 
+12:54:56.949 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+12:54:56.957 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - forwarding message  to Flex :  
+12:54:57.005 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.services.ToCBSTxns - IO Exception connection to Flex :  
+12:54:57.009 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+12:54:57.044 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 

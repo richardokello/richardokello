@@ -1,0 +1,78 @@
+11:55:49.498 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on VINCENT-ROG with PID 268 (started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\SBM\TYSNC\sbm_gateway) 
+11:55:49.502 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: dev 
+11:55:50.435 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:55:50.582 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 131ms. Found 7 repository interfaces. 
+11:55:50.583 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:55:50.594 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 9ms. Found 1 repository interfaces. 
+11:55:51.366 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$afaf56f6] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+11:55:51.668 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+11:55:52.131 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+11:55:52.319 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+11:55:52.321 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+11:55:52.492 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+11:55:52.798 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
+11:55:53.340 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@1ee40b5c 
+11:55:53.341 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@1ee40b5c 
+11:55:53.341 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@124eb83d 
+11:55:53.342 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@124eb83d 
+11:55:57.332 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+11:55:57.624 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+11:55:57.679 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+11:55:57.909 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+11:55:57.912 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
+11:55:57.957 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@1ee40b5c 
+11:55:57.957 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@1ee40b5c 
+11:55:57.957 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@124eb83d 
+11:55:57.958 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@124eb83d 
+11:55:57.986 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+11:55:58.810 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+11:55:59.621 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+11:56:00.542 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+11:56:00.678 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Started TsyncApplicationTests in 11.741 seconds (JVM running for 12.752) 
+11:56:00.893 [Thread-5] INFO  o.s.s.c.ThreadPoolTaskScheduler - Shutting down ExecutorService 'taskScheduler' 
+11:56:00.895 [Thread-5] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
+11:56:00.899 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+11:56:00.900 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+11:56:00.906 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+11:56:00.907 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+11:56:00.909 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+11:56:00.986 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+11:57:25.202 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on VINCENT-ROG with PID 2948 (started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\SBM\TYSNC\sbm_gateway) 
+11:57:25.203 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: dev 
+11:57:26.136 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:57:26.251 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 99ms. Found 7 repository interfaces. 
+11:57:26.252 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:57:26.261 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 9ms. Found 1 repository interfaces. 
+11:57:27.011 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$5724b9be] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+11:57:27.309 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+11:57:27.787 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+11:57:27.972 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+11:57:27.974 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+11:57:28.149 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+11:57:28.514 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
+11:57:28.752 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@37d3e140 
+11:57:28.752 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@37d3e140 
+11:57:28.753 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@1291aab5 
+11:57:28.753 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@1291aab5 
+11:57:33.525 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+11:57:33.923 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+11:57:33.986 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+11:57:34.299 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+11:57:34.303 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
+11:57:34.351 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@37d3e140 
+11:57:34.351 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@37d3e140 
+11:57:34.351 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@1291aab5 
+11:57:34.352 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@1291aab5 
+11:57:34.386 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+11:57:35.262 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+11:57:36.118 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+11:57:36.587 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+11:57:36.663 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Started TsyncApplicationTests in 11.969 seconds (JVM running for 12.845) 
+11:57:36.816 [Thread-5] INFO  o.s.s.c.ThreadPoolTaskScheduler - Shutting down ExecutorService 'taskScheduler' 
+11:57:36.818 [Thread-5] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
+11:57:36.821 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+11:57:36.823 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+11:57:36.829 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+11:57:36.830 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+11:57:36.832 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+11:57:36.877 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 

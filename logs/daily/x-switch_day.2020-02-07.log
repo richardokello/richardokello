@@ -1,0 +1,60 @@
+09:58:31.325 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on OBED with PID 12648 (C:\Users\mkamoni\Desktop\Projects\TYSNC\sbm_gateway\target\classes started by mkamoni in C:\Users\mkamoni\Desktop\Projects\TYSNC\sbm_gateway) 
+09:58:31.345 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+09:58:34.491 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+09:58:34.560 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 69ms. Found 7 repository interfaces. 
+09:58:34.560 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+09:58:34.591 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 16ms. Found 1 repository interfaces. 
+09:58:34.961 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$7a9e0da4] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+09:58:35.223 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+09:58:35.261 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+09:58:35.657 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+09:58:35.657 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+09:58:35.828 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+09:58:35.828 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 4437 ms 
+09:58:36.931 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+09:58:37.484 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+09:58:37.584 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+09:58:37.584 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+09:58:37.668 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+09:58:37.900 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
+09:58:38.054 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@ba4f370 
+09:58:38.054 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@ba4f370 
+09:58:38.054 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@1682e6a 
+09:58:38.054 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@1682e6a 
+09:58:40.963 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+09:58:41.126 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+09:58:41.210 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+09:58:41.327 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+09:58:41.343 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
+09:58:41.364 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@ba4f370 
+09:58:41.364 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@ba4f370 
+09:58:41.364 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@1682e6a 
+09:58:41.364 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@1682e6a 
+09:58:41.380 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+09:58:44.007 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+09:58:44.383 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+09:58:44.767 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+09:58:44.879 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+09:58:44.949 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+09:58:44.957 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 14.339 seconds (JVM running for 16.64) 
+09:58:45.020 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+09:58:45.020 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+10:05:49.461 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ Server Time : null 07/02/20 10:05:49 441 +0300 
+10:05:49.462 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ MTI  : 1100 
+10:05:49.462 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  ~^~^~^^~^~^~^ procode  : 003800 
+10:05:49.711 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  MTI  VALIFDATION  : 1100 
+10:05:49.711 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+10:05:49.712 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 003800 
+10:05:49.712 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : {appVersion=Mv T1.0, userAccessCode=55555, serialNumber=1519WL81344394, userName=MRB001, userWorkGroup=4} 
+10:05:49.712 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  STEP 1  : 1100 
+10:06:40.393 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - RESPONSE DESC : Opened 
+10:06:44.775 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+10:06:49.545 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+10:07:01.507 [Thread-5] INFO  o.s.s.c.ThreadPoolTaskScheduler - Shutting down ExecutorService 'taskScheduler' 
+10:07:01.509 [Thread-5] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
+10:07:01.513 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+10:07:01.514 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+10:07:01.520 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+10:07:01.520 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+10:07:01.521 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+10:07:01.559 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 

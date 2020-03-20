@@ -1,0 +1,19 @@
+13:31:01.701 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on OBED with PID 3420 (C:\Users\mkamoni\Desktop\Projects\TYSNC\sbm_gateway\target\classes started by mkamoni in C:\Users\mkamoni\Desktop\Projects\TYSNC\sbm_gateway) 
+13:31:01.705 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+13:31:02.280 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+13:31:02.377 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 86ms. Found 7 repository interfaces. 
+13:31:02.377 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+13:31:02.384 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 6ms. Found 1 repository interfaces. 
+13:31:02.797 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$ee521ef3] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+13:31:03.045 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+13:31:03.609 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+13:31:04.072 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+13:31:04.072 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+13:31:04.250 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+13:31:04.251 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2509 ms 
+13:31:04.400 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+13:31:06.535 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+13:31:06.536 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+13:31:06.612 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+13:31:06.760 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+13:31:08.779 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 

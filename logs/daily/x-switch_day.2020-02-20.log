@@ -1,0 +1,93 @@
+14:22:02.436 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on VINCENT-ROG with PID 9860 (started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\SBM\TYSNC\sbm_gateway) 
+14:22:02.451 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: dev 
+14:22:03.216 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:22:03.310 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 78ms. Found 7 repository interfaces. 
+14:22:03.310 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:22:03.326 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 16ms. Found 1 repository interfaces. 
+14:22:04.468 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$fc70efe] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+14:22:04.966 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+14:22:27.371 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+14:22:27.372 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+14:22:27.547 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+14:22:27.825 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+14:32:41.984 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on VINCENT-ROG with PID 13252 (started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\SBM\TYSNC\sbm_gateway) 
+14:32:41.985 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: dev 
+14:32:42.727 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:32:42.828 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 88ms. Found 7 repository interfaces. 
+14:32:42.830 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:32:42.850 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 19ms. Found 1 repository interfaces. 
+14:32:43.428 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$349e3997] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+14:32:43.666 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+14:33:05.904 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+14:33:05.904 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+14:33:06.013 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+14:33:06.279 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+14:34:48.413 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on VINCENT-ROG with PID 9268 (started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\SBM\TYSNC\sbm_gateway) 
+14:34:48.413 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: dev 
+14:34:49.132 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:34:49.227 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 79ms. Found 7 repository interfaces. 
+14:34:49.227 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:34:49.227 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 0ms. Found 1 repository interfaces. 
+14:34:49.789 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$fc70efe] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+14:34:50.039 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+14:35:12.334 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+14:35:12.334 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+14:35:12.459 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+14:35:12.754 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+14:37:24.898 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 3448 (C:\Users\Vincent\Desktop\PROJECTS\SBM\TYSNC\sbm_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\SBM\TYSNC\sbm_gateway) 
+14:37:24.901 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: dev 
+14:37:25.545 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:37:25.673 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 115ms. Found 7 repository interfaces. 
+14:37:25.674 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:37:25.680 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 6ms. Found 1 repository interfaces. 
+14:37:26.164 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$61a3d46e] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+14:37:26.447 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+14:37:26.474 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+14:37:26.622 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+14:37:26.622 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+14:37:26.747 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+14:37:26.747 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1807 ms 
+14:37:26.981 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+14:37:49.266 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+14:37:49.267 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+14:37:49.458 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+14:37:49.742 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+14:38:06.666 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on VINCENT-ROG with PID 7780 (started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\SBM\TYSNC\sbm_gateway) 
+14:38:06.666 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: remote 
+14:38:07.358 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:38:07.444 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 73ms. Found 7 repository interfaces. 
+14:38:07.445 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+14:38:07.452 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 7ms. Found 1 repository interfaces. 
+14:38:07.963 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$1bc0f32f] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+14:38:08.179 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+14:38:08.557 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+14:38:08.682 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+14:38:08.683 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+14:38:08.811 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+14:38:09.093 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
+14:38:09.227 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@3f5dfe69 
+14:38:09.227 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@3f5dfe69 
+14:38:09.227 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@451e2fa9 
+14:38:09.228 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@451e2fa9 
+14:38:12.107 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+14:38:12.334 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+14:38:12.375 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+14:38:12.583 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+14:38:12.586 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
+14:38:12.620 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@3f5dfe69 
+14:38:12.620 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@3f5dfe69 
+14:38:12.620 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@451e2fa9 
+14:38:12.620 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@451e2fa9 
+14:38:12.642 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+14:38:13.288 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+14:38:13.830 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+14:38:14.130 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+14:38:14.181 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Started TsyncApplicationTests in 7.903 seconds (JVM running for 8.498) 
+14:38:14.227 [Thread-4] INFO  o.s.s.c.ThreadPoolTaskScheduler - Shutting down ExecutorService 'taskScheduler' 
+14:38:14.229 [Thread-4] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
+14:38:14.232 [Thread-4] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+14:38:14.233 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+14:38:14.239 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+14:38:14.240 [Thread-4] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+14:38:14.241 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+14:38:14.280 [Thread-4] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 

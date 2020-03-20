@@ -1,0 +1,7 @@
+{
+    "server": {
+        "liveport": 8082,
+        "testport": 2323,
+        "environment": "dev"
+    }
+}
