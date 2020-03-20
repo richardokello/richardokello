@@ -23,8 +23,7 @@ public class TsyncApplicationTest {
     public void invokeAOPStuff() {
 
         //String mti, String procode, String actionstatus, String intrash
-
-            coreProcessorService.getTxnTypebyMTIAndProcodeAndActionstatusandIntrash("1233","2343242","1","NO");
+            //coreProcessorService.getTxnTypebyMTIAndProcodeAndActionstatusAndIntrash("1233","2343242","1","NO");
 
     }
 }

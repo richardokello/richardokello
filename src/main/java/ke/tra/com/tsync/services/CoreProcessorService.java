@@ -44,8 +44,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
     private ProcessAuthorizationServices processAuthorizationServices;
     @Autowired
     private ForwardToWay4Switch forwardToWay4Switch;
-    @Autowired
-    private ToCBSTxns toCBSTxns;
+
 
     @Autowired private  CashCollectionReconSvc cashCollectionReconSvc;
 

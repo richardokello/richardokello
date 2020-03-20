@@ -1,7 +1,7 @@
 package ke.tra.com.tsync.services;
 
 
-import ke.tra.com.tsync.wrappers.TrcmGeneralRestWrapper;
+import ke.tra.com.tsync.wrappers.crdb.CRDBWrapper;
 import ke.tra.com.tsync.wrappers.crdb.SessionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,11 +29,11 @@ public class CRDBPipService {
     {
         String result="";
         try {
-            TrcmGeneralRestWrapper trcmGeneralRestWrapper = restTemplate.getForObject(get_session_pip, TrcmGeneralRestWrapper.class);
+            CRDBWrapper crdbWrapper = restTemplate.getForObject(get_session_pip, CRDBWrapper.class);
            // trcmGeneralRestWrapper.getObject();
 
-            if(trcmGeneralRestWrapper.getStatus()==200){
-                SessionResponse sessionResponse= (SessionResponse) trcmGeneralRestWrapper.getData();
+            if(crdbWrapper.getStatus()==200){
+                SessionResponse sessionResponse= (SessionResponse) crdbWrapper.getData();
                 result=sessionResponse.getSessionToken();
             }
             return result;
@@ -42,8 +42,5 @@ public class CRDBPipService {
             return "";
         }
     }
-
-
-
 
 }

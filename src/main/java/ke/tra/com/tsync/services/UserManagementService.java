@@ -30,7 +30,7 @@ import java.util.Optional;
 @Service
 public class UserManagementService implements UserManagementTmpl {
     private static final org.slf4j.Logger usemanagelog = LoggerFactory.getLogger(UserManagementService.class);
-
+/*
     @Value("${usermanagementlogin}")
     private String usermanagementloginurl;
 
@@ -39,7 +39,7 @@ public class UserManagementService implements UserManagementTmpl {
 
     @Value("${reset_user_pass}")
     private String resetUserPass;
-
+*/
     @Autowired
     private RestTemplate myRestTemplate;
 
@@ -47,8 +47,8 @@ public class UserManagementService implements UserManagementTmpl {
     public LoginesponseWrapper userResponseWrp(UserLoginReq logReq) {
         LoginesponseWrapper ulr = new LoginesponseWrapper();
         try {
-            usemanagelog.info("usermanagementloginurl  : " + usermanagementloginurl);
-            ulr = myRestTemplate.postForObject(usermanagementloginurl, logReq, LoginesponseWrapper.class);
+          //  usemanagelog.info("usermanagementloginurl  : " + usermanagementloginurl);
+          //  ulr = myRestTemplate.postForObject(usermanagementloginurl, logReq, LoginesponseWrapper.class);
         } catch (RestClientException e) {
             if (e instanceof ResourceAccessException) {
                 ulr.setCode(503);
@@ -61,75 +61,13 @@ public class UserManagementService implements UserManagementTmpl {
 
     @Override
     public ISOMsg changeUserPassword(ISOMsg isomsg, HashMap<String, Object> dataMap, String newpass) {
-       // String newpass = isomsg.getString(72);
-        String un = (String) dataMap.get("userName");
-        String oldpass = (String) dataMap.get("userAccessCode");
 
-        if (isomsg.hasField(72) && isomsg.getString(72).length() > 3) {
-            usemanagelog.info("changeUserPass URL  {}", changeUserPass);
-
-           String newpassenc =BCrypt.hashpw(newpass, BCrypt.gensalt());
-            usemanagelog.info("new pass params : {} ", Map.of(
-                    "newPin",newpass,
-                    "oldPin", oldpass,
-                    "username", un).toString());
-            try {
-                ResponseEntity<TrcmGeneralRestWrapper> responseEntity = myRestTemplate.postForEntity(
-                        changeUserPass, Map.of(
-                                "newPin",newpass,
-                                "oldPin", oldpass,
-                                "username", un), TrcmGeneralRestWrapper.class
-                );
-
-                usemanagelog.info("changeuserpassRes {}", responseEntity);
-
-                if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                    if (responseEntity.getBody().getCode().equalsIgnoreCase("200")) {
-                        isomsg.set(39, "00");
-                        isomsg.set(72, responseEntity.getBody().getDescription());
-                    }
-                }else{
-                    isomsg.set(39, "05");
-                    isomsg.set(72, responseEntity.getBody().getDescription());
-                }
-
-            } catch (RestClientException restException) {
-                restException.printStackTrace();
-                isomsg.set(39, "06");
-                isomsg.set(72, "Password Reset Failed");
-            }
-
-        } else {
-            isomsg.set(39, "06");
-                isomsg.set(72, "invalid Request");
-        }
         return isomsg;
     }
 
     @Override
     public ISOMsg resetUserPin(ISOMsg isomsg, HashMap<String, Object> dataMap) {
-        String username = (String) dataMap.get("userName");
-        try {
-            ResponseEntity<TrcmGeneralRestWrapper> res = myRestTemplate.
-                    getForEntity(resetUserPass, TrcmGeneralRestWrapper.class, Map.of("username", username));
-            if (res.getStatusCodeValue() == 200
-                    && res.getBody().getCode().equalsIgnoreCase("200")) {
-                isomsg.set(39, "00");
-                isomsg.set(72, res.getBody().getDescription());
-            } else {
-                isomsg.set(39, "06");
-                isomsg.set(72, "Password Reset Failed");
-            }
 
-        } catch (RestClientException e) {
-            isomsg.set(39, "06");
-            isomsg.set(72, "Password Reset Failed");
-            if (e instanceof ResourceAccessException) {
-                isomsg.set(39, "06");
-                isomsg.set(72, "Remote System Error");
-            }
-            e.printStackTrace();
-        }
         return isomsg;
     }
 

@@ -21,23 +21,13 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
     @Autowired
     private  POSIrisTxns posIrisTxns;
 
-    @Autowired
-    private ToCBSTxns toCBSTxns;
-
-    @Autowired private CBDataBaseOperations cbDataBaseOperations;
-
-    @Autowired private CountyRevenueStreams countyRevenueStreams;
-
     @Autowired private RatePayerCategories ratePayerCategories;
 
     @Autowired private SupportCategoriesModule supportCategoriesModule;
 
-    @Autowired private  SupportModule supportModule;
-
     @Autowired private  CashCollectionReconSvc cashCollectionReconSvc;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(POSIrisTxns.class);
-
 
 
     @Override
@@ -76,39 +66,11 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                 isoMsg = posIrisTxns.receiveHeartBeat(isoMsg);
                 break;
 
-            case "002000":
-                // fetch revenue streams
-                isoMsg = countyRevenueStreams.setRevenueStreams(isoMsg);
-                break;
-
-            case "003000":
-                // fetch revenue streams by Device
-                isoMsg = countyRevenueStreams.RevenueItemsByDeviceRes(isoMsg,fieldDataMap);
-                break;
-
-            case "003100":
-                // fetch revenue streams by stream Id
-                isoMsg = countyRevenueStreams.getRevenueStreamItems(isoMsg);
-                break;
-
-            case "003200":
-                // fetch Amount by Zone .. Stream ID
-                isoMsg = countyRevenueStreams.getAmountByZoneAndStreamItemId(isoMsg);
-                break;
 
             case "003300":
                 // fetch Amount by Zone .. Stream ID
                 isoMsg = ratePayerCategories.getARatePayerCategories(isoMsg);
                 break;
-
-            case "003400":
-                // fetch child details using the stream code
-                isoMsg = countyRevenueStreams.getStreamByUniqueID(isoMsg);
-                break;
-
-            case "003500":
-                // fetch Account number usingthe using the stream code
-                return countyRevenueStreams.getRevenueStreamAccountByID(isoMsg);
 
 
             case "003600":
@@ -116,38 +78,6 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                 return supportCategoriesModule.getAllSupportCategories(isoMsg);
 
 
-            case "003700":
-                // create support case
-                return supportModule.createSupportCase(isoMsg,fieldDataMap);
-
-
-            case "003800":
-                //create support case
-                return supportModule.getSupportCaseByRefNo(isoMsg);
-
-            case"003900":
-                //all support cases by Agenct No
-                return supportModule.getAllSupportCasesByAgentNo(isoMsg, fieldDataMap);
-
-
-            case "004000":
-                return supportModule.addFeedBackByCaseRef(isoMsg,fieldDataMap);
-
-            case "311000":
-                return cbDataBaseOperations.getAgentFloatBalance(isoMsg);
-
-
-            case "310000":
-                return toCBSTxns.sendToFlex(isoMsg);
-
-            case "004400":
-                return  cashCollectionReconSvc.getCashCollectionReconData(isoMsg);
-
-            case "004200":
-                return cashCollectionReconSvc.recordHourlyParkingStartDuration(isoMsg);
-
-            case "004300":
-                return  cashCollectionReconSvc.fetchPaymentDurationbyUniqueCode(isoMsg);
 
             default:
                 isoMsg.set(39,"05");

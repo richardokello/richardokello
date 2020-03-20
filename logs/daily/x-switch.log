@@ -1,44 +1,262 @@
-09:24:01.270 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on VINCENT-ROG with PID 22184 (started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
-09:24:01.272 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: dev 
-09:24:02.249 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
-09:24:02.356 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 92ms. Found 9 repository interfaces. 
-09:24:02.358 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
-09:24:02.365 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 7ms. Found 1 repository interfaces. 
-09:24:02.952 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$cddb34bd] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
-09:24:03.168 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
-09:24:03.621 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
-09:24:03.837 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
-09:24:03.840 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
-09:24:04.051 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
-09:24:04.361 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
-09:24:04.553 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@76a9a009 
-09:24:04.553 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@76a9a009 
-09:24:04.553 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@5866731 
-09:24:04.553 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@5866731 
-09:24:07.277 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
-09:24:07.488 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
-09:24:07.522 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
-09:24:07.743 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
-09:24:07.745 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect 
-09:24:07.776 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [byte[]] overrides previous : org.hibernate.type.BinaryType@76a9a009 
-09:24:07.776 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[B] overrides previous : org.hibernate.type.BinaryType@76a9a009 
-09:24:07.776 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [Byte[]] overrides previous : org.hibernate.type.WrapperBinaryType@5866731 
-09:24:07.776 [main] INFO  o.hibernate.type.BasicTypeRegistry - HHH000270: Type registration [[Ljava.lang.Byte;] overrides previous : org.hibernate.type.WrapperBinaryType@5866731 
-09:24:07.795 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
-09:24:08.457 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
-09:24:09.005 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
-09:24:09.471 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+16:28:25.169 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 12788 (C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
+16:28:25.173 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: prod 
+16:28:25.713 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:28:25.788 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 65ms. Found 9 repository interfaces. 
+16:28:25.789 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:28:25.793 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 4ms. Found 1 repository interfaces. 
+16:28:26.206 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$5f15fb27] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+16:28:26.422 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+16:28:26.442 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+16:28:26.570 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+16:28:26.570 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+16:28:26.700 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+16:28:26.700 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1489 ms 
+16:28:26.828 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+16:28:26.949 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+16:28:27.074 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+16:28:27.075 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+16:28:27.223 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+16:28:27.425 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:28:29.895 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+16:28:30.026 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+16:28:30.123 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+16:28:30.124 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+16:28:30.124 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:28:30.139 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+16:28:30.210 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+16:28:30.211 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+16:28:30.213 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+16:28:30.213 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+16:28:30.214 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+16:28:30.217 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+16:28:30.219 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+16:29:01.639 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 14352 (C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
+16:29:01.640 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: prod 
+16:29:02.225 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:29:02.289 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 56ms. Found 9 repository interfaces. 
+16:29:02.289 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:29:02.294 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 5ms. Found 1 repository interfaces. 
+16:29:02.609 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$cdb17deb] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+16:29:02.784 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+16:29:02.801 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+16:29:02.935 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+16:29:02.936 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+16:29:03.058 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+16:29:03.058 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1392 ms 
+16:29:03.164 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+16:29:03.239 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+16:29:03.320 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+16:29:03.321 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+16:29:03.398 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+16:29:03.576 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:29:05.937 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+16:29:06.060 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+16:29:06.163 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+16:29:06.164 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+16:29:06.164 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:29:06.179 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+16:29:06.237 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+16:29:06.242 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+16:29:06.244 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+16:29:06.244 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+16:29:06.245 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+16:29:06.254 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+16:29:06.256 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+16:30:24.395 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 10196 (C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
+16:30:24.396 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: prod 
+16:30:24.979 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:30:25.041 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 55ms. Found 9 repository interfaces. 
+16:30:25.041 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:30:25.046 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 5ms. Found 1 repository interfaces. 
+16:30:25.358 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$bfd9e618] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+16:30:25.518 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+16:30:25.533 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+16:30:25.659 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+16:30:25.659 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+16:30:25.774 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+16:30:25.774 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1351 ms 
+16:30:25.883 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+16:30:25.958 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+16:30:26.038 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+16:30:26.039 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+16:30:26.115 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+16:30:26.289 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:30:28.587 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+16:30:28.696 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+16:30:28.789 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+16:30:28.790 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+16:30:28.790 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:30:28.805 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+16:30:28.864 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+16:30:28.869 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+16:30:28.871 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+16:30:28.872 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+16:30:28.872 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+16:30:28.882 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+16:30:28.884 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+16:31:12.502 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 15040 (C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
+16:31:12.503 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: prod 
+16:31:13.229 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:31:13.292 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 55ms. Found 9 repository interfaces. 
+16:31:13.292 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:31:13.297 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 5ms. Found 1 repository interfaces. 
+16:31:13.605 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$676980a4] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+16:31:13.769 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+16:31:13.784 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+16:31:13.907 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+16:31:13.907 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+16:31:14.025 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+16:31:14.025 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1490 ms 
+16:31:14.131 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+16:31:14.206 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+16:31:14.286 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+16:31:14.286 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+16:31:14.364 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+16:31:14.544 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:31:16.793 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+16:31:16.903 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+16:31:17.015 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+16:31:17.016 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+16:31:17.017 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:31:17.035 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+16:31:17.394 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+16:31:17.395 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+16:31:17.399 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+16:31:17.399 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+16:31:17.400 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+16:31:17.402 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+16:31:17.403 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+16:38:36.598 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 14796 (C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
+16:38:36.601 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: prod 
+16:38:37.175 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:38:37.263 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 74ms. Found 9 repository interfaces. 
+16:38:37.264 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:38:37.270 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 6ms. Found 1 repository interfaces. 
+16:38:37.627 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$713dd396] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+16:38:37.794 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+16:38:37.809 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+16:38:37.941 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+16:38:37.942 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+16:38:38.045 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+16:38:38.045 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1406 ms 
+16:38:38.151 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+16:38:38.229 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+16:38:38.311 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+16:38:38.312 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+16:38:38.390 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+16:38:38.517 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:38:40.905 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+16:38:41.020 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+16:38:41.080 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+16:38:41.080 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+16:38:41.081 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:38:41.095 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+16:38:41.413 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+16:38:41.414 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+16:38:41.418 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+16:38:41.419 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+16:38:41.419 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+16:38:41.422 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+16:38:41.423 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+16:41:06.483 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 8292 (C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
+16:41:06.485 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: prod 
+16:41:07.056 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:41:07.142 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 76ms. Found 9 repository interfaces. 
+16:41:07.143 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:41:07.151 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 8ms. Found 1 repository interfaces. 
+16:41:07.538 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$27566c3c] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+16:41:07.705 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+16:41:07.721 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+16:41:07.849 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+16:41:07.849 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+16:41:07.960 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+16:41:07.960 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1447 ms 
+16:41:08.072 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+16:41:08.148 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+16:41:08.228 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+16:41:08.229 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+16:41:08.310 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+16:41:08.455 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:41:10.713 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+16:41:10.825 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+16:41:10.884 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+16:41:10.884 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+16:41:10.885 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:41:10.899 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+16:41:11.226 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+16:41:11.227 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+16:41:11.231 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+16:41:11.231 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+16:41:11.232 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+16:41:11.234 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+16:41:11.235 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+16:41:48.277 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 4836 (C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
+16:41:48.279 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: prod 
+16:41:48.885 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:41:48.949 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 55ms. Found 9 repository interfaces. 
+16:41:48.949 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:41:48.954 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 5ms. Found 1 repository interfaces. 
+16:41:49.293 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$8917e33f] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+16:41:49.463 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+16:41:49.481 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+16:41:49.612 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+16:41:49.612 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+16:41:49.738 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+16:41:49.738 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1425 ms 
+16:41:49.872 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+16:41:49.981 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+16:41:50.077 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+16:41:50.079 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+16:41:50.163 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+16:41:50.302 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:41:52.634 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+16:41:52.744 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+16:41:52.802 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+16:41:52.803 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+16:41:52.803 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:41:52.817 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+16:41:53.153 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
+16:41:53.154 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
+16:41:53.159 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
+16:41:53.159 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
+16:41:53.159 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+16:41:53.162 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+16:41:53.163 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+16:44:02.604 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 14864 (C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
+16:44:02.606 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: prod 
+16:44:03.103 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:44:03.171 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 61ms. Found 9 repository interfaces. 
+16:44:03.172 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+16:44:03.178 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 6ms. Found 1 repository interfaces. 
+16:44:03.503 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$73926eb] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+16:44:03.678 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+16:44:03.695 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+16:44:03.832 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+16:44:03.832 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+16:44:03.940 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+16:44:03.940 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1307 ms 
+16:44:04.046 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+16:44:04.121 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+16:44:04.203 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+16:44:04.204 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+16:44:04.282 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+16:44:04.416 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:44:06.834 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+16:44:06.949 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'maindb' 
+16:44:07.008 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting... 
+16:44:07.009 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed. 
+16:44:07.009 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+16:44:07.023 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'h2db' 
+16:44:07.425 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+16:44:07.567 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+16:44:07.734 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
 
-Using generated security password: 8574e050-eb53-4809-8e19-475fede68328
+Using generated security password: db1eec8e-d641-47cc-8a0d-93a5798888cc
  
-09:24:09.648 [main] INFO  o.s.s.w.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3646312f, org.springframework.security.web.context.SecurityContextPersistenceFilter@b3cc4a8, org.springframework.security.web.header.HeaderWriterFilter@568cb323, org.springframework.security.web.csrf.CsrfFilter@73f1d6b7, org.springframework.security.web.authentication.logout.LogoutFilter@20f8f440, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@3db9dc38, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@4463e7ac, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@80fd11b, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@6160b774, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@d59296f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4b6827c5, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2c7d64c1, org.springframework.security.web.session.SessionManagementFilter@6b04770d, org.springframework.security.web.access.ExceptionTranslationFilter@6f59ac2c, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@3933bbc6] 
-09:24:09.704 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
-09:24:09.767 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Started TsyncApplicationTests in 8.961 seconds (JVM running for 9.708) 
-09:24:09.820 [Thread-5] INFO  o.s.s.c.ThreadPoolTaskScheduler - Shutting down ExecutorService 'taskScheduler' 
-09:24:09.822 [Thread-5] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
-09:24:09.825 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'h2db' 
-09:24:09.827 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated... 
-09:24:09.832 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed. 
-09:24:09.833 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'maindb' 
-09:24:09.834 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
-09:24:09.869 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+16:44:07.791 [main] INFO  o.s.s.w.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@403adc49, org.springframework.security.web.context.SecurityContextPersistenceFilter@77945728, org.springframework.security.web.header.HeaderWriterFilter@60ca0605, org.springframework.security.web.csrf.CsrfFilter@6f9f5d71, org.springframework.security.web.authentication.logout.LogoutFilter@35138ba2, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@38175b1b, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@52fba4a7, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@161c8305, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@60528633, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1abd54fc, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@88c0ed3, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@696f286d, org.springframework.security.web.session.SessionManagementFilter@6bcdc5c6, org.springframework.security.web.access.ExceptionTranslationFilter@b78bc48, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@20797cb8] 
+16:44:07.804 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+16:44:07.839 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+16:44:07.855 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+16:44:07.858 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 5.556 seconds (JVM running for 6.132) 
+16:44:07.869 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+16:44:07.869 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 

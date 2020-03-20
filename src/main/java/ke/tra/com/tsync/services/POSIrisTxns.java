@@ -56,7 +56,7 @@ public class POSIrisTxns implements PosIrisInt {
             tmsDeviceHeartbeat.setSerialNo(serialnumber);
             tmsDeviceHeartbeat.setSignalStrength(nw[1]);
             tmsDeviceHeartbeat.setTid(isoMsg.getString(41));
-            tmsDeviceHeartbeat.setDeviceTemperature(new Short(tmp[1]));
+            tmsDeviceHeartbeat.setDeviceTemperature(Short.valueOf(tmp[1]));
             tmsDeviceHeartbeat.setObj(obj[1]);
             tmsDeviceHeartbeat.setTmVersion(telliumManagerVersion[1]);
 

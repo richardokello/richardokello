@@ -4,14 +4,12 @@ package ke.tra.com.tsync.utils;
 import ke.tra.com.tsync.h2pkgs.models.GeneralSettingsCache;
 import ke.tra.com.tsync.h2pkgs.repo.GatewaySettingsCache;
 import ke.tra.com.tsync.services.CRDBPipService;
-import ke.tra.com.tsync.services.ToCBSTxns;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 @Component
 public class PipSessionScheduler {
@@ -20,8 +18,7 @@ public class PipSessionScheduler {
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd M yyyy HH:mm:ss");
 
     @Autowired private GatewaySettingsCache gatewaySettingsCache;
-    @Autowired
-    CRDBPipService crdbPipService;
+    @Autowired private CRDBPipService crdbPipService;
 
     @Scheduled(cron = "0 0 6 * * *" ,zone="Africa/Djibouti")
     private void fetchSessionNumber() {

@@ -18,7 +18,7 @@ public class GeneralSettingsCache {
     @Id
     private long id;
 
-    @Column(name = "crdb_session_key")
+    @Column(name = "crdb_session_str")
     private String crdbSessionKey;
 
     @Column(name = "updated")

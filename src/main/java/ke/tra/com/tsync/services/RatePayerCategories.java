@@ -5,8 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import ke.tra.com.tsync.wrappers.DataWrapper;
-import ke.tra.com.tsync.wrappers.TrcmGeneralRestWrapper;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

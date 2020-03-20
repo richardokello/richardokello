@@ -1,9 +1,6 @@
 package ke.tra.com.tsync.services;
 
 import com.google.gson.*;
-import ke.tra.com.tsync.wrappers.TrcmGeneralRestWrapper;
-import ke.tra.com.tsync.wrappers.support.SupportCategories;
-import netscape.javascript.JSObject;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.lang.reflect.Array;
-import java.util.List;
 
 @Service
 public class SupportCategoriesModule {

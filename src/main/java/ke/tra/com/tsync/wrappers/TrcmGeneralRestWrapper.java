@@ -17,13 +17,13 @@ import lombok.*;
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor @ToString
 public class TrcmGeneralRestWrapper {
 
-    @JsonProperty("status")
-    private int status;
-    
-    @JsonProperty("statusDesc")
-    private String statusDesc;
+    @JsonProperty("code")
+    private String code;
+
+    @JsonProperty("message")
+    private String description;
 
     @JsonProperty("data")
-    private Object data;
+    private Object object;
 
 }

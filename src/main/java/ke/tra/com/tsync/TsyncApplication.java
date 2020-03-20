@@ -55,8 +55,8 @@ public class TsyncApplication {
         System.out.println(String.format("****** Creating table: %s, and Inserting switch ip port settings ******", "GENERALSETTINGSCACHE"));
         String sqlStatements[] = {
                 "drop table GENERALSETTINGSCACHE if exists",
-                "create table GENERALSETTINGSCACHE(id int,sign_on_state varchar(10),last_name varchar(255))",
-                "insert into GENERALSETTINGSCACHE(id, sign_on_state) values(1,'"+GeneralSettingsCache.SignOnState.SIGNON+"')",
+                "create table GENERALSETTINGSCACHE(id int,crdb_session_str varchar(40),updated boolean)",
+                "insert into GENERALSETTINGSCACHE(id, crdb_session_str,updated) values(1,'NA',false)",
         };
 
         Arrays.asList(sqlStatements).stream().forEach(sql -> {
@@ -65,11 +65,15 @@ public class TsyncApplication {
         });
 
         System.out.println(String.format("****** Fetching from table: %s ******", "GENERALSETTINGSCACHE"));
-        jdbcTemplate.query("select id,sign_on_state from GENERALSETTINGSCACHE",
+        jdbcTemplate.query("select id,crdb_session_str,updated from GENERALSETTINGSCACHE",
                 (rs, i) -> {
-                    System.out.println(String.format("id:%s,sign_on_state:%s",
+                    System.out.printf(
+                            String.format("\nid:%s, crdb_session_str:%s, updated:%s  ",
                             rs.getString("id"),
-                            rs.getString("sign_on_state")));
+                            rs.getString("crdb_session_str"),
+                            rs.getBoolean("updated")
+                            )
+                    );
                     return null;
                 });
     }

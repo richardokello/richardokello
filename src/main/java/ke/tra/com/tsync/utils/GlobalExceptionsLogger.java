@@ -11,7 +11,7 @@ public class GlobalExceptionsLogger {
     public void before(JoinPoint joinPoint){
         //Advice
        // logger.error(" Test xxxxx ");
-        logger.error(" JoinPoint execution for {}", joinPoint);
+        logger.error("GlobalExceptionsLogger JoinPoint execution for {}", joinPoint);
     }
 
 }

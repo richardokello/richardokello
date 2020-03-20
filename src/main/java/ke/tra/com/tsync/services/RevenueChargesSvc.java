@@ -1,14 +1,8 @@
 package ke.tra.com.tsync.services;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import ke.tra.com.tsync.wrappers.TrcmGeneralRestWrapper;
-import ke.tra.com.tsync.wrappers.revenueStream.RevenueStreamItem;
-import org.jpos.iso.ISOException;
-import org.jpos.iso.ISOUtil;
-import org.junit.Assert;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -16,11 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 
 @Service
