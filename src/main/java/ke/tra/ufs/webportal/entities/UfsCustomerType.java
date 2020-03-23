@@ -85,12 +85,12 @@ public class UfsCustomerType implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JsonIgnore
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
     @Filter
-    private BigDecimal tenantIds;
+    private String tenantIds;
     @Transient
     private List<Long> ruleIds;
 
@@ -135,11 +135,11 @@ public class UfsCustomerType implements Serializable {
         this.tenantId = tenantId;
     }
 
-    public BigDecimal getTenantIds() {
+    public String getTenantIds() {
         return tenantIds;
     }
 
-    public void setTenantIds(BigDecimal tenantIds) {
+    public void setTenantIds(String tenantIds) {
         this.tenantIds = tenantIds;
     }
 

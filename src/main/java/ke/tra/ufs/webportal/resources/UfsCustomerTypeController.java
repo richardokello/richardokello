@@ -78,7 +78,6 @@ public class UfsCustomerTypeController extends ChasisResource<UfsCustomerType, B
         ResponseWrapper response = new ResponseWrapper();
         List<Object> customerTypeRuleMap = new ArrayList();
 
-
         List<UfsCustomerTypeRuleMap> custTypeRuleMapDb = typeRulesMapRepository.findAllByTypeIds(id);
 
         if (custTypeRuleMapDb.isEmpty()) {
@@ -86,15 +85,6 @@ public class UfsCustomerTypeController extends ChasisResource<UfsCustomerType, B
             response.setData(customerTypeRuleMap);
             return ResponseEntity.ok(response);
         }
-        custTypeRuleMapDb.forEach(custType -> {
-
-            Map<String, Object> r = new HashMap<>();
-            r.put("ruleId",custType.getRuleId().getId() );
-            r.put("ruleName", custType.getRuleId().getName());
-
-            customerTypeRuleMap.add(r);
-        });
-
 
         response.setData(custTypeRuleMapDb);
         return ResponseEntity.ok(response);
