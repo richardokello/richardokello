@@ -30,6 +30,8 @@ import com.zaxxer.hikari.HikariDataSource;
         "ke.tra.com.tsync.config.db1"},
         transactionManagerRef = "db1TransactionManager"
         )
+
+
 public class Db1Config {
     @Primary
     @Bean(name = "db1DataSourceProperties")

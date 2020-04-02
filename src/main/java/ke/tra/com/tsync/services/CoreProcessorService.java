@@ -192,6 +192,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
             //process the transaction
             LOGGER.info(" fieldDataMap  : " + fieldDataMap.toString());
         } **/
+        isoMsg.set(39, "06");
 
         switch (isoMsg.getString(0)) {
             case "0100":
@@ -200,7 +201,6 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                 //Authorization Request	Request from a point-of-sale terminal for authorization for a cardholder purchase
                 isoMsg = processAuthorizationServices.processAuthbyProcode(isoMsg,fieldDataMap);
                 break;
-
             default:
                 break;
         }

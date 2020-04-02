@@ -1,6 +1,6 @@
 package ke.tra.com.tsync.services;
 
-
+import ke.tra.com.tsync.services.crdb.CRDBPipService;
 import ke.tra.com.tsync.services.template.AuthorizationTxnsTmpl;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.LoggerFactory;
@@ -12,20 +12,13 @@ import java.util.HashMap;
 @Service
 public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
 
-    @Autowired
-    private  UserManagementService userManagementService;
-
-    @Autowired
-    private  CoreProcessorService coreProcessorService;
-
-    @Autowired
-    private  POSIrisTxns posIrisTxns;
-
+    @Autowired private  UserManagementService userManagementService;
+    @Autowired private  CoreProcessorService coreProcessorService;
+    @Autowired private  POSIrisTxns posIrisTxns;
     @Autowired private RatePayerCategories ratePayerCategories;
-
     @Autowired private SupportCategoriesModule supportCategoriesModule;
-
     @Autowired private  CashCollectionReconSvc cashCollectionReconSvc;
+    @Autowired private CRDBPipService crdbPipService;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(POSIrisTxns.class);
 
@@ -46,7 +39,6 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                     isoMsg = userManagementService.resetUserPin(isoMsg,fieldDataMap);
                 else
                     return isoMsg2;
-
                 break;
 
             case "001111":
@@ -58,26 +50,25 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                     isoMsg = userManagementService.changeUserPassword(isoMsg,fieldDataMap,newpass);
                 break;
 
-            case "011111":
-                //Control number
-                break;
+            case "011111": //Inquire Control Number
+                return crdbPipService.inquireGEPGControlNumber(isoMsg);
+
+            case "011112": //Post Control Number
+                //Post Control number
+                return crdbPipService.postGEPGControlNumber(isoMsg);
 
             case "001100":
                 isoMsg = posIrisTxns.receiveHeartBeat(isoMsg);
                 break;
-
 
             case "003300":
                 // fetch Amount by Zone .. Stream ID
                 isoMsg = ratePayerCategories.getARatePayerCategories(isoMsg);
                 break;
 
-
             case "003600":
                 // fetch Account number using the using the stream code
                 return supportCategoriesModule.getAllSupportCategories(isoMsg);
-
-
 
             default:
                 isoMsg.set(39,"05");
