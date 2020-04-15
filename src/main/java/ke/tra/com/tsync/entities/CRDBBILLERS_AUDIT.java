@@ -1,6 +1,5 @@
 package ke.tra.com.tsync.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ke.tra.com.tsync.wrappers.crdb.GepgControlNumberRequest;
 import ke.tra.com.tsync.wrappers.crdb.GetControlNumberDetailsResponse;
 import ke.tra.com.tsync.wrappers.crdb.PostGePGControlNumberPaymentRequest;
@@ -14,17 +13,17 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- *
  * @author Mwagiru Kamoni
  */
 
+/*
 enum RequestType {
     GetControlNumber,
     GetControlNumberResponse,
     PostControlNumber,
     PostControlNumberResponse
 }
-
+ */
 
 @Data
 @AllArgsConstructor
@@ -32,27 +31,7 @@ enum RequestType {
 @Entity
 @Table(name = "CRDBBILLERS_GEPG_LOGS")
 public class CRDBBILLERS_AUDIT implements Serializable {
-    /**
-     * "ID" NUMBER NOT NULL ENABLE,
-     * 	"REQUEST_NAME" VARCHAR2(20 BYTE),
-     * 	"CODE" VARCHAR2(15 BYTE) NOT NULL ENABLE,
-     * 	"REQUEST_ID" VARCHAR2(20 BYTE),
-     * 	"PAYMENT_REFERENCE" VARCHAR2(20 BYTE),
-     * 	"PAYMENT_TYPE" VARCHAR2(15 BYTE),
-     * 	"OWNER" VARCHAR2(80 BYTE),
-     * 	"CUSTOMER_EMAIL" VARCHAR2(100 BYTE),
-     * 	"CUSTOMER_MOBILE" VARCHAR2(15 BYTE),
-     * 	"SERVICE_NAME" VARCHAR2(100 BYTE),
-     * 	"PAYMENT_GFS_CODE" VARCHAR2(20 BYTE),
-     * 	"CURRENCY" VARCHAR2(10 BYTE),
-     * 	"PAYMENT_DESC" VARCHAR2(100 BYTE),
-     * 	"PAYMENT_EXPIRY" VARCHAR2(20 BYTE),
-     * 	"PAYMENT_OPTION" VARCHAR2(10 BYTE),
-     * 	"AMOUNT" VARCHAR2(20 BYTE),
-     * 	"MESSAGE" VARCHAR2(400 BYTE),
-     * 	"INSERTTIME" TIMESTAMP (6) DEFAULT current_timestamp(2) NOT NULL ENABLE,
-     * 	"REQUEST_DIRECTION" VARCHAR2(20 B
-     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CRDBBILLERS_GEPG_LOGS_SEQ")
     @SequenceGenerator(sequenceName = "crdbbillers_gepg_logs_seq", allocationSize = 1, name = "CRDBBILLERS_GEPG_LOGS_SEQ")
@@ -66,7 +45,7 @@ public class CRDBBILLERS_AUDIT implements Serializable {
     private String code;
     //private String sessionToken;//not needed
     //private String partnerID;
-   // private String checksum;//not needed
+    // private String checksum;//not needed
 
     @Column(name = "REQUEST_ID")
     private String requestID;
@@ -101,7 +80,7 @@ public class CRDBBILLERS_AUDIT implements Serializable {
     @Column(name = "PAYMENT_DESC")
     private String paymentDesc;
 
-    @Column(name = "PAYENT_EXPIRY")
+    @Column(name = "PAYMENT_EXPIRY")
     private String paymentExpiry;
 
     @Column(name = "PAYMENT_OPTION")
@@ -111,18 +90,98 @@ public class CRDBBILLERS_AUDIT implements Serializable {
     private String amount;
 
     @Column(name = "MESSAGE")
-    private String message;
+    private String message="";
 
+    @Column(name = "REQUEST_DIRECTION")
+    private String requestDirection;
 
-    @Column(name="REQUEST_DIRECTION")
-    private  String requestDirection;
-    CRDBBILLERS_AUDIT(
+    @Column(name = "GEPG_RECEIPT")
+    private String gepgReceipt;
+
+    @Column(name = "TID")
+    String tid;
+    @Column(name = "MID")
+    String mid;
+    @Column(name = "POS_REF")
+    String posref;
+
+    public CRDBBILLERS_AUDIT(
             GepgControlNumberRequest gepgControlNumberRequest,
-            GetControlNumberDetailsResponse getControlNumberDetailsResponse){
-
+            String tid,String mid, String posref) {
+        this.tid=tid;
+        this.mid=mid;
+        this.posref=posref;
+        requestName = "GETCONTROL";
+        code = gepgControlNumberRequest.code(); // IF WE HAVE A REQUEST WITHOUT A CODE
+        requestID = gepgControlNumberRequest.requestID();
+        paymentReference = gepgControlNumberRequest.paymentReference();
+        requestDirection = "REQUEST";
     }
-    CRDBBILLERS_AUDIT(PostGePGControlNumberPaymentRequest postGePGControlNumberPaymentRequest,
-                      PostGepgControlNumberResponse postGepgControlNumberResponse){
+
+
+    public CRDBBILLERS_AUDIT(GetControlNumberDetailsResponse getControlNumberDetailsResponse
+    ,String tid,String mid, String posref) {
+        this.tid=tid;
+        this.mid=mid;
+        this.posref=posref;
+        amount = getControlNumberDetailsResponse.amount();
+        requestName = "GETCONTROL";
+        code="INQUIRE"; //  MOVE THIS TO INPUT TO ALLOW FOR MULTIPLE CODES
+        requestID = getControlNumberDetailsResponse.requestID();
+        paymentReference = getControlNumberDetailsResponse.paymentReference();
+        requestDirection = "RESPONSE";
+        owner = getControlNumberDetailsResponse.owner();
+        customerEmail = getControlNumberDetailsResponse.customerEmail();
+        customerMobile = getControlNumberDetailsResponse.customerMobile();
+        serviceName=getControlNumberDetailsResponse.serviceName();
+        paymentGfsCode = getControlNumberDetailsResponse.paymentGfsCode();
+        currency = getControlNumberDetailsResponse.currency();
+        message=getControlNumberDetailsResponse.message();
+    }
+
+
+    public CRDBBILLERS_AUDIT(PostGePGControlNumberPaymentRequest postGePGControlNumberPaymentRequest,
+                             String tid,String mid, String posref) {
+        this.tid=tid;
+        this.mid=mid;
+        this.posref=posref;
+        requestName = "POSTCONTROL";
+        code = postGePGControlNumberPaymentRequest.code(); // IF WE HAVE A REQUEST WITHOUT A CODE
+        requestID = postGePGControlNumberPaymentRequest.requestID();
+        paymentReference = postGePGControlNumberPaymentRequest.paymentReference();
+        requestDirection = "REQUEST";
+        //callbackurl=postGePGControlNumberPaymentRequest.callbackurl();
+        paymentType = postGePGControlNumberPaymentRequest.paymentType();
+        owner = postGePGControlNumberPaymentRequest.owner();
+        customerEmail = postGePGControlNumberPaymentRequest.customerEmail();
+        customerMobile = postGePGControlNumberPaymentRequest.customerMobile();
+        serviceName = postGePGControlNumberPaymentRequest.serviceName();
+        customerMobile = postGePGControlNumberPaymentRequest.customerMobile();
+        paymentGfsCode = postGePGControlNumberPaymentRequest.paymentGfsCode();
+        currency = postGePGControlNumberPaymentRequest.currency();
+        paymentDesc = postGePGControlNumberPaymentRequest.paymentDesc();
+        paymentExpiry = postGePGControlNumberPaymentRequest.paymentExpiry();
+        paymentOption = postGePGControlNumberPaymentRequest.paymentOption();
+        amount = postGePGControlNumberPaymentRequest.amount();
+    }
+//CREATE A FACTORY TO INITIALIZE ALL THESE CLASS INITIALIZERS
+
+    public CRDBBILLERS_AUDIT(PostGepgControlNumberResponse postGepgControlNumberResponse,
+                             String tid,String mid, String posref) {
+        //partnerID not being saved
+        requestName = "POSTCONTROL";
+        code="PURCHASE"; // MOVE THIS TO INPUT TO ALLOW FOR MULTIPLE CODES
+        requestID = postGepgControlNumberResponse.requestID();
+        paymentReference = postGepgControlNumberResponse.paymentReference();
+        requestDirection = "RESPONSE";
+        owner = postGepgControlNumberResponse.owner();
+        amount = postGepgControlNumberResponse.amount();
+        
+        gepgReceipt = postGepgControlNumberResponse.gepgReceipt();
+        this.tid=tid;
+        this.mid=mid;
+        this.posref=posref;
+
     }
 
 

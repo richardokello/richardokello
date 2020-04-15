@@ -23,4 +23,5 @@ public class GeneralSettingsCache {
 
     @Column(name = "updated")
     private boolean updated;
+
 }

@@ -12,10 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -92,7 +89,7 @@ public class TsyncApplication {
 
     private void getSessionKeyIni(){
         logger.info("Attempting fetchSessionNumber from PIP:: Execution Time - {}", new Date().toString());
-        String sessionStr = crdbPipService.getSessionDetails();
+        String sessionStr = crdbPipService.getSessionDetailsOnline();
         logger.info("sessionStr {} " , sessionStr);
         GeneralSettingsCache gs= gatewaySettingsCacheRepo.findById(1L).get();
         gs.setCrdbSessionKey(sessionStr);

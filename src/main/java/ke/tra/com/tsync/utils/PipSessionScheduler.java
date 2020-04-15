@@ -20,23 +20,13 @@ public class PipSessionScheduler {
     @Autowired private GatewaySettingsCacheRepo gatewaySettingsCacheRepo;
     @Autowired private CRDBPipService crdbPipService;
 
-    @Scheduled(cron = "0 0 7 * * *" ,zone="GMT+3:00")
+    @Scheduled(cron = "0 15 6 * * *" ,zone="GMT+3:00")
     private void fetchSessionNumber() {
         try {
             logger.info("Attempting fetchSessionNumber from PIP:: Execution Time - {}", dateTimeFormatter.format(LocalDateTime.now()));
-            String sessionStr = crdbPipService.getSessionDetails();
+            String sessionStr = crdbPipService.getSessionDetailsOnline();
             logger.info("sessionStr {} " , sessionStr);
-            GeneralSettingsCache gs= gatewaySettingsCacheRepo.findById(1L).get();
-            gs.setCrdbSessionKey(sessionStr);
-           // String getCrdbSessionKey =  gs.getCrdbSessionKey();
-            if(!sessionStr.isEmpty()){
-                gs.setUpdated(false);
-                gatewaySettingsCacheRepo.save(gs);
-            } else{
-                gs.setCrdbSessionKey(sessionStr);
-                gs.setUpdated(true);
-                gatewaySettingsCacheRepo.save(gs);
-            }
+            PipSessionServiceAsync.updateValidSessionString(sessionStr, gatewaySettingsCacheRepo);
         } catch (Exception e) {
             logger.info("PipSessionScheduler fetchSessionNumber error: {} " ,e);
             logger.error("PipSessionScheduler fetchSessionNumber error: {} " ,e);

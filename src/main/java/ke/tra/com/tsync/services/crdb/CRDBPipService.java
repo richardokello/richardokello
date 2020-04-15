@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import ke.tra.com.tsync.h2pkgs.models.GeneralSettingsCache;
 import ke.tra.com.tsync.h2pkgs.repo.GatewaySettingsCacheRepo;
+import ke.tra.com.tsync.utils.PipSessionServiceAsync;
 import ke.tra.com.tsync.wrappers.crdb.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jpos.iso.ISOMsg;
@@ -41,12 +42,15 @@ public class CRDBPipService {
     @Autowired
     private GatewaySettingsCacheRepo gatewaySettingsCacheRepo;
 
-    // @Autowired
-    //private LoggingInterceptor loggingInterceptor;
+    @Autowired
+    private CRDB_BillersAudit_Service crdbBillersAuditService;
+
+    @Autowired
+    private PipSessionServiceAsync pipSessionServiceAsync;
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CRDBPipService.class);
 
     // validate Control Number
-    private String getControlNumberFromLocalDB() {
+    private String getSessionStringFromLocalDB() {
         try {
             GeneralSettingsCache generalSettingsCache = gatewaySettingsCacheRepo.findById(1l).get();
             return generalSettingsCache.getCrdbSessionKey();
@@ -57,18 +61,6 @@ public class CRDBPipService {
         return "";
     }
 
-    private synchronized String refreshSessionNo(){
-        String sessionStr="";
-        try {
-            sessionStr = getSessionDetails();
-            GeneralSettingsCache generalSettingsCache = gatewaySettingsCacheRepo.findById(1l).get();
-            generalSettingsCache.setCrdbSessionKey(sessionStr);
-            gatewaySettingsCacheRepo.save(generalSettingsCache);
-        }catch (Exception e){
-            LOGGER.error("refreshSessionNo {}", e);
-        }
-        return sessionStr;
-    }
 
     public RestTemplate restTemplate() {
         RestTemplate myrestTemplate = new RestTemplate();
@@ -85,11 +77,9 @@ public class CRDBPipService {
         return myrestTemplate;
     }
 
-    public String getSessionDetails() {
+    public String getSessionDetailsOnline() {
         String result = "";
         try {
-            // restTemplate.setMessageConverters(getMessageConverters());
-
             RestTemplate myrestTemplate = restTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -111,13 +101,11 @@ public class CRDBPipService {
             //CRDBWrapper crdbWrapper = new Gson().fromJson(stringResponseEntity.getBody(), CRDBWrapper.class);
             LOGGER.info("crdbWrapperResponseEntity {} ", crdbWrapperResponseEntity);
             if (crdbWrapperResponseEntity.getStatusCode().is2xxSuccessful()) {
-
                 SessionResponse sessionResponse = new ObjectMapper().convertValue(crdbWrapperResponseEntity.getBody().getData(), SessionResponse.class);
-                // crdbWrapperResponseEntity.getBody().getData();
-                //SessionResponse sessionResponse = (SessionResponse) (Arrays.asList(crdbWrapperResponseEntity.getBody().getData());
                 result = sessionResponse.getSessionToken();
             }
             return result;
+
         } catch (Exception e) {
             LOGGER.error("getSessionDetails", e);
             LOGGER.info("getSessionDetails {}", e);
@@ -134,26 +122,32 @@ public class CRDBPipService {
     }
 
     //CRDB HTTP REQUEST
-    private ResponseEntity<CRDBWrapper> inquireGEPGControlNumber(String paymentreference) {
+    private ResponseEntity<CRDBWrapper> inquireGEPGControlNumber(String paymentreference, ISOMsg isoMsg) {
         String requestID = new SimpleDateFormat("yyyyMMddHHmmssS")
                 .format(new Timestamp(System.currentTimeMillis()));
-        String sessionToken = getControlNumberFromLocalDB();
-       // String requestIDMD5 = DigestUtils.md5Hex(requestID);
-       //String sha1Str = ;
+        String sessionToken = getSessionStringFromLocalDB();
         GepgControlNumberRequest gepgControlNumberRequest = new GepgControlNumberRequest(
-                paymentreference, "INQUIRE", get_session_pip_partnername, sessionToken, DigestUtils.sha1Hex(DigestUtils.md5Hex(requestID) + paymentreference), requestID
+                paymentreference,
+                "INQUIRE",
+                get_session_pip_partnername,
+                sessionToken,
+                DigestUtils.sha1Hex(DigestUtils.md5Hex(requestID) + paymentreference),
+                requestID
+        );
 
+        crdbBillersAuditService.logGepgControlNumberRequestAsync(gepgControlNumberRequest,
+                isoMsg.getString(41),
+                isoMsg.getString(42),
+                isoMsg.getString(37)
         );
 
         LOGGER.info("GepgControlNumberRequest Body {}", gepgControlNumberRequest);
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.TEXT_HTML));
         HttpEntity<GepgControlNumberRequest> entity = new HttpEntity<>(gepgControlNumberRequest, headers);
         LOGGER.info("GepgControlNumberRequest entity {} url : {} ", entity, get_gepg_pip_url);
         try {
-
             RestTemplate restTemplate = restTemplate();
             ResponseEntity<CRDBWrapper> response = restTemplate.exchange(
                     get_gepg_pip_url,
@@ -162,7 +156,6 @@ public class CRDBPipService {
                     new ParameterizedTypeReference<CRDBWrapper>() {
                     }
             );
-
             LOGGER.info("GepgControlNumberResponse response {}", response);
             return response;
         } catch (Exception ee) {
@@ -179,7 +172,7 @@ public class CRDBPipService {
             , String owner, String customerEmail, String customerMobile
             , String serviceName, String paymentGfsCode, String currency
             , String paymentDesc, String paymentExpiry, String paymentOption
-            , String amount) {
+            , String amount, ISOMsg isoMsg) {
         try {
             ResponseEntity<CRDBWrapper> crdbWrapperResponseEntity = null;
             HttpHeaders headers = new HttpHeaders();
@@ -205,11 +198,15 @@ public class CRDBPipService {
                             .paymentExpiry(paymentExpiry)
                             .paymentOption(paymentOption)
                             .amount(amount);
-
+            crdbBillersAuditService.logPostGePGControlNumberPaymentRequestAsync(postGePGControlNumberPaymentRequest,
+                    isoMsg.getString(41),
+                    isoMsg.getString(42),
+                    isoMsg.getString(37));
             HttpEntity<PostGePGControlNumberPaymentRequest> postGePGControlNumberPaymentRequestHttpEntity =
                     new HttpEntity<>(postGePGControlNumberPaymentRequest, headers);
-
-            LOGGER.info("\n\n PostGePGControlNumberPaymentRequest   {} \n\n\n", postGePGControlNumberPaymentRequestHttpEntity);
+            LOGGER.info(
+                    "\n\n PostGePGControlNumberPaymentRequest \n   {} \n\n",
+                    postGePGControlNumberPaymentRequestHttpEntity);
 
             RestTemplate restTemplate = restTemplate();
             crdbWrapperResponseEntity = restTemplate
@@ -225,7 +222,6 @@ public class CRDBPipService {
                     new ObjectMapper().convertValue(
                             crdbWrapperResponseEntity.getBody().getData(),
                             PostGepgControlNumberResponse.class);
-
             return crdbWrapperResponseEntity;
         } catch (Exception ee) {
             LOGGER.info("\n\n PostGePGControlNumberPaymentRequest   {} \n\n\n", ee);
@@ -237,26 +233,42 @@ public class CRDBPipService {
         try {
             if (!isoMsg.hasField(63) || isoMsg.getString(63).isEmpty())
                 isoMsg.set(39, "06");
-            ResponseEntity<CRDBWrapper> inquireGEPGControlNumber = inquireGEPGControlNumber(isoMsg.getString(63));
+            ResponseEntity<CRDBWrapper> inquireGEPGControlNumber = inquireGEPGControlNumber(isoMsg.getString(63),isoMsg);
             if (null == inquireGEPGControlNumber) {
                 isoMsg.set(39, "96");
             }
             if (inquireGEPGControlNumber.getStatusCode().is2xxSuccessful()) {
                 //fetch reponse details
                 CRDBWrapper crdbWrapper = inquireGEPGControlNumber.getBody();
+                GetControlNumberDetailsResponse getControlNumberDetailsResponse =
+                        new ObjectMapper().convertValue(
+                                crdbWrapper.getData(),
+                                GetControlNumberDetailsResponse.class);
+
+                crdbBillersAuditService.logCGetControlNumberDetailsResponseAsync(getControlNumberDetailsResponse,isoMsg.getString(41),
+                        isoMsg.getString(42),
+                        isoMsg.getString(37));
                 if (crdbWrapper.getStatus() == 200) {
                     isoMsg.set(39, "00");
-                    GetControlNumberDetailsResponse getControlNumberDetailsResponse =
-                            new ObjectMapper().convertValue(
-                                    crdbWrapper.getData(),
-                                    GetControlNumberDetailsResponse.class);
-
                     String de63res = getControlNumberDetailsResponse.getToPOSStr();
                     isoMsg.set(63, de63res);
                 }else{
-                    if((crdbWrapper.getStatus() == 200){
-
+                    if(crdbWrapper.getStatus()==201 || crdbWrapper.getStatus()==205 || crdbWrapper.getStatus()==206 ){
+                        pipSessionServiceAsync.refreshSessionNumber();
+                        isoMsg.set(63, "System unavailable. Please try again after 30 seconds");
+                        return isoMsg;
                     }
+                    String message =getControlNumberDetailsResponse.message();
+                    try {
+                        message = getControlNumberDetailsResponse.message();
+                        if(message.isEmpty() || message.isBlank())
+                            message = crdbWrapper.getStatusDesc();
+                        LOGGER.info("pos txnReference {} gepg response message {} ", isoMsg.getString(37), message);
+                    }catch(Exception e){
+                        LOGGER.error("postGEPGControlNumber {} ", e);
+                    }
+                    isoMsg.set(63, message);
+                    isoMsg.set(72, message);
                 }
             }
         } catch (Exception ee) {
@@ -287,6 +299,7 @@ public class CRDBPipService {
      */
 
     public ISOMsg postGEPGControlNumber(ISOMsg isoMsg) {
+        isoMsg.set(39, "06");
         if (!isoMsg.hasField(63) || isoMsg.getString(63).isEmpty())
             isoMsg.set(39, "06");
         String[] f63split = isoMsg.getString(63).split("#");
@@ -296,7 +309,7 @@ public class CRDBPipService {
         }
         String txnReference = isoMsg.getString(37);
         String code = "PURCHASE";
-        String sessionToken = getControlNumberFromLocalDB();
+        String sessionToken = getSessionStringFromLocalDB();
         ;
         String partnerID = f63split[12];
         String requestID = f63split[0];
@@ -318,26 +331,46 @@ public class CRDBPipService {
         String paymentExpiry = f63split[8];
         String paymentOption = f63split[9];
 
+
+
         //fetch posting details
         ResponseEntity<CRDBWrapper> postGePGControlNumberPaymentRequestHttpEntity =
                 postGePGControlNumberPaymentRequestHttpEntity(
                         code, sessionToken, partnerID, checksum,
                         requestID, paymentReference, callbackurl, owner,
                         customerEmail, customerMobile, serviceName, paymentGfsCode,
-                        currency, paymentDesc, paymentExpiry, paymentOption, amount);
+                        currency, paymentDesc, paymentExpiry, paymentOption, amount,isoMsg);
+
+
         isoMsg.set(39, "96");
         if (postGePGControlNumberPaymentRequestHttpEntity != null) {
             if (postGePGControlNumberPaymentRequestHttpEntity.getStatusCode().is2xxSuccessful()) {
                 CRDBWrapper crdbWrapperResponse = postGePGControlNumberPaymentRequestHttpEntity.getBody();
+                PostGepgControlNumberResponse gepgControlNumberResponse =new ObjectMapper().convertValue(
+                        crdbWrapperResponse.getData(),
+                        PostGepgControlNumberResponse.class
+                );
+
+                crdbBillersAuditService.logPostGepgControlNumberResponseAsync(gepgControlNumberResponse,isoMsg.getString(41),
+                        isoMsg.getString(42),
+                        isoMsg.getString(37));
                 if (crdbWrapperResponse.getStatus() == 200) {
                     isoMsg.set(39, "00");
-                    PostGepgControlNumberResponse gepgControlNumberResponse =
-                            new ObjectMapper().convertValue(crdbWrapperResponse.getData(),
-                                    PostGepgControlNumberResponse.class);
                     isoMsg.set(63, gepgControlNumberResponse.toPosString());
+                    //isoMsg.set(72, gepgControlNumberResponse.toPosString());
                 } else {
                     isoMsg.set(39, "96");
-                    isoMsg.set(72, crdbWrapperResponse.getStatusDesc());
+                    String message ="ERROR IN REMOTE SYSTEM";
+                    try {
+                        message = gepgControlNumberResponse.message();
+                        if(message.isEmpty() || message.isBlank())
+                            message = crdbWrapperResponse.getStatusDesc();
+                        LOGGER.info("pos txnReference {} gepg response message {} ", txnReference, message);
+                    }catch(Exception e){
+                        LOGGER.error("postGEPGControlNumber {} ", e);
+                    }
+                    isoMsg.set(63, message);
+                    isoMsg.set(72, message);
                 }
             }
         }

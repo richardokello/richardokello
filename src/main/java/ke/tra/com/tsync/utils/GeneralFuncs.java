@@ -20,7 +20,6 @@ public class GeneralFuncs {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GeneralFuncs.class.getName());
 
-
     @Qualifier("db1EntityManagerFactory")
     @Autowired
     private EntityManager em;
@@ -28,16 +27,11 @@ public class GeneralFuncs {
     public String getNextStanNumber() {
         Query q = em.createNativeQuery("SELECT STANSEQUENCE.nextval from DUAL");
         BigDecimal result = (BigDecimal) q.getSingleResult();
-
-
-
-
         return result.toString();
     }
 
     // Get Agent Blance
     public String getAgentBlance(String accountnumber) {
-
         try {
             Query q = em.createNativeQuery("select ACY_AVL_BAL from sttm_cust_account@flex2 where cust_ac_no = '" + accountnumber + "'");
             Object result = q.getSingleResult();
@@ -47,7 +41,6 @@ public class GeneralFuncs {
             logger.error("RETURNED BALANCE FOR REF {}   ", e);
             return "";
         }
-
     }
 
     public String logISOMsg(ISOMsg msg, Integer direction) {

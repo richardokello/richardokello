@@ -19,25 +19,25 @@ public class PostGepgControlNumberResponse {
 
 
     @JsonProperty("txnReference")
-    public String txnReference;
+    private String txnReference;
 
     @JsonProperty("requestID")
-    public String requestID;
+    private String requestID;
 
-    public String owner;
-    public String amount;
+    private String owner;
+    private String amount;
 
     @JsonProperty("paymentReference")
-    public String paymentReference;
+    private String paymentReference;
 
     @JsonProperty("gepgReceipt")
-    public String gepgReceipt;
+    private String gepgReceipt;
 
     @JsonProperty("partnerID")
-    public String partnerID;
+    private String partnerID;
 
     @JsonProperty("message")
-    public String message;
+    private String message;
 
     public String toPosString(){
         return

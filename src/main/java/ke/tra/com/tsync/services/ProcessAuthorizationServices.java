@@ -22,7 +22,6 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(POSIrisTxns.class);
 
-
     @Override
     public ISOMsg processAuthbyProcode(ISOMsg isoMsg, HashMap<String, Object> fieldDataMap){
         isoMsg.set(39, "06");
@@ -31,7 +30,6 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                 //pos agent login
                 isoMsg = userManagementService.processUserLogin(isoMsg,fieldDataMap);
                 break;
-
             case "001110":
                 //reset Pin change
                 ISOMsg isoMsg2 = userManagementService.processUserLogin(isoMsg,fieldDataMap);
@@ -44,7 +42,6 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
             case "001111":
                 //password change
                 String newpass = isoMsg.getString(72).trim();
-                //logger.info("\n\nmewpasss {} \n\n", newpass);
                 if((userManagementService.processUserLogin(isoMsg,fieldDataMap))
                         .getString(39).equalsIgnoreCase("00"))
                     isoMsg = userManagementService.changeUserPassword(isoMsg,fieldDataMap,newpass);
@@ -57,7 +54,7 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                 //Post Control number
                 return crdbPipService.postGEPGControlNumber(isoMsg);
 
-            case "001100":
+            case "001100": //TMS heartbeats
                 isoMsg = posIrisTxns.receiveHeartBeat(isoMsg);
                 break;
 

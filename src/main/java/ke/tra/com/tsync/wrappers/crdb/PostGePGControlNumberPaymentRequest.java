@@ -1,12 +1,10 @@
 package ke.tra.com.tsync.wrappers.crdb;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Data
@@ -15,55 +13,61 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(fluent = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PostGePGControlNumberPaymentRequest {
 
+    @JsonProperty("code")
     public String code;
 
     @JsonProperty("sessionToken")
-    public String sessionToken;
+    private String sessionToken;
 
     @JsonProperty("partnerID")
-    public String partnerID;
+    private String partnerID;
 
-    public String checksum;
+    @JsonProperty("checksum")
+    private String checksum;
 
     @JsonProperty("requestID")
-    public String requestID;
+    private String requestID;
 
     @JsonProperty("paymentReference")
-    public String paymentReference;
+    private String paymentReference;
 
-    public String callbackurl;
+    @JsonProperty("callbackurl")
+    private String callbackurl;
 
     @JsonProperty("paymentType")
-    public String paymentType;
+    private String paymentType;
 
-    public String owner;
+    @JsonProperty("owner")
+    private String owner;
 
     @JsonProperty("customerEmail")
-    public String customerEmail;
+    private String customerEmail;
 
     @JsonProperty("customerMobile")
-    public String customerMobile;
+    private String customerMobile;
 
     @JsonProperty("serviceName")
-    public String serviceName;
+    private String serviceName;
 
     @JsonProperty("paymentGfsCode")
-    public String paymentGfsCode;
+    private String paymentGfsCode;
 
-    public String currency;
+    @JsonProperty("currency")
+    private String currency;
 
     @JsonProperty("paymentDesc")
-    public String paymentDesc;
+    private String paymentDesc;
 
     @JsonProperty("paymentExpiry")
-    public String paymentExpiry;
+    private String paymentExpiry;
 
     @JsonProperty("paymentOption")
-    public String paymentOption;
+    private String paymentOption;
 
-    public String amount;
-
-
+    @JsonProperty("amount")
+    private String amount;
 }

@@ -1,6 +1,7 @@
 package ke.tra.com.tsync.wrappers.crdb;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -10,22 +11,18 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(fluent = true)
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GepgControlNumberRequest  {
-
         @JsonProperty("paymentReference")
-        String paymentReference;
+        private String paymentReference;
         @JsonProperty("code")
-        String code;
+        private String code;
         @JsonProperty("partnerID")
-        String partnerID;
+        private String partnerID;
         @JsonProperty("sessionToken")
-        String sessionToken;
+        private String sessionToken;
         @JsonProperty("checksum")
-        String checksum;
+        private String checksum;
         @JsonProperty("requestID")
-        String requestID;
-
-
-
+        private String requestID;
 }

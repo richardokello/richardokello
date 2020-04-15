@@ -74,15 +74,16 @@ public class RequestHandlers implements ISORequestListener {
             coreProcessor.getTxnTypebyMTIAndProcodeAndActionstatusAndIntrash(
                     mti.trim(),
                     procode.trim(),
-                    "Approved", "NO")
-                    .ifPresentOrElse(obj -> {
-                                field39[0] = "00";
-                                // m.set(39, "00");
-                            }, () -> {
-                                field39[0] = "58";
-                                logger.error("txn with mti {} and procode {} txnref {}  has not been configured or is not enabled on system yet", errStr[0], errStr[1], errStr[2]);
-                            }
-                    );
+                    "Approved",
+                    "NO"
+            ).ifPresentOrElse(obj -> {
+                        field39[0] = "00";
+                        // m.set(39, "00");
+                    }, () -> {
+                        field39[0] = "58";
+                        logger.error("txn with mti {} and procode {} txnref {}  has not been configured or is not enabled on system yet", errStr[0], errStr[1], errStr[2]);
+                    }
+            );
 
             m.set(39, field39[0]);
             logger.info(" HERE WE ARE" + m.getString(39));
@@ -94,13 +95,14 @@ public class RequestHandlers implements ISORequestListener {
             //set response desc if null
             // all txns start with system error by default ..success to be set on success
             //
-
             m = coreProcessor.setResponseDescription(m);
 
             //save to database
         } catch (Exception e) {
-            try {   logger.error(new String(m.pack()), e);   } catch (ISOException ex) {
-                 logger.error(String.valueOf(ex));
+            try {
+                logger.error(new String(m.pack()), e);
+            } catch (ISOException ex) {
+                logger.error(String.valueOf(ex));
                 // ex.printStackTrace();
             }
             m.set(72, "REMOTE SYSTEM ERROR DURING PROCESSING");

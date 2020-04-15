@@ -16,7 +16,6 @@ import java.util.Map;
 @NoArgsConstructor
 @Accessors(fluent = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class GetControlNumberDetailsResponse{
 
     @JsonProperty("requestID")
@@ -46,15 +45,13 @@ public class GetControlNumberDetailsResponse{
     @JsonProperty("partnerID")
     private String partnerID;
     @JsonProperty("message")
-    public String message;
+    private String message;
 
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-
     public String getToPOSStr(){
-
-return        requestID()
+        return requestID()
         + "#"+this.owner
         + "#"+this.customerEmail
         + "#"+this.customerMobile
@@ -67,7 +64,6 @@ return        requestID()
         + "#"+this.amount
         + "#"+this.paymentReference
         + "#"+this.partnerID;
-
     }
 
 
