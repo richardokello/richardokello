@@ -87,12 +87,12 @@ public class UfsCustomerTypeRules implements Serializable {
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<UfsCustomerTypeRuleMap> ufsCustomerTypeRuleMapList;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
     @Filter
-    private BigDecimal tenantIds;
+    private String tenantIds;
 
     public UfsCustomerTypeRules() {
     }
@@ -142,11 +142,11 @@ public class UfsCustomerTypeRules implements Serializable {
     }
 
 
-    public BigDecimal getTenantIds() {
+    public String getTenantIds() {
         return tenantIds;
     }
 
-    public void setTenantIds(BigDecimal tenantIds) {
+    public void setTenantIds(String tenantIds) {
         this.tenantIds = tenantIds;
     }
 
