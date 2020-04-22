@@ -24,40 +24,81 @@ public class CRDB_BillersAudit_Service {
 
     @Async
     public void logPostGePGControlNumberPaymentRequestAsync(
-            PostGePGControlNumberPaymentRequest postGePGControlNumberPaymentRequest,String tid,String mid, String posref
+            PostGePGControlNumberPaymentRequest postGePGControlNumberPaymentRequest,
+            String tid,
+            String mid,
+            String posref,
+            String switchauthcode,
+            Integer retriesCount,
+            Integer httpcode,
+            String requestSendDesc
     ) {
         try {
-            crdbBillersAuditRepo.save(new CRDBBILLERS_AUDIT(postGePGControlNumberPaymentRequest,tid,mid,posref));
+            crdbBillersAuditRepo.save(new CRDBBILLERS_AUDIT(
+                    postGePGControlNumberPaymentRequest,
+                    tid,
+                    mid,
+                    posref,
+                    switchauthcode,
+                    retriesCount,
+                            httpcode,
+                            requestSendDesc)
+            );
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error("logPostGePGControlNumberPaymentRequestAsync {}", e);
         }
     }
 
     @Async
     public void logPostGepgControlNumberResponseAsync(
-            PostGepgControlNumberResponse postGepgControlNumberResponse,String tid,String mid, String posref) {
+            PostGepgControlNumberResponse postGepgControlNumberResponse,
+            String tid,String mid, String posref,String status,String statusDesc) {
         try {
-            crdbBillersAuditRepo.save(new CRDBBILLERS_AUDIT(postGepgControlNumberResponse,tid,mid,posref));
+            crdbBillersAuditRepo.save(new CRDBBILLERS_AUDIT(
+                    postGepgControlNumberResponse,tid,mid,posref,status,statusDesc));
         } catch (Exception e) {
             LOGGER.error("LogPostGepgControlNumberResponseAsync {}", e);
         }
     }
 
     @Async
-    public void logGepgControlNumberRequestAsync(GepgControlNumberRequest gepgControlNumberRequest
-     ,String tid,String mid, String posref) {
+    public void logGepgControlNumberRequestAsync(
+            GepgControlNumberRequest gepgControlNumberRequest,
+     String tid,String mid, String posref, Integer retriesCount,
+    Integer httpcode, String requestSendDesc
+    ) {
         try {
-            crdbBillersAuditRepo.save(new CRDBBILLERS_AUDIT(gepgControlNumberRequest,tid,mid,posref));
+            crdbBillersAuditRepo.save(
+                new CRDBBILLERS_AUDIT(
+                        gepgControlNumberRequest,
+                        tid,
+                        mid,
+                        posref
+                        ,retriesCount
+                        ,httpcode
+                        ,requestSendDesc
+                )
+            );
         } catch (Exception e) {
-            LOGGER.error("logGepgControlNumberRequestAsync {}", e);
+            LOGGER.error("logGepgControlNumberRequestAsync Error {}", e);
         }
     }
 
 
     @Async
-    public void logCGetControlNumberDetailsResponseAsync(GetControlNumberDetailsResponse getControlNumberDetailsResponse ,String tid,String mid, String posref) {
+    public void logCGetControlNumberDetailsResponseAsync(
+            GetControlNumberDetailsResponse getControlNumberDetailsResponse,
+            String tid,String mid, String posref,
+            String status,String statusDesc) {
         try {
-            crdbBillersAuditRepo.save(new CRDBBILLERS_AUDIT(getControlNumberDetailsResponse,tid,mid,posref));
+            crdbBillersAuditRepo.save(
+                    new CRDBBILLERS_AUDIT(getControlNumberDetailsResponse,
+                            tid
+                            ,mid
+                            ,posref,status,statusDesc
+                    )
+            );
         } catch (Exception e) {
             LOGGER.error("logCGetControlNumberDetailsResponseAsync {}", e);
         }

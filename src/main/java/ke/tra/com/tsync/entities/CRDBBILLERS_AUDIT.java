@@ -105,84 +105,127 @@ public class CRDBBILLERS_AUDIT implements Serializable {
     @Column(name = "POS_REF")
     String posref;
 
+    @Column(name="SWITCH_AUTH_CODE")
+    String switchAgentCode;
+
+    @Column(name="STATUS")
+    String status;
+
+    @Column(name="STATUSDESC")
+    String statusDesc;
+
+    @Column(name="RETRIESCOUNT")
+    Integer retriesCount;
+
+
+    @Column(name="HTTPCODE")
+    Integer httpcode;
+
+    @Column(name="REQUESTSENDDESCRPTION")
+    String requestSendDescription;
+
+    @Column(name="POSSTAN")
+    String posStan;
+
+    @Column(name="ISORGINALREQUEST")
+    Integer isOrginalRequest;
+
+
     public CRDBBILLERS_AUDIT(
             GepgControlNumberRequest gepgControlNumberRequest,
-            String tid,String mid, String posref) {
+            String tid,String mid,
+            String posref,Integer retriesCount,
+    Integer httpcode,String requestSendDescription
+    ) {
         this.tid=tid;
         this.mid=mid;
         this.posref=posref;
-        requestName = "GETCONTROL";
-        code = gepgControlNumberRequest.code(); // IF WE HAVE A REQUEST WITHOUT A CODE
-        requestID = gepgControlNumberRequest.requestID();
-        paymentReference = gepgControlNumberRequest.paymentReference();
-        requestDirection = "REQUEST";
+        this.requestName = "GETCONTROL";
+        this.code = gepgControlNumberRequest.code(); // IF WE HAVE A REQUEST WITHOUT A CODE
+        this.requestID = gepgControlNumberRequest.requestID();
+        this.paymentReference = gepgControlNumberRequest.paymentReference();
+        this.requestDirection = "REQUEST";
+        this.retriesCount=retriesCount;
+        this.httpcode = httpcode;
+        this.requestSendDescription=requestSendDescription;
     }
 
 
     public CRDBBILLERS_AUDIT(GetControlNumberDetailsResponse getControlNumberDetailsResponse
-    ,String tid,String mid, String posref) {
+    ,String tid,String mid, String posref, String status,String statusDesc) {
         this.tid=tid;
         this.mid=mid;
         this.posref=posref;
-        amount = getControlNumberDetailsResponse.amount();
-        requestName = "GETCONTROL";
-        code="INQUIRE"; //  MOVE THIS TO INPUT TO ALLOW FOR MULTIPLE CODES
-        requestID = getControlNumberDetailsResponse.requestID();
-        paymentReference = getControlNumberDetailsResponse.paymentReference();
-        requestDirection = "RESPONSE";
-        owner = getControlNumberDetailsResponse.owner();
-        customerEmail = getControlNumberDetailsResponse.customerEmail();
-        customerMobile = getControlNumberDetailsResponse.customerMobile();
-        serviceName=getControlNumberDetailsResponse.serviceName();
-        paymentGfsCode = getControlNumberDetailsResponse.paymentGfsCode();
-        currency = getControlNumberDetailsResponse.currency();
-        message=getControlNumberDetailsResponse.message();
+        this.amount = getControlNumberDetailsResponse.amount();
+        this.requestName = "GETCONTROL";
+        this.code="INQUIRE"; //  MOVE THIS TO INPUT TO ALLOW FOR MULTIPLE CODES
+        this.requestID = getControlNumberDetailsResponse.requestID();
+        this.paymentReference = getControlNumberDetailsResponse.paymentReference();
+        this.requestDirection = "RESPONSE";
+        this.owner = getControlNumberDetailsResponse.owner();
+        this. customerEmail = getControlNumberDetailsResponse.customerEmail();
+        this.customerMobile = getControlNumberDetailsResponse.customerMobile();
+        this.serviceName=getControlNumberDetailsResponse.serviceName();
+        this.paymentGfsCode = getControlNumberDetailsResponse.paymentGfsCode();
+        this.currency = getControlNumberDetailsResponse.currency();
+        this. message=getControlNumberDetailsResponse.message();
+        this.statusDesc=statusDesc;
+        this.status=status;
     }
 
 
     public CRDBBILLERS_AUDIT(PostGePGControlNumberPaymentRequest postGePGControlNumberPaymentRequest,
-                             String tid,String mid, String posref) {
+                             String tid,String mid, String posref,
+                             String switchauthcode,
+                             Integer retriesCount,
+                             Integer httpcode,
+                             String httpCodeDesc
+    ) {
+
+
         this.tid=tid;
         this.mid=mid;
         this.posref=posref;
-        requestName = "POSTCONTROL";
-        code = postGePGControlNumberPaymentRequest.code(); // IF WE HAVE A REQUEST WITHOUT A CODE
-        requestID = postGePGControlNumberPaymentRequest.requestID();
-        paymentReference = postGePGControlNumberPaymentRequest.paymentReference();
-        requestDirection = "REQUEST";
+        this.requestName = "POSTCONTROL";
+        this.code = postGePGControlNumberPaymentRequest.code(); // IF WE HAVE A REQUEST WITHOUT A CODE
+        this.requestID = postGePGControlNumberPaymentRequest.requestID();
+        this.paymentReference = postGePGControlNumberPaymentRequest.paymentReference();
+        this.requestDirection = "REQUEST";
         //callbackurl=postGePGControlNumberPaymentRequest.callbackurl();
-        paymentType = postGePGControlNumberPaymentRequest.paymentType();
-        owner = postGePGControlNumberPaymentRequest.owner();
-        customerEmail = postGePGControlNumberPaymentRequest.customerEmail();
-        customerMobile = postGePGControlNumberPaymentRequest.customerMobile();
-        serviceName = postGePGControlNumberPaymentRequest.serviceName();
-        customerMobile = postGePGControlNumberPaymentRequest.customerMobile();
-        paymentGfsCode = postGePGControlNumberPaymentRequest.paymentGfsCode();
-        currency = postGePGControlNumberPaymentRequest.currency();
-        paymentDesc = postGePGControlNumberPaymentRequest.paymentDesc();
-        paymentExpiry = postGePGControlNumberPaymentRequest.paymentExpiry();
-        paymentOption = postGePGControlNumberPaymentRequest.paymentOption();
-        amount = postGePGControlNumberPaymentRequest.amount();
+        this.paymentType = postGePGControlNumberPaymentRequest.paymentType();
+        this.owner = postGePGControlNumberPaymentRequest.owner();
+        this.customerEmail = postGePGControlNumberPaymentRequest.customerEmail();
+        this.customerMobile = postGePGControlNumberPaymentRequest.customerMobile();
+        this.serviceName = postGePGControlNumberPaymentRequest.serviceName();
+        this.customerMobile = postGePGControlNumberPaymentRequest.customerMobile();
+        this.paymentGfsCode = postGePGControlNumberPaymentRequest.paymentGfsCode();
+        this.currency = postGePGControlNumberPaymentRequest.currency();
+        this.paymentDesc = postGePGControlNumberPaymentRequest.paymentDesc();
+        this.paymentExpiry = postGePGControlNumberPaymentRequest.paymentExpiry();
+        this.paymentOption = postGePGControlNumberPaymentRequest.paymentOption();
+        this.amount = postGePGControlNumberPaymentRequest.amount();
+        this.switchAgentCode=switchauthcode;
+        this.retriesCount=retriesCount;
+        this.httpcode = httpcode;
+        this.requestSendDescription=httpCodeDesc;
     }
 //CREATE A FACTORY TO INITIALIZE ALL THESE CLASS INITIALIZERS
 
     public CRDBBILLERS_AUDIT(PostGepgControlNumberResponse postGepgControlNumberResponse,
-                             String tid,String mid, String posref) {
+                             String tid,String mid, String posref,String status,String statusDesc) {
         //partnerID not being saved
-        requestName = "POSTCONTROL";
-        code="PURCHASE"; // MOVE THIS TO INPUT TO ALLOW FOR MULTIPLE CODES
-        requestID = postGepgControlNumberResponse.requestID();
-        paymentReference = postGepgControlNumberResponse.paymentReference();
-        requestDirection = "RESPONSE";
-        owner = postGepgControlNumberResponse.owner();
-        amount = postGepgControlNumberResponse.amount();
-        
-        gepgReceipt = postGepgControlNumberResponse.gepgReceipt();
+        this.requestName = "POSTCONTROL";
+        this.code="PURCHASE"; // MOVE THIS TO INPUT TO ALLOW FOR MULTIPLE CODES
+        this.requestID = postGepgControlNumberResponse.requestID();
+        this.paymentReference = postGepgControlNumberResponse.paymentReference();
+        this.requestDirection = "RESPONSE";
+        this.owner = postGepgControlNumberResponse.owner();
+        this.amount = postGepgControlNumberResponse.amount();
+        this.gepgReceipt = postGepgControlNumberResponse.gepgReceipt();
         this.tid=tid;
         this.mid=mid;
         this.posref=posref;
-
+        this.statusDesc=statusDesc;
+        this.status=status;
     }
-
-
 }

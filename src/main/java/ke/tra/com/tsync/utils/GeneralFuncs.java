@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 
 @Component
@@ -60,10 +62,12 @@ public class GeneralFuncs {
         }
     }
 
-    public void saveCashCollectionReconData(ISOMsg isoMsg, String string) {
-      //  new CashCollectionRecon().setAgentUsername()
+    public static String exceptionToStr(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        String exceptionToStr = sw.toString();
+        return exceptionToStr;
     }
-
 
     //password bycypt
 }

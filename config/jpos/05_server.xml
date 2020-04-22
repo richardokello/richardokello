@@ -1,8 +1,6 @@
 <server class="org.jpos.q2.iso.QServer" logger="Q2" name="ISOServer">
     <attr name="port" type="java.lang.Integer">9065</attr>
      <attr name="maxSessions" type="java.lang.Integer">1000</attr>
-    <!--<attr name="minSessions" type="java.lang.Integer">10</attr-->
-
     <channel class="org.jpos.iso.channel.NACChannel" logger="Q2"
              packager="ke.tra.com.tsync.packager.Transport_Packager" header="6000018000">
         <property name="packager-logger" value="Q2"/>
