@@ -36,8 +36,8 @@ public class VwMerchants implements Serializable {
     private String revenueGenerated;
 
     @Filter
-    @Column(name = "LOCATION")
-    private String location;
+    @Column(name = "REGION")
+    private String region;
 
     @Filter
     @Column(name = "STATUS")
