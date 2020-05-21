@@ -59,11 +59,6 @@
             <artifactId>jdbc7</artifactId>
             <version>1</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.postgresql</groupId>-->
-<!--            <artifactId>postgresql</artifactId>-->
-<!--            <version>42.1.1</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -72,7 +67,7 @@
         <dependency>
             <groupId>io.github.jayjieh</groupId>
             <artifactId>SpringResourceChasis</artifactId>
-            <version>1.3.2</version>
+            <version>1.3.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
