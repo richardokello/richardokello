@@ -18,7 +18,7 @@ import java.util.List;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_OTP_CATEGORY", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_OTP_CATEGORY")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsOtpCategory.findAll", query = "SELECT u FROM UfsOtpCategory u")

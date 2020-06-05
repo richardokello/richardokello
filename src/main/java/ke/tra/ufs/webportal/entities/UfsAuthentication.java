@@ -20,7 +20,7 @@ import java.util.Date;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_AUTHENTICATION", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_AUTHENTICATION")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsAuthentication.findAll", query = "SELECT u FROM UfsAuthentication u")

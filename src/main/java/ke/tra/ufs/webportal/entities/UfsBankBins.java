@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author ojuma
  */
 @Entity
-@Table(name = "UFS_BANK_BINS", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_BANK_BINS")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsBankBins.findAll", query = "SELECT u FROM UfsBankBins u")

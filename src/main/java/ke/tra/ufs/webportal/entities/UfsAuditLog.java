@@ -18,7 +18,7 @@ import java.util.Date;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_AUDIT_LOG", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_AUDIT_LOG")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsAuditLog.findAll", query = "SELECT u FROM UfsAuditLog u")

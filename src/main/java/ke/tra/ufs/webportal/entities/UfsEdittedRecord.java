@@ -22,7 +22,7 @@ import java.util.Date;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_EDITTED_RECORD", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_EDITTED_RECORD")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsEdittedRecord.findAll", query = "SELECT u FROM UfsEdittedRecord u")

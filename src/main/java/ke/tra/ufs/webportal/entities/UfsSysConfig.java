@@ -21,7 +21,7 @@ import java.math.BigDecimal;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_SYS_CONFIG", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_SYS_CONFIG")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UfsSysConfig.findAll", query = "SELECT u FROM UfsSysConfig u")

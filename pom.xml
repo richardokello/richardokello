@@ -56,8 +56,8 @@
         </dependency>
         <dependency>
             <groupId>com.oracle</groupId>
-            <artifactId>ojdbc7</artifactId>
-            <version>12.1.0</version>
+            <artifactId>jdbc7</artifactId>
+            <version>1</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>io.github.jayjieh</groupId>
             <artifactId>SpringResourceChasis</artifactId>
-            <version>1.3.2</version>
+            <version>1.3.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>

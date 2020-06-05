@@ -22,7 +22,7 @@ import java.util.Set;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_ROLE", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_ROLE")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsRole.findAll", query = "SELECT u FROM UfsRole u")
