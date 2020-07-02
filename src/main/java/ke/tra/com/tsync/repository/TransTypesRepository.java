@@ -19,12 +19,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransTypesRepository extends JpaRepository<TransactionTypes, BigDecimal>{
-
     /**
      * 
      * @param mti
      * @param procode // configure table to ensure a unique combination of procode and MTIs
      * @return 
      */
-    TransactionTypes findByTxnMtiAndTxnProcodeAndActionStatusAndIntrash(String mti, String procode, String actionstatus , String intrash) throws JDBCConnectionException;
+    TransactionTypes findByTxnMtiAndTxnProcodeAndActionStatusAndIntrash(
+            String mti, String procode, String actionstatus , String intrash
+    ) throws JDBCConnectionException;
 }

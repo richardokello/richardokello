@@ -87,7 +87,7 @@ public class CRDBBILLERS_AUDIT implements Serializable {
     private String paymentOption;
 
     @Column(name = "AMOUNT")
-    private String amount;
+    private String amount; // in future sput amount to original Amount and fromPOSamount
 
     @Column(name = "MESSAGE")
     private String message="";
@@ -227,5 +227,40 @@ public class CRDBBILLERS_AUDIT implements Serializable {
         this.posref=posref;
         this.statusDesc=statusDesc;
         this.status=status;
+    }
+
+    public CRDBBILLERS_AUDIT(
+            PostGePGControlNumberPaymentRequest postGePGControlNumberPaymentRequest,
+            String tid, String mid, String posref, String switchauthcode,
+            Integer retriesCount, Integer httpcode,
+            String requestSendDesc, Integer isOriginalRequest) {
+
+        this.tid=tid;
+        this.mid=mid;
+        this.posref=posref;
+        this.requestName = "POSTCONTROL";
+        this.code = postGePGControlNumberPaymentRequest.code(); // IF WE HAVE A REQUEST WITHOUT A CODE
+        this.requestID = postGePGControlNumberPaymentRequest.requestID();
+        this.paymentReference = postGePGControlNumberPaymentRequest.paymentReference();
+        this.requestDirection = "REQUEST";
+        //callbackurl=postGePGControlNumberPaymentRequest.callbackurl();
+        this.paymentType = postGePGControlNumberPaymentRequest.paymentType();
+        this.owner = postGePGControlNumberPaymentRequest.owner();
+        this.customerEmail = postGePGControlNumberPaymentRequest.customerEmail();
+        this.customerMobile = postGePGControlNumberPaymentRequest.customerMobile();
+        this.serviceName = postGePGControlNumberPaymentRequest.serviceName();
+        this.customerMobile = postGePGControlNumberPaymentRequest.customerMobile();
+        this.paymentGfsCode = postGePGControlNumberPaymentRequest.paymentGfsCode();
+        this.currency = postGePGControlNumberPaymentRequest.currency();
+        this.paymentDesc = postGePGControlNumberPaymentRequest.paymentDesc();
+        this.paymentExpiry = postGePGControlNumberPaymentRequest.paymentExpiry();
+        this.paymentOption = postGePGControlNumberPaymentRequest.paymentOption();
+        this.amount = postGePGControlNumberPaymentRequest.amount();
+        this.switchAgentCode=switchauthcode;
+        this.retriesCount=retriesCount;
+        this.httpcode = httpcode;
+        this.requestSendDescription=requestSendDesc;
+        this.isOrginalRequest=isOriginalRequest;
+
     }
 }

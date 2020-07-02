@@ -50,9 +50,7 @@ public class RequestHandlers implements ISORequestListener {
 
 
         try {
-
             coreProcessor = SpringContextBridge.services().getcoreProcessor();
-
             tid = m.hasField(41) ? m.getString(41) : "";
             mid = m.hasField(42) ? m.getString(42) : "";
             mti = m.hasField(0) ? m.getString(0) : "";
@@ -69,7 +67,6 @@ public class RequestHandlers implements ISORequestListener {
             errStr[0] = mti;
             errStr[1] = procode;
             errStr[2] = f37;
-
 
             coreProcessor.getTxnTypebyMTIAndProcodeAndActionstatusAndIntrash(
                     mti.trim(),

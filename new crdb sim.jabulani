@@ -1,0 +1,3 @@
+openssl pkcs7 -in certnew.p7b -inform DER -out client_cert_chain.pem -print_certs
+openssl pkcs12 -export -out CLIENT.p12 -in client_cert_chain.pem -inkey CLIENT.key -name crdbbankplc.com
+keytool -importkeystore -srckeystore GATEWAY.p12 -srcstoretype pkcs12 -srcalias crdbbankplc.com -destkeystore GATEWAY.JKS -deststoretype JCEKS -deststorepass Crdb123 -destalias crdbbankplc.com

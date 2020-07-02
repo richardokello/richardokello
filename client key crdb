@@ -1,0 +1,2 @@
+openssl pkcs7 -print_certs -in certnew.p7b -out certificate.cer
+openssl pkcs12 -export -out client.p12 -in gw_cert_chain.pem -inkey GTW.key -name crdbbankplc.com
