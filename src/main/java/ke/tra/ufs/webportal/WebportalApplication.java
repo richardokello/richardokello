@@ -21,7 +21,9 @@ public class WebportalApplication {
     private String baseUrl;
 
     public static void main(String[] args) {
+        System.out.println("-----------------Starting UFS server ......");
         SpringApplication.run(WebportalApplication.class, args);
+        System.out.println("**************** UFS server started ****************");
     }
 
 
@@ -32,9 +34,9 @@ public class WebportalApplication {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        MappingJackson2HttpMessageConverter converter
-                = new MappingJackson2HttpMessageConverter(mapper);
-        return converter;
+//        MappingJackson2HttpMessageConverter converter
+//                = new MappingJackson2HttpMessageConverter(mapper);
+        return new MappingJackson2HttpMessageConverter(mapper);
     }
 
     @Primary

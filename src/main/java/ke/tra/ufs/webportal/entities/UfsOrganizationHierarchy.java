@@ -23,7 +23,7 @@ import ke.axle.chassis.annotations.Filter;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_ORGANIZATION_HIERARCHY", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_ORGANIZATION_HIERARCHY")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsOrganizationHierarchy.findAll", query = "SELECT u FROM UfsOrganizationHierarchy u")

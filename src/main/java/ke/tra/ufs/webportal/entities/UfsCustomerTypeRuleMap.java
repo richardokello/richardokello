@@ -36,7 +36,7 @@ public class UfsCustomerTypeRuleMap implements Serializable {
             name = "UFS_CUSTOMER_TYPE_RULE_MAP_SEQ",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
-                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_CUSTOMER_TYPE_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_CUSTOMER_TYPE_RULE_MAP_SEQ"),
                     @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
                     @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
             }

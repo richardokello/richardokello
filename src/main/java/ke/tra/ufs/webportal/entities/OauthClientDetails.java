@@ -17,7 +17,7 @@ import java.math.BigInteger;
  * @author ASUS
  */
 @Entity
-@Table(name = "OAUTH_CLIENT_DETAILS", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "OAUTH_CLIENT_DETAILS")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "OauthClientDetails.findAll", query = "SELECT o FROM OauthClientDetails o")

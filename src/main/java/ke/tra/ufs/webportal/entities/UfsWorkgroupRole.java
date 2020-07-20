@@ -16,7 +16,7 @@ import java.util.Date;
  * @author ASUS
  */
 @Entity
-@Table(name = "UFS_WORKGROUP_ROLE", catalog = "", schema = "UFS_SMART_SUITE")
+@Table(name = "UFS_WORKGROUP_ROLE")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsWorkgroupRole.findAll", query = "SELECT u FROM UfsWorkgroupRole u")
