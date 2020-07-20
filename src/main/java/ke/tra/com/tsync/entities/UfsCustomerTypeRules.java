@@ -57,7 +57,7 @@ public class UfsCustomerTypeRules implements Serializable {
     @Basic(optional = false)
     @Column(name = "ACTIVE")
     private short active;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ruleId")

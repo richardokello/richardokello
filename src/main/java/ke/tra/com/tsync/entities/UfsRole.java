@@ -54,7 +54,7 @@ public class UfsRole implements Serializable {
     private String intrash;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "role")
     private Collection<UfsRolePermission> ufsRolePermissionCollection;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne
     private UfsOrganizationUnits tenantId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "role")

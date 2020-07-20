@@ -66,7 +66,7 @@ public class UfsBankRegion implements Serializable {
     private Collection<FieldQuestionsSupervisor> fieldQuestionsSupervisorCollection;
     @OneToMany(mappedBy = "regionId")
     private Collection<FieldTasks> fieldTasksCollection;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
     @OneToMany(mappedBy = "parentId")

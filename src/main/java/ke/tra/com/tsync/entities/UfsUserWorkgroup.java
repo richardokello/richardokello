@@ -7,6 +7,7 @@
 package ke.tra.com.tsync.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -39,12 +40,20 @@ public class UfsUserWorkgroup implements Serializable {
     private Date creationDate;
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "WORKGROUP", referencedColumnName = "GROUP_ID")
+    @JoinColumn(name = "WORKGROUP", referencedColumnName = "GROUP_ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsWorkgroup workgroup;
-    @JoinColumn(name = "USER_", referencedColumnName = "USER_ID")
+
+    @Column(name = "WORKGROUP")
+    private Long workgroupId;
+
+    @JoinColumn(name = "USER_", referencedColumnName = "USER_ID", insertable = false,updatable = false)
     @ManyToOne(optional = false)
     private UfsUser user;
+
+    @Column(name = "USER_")
+    private Long userId;
+
 
     public UfsUserWorkgroup() {
     }
@@ -89,8 +98,24 @@ public class UfsUserWorkgroup implements Serializable {
         return user;
     }
 
+    public Long getWorkgroupId() {
+        return workgroupId;
+    }
+
+    public void setWorkgroupId(Long workgroupId) {
+        this.workgroupId = workgroupId;
+    }
+
     public void setUser(UfsUser user) {
         this.user = user;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override

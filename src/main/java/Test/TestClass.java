@@ -11,19 +11,25 @@ import ke.tra.com.tsync.packager.TracomPackager;
 import org.jpos.iso.ISOChannel;
 import org.jpos.iso.ISOPackager;
 import org.jpos.iso.ISOUtil;
+import org.jpos.iso.channel.NACChannel;
 import org.jpos.iso.channel.NCCChannel;
 import org.jpos.util.SimpleLogListener;
 
 public class TestClass {
 
-    public static void yyy(String[] args) {
+    public static void main(String[] args) {
 
         try {
             ISOPackager packager = new TracomPackager();
             System.out.printf("~~~~~~~~~~~~~~~~~~~~~~");
             ISOMsg isoMsg;
-            // msg = sendMoney();
-            isoMsg = receiveMoneyCLS();
+            //isoMsg = posUserCreation();
+            isoMsg = deletePosUser();
+            //isoMsg = posUserLogin();
+            //isoMsg = resetUserPin();
+            //isoMsg = changeUserPin();
+            //isoMsg = sendMoney();
+            //isoMsg = receiveMoneyCLS();
             // msg = depotoCustomer();
             byte[] TPDU = new byte[5];
             TPDU[0] = 60;
@@ -40,15 +46,19 @@ public class TestClass {
 
             byte[] data = isoMsg.pack();
             System.out.println(ISOUtil.hexdump(data));
+            String server;
+            server = "127.0.0.1"; // port = 9000; // dev server
             //BaseChannel channel = new NCCChannel(ip, port, packager, TPDU);
-            ISOChannel channel = new NCCChannel("localhost", 9052, packager, TPDU);
+            NACChannel channel = new NACChannel(server, 9065, packager, TPDU);
             //ISOChannel channel = new NCCChannel(ip, port, packager, TPDU);
             // System.out.println("Count kwa sender : " + n + " \n");
             channel.connect();
 
             channel.send(isoMsg);
+            System.out.println("+++++++++++++++++");
           //  logISOMsg(isoMsg, "\n~~~~Request~~~");
             ISOMsg incoming = channel.receive();
+
             // System.out.println("Count kwa receiver : " + n + " \n");
             channel.disconnect();
             byte[] data2 = incoming.pack();
@@ -63,7 +73,85 @@ public class TestClass {
         }
 
     }
+    private static ISOMsg posUserLogin() throws ISOException {
+        ISOMsg msg = new ISOMsg();
 
+        msg.setMTI("1100"); // mti
+        msg.set(3, "001000"); // processing code
+        msg.set(11, "000010"); // System trace audit number (STAN) if any
+        msg.set(41, "PO400001"); // Card acceptor terminal identification(TID)
+        msg.set(42, "100000RW0010408"); // 	Card acceptor identification code(MID)
+        //msg.set(47, "025008111111110260241612773132210173010653100290011030006KeSeal03500499990360049999"); // additional data where we
+        msg.set(47, "025008111111110260241612773132210173010653100290011030006KeSeal031015collins collins032014colo@gmail.com03301007891781910340082900000103500499990360040000037005[1,3]");
+        return msg;
+    }
+    private static ISOMsg posUserCreation() throws ISOException {
+        ISOMsg msg = new ISOMsg();
+
+        msg.setMTI("1100"); // mti
+        msg.set(3, "000020"); // processing code
+        msg.set(11, "000010"); // System trace audit number (STAN)
+        msg.set(41, "PO400001"); // Card acceptor terminal identification
+        msg.set(42, "100000RW0010408"); // 	Card acceptor identification code
+        msg.set(47, "025008111111110260241612773132210173010653100290011030008CoolKids031015collins collins032014colo@gmail.com03301007822781910340082900000103500499990360040000037005[1,3]");; // additional data
+
+        System.out.println(msg);
+        return msg;
+    }
+
+    private static ISOMsg firstTimePosUserLogin() throws ISOException {
+        ISOMsg msg = new ISOMsg();
+
+        msg.setMTI("0100"); // mti
+        msg.set(3, "011111"); // processing code
+        msg.set(11, "000010"); // System trace audit number (STAN)
+        msg.set(41, "PO400001"); // Card acceptor terminal identification
+        msg.set(42, "100000RW0010408"); // 	Card acceptor identification code
+        msg.set(47, "026024161277313221017301065310030006KeSeal0350049999"); // additional data
+        System.out.println("++++++++++++++++sending  iso msg+++++++++++++++++++++++++");
+        System.out.println(msg);
+        return msg;
+    }
+    //
+
+
+    private static ISOMsg changeUserPin() throws ISOException {
+        ISOMsg msg = new ISOMsg();
+
+        msg.setMTI("1100"); // Mti
+        msg.set(3, "001111"); // processing Code
+        msg.set(11, "01000"); // system trace audit number (STAN)
+        msg.set(41, "PO400001"); // TID
+        msg.set(42, "100000RW0010408"); //MID
+        msg.set(47, "02500811111111026024161277313221017301065310030006KeSeal036004999904000499990410040000"); // data
+        return msg;
+    }
+
+    private static ISOMsg resetUserPin() throws ISOException {
+        ISOMsg msg = new ISOMsg();
+        msg.setMTI("1100"); // Mti
+        msg.set(3, "001110"); // processing Code for reset password
+        msg.set(11, "01000"); // system trace audit number (STAN)
+        msg.set(41, "PO400001"); // TID
+        msg.set(42, "100000RW0010408"); //MID
+        msg.set(47, "026024161277313221017301065310030006KeSeal"); // data
+
+        return msg;
+    }
+
+
+    private static ISOMsg deletePosUser() throws ISOException {
+        ISOMsg msg = new ISOMsg();
+
+        msg.setMTI("1100"); // mti
+        msg.set(3, "011113"); // processing code
+        msg.set(11, "000010"); // System trace audit number (STAN) if any
+        msg.set(41, "PO400001"); // Card acceptor terminal identification(TID)
+        msg.set(42, "100000RW0010408"); // 	Card acceptor identification code(MID)
+        msg.set(47, "02500811111111026024161277313221017301065310030008CoolKids"); // additional data where we
+        System.out.println(msg);
+        return msg;
+    }
     public static ISOMsg getPurchase() throws ISOException {
         Date today = new Date();
         String mti = "0700";
@@ -95,7 +183,7 @@ public class TestClass {
         isoMsg.set(3, "410000");
         isoMsg.set(4, "000000000700");
         isoMsg.set(11, f_11);
-        isoMsg.set(12, "180614091056");
+        isoMsg.set(12, "1806140");
         isoMsg.set(41, "PO400001");
         isoMsg.set(42, "100000RW0010408");
         isoMsg.set(47, "2507Mv T1.030100745454545360652522637014");

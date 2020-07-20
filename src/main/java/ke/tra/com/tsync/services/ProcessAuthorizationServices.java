@@ -2,6 +2,7 @@ package ke.tra.com.tsync.services;
 
 import ke.tra.com.tsync.services.crdb.CRDBPipService;
 import ke.tra.com.tsync.services.template.AuthorizationTxnsTmpl;
+import ke.tra.com.tsync.wrappers.PosUserWrapper;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,34 +24,51 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(POSIrisTxns.class);
 
     @Override
-    public ISOMsg processAuthbyProcode(ISOMsg isoMsg, HashMap<String, Object> fieldDataMap){
+    public ISOMsg processAuthbyProcode(ISOMsg isoMsg, PosUserWrapper wrapper){
         isoMsg.set(39, "06");
+
         switch (isoMsg.getString(3)){
             case "001000":
                 //pos agent login
-                isoMsg = userManagementService.processUserLogin(isoMsg,fieldDataMap);
+                System.out.println(wrapper);
+                isoMsg = userManagementService.processUserLogin(isoMsg,wrapper);
+
                 break;
             case "001110":
                 //reset Pin change
-                ISOMsg isoMsg2 = userManagementService.processUserLogin(isoMsg,fieldDataMap);
-                if(isoMsg2.getString(39).equalsIgnoreCase("00"))
-                    isoMsg = userManagementService.resetUserPin(isoMsg,fieldDataMap);
-                else
-                    return isoMsg2;
+                //ISOMsg isoMsg2 = userManagementService.processUserLogin(isoMsg,wrapper);
+                //if(isoMsg2.getString(39).equalsIgnoreCase("00"))
+                     isoMsg = userManagementService.resetUserPin(isoMsg,wrapper);
+//                else
+//                    return isoMsg2;
                 break;
 
             case "001111":
                 //password change
-                String newpass = isoMsg.getString(72).trim();
-                if((userManagementService.processUserLogin(isoMsg,fieldDataMap))
-                        .getString(39).equalsIgnoreCase("00"))
-                    isoMsg = userManagementService.changeUserPassword(isoMsg,fieldDataMap,newpass);
+                //String newpass = isoMsg.getString(72).trim();
+//                if((userManagementService.processUserLogin(isoMsg,wrapper))
+//                        .getString(39).equalsIgnoreCase("00"))
+                isoMsg = userManagementService.changeUserPassword(isoMsg,wrapper);
+                break;
+            case "000020":
+                //password change
+                //String newpass = isoMsg.getString(72).trim();
+//                if((userManagementService.processUserLogin(isoMsg,wrapper))
+//                        .getString(39).equalsIgnoreCase("00"))
+                isoMsg = userManagementService.createUser(isoMsg,wrapper);
+                break;
+            case "011113":
+                //password change
+                //String newpass = isoMsg.getString(72).trim();
+//                if((userManagementService.processUserLogin(isoMsg,wrapper))
+//                        .getString(39).equalsIgnoreCase("00"))
+                isoMsg = userManagementService.deleteUser(isoMsg,wrapper);
                 break;
 
             case "011111": //Inquire Control Number
                 return crdbPipService.inquireGEPGControlNumber(isoMsg);
 
-            case "011112": //Post Control Number
+            case "011112": //Post Control Number 000020
                 //Post Control number
                 return crdbPipService.postGEPGControlNumber(isoMsg);
 

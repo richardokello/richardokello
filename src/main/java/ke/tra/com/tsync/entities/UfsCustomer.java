@@ -80,7 +80,7 @@ public class UfsCustomer implements Serializable {
     private Collection<UfsCustomerOwners> ufsCustomerOwnersCollection;
     @OneToMany(mappedBy = "customerId")
     private Collection<FieldTickets> fieldTicketsCollection;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne
     private UfsOrganizationUnits tenantId;
     @JoinColumn(name = "GEOGRAPHICAL_REG_ID", referencedColumnName = "ID")

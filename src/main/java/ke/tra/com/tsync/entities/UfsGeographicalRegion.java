@@ -59,7 +59,7 @@ public class UfsGeographicalRegion implements Serializable {
     private Collection<TmsDevice> tmsDeviceCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "geographicalRegionId")
     private Collection<UfsBankBranches> ufsBankBranchesCollection;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
     @OneToMany(mappedBy = "parentId")

@@ -6,6 +6,8 @@
 
 package ke.tra.com.tsync.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -65,7 +67,7 @@ public class TmsDevice implements Serializable {
     private Collection<TmsDeviceSimcard> tmsDeviceSimcardCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceId")
     private Collection<TmsDeviceStatus> tmsDeviceStatusCollection;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne
     private UfsOrganizationUnits tenantId;
     @JoinColumn(name = "GEOGRAPH_REG_ID", referencedColumnName = "ID")
@@ -74,9 +76,14 @@ public class TmsDevice implements Serializable {
     @JoinColumn(name = "MODEL_ID", referencedColumnName = "MODEL_ID")
     @ManyToOne(optional = false)
     private UfsDeviceModel modelId;
-    @JoinColumn(name = "OUTLET_ID", referencedColumnName = "ID")
+
+    @JoinColumn(name = "OUTLET_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsCustomerOutlet outletId;
+    @Column(name = "OUTLET_ID")
+    private BigDecimal outletIds;
+
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
     @ManyToOne
     private UfsCustomer customerId;
@@ -284,6 +291,14 @@ public class TmsDevice implements Serializable {
 
     public Collection<TmsDeviceMids> getTmsDeviceMidsCollection() {
         return tmsDeviceMidsCollection;
+    }
+
+    public BigDecimal getOutletIds() {
+        return outletIds;
+    }
+
+    public void setOutletIds(BigDecimal outletIds) {
+        this.outletIds = outletIds;
     }
 
     public void setTmsDeviceMidsCollection(Collection<TmsDeviceMids> tmsDeviceMidsCollection) {

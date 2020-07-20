@@ -48,7 +48,7 @@ public class UfsRevenueEntities implements Serializable {
     private Date creationDate;
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne
     private UfsOrganizationUnits tenantId;
 

@@ -6,20 +6,19 @@
 
 package ke.tra.com.tsync.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import ke.axle.chassis.annotations.ChasisUUID;
+import ke.axle.chassis.annotations.TreeRoot;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import java.util.List;
+import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -27,89 +26,115 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "UFS_ORGANIZATION_UNITS")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsOrganizationUnits.findAll", query = "SELECT u FROM UfsOrganizationUnits u")})
+        @NamedQuery(name = "UfsOrganizationUnits.findAll", query = "SELECT u FROM UfsOrganizationUnits u")
+        , @NamedQuery(name = "UfsOrganizationUnits.findByName", query = "SELECT u FROM UfsOrganizationUnits u WHERE u.name = :name")
+        , @NamedQuery(name = "UfsOrganizationUnits.findByIsParent", query = "SELECT u FROM UfsOrganizationUnits u WHERE u.isParent = :isParent")
+        , @NamedQuery(name = "UfsOrganizationUnits.findByAction", query = "SELECT u FROM UfsOrganizationUnits u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsOrganizationUnits.findByActionStatus", query = "SELECT u FROM UfsOrganizationUnits u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsOrganizationUnits.findByIntrash", query = "SELECT u FROM UfsOrganizationUnits u WHERE u.intrash = :intrash")})
 public class UfsOrganizationUnits implements Serializable {
-    private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Id
-    @Basic(optional = false)
-    @Column(name = "ID")
-    private BigDecimal id;
+
+    @Size(max = 20)
     @Column(name = "NAME")
     private String name;
-    @Column(name = "IS_PARENT")
-    private Short isParent;
+    @Size(max = 15)
     @Column(name = "ACTION")
     private String action;
+    @Size(max = 15)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
+    @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<UfsCustomerTypeRules> ufsCustomerTypeRulesCollection;
+    @JsonIgnore
+    private Set<UfsBanks> ufsBanksSet;
     @OneToMany(mappedBy = "tenantId")
-    private Collection<TmsDevice> tmsDeviceCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<UfsReconBatch> ufsReconBatchCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<UfsGeographicalRegion> ufsGeographicalRegionCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<UfsCurrency> ufsCurrencyCollection;
+    @JsonIgnore
+    private List<UfsTieredCommissionAmount> ufsTieredCommissionAmountList;
     @OneToMany(mappedBy = "tenantId")
-    private Collection<UfsWorkgroup> ufsWorkgroupCollection;
-    @OneToMany(mappedBy = "parentId")
-    private Collection<UfsOrganizationUnits> ufsOrganizationUnitsCollection;
-    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsOrganizationUnits parentId;
-    @JoinColumn(name = "LEVEL_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsOrganizationHierarchy levelId;
+    @JsonIgnore
+    private List<UfsRevenueEntities> ufsRevenueEntitiesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<UfsBankRegion> ufsBankRegionCollection;
+    @JsonIgnore
+    private List<UfsCustomerTypeRules> ufsCustomerTypeRulesList;
     @OneToMany(mappedBy = "tenantId")
-    private Collection<UfsDepartment> ufsDepartmentCollection;
-    @OneToMany(mappedBy = "tenantId")
+    @JsonIgnore
     private Collection<UfsCustomerType> ufsCustomerTypeCollection;
-    @OneToMany(mappedBy = "tenantId")
-    private Collection<UfsCustomer> ufsCustomerCollection;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<UfsBanks> ufsBanksCollection;
+    private List<UfsGeographicalRegion> ufsGeographicalRegionList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<UfsUser> ufsUserCollection;
+    private List<UfsBusinessUnits> ufsBusinessUnitsList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<UfsBusinessUnits> ufsBusinessUnitsCollection;
+    private List<UfsBankRegion> ufsBankRegionList;
+    @JsonIgnore
     @OneToMany(mappedBy = "tenantId")
-    private Collection<UfsRole> ufsRoleCollection;
+    private List<UfsCurrency> ufsCurrencyList;
+    @JsonIgnore
     @OneToMany(mappedBy = "tenantId")
-    private Collection<UfsTieredCommissionAmount> ufsTieredCommissionAmountCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<UfsGls> ufsGlsCollection;
+    private List<UfsDepartment> ufsDepartmentList;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @ChasisUUID
+    @Column(name = "U_UID")
+    private String uuid;
+    @Column(name = "IS_PARENT")
+    private Short isParent;
     @OneToMany(mappedBy = "tenantId")
-    private Collection<UfsRevenueEntities> ufsRevenueEntitiesCollection;
+    @JsonIgnore
+    private List<UfsRole> ufsRoleList;
+    @OneToMany(mappedBy = "tenantId")
+    @JsonIgnore
+    private List<UfsWorkgroup> ufsWorkgroupList;
+    @JoinColumn(name = "LEVEL_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    @JsonIgnore
+    private UfsOrganizationHierarchy levelId;
+    @Column(name = "LEVEL_ID")
+    private BigDecimal levelIds;
+
+    @OneToMany(mappedBy = "parentId")
+    @JsonIgnore
+    private List<UfsOrganizationUnits> ufsOrganizationUnitsList;
+    @JoinColumn(name = "PARENT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
+    @ManyToOne
+    @JsonIgnore
+    private UfsOrganizationUnits parentId;
+    @OneToMany(mappedBy = "tenantId")
+    @JsonIgnore
+    private List<UfsUser> ufsUserList;
+    @Transient
+    private List<UfsOrganizationUnits> children;
+    @Column(name = "PARENT_ID")
+    @TreeRoot
+    private String parentIds;
+    @Transient
+    private String text;
+    @Transient
+    private UfsOrganizationHierarchy currentLevelTenant;
+    @Transient
+    private UfsOrganizationHierarchy nextLevelTenant;
 
     public UfsOrganizationUnits() {
     }
 
-    public UfsOrganizationUnits(BigDecimal id) {
-        this.id = id;
+    public UfsOrganizationUnits(String uuid) {
+        this.uuid = uuid;
     }
 
-    public BigDecimal getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(BigDecimal id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public Short getIsParent() {
@@ -120,14 +145,6 @@ public class UfsOrganizationUnits implements Serializable {
         this.isParent = isParent;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
     public String getActionStatus() {
         return actionStatus;
     }
@@ -136,76 +153,22 @@ public class UfsOrganizationUnits implements Serializable {
         this.actionStatus = actionStatus;
     }
 
-    public String getIntrash() {
-        return intrash;
+    @XmlTransient
+    public List<UfsRole> getUfsRoleList() {
+        return ufsRoleList;
     }
 
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
+    public void setUfsRoleList(List<UfsRole> ufsRoleList) {
+        this.ufsRoleList = ufsRoleList;
     }
 
-    public Collection<UfsCustomerTypeRules> getUfsCustomerTypeRulesCollection() {
-        return ufsCustomerTypeRulesCollection;
+    @XmlTransient
+    public List<UfsWorkgroup> getUfsWorkgroupList() {
+        return ufsWorkgroupList;
     }
 
-    public void setUfsCustomerTypeRulesCollection(Collection<UfsCustomerTypeRules> ufsCustomerTypeRulesCollection) {
-        this.ufsCustomerTypeRulesCollection = ufsCustomerTypeRulesCollection;
-    }
-
-    public Collection<TmsDevice> getTmsDeviceCollection() {
-        return tmsDeviceCollection;
-    }
-
-    public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
-        this.tmsDeviceCollection = tmsDeviceCollection;
-    }
-
-    public Collection<UfsReconBatch> getUfsReconBatchCollection() {
-        return ufsReconBatchCollection;
-    }
-
-    public void setUfsReconBatchCollection(Collection<UfsReconBatch> ufsReconBatchCollection) {
-        this.ufsReconBatchCollection = ufsReconBatchCollection;
-    }
-
-    public Collection<UfsGeographicalRegion> getUfsGeographicalRegionCollection() {
-        return ufsGeographicalRegionCollection;
-    }
-
-    public void setUfsGeographicalRegionCollection(Collection<UfsGeographicalRegion> ufsGeographicalRegionCollection) {
-        this.ufsGeographicalRegionCollection = ufsGeographicalRegionCollection;
-    }
-
-    public Collection<UfsCurrency> getUfsCurrencyCollection() {
-        return ufsCurrencyCollection;
-    }
-
-    public void setUfsCurrencyCollection(Collection<UfsCurrency> ufsCurrencyCollection) {
-        this.ufsCurrencyCollection = ufsCurrencyCollection;
-    }
-
-    public Collection<UfsWorkgroup> getUfsWorkgroupCollection() {
-        return ufsWorkgroupCollection;
-    }
-
-    public void setUfsWorkgroupCollection(Collection<UfsWorkgroup> ufsWorkgroupCollection) {
-        this.ufsWorkgroupCollection = ufsWorkgroupCollection;
-    }
-
-    public Collection<UfsOrganizationUnits> getUfsOrganizationUnitsCollection() {
-        return ufsOrganizationUnitsCollection;
-    }
-
-    public void setUfsOrganizationUnitsCollection(Collection<UfsOrganizationUnits> ufsOrganizationUnitsCollection) {
-        this.ufsOrganizationUnitsCollection = ufsOrganizationUnitsCollection;
-    }
-
-    public UfsOrganizationUnits getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(UfsOrganizationUnits parentId) {
-        this.parentId = parentId;
+    public void setUfsWorkgroupList(List<UfsWorkgroup> ufsWorkgroupList) {
+        this.ufsWorkgroupList = ufsWorkgroupList;
     }
 
     public UfsOrganizationHierarchy getLevelId() {
@@ -216,98 +179,68 @@ public class UfsOrganizationUnits implements Serializable {
         this.levelId = levelId;
     }
 
-    public Collection<UfsBankRegion> getUfsBankRegionCollection() {
-        return ufsBankRegionCollection;
+    @XmlTransient
+    @JsonIgnore
+    public List<UfsOrganizationUnits> getUfsOrganizationUnitsList() {
+        return ufsOrganizationUnitsList;
     }
 
-    public void setUfsBankRegionCollection(Collection<UfsBankRegion> ufsBankRegionCollection) {
-        this.ufsBankRegionCollection = ufsBankRegionCollection;
+    public void setUfsOrganizationUnitsList(List<UfsOrganizationUnits> ufsOrganizationUnitsList) {
+        this.ufsOrganizationUnitsList = ufsOrganizationUnitsList;
     }
 
-    public Collection<UfsDepartment> getUfsDepartmentCollection() {
-        return ufsDepartmentCollection;
+    public UfsOrganizationUnits getParentId() {
+        return parentId;
     }
 
-    public void setUfsDepartmentCollection(Collection<UfsDepartment> ufsDepartmentCollection) {
-        this.ufsDepartmentCollection = ufsDepartmentCollection;
+    public void setParentId(UfsOrganizationUnits parentId) {
+        this.parentId = parentId;
     }
 
-    public Collection<UfsCustomerType> getUfsCustomerTypeCollection() {
-        return ufsCustomerTypeCollection;
+    @XmlTransient
+    public List<UfsUser> getUfsUserList() {
+        return ufsUserList;
     }
 
-    public void setUfsCustomerTypeCollection(Collection<UfsCustomerType> ufsCustomerTypeCollection) {
-        this.ufsCustomerTypeCollection = ufsCustomerTypeCollection;
+    public void setUfsUserList(List<UfsUser> ufsUserList) {
+        this.ufsUserList = ufsUserList;
     }
 
-    public Collection<UfsCustomer> getUfsCustomerCollection() {
-        return ufsCustomerCollection;
+    public String getParentIds() {
+        return parentIds;
     }
 
-    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
-        this.ufsCustomerCollection = ufsCustomerCollection;
+    public void setParentIds(String parentIds) {
+        this.parentIds = parentIds;
     }
 
-    public Collection<UfsBanks> getUfsBanksCollection() {
-        return ufsBanksCollection;
+    public BigDecimal getLevelIds() {
+        return levelIds;
     }
 
-    public void setUfsBanksCollection(Collection<UfsBanks> ufsBanksCollection) {
-        this.ufsBanksCollection = ufsBanksCollection;
+    public void setLevelIds(BigDecimal levelIds) {
+        this.levelIds = levelIds;
     }
 
-    public Collection<UfsUser> getUfsUserCollection() {
-        return ufsUserCollection;
+    public String getText() {
+        try {
+            String _text = this.getName();
+            _text += "       :     " + this.getLevelId().getLevelName();
+            return _text;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return text;
     }
 
-    public void setUfsUserCollection(Collection<UfsUser> ufsUserCollection) {
-        this.ufsUserCollection = ufsUserCollection;
-    }
-
-    public Collection<UfsBusinessUnits> getUfsBusinessUnitsCollection() {
-        return ufsBusinessUnitsCollection;
-    }
-
-    public void setUfsBusinessUnitsCollection(Collection<UfsBusinessUnits> ufsBusinessUnitsCollection) {
-        this.ufsBusinessUnitsCollection = ufsBusinessUnitsCollection;
-    }
-
-    public Collection<UfsRole> getUfsRoleCollection() {
-        return ufsRoleCollection;
-    }
-
-    public void setUfsRoleCollection(Collection<UfsRole> ufsRoleCollection) {
-        this.ufsRoleCollection = ufsRoleCollection;
-    }
-
-    public Collection<UfsTieredCommissionAmount> getUfsTieredCommissionAmountCollection() {
-        return ufsTieredCommissionAmountCollection;
-    }
-
-    public void setUfsTieredCommissionAmountCollection(Collection<UfsTieredCommissionAmount> ufsTieredCommissionAmountCollection) {
-        this.ufsTieredCommissionAmountCollection = ufsTieredCommissionAmountCollection;
-    }
-
-    public Collection<UfsGls> getUfsGlsCollection() {
-        return ufsGlsCollection;
-    }
-
-    public void setUfsGlsCollection(Collection<UfsGls> ufsGlsCollection) {
-        this.ufsGlsCollection = ufsGlsCollection;
-    }
-
-    public Collection<UfsRevenueEntities> getUfsRevenueEntitiesCollection() {
-        return ufsRevenueEntitiesCollection;
-    }
-
-    public void setUfsRevenueEntitiesCollection(Collection<UfsRevenueEntities> ufsRevenueEntitiesCollection) {
-        this.ufsRevenueEntitiesCollection = ufsRevenueEntitiesCollection;
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (uuid != null ? uuid.hashCode() : 0);
         return hash;
     }
 
@@ -318,15 +251,161 @@ public class UfsOrganizationUnits implements Serializable {
             return false;
         }
         UfsOrganizationUnits other = (UfsOrganizationUnits) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.uuid == null && other.uuid != null) || (this.uuid != null && !this.uuid.equals(other.uuid))) {
             return false;
         }
         return true;
     }
 
+    public UfsOrganizationHierarchy getCurrentLevelTenant() {
+        return getLevelId();
+    }
+
+    public void setCurrentLevelTenant(UfsOrganizationHierarchy currentLevelTenant) {
+        this.currentLevelTenant = currentLevelTenant;
+    }
+
+    public UfsOrganizationHierarchy getNextLevelTenant() {
+        return nextLevelTenant;
+    }
+
+    public void setNextLevelTenant(UfsOrganizationHierarchy nextLevelTenant) {
+        this.nextLevelTenant = nextLevelTenant;
+    }
+
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.UfsOrganizationUnits[ id=" + id + " ]";
+        return "ke.tracom.ufs.entities.UfsOrganizationUnits[ id=" + uuid + " ]";
     }
-    
+
+
+    @XmlTransient
+    public List<UfsGeographicalRegion> getUfsGeographicalRegionList() {
+        return ufsGeographicalRegionList;
+    }
+
+    public void setUfsGeographicalRegionList(List<UfsGeographicalRegion> ufsGeographicalRegionList) {
+        this.ufsGeographicalRegionList = ufsGeographicalRegionList;
+    }
+
+    @XmlTransient
+    public List<UfsBusinessUnits> getUfsBusinessUnitsList() {
+        return ufsBusinessUnitsList;
+    }
+
+    public void setUfsBusinessUnitsList(List<UfsBusinessUnits> ufsBusinessUnitsList) {
+        this.ufsBusinessUnitsList = ufsBusinessUnitsList;
+    }
+
+    @XmlTransient
+    public List<UfsBankRegion> getUfsBankRegionList() {
+        return ufsBankRegionList;
+    }
+
+    public void setUfsBankRegionList(List<UfsBankRegion> ufsBankRegionList) {
+        this.ufsBankRegionList = ufsBankRegionList;
+    }
+
+    @XmlTransient
+    public List<UfsCurrency> getUfsCurrencyList() {
+        return ufsCurrencyList;
+    }
+
+    public void setUfsCurrencyList(List<UfsCurrency> ufsCurrencyList) {
+        this.ufsCurrencyList = ufsCurrencyList;
+    }
+
+    @XmlTransient
+    public List<UfsDepartment> getUfsDepartmentList() {
+        return ufsDepartmentList;
+    }
+
+    public void setUfsDepartmentList(List<UfsDepartment> ufsDepartmentList) {
+        this.ufsDepartmentList = ufsDepartmentList;
+    }
+
+    public List<UfsOrganizationUnits> getChildren() {
+        return ufsOrganizationUnitsList;
+    }
+
+    public void setChildren(List<UfsOrganizationUnits> children) {
+        this.children = children;
+    }
+
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomerType> getUfsCustomerTypeCollection() {
+        return ufsCustomerTypeCollection;
+    }
+
+    public void setUfsCustomerTypeCollection(Collection<UfsCustomerType> ufsCustomerTypeCollection) {
+        this.ufsCustomerTypeCollection = ufsCustomerTypeCollection;
+    }
+
+
+    @XmlTransient
+    @JsonIgnore
+    public List<UfsTieredCommissionAmount> getUfsTieredCommissionAmountList() {
+        return ufsTieredCommissionAmountList;
+    }
+
+    public void setUfsTieredCommissionAmountList(List<UfsTieredCommissionAmount> ufsTieredCommissionAmountList) {
+        this.ufsTieredCommissionAmountList = ufsTieredCommissionAmountList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<UfsRevenueEntities> getUfsRevenueEntitiesList() {
+        return ufsRevenueEntitiesList;
+    }
+
+    public void setUfsRevenueEntitiesList(List<UfsRevenueEntities> ufsRevenueEntitiesList) {
+        this.ufsRevenueEntitiesList = ufsRevenueEntitiesList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<UfsCustomerTypeRules> getUfsCustomerTypeRulesList() {
+        return ufsCustomerTypeRulesList;
+    }
+
+    public void setUfsCustomerTypeRulesList(List<UfsCustomerTypeRules> ufsCustomerTypeRulesList) {
+        this.ufsCustomerTypeRulesList = ufsCustomerTypeRulesList;
+    }
+
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsBanks> getUfsBanksSet() {
+        return ufsBanksSet;
+    }
+
+    public void setUfsBanksSet(Set<UfsBanks> ufsBanksSet) {
+        this.ufsBanksSet = ufsBanksSet;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
 }

@@ -13,9 +13,12 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
@@ -23,9 +26,9 @@ import java.util.Arrays;
 import java.util.Date;
 
 @EnableAsync
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+//@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 @SpringBootApplication
-@EnableTransactionManagement
+//@EnableTransactionManagement
 @EnableScheduling
 public class TsyncApplication {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TsyncApplication.class);
@@ -34,11 +37,17 @@ public class TsyncApplication {
     }
 
     @Autowired
-    @Qualifier("h2JdbcTemplate")
+    //@Qualifier("h2JdbcTemplate")
     private JdbcTemplate jdbcTemplate;
 
     @Autowired private CRDBPipService crdbPipService;
     @Autowired private GatewaySettingsCacheRepo gatewaySettingsCacheRepo;
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+
     public TsyncApplication() {
     }
 
@@ -53,8 +62,8 @@ public class TsyncApplication {
 
     @PostConstruct
     private void initAppCfgs(){
-        initDb();
-        getSessionKeyIni();
+        //initDb();
+        //getSessionKeyIni();
     }
 
     private void initDb() {

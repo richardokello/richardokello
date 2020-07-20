@@ -40,9 +40,12 @@ public class UfsWorkgroupRole implements Serializable {
     private Date creationDate;
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "WORKGROUP", referencedColumnName = "GROUP_ID")
+    @JoinColumn(name = "WORKGROUP", referencedColumnName = "GROUP_ID",insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsWorkgroup workgroup;
+
+    @Column(name = "WORKGROUP")
+    private Long groupId;
     @JoinColumn(name = "ROLE", referencedColumnName = "ROLE_ID")
     @ManyToOne(optional = false)
     private UfsRole role;
@@ -97,6 +100,14 @@ public class UfsWorkgroupRole implements Serializable {
 
     public void setRole(UfsRole role) {
         this.role = role;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     @Override

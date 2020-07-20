@@ -21,7 +21,7 @@ public class GeneralFuncs {
 
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GeneralFuncs.class.getName());
-
+/*
     @Qualifier("db1EntityManagerFactory")
     @Autowired
     private EntityManager em;
@@ -60,7 +60,7 @@ public class GeneralFuncs {
         } finally {
             return finalStr;
         }
-    }
+    }*/
 
     public static String exceptionToStr(Exception e) {
         StringWriter sw = new StringWriter();

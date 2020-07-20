@@ -52,7 +52,7 @@ public class UfsWorkgroup implements Serializable {
     private Date createdOn;
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne
     private UfsOrganizationUnits tenantId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workgroup")

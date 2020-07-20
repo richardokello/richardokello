@@ -6,20 +6,19 @@
 
 package ke.tra.com.tsync.entities;
 
+import ke.axle.chassis.annotations.Filter;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.List;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -27,52 +26,82 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "UFS_USER_TYPE")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsUserType.findAll", query = "SELECT u FROM UfsUserType u")})
+        @NamedQuery(name = "UfsUserType.findAll", query = "SELECT u FROM UfsUserType u")
+        , @NamedQuery(name = "UfsUserType.findByTypeId", query = "SELECT u FROM UfsUserType u WHERE u.typeId = :typeId")
+        , @NamedQuery(name = "UfsUserType.findByUserType", query = "SELECT u FROM UfsUserType u WHERE u.userType = :userType")
+        , @NamedQuery(name = "UfsUserType.findByDescription", query = "SELECT u FROM UfsUserType u WHERE u.description = :description")
+        , @NamedQuery(name = "UfsUserType.findByAction", query = "SELECT u FROM UfsUserType u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsUserType.findByActionStatus", query = "SELECT u FROM UfsUserType u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsUserType.findByCreationDate", query = "SELECT u FROM UfsUserType u WHERE u.creationDate = :creationDate")
+        , @NamedQuery(name = "UfsUserType.findByIntrash", query = "SELECT u FROM UfsUserType u WHERE u.intrash = :intrash")})
 public class UfsUserType implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
+
     @Basic(optional = false)
-    @Column(name = "TYPE_ID")
-    private Short typeId;
-    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
     @Column(name = "USER_TYPE")
     private String userType;
+    @Size(max = 100)
     @Column(name = "DESCRIPTION")
     private String description;
+    @Size(max = 15)
     @Column(name = "ACTION")
     private String action;
+    @Size(max = 15)
+    @Filter
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Basic(optional = false)
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
     @Basic(optional = false)
+    @Size(min = 1, max = 3)
     @Column(name = "INTRASH")
     private String intrash;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GenericGenerator(
+            name = "UFS_USER_TYPE_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_USER_TYPE_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_USER_TYPE_SEQ")
+    @Column(name = "TYPE_ID")
+    private BigDecimal typeId;
+
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userType")
-    private Collection<UfsUser> ufsUserCollection;
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsUser> ufsUserList;
 
     public UfsUserType() {
     }
 
-    public UfsUserType(Short typeId) {
+    public UfsUserType(BigDecimal typeId) {
         this.typeId = typeId;
     }
 
-    public UfsUserType(Short typeId, String userType, Date creationDate, String intrash) {
+    public UfsUserType(BigDecimal typeId, String userType, Date creationDate, String intrash) {
         this.typeId = typeId;
         this.userType = userType;
         this.creationDate = creationDate;
         this.intrash = intrash;
     }
 
-    public Short getTypeId() {
+    public BigDecimal getTypeId() {
         return typeId;
     }
 
-    public void setTypeId(Short typeId) {
+    public void setTypeId(BigDecimal typeId) {
         this.typeId = typeId;
     }
 
@@ -84,21 +113,6 @@ public class UfsUserType implements Serializable {
         this.userType = userType;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -116,20 +130,14 @@ public class UfsUserType implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getIntrash() {
-        return intrash;
+
+    @XmlTransient
+    public List<UfsUser> getUfsUserList() {
+        return ufsUserList;
     }
 
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
-
-    public Collection<UfsUser> getUfsUserCollection() {
-        return ufsUserCollection;
-    }
-
-    public void setUfsUserCollection(Collection<UfsUser> ufsUserCollection) {
-        this.ufsUserCollection = ufsUserCollection;
+    public void setUfsUserList(List<UfsUser> ufsUserList) {
+        this.ufsUserList = ufsUserList;
     }
 
     @Override
@@ -154,7 +162,31 @@ public class UfsUserType implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.UfsUserType[ typeId=" + typeId + " ]";
+        return "ke.tracom.ufs.entities.UfsUserType[ typeId=" + typeId + " ]";
     }
-    
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
 }

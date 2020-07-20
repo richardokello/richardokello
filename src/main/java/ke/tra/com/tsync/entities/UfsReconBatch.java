@@ -48,7 +48,7 @@ public class UfsReconBatch implements Serializable {
     private Date createdAt;
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
 

@@ -60,8 +60,8 @@ public class UfsCurrency implements Serializable {
     @Basic(optional = false)
     @Column(name = "NUMERIC_VALUE")
     private int numericValue;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID",insertable = false, updatable = false)
+    @ManyToOne
     private UfsOrganizationUnits tenantId;
     @OneToMany(mappedBy = "settlementCurrency")
     private Collection<UfsBanks> ufsBanksCollection;
@@ -165,13 +165,13 @@ public class UfsCurrency implements Serializable {
         this.numericValue = numericValue;
     }
 
-    public UfsOrganizationUnits getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UfsOrganizationUnits tenantId) {
-        this.tenantId = tenantId;
-    }
+//    public UfsOrganizationUnits getTenantId() {
+//        return tenantId;
+//    }
+//
+//    public void setTenantId(UfsOrganizationUnits tenantId) {
+//        this.tenantId = tenantId;
+//    }
 
     public Collection<UfsBanks> getUfsBanksCollection() {
         return ufsBanksCollection;
@@ -213,5 +213,5 @@ public class UfsCurrency implements Serializable {
     public String toString() {
         return "com.mycompany.oracleufs.UfsCurrency[ id=" + id + " ]";
     }
-    
+
 }

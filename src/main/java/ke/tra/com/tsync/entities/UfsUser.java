@@ -6,23 +6,22 @@
 
 package ke.tra.com.tsync.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Searchable;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.List;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -30,137 +29,157 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "UFS_USER")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsUser.findAll", query = "SELECT u FROM UfsUser u")})
+        @NamedQuery(name = "UfsUser.findAll", query = "SELECT u FROM UfsUser u")
+        , @NamedQuery(name = "UfsUser.findByUserId", query = "SELECT u FROM UfsUser u WHERE u.userId = :userId")
+        , @NamedQuery(name = "UfsUser.findByFullName", query = "SELECT u FROM UfsUser u WHERE u.fullName = :fullName")
+        , @NamedQuery(name = "UfsUser.findByDateOfBirth", query = "SELECT u FROM UfsUser u WHERE u.dateOfBirth = :dateOfBirth")
+        , @NamedQuery(name = "UfsUser.findByAvatar", query = "SELECT u FROM UfsUser u WHERE u.avatar = :avatar")
+        , @NamedQuery(name = "UfsUser.findByStatus", query = "SELECT u FROM UfsUser u WHERE u.status = :status")
+        , @NamedQuery(name = "UfsUser.findByAction", query = "SELECT u FROM UfsUser u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsUser.findByActionStatus", query = "SELECT u FROM UfsUser u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsUser.findByIntrash", query = "SELECT u FROM UfsUser u WHERE u.intrash = :intrash")
+        , @NamedQuery(name = "UfsUser.findByCreationDate", query = "SELECT u FROM UfsUser u WHERE u.creationDate = :creationDate")
+        , @NamedQuery(name = "UfsUser.findByPhoneNumber", query = "SELECT u FROM UfsUser u WHERE u.phoneNumber = :phoneNumber")})
 public class UfsUser implements Serializable {
-    private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Id
+
     @Basic(optional = false)
-    @Column(name = "USER_ID")
-    private BigDecimal userId;
-    @Basic(optional = false)
-    @Column(name = "ACTION_STATUS")
-    private String actionStatus;
-    @Basic(optional = false)
-    @Column(name = "CREATION_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
-    @Column(name = "EMAIL")
-    private String email;
-    @Basic(optional = false)
+    @NotNull
+    @ModifiableField
+    @Size(min = 1, max = 100)
     @Column(name = "FULL_NAME")
+    @Filter
+    @Searchable
     private String fullName;
-    @Column(name = "INTRASH")
-    private String intrash;
-    @Column(name = "PHONE_NUMBER")
-    private String phoneNumber;
+    @Size(max = 255)
     @Column(name = "AVATAR")
     private String avatar;
     @Basic(optional = false)
-    @Column(name = "ACTION")
+    @NotNull
+    @Column(name = "STATUS")
+    private short status;
+    @Size(max = 15)
+    @Column(name = "ACTION",insertable = false)
+    @Filter
     private String action;
+    @Size(max = 15)
+    @Filter
+    @Column(name = "ACTION_STATUS",insertable = false)
+    private String actionStatus;
+    @Size(max = 3)
+    @Column(name = "INTRASH",insertable = false)
+    private String intrash;
+    @Size(max = 15)
+    @ModifiableField
+    @Column(name = "PHONE_NUMBER")
+    private String phoneNumber;
+    @OneToMany(mappedBy = "uploadedBy")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsRegionsBatch> ufsRegionsBatchList;
+    @JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    private UfsDepartment departmentId;
+    @Column(name = "DEPARTMENT_ID")
+    private BigDecimal departmentIds;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GenericGenerator(
+            name = "UFS_USER_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_USER_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_USER_SEQ")
+    @Column(name = "USER_ID")
+    private Long userId;
+    @ModifiableField
     @Column(name = "DATE_OF_BIRTH")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateOfBirth;
-    @Basic(optional = false)
-    @Column(name = "STATUS")
-    private short status;
+    @Column(name = "CREATION_DATE", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsUserWorkgroup> ufsUserWorkgroupList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<UfsPasswordHistory> ufsPasswordHistoryCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<UfsUserBranchManagers> ufsUserBranchManagersCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<UfsUserRegionMap> ufsUserRegionMapCollection;
-    @OneToMany(mappedBy = "supervisorId")
-    private Collection<FieldTicketsComments> fieldTicketsCommentsCollection;
-    @OneToMany(mappedBy = "uploadedBy")
-    private Collection<UfsCustomerComplaintsBatch> ufsCustomerComplaintsBatchCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "supervisorId")
-    private Collection<FieldQuestionsSupervisor> fieldQuestionsSupervisorCollection;
-    @OneToMany(mappedBy = "supervisorId")
-    private Collection<FieldTasks> fieldTasksCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<UfsUserAgentSupervisor> ufsUserAgentSupervisorCollection;
-    @OneToMany(mappedBy = "supervisorId")
-    private Collection<FieldTickets> fieldTicketsCollection;
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsPasswordHistory> ufsPasswordHistoryList;
     @OneToMany(mappedBy = "userId")
-    private Collection<UfsAuthOtp> ufsAuthOtpCollection;
-    @OneToMany(mappedBy = "uploadedBy")
-    private Collection<UfsRegionsBatch> ufsRegionsBatchCollection;
-    @OneToMany(mappedBy = "uploadedBy")
-    private Collection<UfsGlsBatch> ufsGlsBatchCollection;
-    @JoinColumn(name = "USER_TYPE", referencedColumnName = "TYPE_ID")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsAuditLog> ufsAuditLogList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<UfsAuthentication> ufsAuthenticationList;
+    @JoinColumn(name = "GENDER", referencedColumnName = "GENDER_ID", insertable = false, updatable = false)
+    @ManyToOne
+    private UfsGender gender;
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
+    @ManyToOne
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private UfsOrganizationUnits tenantId;
+    @Column(name = "TENANT_ID")
+    @Filter
+    private String tenantIds;
+    @JoinColumn(name = "USER_TYPE", referencedColumnName = "TYPE_ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsUserType userType;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private UfsOrganizationUnits tenantId;
-    @JoinColumn(name = "GENDER", referencedColumnName = "GENDER_ID")
-    @ManyToOne(optional = false)
-    private UfsGender gender;
-    @JoinColumn(name = "DEPARTMENT_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private UfsDepartment departmentId;
-    @OneToMany(mappedBy = "uploadedBy")
-    private Collection<TmsWhitelistBatch> tmsWhitelistBatchCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<UfsUserRoleMap> ufsUserRoleMapCollection;
-    @OneToMany(mappedBy = "supervisorId")
-    private Collection<FieldQuestionsFeedback> fieldQuestionsFeedbackCollection;
-    @OneToMany(mappedBy = "uploadedBy")
-    private Collection<UfsTrainedAgentsBatch> ufsTrainedAgentsBatchCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private Collection<UfsAuthentication> ufsAuthenticationCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private Collection<UfsUserWorkgroup> ufsUserWorkgroupCollection;
+
+    @Transient
+    @ModifiableField
+    private List<BigDecimal> userWorkgroupIds;
+
+
+    @Transient
+    @ModifiableField
+    private List<BigDecimal> workgroupIds;
+
+    //@Transient
+    @Column(name = "EMAIL")
+    @Filter
+    @ModifiableField
+    private String email;
+
+    @Column(name = "GENDER")
+    @Filter
+    @ModifiableField
+    private BigDecimal genderId;
+
+
+    @Column(name = "USER_TYPE")
+    @ModifiableField
+    @Filter
+    private BigDecimal userTypeId;
+    @Transient
+    private Long branchIds;
+    @Transient
+    private Long regionIds;
+
 
     public UfsUser() {
     }
 
-    public UfsUser(BigDecimal userId) {
+    public UfsUser(Long userId) {
         this.userId = userId;
     }
 
-    public UfsUser(BigDecimal userId, String actionStatus, Date creationDate, String fullName, String action, short status) {
+    public UfsUser(Long userId, String fullName, short status) {
         this.userId = userId;
-        this.actionStatus = actionStatus;
-        this.creationDate = creationDate;
         this.fullName = fullName;
-        this.action = action;
         this.status = status;
     }
 
-    public BigDecimal getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(BigDecimal userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public String getActionStatus() {
-        return actionStatus;
-    }
-
-    public void setActionStatus(String actionStatus) {
-        this.actionStatus = actionStatus;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getFullName() {
@@ -171,12 +190,30 @@ public class UfsUser implements Serializable {
         this.fullName = fullName;
     }
 
-    public String getIntrash() {
-        return intrash;
+    public Date getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+
+    public String getActionStatus() {
+        return actionStatus;
+    }
+
+    public void setActionStatus(String actionStatus) {
+        this.actionStatus = actionStatus;
+    }
+
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public String getPhoneNumber() {
@@ -187,148 +224,40 @@ public class UfsUser implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAvatar() {
-        return avatar;
+    @XmlTransient
+    public List<UfsUserWorkgroup> getUfsUserWorkgroupList() {
+        return ufsUserWorkgroupList;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setUfsUserWorkgroupList(List<UfsUserWorkgroup> ufsUserWorkgroupList) {
+        this.ufsUserWorkgroupList = ufsUserWorkgroupList;
     }
 
-    public String getAction() {
-        return action;
+    @XmlTransient
+    public List<UfsPasswordHistory> getUfsPasswordHistoryList() {
+        return ufsPasswordHistoryList;
     }
 
-    public void setAction(String action) {
-        this.action = action;
+    public void setUfsPasswordHistoryList(List<UfsPasswordHistory> ufsPasswordHistoryList) {
+        this.ufsPasswordHistoryList = ufsPasswordHistoryList;
     }
 
-    public Date getDateOfBirth() {
-        return dateOfBirth;
+    @XmlTransient
+    public List<UfsAuditLog> getUfsAuditLogList() {
+        return ufsAuditLogList;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setUfsAuditLogList(List<UfsAuditLog> ufsAuditLogList) {
+        this.ufsAuditLogList = ufsAuditLogList;
     }
 
-    public short getStatus() {
-        return status;
+    @XmlTransient
+    public List<UfsAuthentication> getUfsAuthenticationList() {
+        return ufsAuthenticationList;
     }
 
-    public void setStatus(short status) {
-        this.status = status;
-    }
-
-    public Collection<UfsPasswordHistory> getUfsPasswordHistoryCollection() {
-        return ufsPasswordHistoryCollection;
-    }
-
-    public void setUfsPasswordHistoryCollection(Collection<UfsPasswordHistory> ufsPasswordHistoryCollection) {
-        this.ufsPasswordHistoryCollection = ufsPasswordHistoryCollection;
-    }
-
-    public Collection<UfsUserBranchManagers> getUfsUserBranchManagersCollection() {
-        return ufsUserBranchManagersCollection;
-    }
-
-    public void setUfsUserBranchManagersCollection(Collection<UfsUserBranchManagers> ufsUserBranchManagersCollection) {
-        this.ufsUserBranchManagersCollection = ufsUserBranchManagersCollection;
-    }
-
-    public Collection<UfsUserRegionMap> getUfsUserRegionMapCollection() {
-        return ufsUserRegionMapCollection;
-    }
-
-    public void setUfsUserRegionMapCollection(Collection<UfsUserRegionMap> ufsUserRegionMapCollection) {
-        this.ufsUserRegionMapCollection = ufsUserRegionMapCollection;
-    }
-
-    public Collection<FieldTicketsComments> getFieldTicketsCommentsCollection() {
-        return fieldTicketsCommentsCollection;
-    }
-
-    public void setFieldTicketsCommentsCollection(Collection<FieldTicketsComments> fieldTicketsCommentsCollection) {
-        this.fieldTicketsCommentsCollection = fieldTicketsCommentsCollection;
-    }
-
-    public Collection<UfsCustomerComplaintsBatch> getUfsCustomerComplaintsBatchCollection() {
-        return ufsCustomerComplaintsBatchCollection;
-    }
-
-    public void setUfsCustomerComplaintsBatchCollection(Collection<UfsCustomerComplaintsBatch> ufsCustomerComplaintsBatchCollection) {
-        this.ufsCustomerComplaintsBatchCollection = ufsCustomerComplaintsBatchCollection;
-    }
-
-    public Collection<FieldQuestionsSupervisor> getFieldQuestionsSupervisorCollection() {
-        return fieldQuestionsSupervisorCollection;
-    }
-
-    public void setFieldQuestionsSupervisorCollection(Collection<FieldQuestionsSupervisor> fieldQuestionsSupervisorCollection) {
-        this.fieldQuestionsSupervisorCollection = fieldQuestionsSupervisorCollection;
-    }
-
-    public Collection<FieldTasks> getFieldTasksCollection() {
-        return fieldTasksCollection;
-    }
-
-    public void setFieldTasksCollection(Collection<FieldTasks> fieldTasksCollection) {
-        this.fieldTasksCollection = fieldTasksCollection;
-    }
-
-    public Collection<UfsUserAgentSupervisor> getUfsUserAgentSupervisorCollection() {
-        return ufsUserAgentSupervisorCollection;
-    }
-
-    public void setUfsUserAgentSupervisorCollection(Collection<UfsUserAgentSupervisor> ufsUserAgentSupervisorCollection) {
-        this.ufsUserAgentSupervisorCollection = ufsUserAgentSupervisorCollection;
-    }
-
-    public Collection<FieldTickets> getFieldTicketsCollection() {
-        return fieldTicketsCollection;
-    }
-
-    public void setFieldTicketsCollection(Collection<FieldTickets> fieldTicketsCollection) {
-        this.fieldTicketsCollection = fieldTicketsCollection;
-    }
-
-    public Collection<UfsAuthOtp> getUfsAuthOtpCollection() {
-        return ufsAuthOtpCollection;
-    }
-
-    public void setUfsAuthOtpCollection(Collection<UfsAuthOtp> ufsAuthOtpCollection) {
-        this.ufsAuthOtpCollection = ufsAuthOtpCollection;
-    }
-
-    public Collection<UfsRegionsBatch> getUfsRegionsBatchCollection() {
-        return ufsRegionsBatchCollection;
-    }
-
-    public void setUfsRegionsBatchCollection(Collection<UfsRegionsBatch> ufsRegionsBatchCollection) {
-        this.ufsRegionsBatchCollection = ufsRegionsBatchCollection;
-    }
-
-    public Collection<UfsGlsBatch> getUfsGlsBatchCollection() {
-        return ufsGlsBatchCollection;
-    }
-
-    public void setUfsGlsBatchCollection(Collection<UfsGlsBatch> ufsGlsBatchCollection) {
-        this.ufsGlsBatchCollection = ufsGlsBatchCollection;
-    }
-
-    public UfsUserType getUserType() {
-        return userType;
-    }
-
-    public void setUserType(UfsUserType userType) {
-        this.userType = userType;
-    }
-
-    public UfsOrganizationUnits getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UfsOrganizationUnits tenantId) {
-        this.tenantId = tenantId;
+    public void setUfsAuthenticationList(List<UfsAuthentication> ufsAuthenticationList) {
+        this.ufsAuthenticationList = ufsAuthenticationList;
     }
 
     public UfsGender getGender() {
@@ -339,60 +268,96 @@ public class UfsUser implements Serializable {
         this.gender = gender;
     }
 
-    public UfsDepartment getDepartmentId() {
-        return departmentId;
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
     }
 
-    public void setDepartmentId(UfsDepartment departmentId) {
-        this.departmentId = departmentId;
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
     }
 
-    public Collection<TmsWhitelistBatch> getTmsWhitelistBatchCollection() {
-        return tmsWhitelistBatchCollection;
+    public UfsUserType getUserType() {
+        return userType;
     }
 
-    public void setTmsWhitelistBatchCollection(Collection<TmsWhitelistBatch> tmsWhitelistBatchCollection) {
-        this.tmsWhitelistBatchCollection = tmsWhitelistBatchCollection;
+    public void setUserType(UfsUserType userType) {
+        this.userType = userType;
     }
 
-    public Collection<UfsUserRoleMap> getUfsUserRoleMapCollection() {
-        return ufsUserRoleMapCollection;
+    public List<BigDecimal> getUserWorkgroupIds() {
+        return userWorkgroupIds;
     }
 
-    public void setUfsUserRoleMapCollection(Collection<UfsUserRoleMap> ufsUserRoleMapCollection) {
-        this.ufsUserRoleMapCollection = ufsUserRoleMapCollection;
+    public void setUserWorkgroupIds(List<BigDecimal> userWorkgroupIds) {
+        this.userWorkgroupIds = userWorkgroupIds;
     }
 
-    public Collection<FieldQuestionsFeedback> getFieldQuestionsFeedbackCollection() {
-        return fieldQuestionsFeedbackCollection;
+    public List<BigDecimal> getWorkgroupIds() {
+        return workgroupIds;
     }
 
-    public void setFieldQuestionsFeedbackCollection(Collection<FieldQuestionsFeedback> fieldQuestionsFeedbackCollection) {
-        this.fieldQuestionsFeedbackCollection = fieldQuestionsFeedbackCollection;
+    public void setWorkgroupIds(List<BigDecimal> workgroupIds) {
+        this.workgroupIds = workgroupIds;
     }
 
-    public Collection<UfsTrainedAgentsBatch> getUfsTrainedAgentsBatchCollection() {
-        return ufsTrainedAgentsBatchCollection;
+    public BigDecimal getDepartmentIds() {
+        return departmentIds;
     }
 
-    public void setUfsTrainedAgentsBatchCollection(Collection<UfsTrainedAgentsBatch> ufsTrainedAgentsBatchCollection) {
-        this.ufsTrainedAgentsBatchCollection = ufsTrainedAgentsBatchCollection;
+    public void setDepartmentIds(BigDecimal departmentIds) {
+        this.departmentIds = departmentIds;
     }
 
-    public Collection<UfsAuthentication> getUfsAuthenticationCollection() {
-        return ufsAuthenticationCollection;
+    public String getTenantIds() {
+        return tenantIds;
     }
 
-    public void setUfsAuthenticationCollection(Collection<UfsAuthentication> ufsAuthenticationCollection) {
-        this.ufsAuthenticationCollection = ufsAuthenticationCollection;
+    public void setTenantIds(String tenantIds) {
+        this.tenantIds = tenantIds;
     }
 
-    public Collection<UfsUserWorkgroup> getUfsUserWorkgroupCollection() {
-        return ufsUserWorkgroupCollection;
+    public String getEmail() {
+        try {
+            return this.ufsAuthenticationList.get(0).getUsername();
+        } catch (Exception e) {
+            return email;
+        }
     }
 
-    public void setUfsUserWorkgroupCollection(Collection<UfsUserWorkgroup> ufsUserWorkgroupCollection) {
-        this.ufsUserWorkgroupCollection = ufsUserWorkgroupCollection;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public BigDecimal getGenderId() {
+        return genderId;
+    }
+
+    public void setGenderId(BigDecimal genderId) {
+        this.genderId = genderId;
+    }
+
+    public BigDecimal getUserTypeId() {
+        return userTypeId;
+    }
+
+    public void setUserTypeId(BigDecimal userTypeId) {
+        this.userTypeId = userTypeId;
+    }
+
+    public Long getBranchIds() {
+        return branchIds;
+    }
+
+    public void setBranchIds(Long branchIds) {
+        this.branchIds = branchIds;
+    }
+
+    public Long getRegionIds() {
+        return regionIds;
+    }
+
+    public void setRegionIds(Long regionIds) {
+        this.regionIds = regionIds;
     }
 
     @Override
@@ -417,7 +382,57 @@ public class UfsUser implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.UfsUser[ userId=" + userId + " ]";
+        return "ke.tracom.ufs.entities.UfsUser[ userId=" + userId + " ]";
     }
-    
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public short getStatus() {
+        return status;
+    }
+
+    public void setStatus(short status) {
+        this.status = status;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<UfsRegionsBatch> getUfsRegionsBatchList() {
+        return ufsRegionsBatchList;
+    }
+
+    public void setUfsRegionsBatchList(List<UfsRegionsBatch> ufsRegionsBatchList) {
+        this.ufsRegionsBatchList = ufsRegionsBatchList;
+    }
+
+    public UfsDepartment getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(UfsDepartment departmentId) {
+        this.departmentId = departmentId;
+    }
+
 }

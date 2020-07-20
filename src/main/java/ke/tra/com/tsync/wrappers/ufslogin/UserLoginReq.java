@@ -21,5 +21,6 @@ public class UserLoginReq {
     String pin;
    // @JsonAlias("serialNumber")
     String serialNumber;
+    String tid;
 
 }

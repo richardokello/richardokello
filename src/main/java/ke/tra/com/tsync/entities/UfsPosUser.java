@@ -6,21 +6,16 @@
 
 package ke.tra.com.tsync.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -28,20 +23,47 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "UFS_POS_USER")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsPosUser.findAll", query = "SELECT u FROM UfsPosUser u")})
+        @NamedQuery(name = "UfsPosUser.findAll", query = "SELECT u FROM UfsPosUser u")
+        , @NamedQuery(name = "UfsPosUser.findByPosUserId", query = "SELECT u FROM UfsPosUser u WHERE u.posUserId = :posUserId")
+        , @NamedQuery(name = "UfsPosUser.findByActiveStatus", query = "SELECT u FROM UfsPosUser u WHERE u.activeStatus = :activeStatus")
+        , @NamedQuery(name = "UfsPosUser.findByPin", query = "SELECT u FROM UfsPosUser u WHERE u.pin = :pin")
+        , @NamedQuery(name = "UfsPosUser.findByPinStatus", query = "SELECT u FROM UfsPosUser u WHERE u.pinStatus = :pinStatus")
+        , @NamedQuery(name = "UfsPosUser.findByPinLastLogin", query = "SELECT u FROM UfsPosUser u WHERE u.pinLastLogin = :pinLastLogin")
+        , @NamedQuery(name = "UfsPosUser.findByPinLoginAttemtps", query = "SELECT u FROM UfsPosUser u WHERE u.pinLoginAttemtps = :pinLoginAttemtps")
+        , @NamedQuery(name = "UfsPosUser.findByPinChangeDate", query = "SELECT u FROM UfsPosUser u WHERE u.pinChangeDate = :pinChangeDate")
+        , @NamedQuery(name = "UfsPosUser.findByAction", query = "SELECT u FROM UfsPosUser u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsPosUser.findByActionStatus", query = "SELECT u FROM UfsPosUser u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsPosUser.findByIntrash", query = "SELECT u FROM UfsPosUser u WHERE u.intrash = :intrash")})
 public class UfsPosUser implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
+    @NotNull
+    @GenericGenerator(
+            name = "POS_USER_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "POS_USER_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    @GeneratedValue(generator = "POS_USER_SEQ")
     @Column(name = "POS_USER_ID")
     private BigDecimal posUserId;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 10)
     @Column(name = "ACTIVE_STATUS")
     private String activeStatus;
+    @Size(max = 255)
     @Column(name = "PIN")
     private String pin;
+    @Size(max = 10)
     @Column(name = "PIN_STATUS")
     private String pinStatus;
     @Column(name = "PIN_LAST_LOGIN")
@@ -52,18 +74,34 @@ public class UfsPosUser implements Serializable {
     @Column(name = "PIN_CHANGE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date pinChangeDate;
-    @Column(name = "ACTION")
-    private String action;
-    @Column(name = "ACTION_STATUS")
-    private String actionStatus;
-    @Column(name = "INTRASH")
-    private String intrash;
     @Basic(optional = false)
+    @Size(min = 1, max = 10)
+    @Column(name = "ACTION",insertable = false)
+    private String action;
+    @Basic(optional = false)
+    @Size(min = 1, max = 10)
+    @Column(name = "ACTION_STATUS",insertable = false)
+    private String actionStatus;
+    @Size(max = 5)
+    @Column(name = "INTRASH",insertable = false)
+    private String intrash;
+    @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID",insertable = false,updatable = false)
+    @ManyToOne(optional = false)
+    private UfsUser userId;
+
     @Column(name = "USERNAME")
     private String username;
-    @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private UfsCustomerOutlet userId;
+
+    @Column(name = "USER_ID")
+    private Long userIds;
+
+    @JoinColumn(name = "OUTLET_ID",referencedColumnName = "ID",insertable = false,updatable = false)
+    @ManyToOne
+    private UfsCustomerOutlet outletId;
+
+    @Column(name = "OUTLET_ID")
+    @Basic(optional = true)
+    private Long outletIds;
 
     public UfsPosUser() {
     }
@@ -72,10 +110,11 @@ public class UfsPosUser implements Serializable {
         this.posUserId = posUserId;
     }
 
-    public UfsPosUser(BigDecimal posUserId, String activeStatus, String username) {
+    public UfsPosUser(BigDecimal posUserId, String activeStatus, String action, String actionStatus) {
         this.posUserId = posUserId;
         this.activeStatus = activeStatus;
-        this.username = username;
+        this.action = action;
+        this.actionStatus = actionStatus;
     }
 
     public BigDecimal getPosUserId() {
@@ -96,6 +135,14 @@ public class UfsPosUser implements Serializable {
 
     public String getPin() {
         return pin;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPin(String pin) {
@@ -158,20 +205,36 @@ public class UfsPosUser implements Serializable {
         this.intrash = intrash;
     }
 
-    public String getUsername() {
-        return username;
+    public void setUserId(UfsUser userId) {
+        this.userId = userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public UfsCustomerOutlet getUserId() {
+    public UfsUser getUserId() {
         return userId;
     }
 
-    public void setUserId(UfsCustomerOutlet userId) {
-        this.userId = userId;
+    public Long getUserIds() {
+        return userIds;
+    }
+
+    public void setUserIds(Long userIds) {
+        this.userIds = userIds;
+    }
+
+    public UfsCustomerOutlet getOutletId() {
+        return outletId;
+    }
+
+    public void setOutletId(UfsCustomerOutlet outletId) {
+        this.outletId = outletId;
+    }
+
+    public Long getOutletIds() {
+        return outletIds;
+    }
+
+    public void setOutletIds(Long outletIds) {
+        this.outletIds = outletIds;
     }
 
     @Override
@@ -196,7 +259,7 @@ public class UfsPosUser implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.UfsPosUser[ posUserId=" + posUserId + " ]";
+        return "tra.boa.entities.ufs.UfsPosUser[ posUserId=" + posUserId + " ]";
     }
-    
+
 }

@@ -57,11 +57,13 @@ public class RequestHandlers implements ISORequestListener {
             procode = m.hasField(3) ? m.getString(3) : "";
 
             //field37 must be present
+
             if (!m.hasField(37) || m.getString(37).length() < 12)
                 m.set(37, new SimpleDateFormat("ddmmyyhhmmss").format(new Date()).toString());
             logger.info("\n~^~^~^^~^~^~^ Server receive request time {}    MTI  :  {}    procode {} ref {} ", new SimpleDateFormat("dd/MM/yy HH:mm:ss SSS Z").format(new Date()).toString(), mti, procode, m.getString(37));
             Optional<TransactionTypes> txntypes;
             final String[] field39 = new String[1];
+            final String[] field47 = new String[1];
             String f37 = m.getString(37);
             final String[] errStr = new String[3];
             errStr[0] = mti;
@@ -75,14 +77,22 @@ public class RequestHandlers implements ISORequestListener {
                     "NO"
             ).ifPresentOrElse(obj -> {
                         field39[0] = "00";
-                        // m.set(39, "00");
+
                     }, () -> {
-                        field39[0] = "58";
+                        field39[0] = "51";
+                        field47[0] = "Invalid processing code";
                         logger.error("txn with mti {} and procode {} txnref {}  has not been configured or is not enabled on system yet", errStr[0], errStr[1], errStr[2]);
                     }
             );
 
+            System.out.println(field39[0]);
+
             m.set(39, field39[0]);
+//            if (field47[0] == null) {
+//                m.set(47,  "Invalid processing code");
+//            }
+
+
             logger.info(" HERE WE ARE" + m.getString(39));
             // change depending on field used for this data
             if (m.getString(39).equalsIgnoreCase("00"))
@@ -100,16 +110,19 @@ public class RequestHandlers implements ISORequestListener {
                 logger.error(new String(m.pack()), e);
             } catch (ISOException ex) {
                 logger.error(String.valueOf(ex));
-                // ex.printStackTrace();
+                //ex.printStackTrace();
             }
             m.set(72, "REMOTE SYSTEM ERROR DURING PROCESSING");
+            e.printStackTrace();
             logger.error("GE EXCEPTION rrn {} exception {}", m.getString(37), e);
         }
+        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"+m.getString(39));
         coreProcessor.saveOnlineActivity(m);
         try {
             source.send(coreProcessor.setResponseMTI(m));
         } catch (IOException | ISOException e) {
             logger.error("RESPONSE-send-failed rrn {} exception {}", m.getString(37), e);
+            e.printStackTrace();
         }
         logger.info("\n\n ~^~^~^^~^~^~^ Server Response time {}    MTI  :  {}    procode {}  Ref {}  RESPONSE CODE {} \n\n", new SimpleDateFormat("dd/MM/yy HH:mm:ss SSS Z").format(new Date()).toString(), mti, procode, m.getString(37), m.getString(39));
         return true;

@@ -14,12 +14,14 @@ import ke.tra.com.tsync.entities.FailedTransactions;
 import ke.tra.com.tsync.entities.OnlineActivity;
 import ke.tra.com.tsync.entities.TransactionTypes;
 import ke.tra.com.tsync.repository.*;
+import ke.tra.com.tsync.services.template.CoreProcessorTemplate;
+import ke.tra.com.tsync.wrappers.PosUserWrapper;
 import org.hibernate.exception.JDBCConnectionException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ke.tra.com.tsync.services.template.CoreProcessorTemplate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -67,6 +69,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
     public ISOMsg setResponseDescription(ISOMsg isoMsg) {
         if (!isoMsg.hasField(72)) {
             final String responseDesc[] = new String[1];
+            System.out.println("________________++++++++++++++++++++"+isoMsg.getString(39));
             transationResponseMaps.findFirstByCodeEquals(isoMsg.getString(39)).ifPresentOrElse(
                     response -> responseDesc[0] = response.getDescription(),
                     () -> responseDesc[0] = "SYSTEM ERROR"
@@ -79,13 +82,14 @@ public class CoreProcessorService implements CoreProcessorTemplate {
     }
 
     @Override
-    public HashMap<String, Object> terminalDataTLVMap(String fielddata) {
+    public PosUserWrapper terminalDataTLVMap(String fielddata) {
 
-        HashMap<String, Object> dataMap = new HashMap<>();
+        PosUserWrapper wrapper = new PosUserWrapper();
         int skip = 0;
         String Tag = null;
         String TagLength = null;
         String TagValue = null;
+        System.out.println("++++++++++++ HERE");
         boolean more = true;
 
         // Expecting these tags
@@ -107,48 +111,62 @@ public class CoreProcessorService implements CoreProcessorTemplate {
 
                     switch (Integer.valueOf(Tag)) {
                         case 25:
-                            dataMap.put("appVersion", TagValue);
+                            wrapper.setAppVersion(TagValue);
+                            System.out.println("++++++++++++ setAppVersion "+TagValue);
                             break;
                         case 26:
-                            dataMap.put("serialNumber", TagValue);
+                            wrapper.setSerialNumber(TagValue);
+                            System.out.println("+++++++++++++ setSerialNumber "+TagValue);
                             break;
 
                         case 29:
-                            dataMap.put("userGender", TagValue);
+                            wrapper.setGender(Integer.valueOf(TagValue));
+                            System.out.println("+++++++++++++ ssetGenderr " +TagValue);
                             break;
 
                         case 30:
-                            dataMap.put("userName", TagValue);
+                            wrapper.setUsername(TagValue);
+                            System.out.println("+++++++++++++ setUsername " +TagValue);
                             break;
 
                         case 31:
-                            dataMap.put("fullName", TagValue);
+                            wrapper.setFullName(TagValue);
+                            System.out.println("+++++++++++++ setFullName "+TagValue);
                             break;
 
                         case 32:
-                            dataMap.put("eMail", TagValue);
+                            wrapper.setEmail(TagValue);
                             break;
 
                         case 33:
-                            dataMap.put("phoneNo", TagValue);
+                            wrapper.setPhoneNumber(TagValue);
+                            System.out.println("+++++++++++++ setPhoneNumber "+TagValue);
                             break;
 
                         case 34:
-                            dataMap.put("identification", TagValue);
+                            wrapper.setIdNumber(TagValue);
+                            System.out.println("+++++++++++++ setIdNumber "+TagValue);
                             break;
 
                         case 35:
-                            dataMap.put("userAccessCode", TagValue);
+                            wrapper.setUserAccessCode(TagValue);
                             break;
 
                         case 36:
-                            dataMap.put("terminalPin", TagValue);
+                            wrapper.setPin(TagValue); // New pin|user pin
+                            System.out.println("+++++++++++++ setPin "+TagValue);
                             break;
 
                         case 37:
-                            dataMap.put("userWorkGroup", TagValue);
+                            wrapper.setUfsWorkgroup(TagValue);
+                            System.out.println("+++++++++++++ setUfsWorkgroup "+TagValue);
                             break;
-
+                        case 40:
+                            wrapper.setConfirmPin(TagValue); //  confirm
+                            System.out.println("confirm Pin "+ TagValue);
+                        case 41:
+                            wrapper.setCurrentPin(TagValue); //  confirm
+                            System.out.println("Current Pin "+ TagValue); // pin that is being changed
                         default:
                             break;
                     }
@@ -159,11 +177,15 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                     }
                 } catch (NumberFormatException e) {
                     break;
+                } catch(StringIndexOutOfBoundsException e){
+                    e.printStackTrace();
+                    break;
+
                 }
             }
         }
 
-        return dataMap;
+        return wrapper;
     }
 
     @Override
@@ -179,6 +201,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
             }
         } catch (Exception e) {
             LOGGER.error("saveOnlineActivity for isomsg %s ", isoMsg.toString(), e);
+            e.printStackTrace();
         }
     }
 
@@ -186,20 +209,25 @@ public class CoreProcessorService implements CoreProcessorTemplate {
     @Override
     public ISOMsg processTransactionsbyMTI(ISOMsg isoMsg) throws ISOException, JDBCConnectionException {
         LOGGER.info(" processTransactionsbyMTI : " + isoMsg.getString(3));
-        HashMap<String, Object> fieldDataMap = new HashMap<>();
-       /** if (isoMsg.hasField(47)) {
-            fieldDataMap = terminalDataTLVMap(isoMsg.getString(47));
-            //process the transaction
-            LOGGER.info(" fieldDataMap  : " + fieldDataMap.toString());
-        } **/
-        isoMsg.set(39, "06");
+        PosUserWrapper fieldData = new PosUserWrapper();
 
+
+        System.out.println(fieldData);
+       if (isoMsg.hasField(47)) {
+            fieldData = terminalDataTLVMap(isoMsg.getString(47));
+            //process the transaction
+            LOGGER.info(" fieldDataMap  : " + fieldData);
+        }
+        fieldData.setMID(isoMsg.getString(42)==null?"":isoMsg.getString(42));
+        fieldData.setTID(isoMsg.getString(41)==null?"":isoMsg.getString(41));
+        isoMsg.set(39, "06");
+        System.out.println("++++++++++++++++++++_____________ "+fieldData);
         switch (isoMsg.getString(0)) {
             case "0100":
             case "1100":
                 LOGGER.info(" STEP INQUIRY  : " + isoMsg.getString(0) + " F37" + isoMsg.getString(37));
                 //Authorization Request	Request from a point-of-sale terminal for authorization for a cardholder purchase
-                isoMsg = processAuthorizationServices.processAuthbyProcode(isoMsg,fieldDataMap);
+                isoMsg = processAuthorizationServices.processAuthbyProcode(isoMsg,fieldData);
                 break;
             default:
                 break;

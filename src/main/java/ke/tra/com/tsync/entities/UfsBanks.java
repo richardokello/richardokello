@@ -69,10 +69,10 @@ public class UfsBanks implements Serializable {
     private Collection<UfsBankBranches> ufsBankBranchesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
     private Collection<UfsBankRegion> ufsBankRegionCollection;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
-    @JoinColumn(name = "SETTLEMENT_CURRENCY", referencedColumnName = "ID")
+    @JoinColumn(name = "SETTLEMENT_CURRENCY", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     private UfsCurrency settlementCurrency;
     @JoinColumn(name = "COUNTRY", referencedColumnName = "ID")

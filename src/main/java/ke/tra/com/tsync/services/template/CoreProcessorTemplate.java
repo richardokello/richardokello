@@ -5,12 +5,12 @@
  */
 package ke.tra.com.tsync.services.template;
 
-import ke.tra.com.tsync.entities.OnlineActivity;
 import ke.tra.com.tsync.entities.TransactionTypes;
+import ke.tra.com.tsync.wrappers.PosUserWrapper;
 import org.hibernate.exception.JDBCConnectionException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
-import java.util.HashMap;
+
 import java.util.Optional;
 
 /**
@@ -25,7 +25,7 @@ public interface CoreProcessorTemplate {
 
     ISOMsg setResponseDescription(ISOMsg isoMsg);
 
-    HashMap <String, Object> terminalDataTLVMap(String fielddata);
+    PosUserWrapper terminalDataTLVMap(String fielddata);
 
     void saveOnlineActivity(ISOMsg isoMsg);
 
