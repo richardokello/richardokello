@@ -24,8 +24,9 @@ public class TestClass {
             System.out.printf("~~~~~~~~~~~~~~~~~~~~~~");
             ISOMsg isoMsg;
             //isoMsg = posUserCreation();
-            isoMsg = deletePosUser();
-            //isoMsg = posUserLogin();
+            //isoMsg = deletePosUser();
+            isoMsg = posUserLogin();
+            //isoMsg = firstTimePosUserLogin();
             //isoMsg = resetUserPin();
             //isoMsg = changeUserPin();
             //isoMsg = sendMoney();
@@ -82,7 +83,7 @@ public class TestClass {
         msg.set(41, "PO400001"); // Card acceptor terminal identification(TID)
         msg.set(42, "100000RW0010408"); // 	Card acceptor identification code(MID)
         //msg.set(47, "025008111111110260241612773132210173010653100290011030006KeSeal03500499990360049999"); // additional data where we
-        msg.set(47, "025008111111110260241612773132210173010653100290011030006KeSeal031015collins collins032014colo@gmail.com03301007891781910340082900000103500499990360040000037005[1,3]");
+        msg.set(47, "025008111111110260241612773132210173010653100290011030006KeSeal03500499990360040000037005[1,3]");
         return msg;
     }
     private static ISOMsg posUserCreation() throws ISOException {
@@ -102,12 +103,12 @@ public class TestClass {
     private static ISOMsg firstTimePosUserLogin() throws ISOException {
         ISOMsg msg = new ISOMsg();
 
-        msg.setMTI("0100"); // mti
-        msg.set(3, "011111"); // processing code
+        msg.setMTI("1100"); // mti
+        msg.set(3, "011114"); // processing code
         msg.set(11, "000010"); // System trace audit number (STAN)
         msg.set(41, "PO400001"); // Card acceptor terminal identification
         msg.set(42, "100000RW0010408"); // 	Card acceptor identification code
-        msg.set(47, "026024161277313221017301065310030006KeSeal0350049999"); // additional data
+        msg.set(47, "025008111111110260241612773132210173010653100290011030008CoolKids03500499990360040000");
         System.out.println("++++++++++++++++sending  iso msg+++++++++++++++++++++++++");
         System.out.println(msg);
         return msg;

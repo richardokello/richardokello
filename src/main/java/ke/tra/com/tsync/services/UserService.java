@@ -151,7 +151,7 @@ public class UserService implements UserServiceTempl {
 
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.FIRST_TIME_LOGIN);
-
+        System.out.println("++++++==================="+ wrapper);
 
         // validates Device details
 

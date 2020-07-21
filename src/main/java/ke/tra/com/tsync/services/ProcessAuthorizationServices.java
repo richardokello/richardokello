@@ -65,6 +65,15 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                 isoMsg = userManagementService.deleteUser(isoMsg,wrapper);
                 break;
 
+            case "011114":
+                //password change
+                //String newpass = isoMsg.getString(72).trim();
+//                if((userManagementService.processUserLogin(isoMsg,wrapper))
+//                        .getString(39).equalsIgnoreCase("00"))
+
+                isoMsg = userManagementService.firstTimeLogin(isoMsg,wrapper);
+                break;
+
             case "011111": //Inquire Control Number
                 return crdbPipService.inquireGEPGControlNumber(isoMsg);
 

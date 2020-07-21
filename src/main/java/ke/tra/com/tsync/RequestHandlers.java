@@ -79,18 +79,17 @@ public class RequestHandlers implements ISORequestListener {
                         field39[0] = "00";
 
                     }, () -> {
-                        field39[0] = "51";
+                        field39[0] = "12";
                         field47[0] = "Invalid processing code";
                         logger.error("txn with mti {} and procode {} txnref {}  has not been configured or is not enabled on system yet", errStr[0], errStr[1], errStr[2]);
                     }
             );
 
-            System.out.println(field39[0]);
-
             m.set(39, field39[0]);
-//            if (field47[0] == null) {
-//                m.set(47,  "Invalid processing code");
-//            }
+            if (field39[0] == "12") {
+                m.set(47,  "Invalid processing code");
+
+            }
 
 
             logger.info(" HERE WE ARE" + m.getString(39));
@@ -116,7 +115,7 @@ public class RequestHandlers implements ISORequestListener {
             e.printStackTrace();
             logger.error("GE EXCEPTION rrn {} exception {}", m.getString(37), e);
         }
-        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"+m.getString(39));
+
         coreProcessor.saveOnlineActivity(m);
         try {
             source.send(coreProcessor.setResponseMTI(m));

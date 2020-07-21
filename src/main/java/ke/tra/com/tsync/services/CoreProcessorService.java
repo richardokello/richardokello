@@ -69,7 +69,6 @@ public class CoreProcessorService implements CoreProcessorTemplate {
     public ISOMsg setResponseDescription(ISOMsg isoMsg) {
         if (!isoMsg.hasField(72)) {
             final String responseDesc[] = new String[1];
-            System.out.println("________________++++++++++++++++++++"+isoMsg.getString(39));
             transationResponseMaps.findFirstByCodeEquals(isoMsg.getString(39)).ifPresentOrElse(
                     response -> responseDesc[0] = response.getDescription(),
                     () -> responseDesc[0] = "SYSTEM ERROR"
@@ -211,7 +210,6 @@ public class CoreProcessorService implements CoreProcessorTemplate {
         LOGGER.info(" processTransactionsbyMTI : " + isoMsg.getString(3));
         PosUserWrapper fieldData = new PosUserWrapper();
 
-
         System.out.println(fieldData);
        if (isoMsg.hasField(47)) {
             fieldData = terminalDataTLVMap(isoMsg.getString(47));
@@ -221,7 +219,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
         fieldData.setMID(isoMsg.getString(42)==null?"":isoMsg.getString(42));
         fieldData.setTID(isoMsg.getString(41)==null?"":isoMsg.getString(41));
         isoMsg.set(39, "06");
-        System.out.println("++++++++++++++++++++_____________ "+fieldData);
+
         switch (isoMsg.getString(0)) {
             case "0100":
             case "1100":

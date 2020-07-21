@@ -62,7 +62,7 @@ public class UserManagementService implements UserManagementTmpl {
             isomsg.set(47, "field 47 is empty");
             return isomsg;
         }
-        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+
         System.out.println(wrapper);
         String username = wrapper.getUsername();
         String currentPin = wrapper.getCurrentPin();
@@ -390,6 +390,40 @@ public class UserManagementService implements UserManagementTmpl {
         System.out.println(responseWrapper.getMessage());
         return isoMsg;
 
+    }
+
+    public ISOMsg firstTimeLogin(ISOMsg isoMsg, PosUserWrapper wrapper){
+
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+
+        try{
+            responseWrapper = userService.firstTimeLogin(wrapper);
+            System.out.println("+==================="+ responseWrapper);
+            Integer code = Integer.valueOf(responseWrapper.getCode());
+            if(code == 200){
+                isoMsg.set(39, "00");
+                isoMsg.set(47, responseWrapper.getMessage());
+            }
+            if(code == 400){
+                isoMsg.set(39, "08"); // bad request
+                isoMsg.set(47, responseWrapper.getMessage());
+            }
+            else{
+                isoMsg.set(47,responseWrapper.getMessage());
+                if(Integer.toString(responseWrapper.getCode()).trim().length()>2){
+                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1,3));
+                }else{
+                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
+                }
+            }
+            System.out.println(responseWrapper.getMessage());
+        }catch (Exception e){
+            isoMsg.set(39, "06"); // system error
+            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
+            e.printStackTrace();
+        }
+
+        return isoMsg;
     }
 
 }
