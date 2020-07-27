@@ -21,4 +21,9 @@ public class UfsCustomerOutletServiceTempl implements UfsCustomerOutletService {
     public UfsCustomerOutlet findByCustomerId(BigDecimal customerId) {
         return this.customerOutletRepository.findByCustomerIds(customerId);
     }
+
+    @Override
+    public UfsCustomerOutlet saveOutlet(UfsCustomerOutlet outlet) {
+        return customerOutletRepository.save(outlet);
+    }
 }
