@@ -30,7 +30,6 @@ import org.hibernate.annotations.GenericGenerator;
     @NamedQuery(name = "UfsCustomerOwners.findAll", query = "SELECT u FROM UfsCustomerOwners u"),
     @NamedQuery(name = "UfsCustomerOwners.findById", query = "SELECT u FROM UfsCustomerOwners u WHERE u.id = :id"),
     @NamedQuery(name = "UfsCustomerOwners.findByName", query = "SELECT u FROM UfsCustomerOwners u WHERE u.name = :name"),
-    @NamedQuery(name = "UfsCustomerOwners.findByPosition", query = "SELECT u FROM UfsCustomerOwners u WHERE u.position = :position"),
     @NamedQuery(name = "UfsCustomerOwners.findByPhoneNumber", query = "SELECT u FROM UfsCustomerOwners u WHERE u.phoneNumber = :phoneNumber"),
     @NamedQuery(name = "UfsCustomerOwners.findByEmail", query = "SELECT u FROM UfsCustomerOwners u WHERE u.email = :email"),
     @NamedQuery(name = "UfsCustomerOwners.findByCreatedAt", query = "SELECT u FROM UfsCustomerOwners u WHERE u.createdAt = :createdAt"),
@@ -59,14 +58,25 @@ public class UfsCustomerOwners implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String name;
-    @Size(max = 20)
-    @Column(name = "POSITION")
-    private String position;
+    @JoinColumn(name = "DESIGNATION", referencedColumnName = "ID",insertable = false,updatable = false)
+    @ManyToOne
+    private UfsBusinessDesignations designation;
+    @Column(name = "DESIGNATION")
+    private Long designationId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 15)
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 15)
+    @Column(name = "ID_NUMBER")
+    private String idNumber;
+    @NotNull
+    @Size(min = 1, max = 15)
+    @Column(name = "SECONDARY_PHONE")
+    private String secondary_phone;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 30)
     @Column(name = "EMAIL")
@@ -75,14 +85,14 @@ public class UfsCustomerOwners implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Size(max = 20)
-    @Column(name = "ACTION")
+    @Column(name = "ACTION", insertable = false)
     private String action;
     @Size(max = 20)
     @Filter
-    @Column(name = "ACTION_STATUS")
+    @Column(name = "ACTION_STATUS", insertable = false)
     private String actionStatus;
     @Size(max = 3)
-    @Column(name = "INTRASH")
+    @Column(name = "INTRASH", insertable = false)
     private String intrash;
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
@@ -127,13 +137,7 @@ public class UfsCustomerOwners implements Serializable {
         this.name = name;
     }
 
-    public String getPosition() {
-        return position;
-    }
 
-    public void setPosition(String position) {
-        this.position = position;
-    }
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -213,6 +217,38 @@ public class UfsCustomerOwners implements Serializable {
 
     public void setCustomerIdsStr(String customerIdsStr) {
         this.customerIdsStr = customerIdsStr;
+    }
+
+    public UfsBusinessDesignations getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(UfsBusinessDesignations designation) {
+        this.designation = designation;
+    }
+
+    public Long getDesignationId() {
+        return designationId;
+    }
+
+    public void setDesignationId(Long designationId) {
+        this.designationId = designationId;
+    }
+
+    public String getSecondary_phone() {
+        return secondary_phone;
+    }
+
+    public void setSecondary_phone(String secondary_phone) {
+        this.secondary_phone = secondary_phone;
+    }
+
+    public String getIdNumber() {
+        return idNumber;
+    }
+
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
     }
 
     @Override

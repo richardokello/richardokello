@@ -11,7 +11,7 @@ public interface CustomerService {
 
     UfsCustomer findByCustomerId(Long id);
 
-    void saveCustomer(UfsCustomer customer);
+    UfsCustomer saveCustomer(UfsCustomer customer);
 
     List<UfsCustomer> getAllTerminatedAgents(String action,String actionStatus);
 

@@ -1,17 +1,19 @@
 package ke.tra.ufs.webportal.resources;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import ke.axle.chassis.ChasisResource;
 import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.utils.LoggerService;
+import ke.axle.chassis.utils.SharedMethods;
 import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.entities.wrapper.AgentTerminationResponseWrapper;
+import ke.tra.ufs.webportal.entities.wrapper.CustomerOnboardingWrapper;
 import ke.tra.ufs.webportal.entities.wrapper.OwnerDetailsWrapper;
-import ke.tra.ufs.webportal.service.CustomerOwnersService;
-import ke.tra.ufs.webportal.service.CustomerService;
-import ke.tra.ufs.webportal.service.TmsDeviceService;
+import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.utils.exceptions.AgentAssignedException;
 import ke.tra.ufs.webportal.utils.exceptions.ItemNotFoundException;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
@@ -41,31 +44,110 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     private final CustomerService customerService;
     private final TmsDeviceService deviceService;
     private final CustomerOwnersService ownersService;
+    private final UfsCustomerOutletService outletService;
+    private final ContactPersonService contactPersonService;
 
     public CustomerResource(LoggerService loggerService, EntityManager entityManager,CustomerService customerService,TmsDeviceService deviceService,
-                            CustomerOwnersService ownersService) {
+                            CustomerOwnersService ownersService,UfsCustomerOutletService outletService,ContactPersonService contactPersonService) {
         super(loggerService, entityManager);
         this.customerService = customerService;
         this.deviceService = deviceService;
         this.ownersService = ownersService;
+        this.outletService = outletService;
+        this.contactPersonService = contactPersonService;
     }
 
-
-    @RequestMapping(value = "/search-account", method = RequestMethod.GET)
-    public ResponseEntity<ResponseWrapper<UfsCustomer>> searchCustomer(@NotNull @RequestParam String accountNumber) {
-        ResponseWrapper<UfsCustomer> response = new ResponseWrapper<>();
-        if (!accountNumber.equals("1234355")) {
-            throw new ItemNotFoundException("Customer with account number :" + accountNumber);
+    /**
+     * Onboarding customer,locations,directors,outlets
+     * @param customerOnboarding
+     * @return
+     */
+    @Transactional
+    @ApiOperation(value = "Create new principal customer", notes = "")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad Request as a result of validation errors")
+            ,
+            @ApiResponse(code = 409, message = "Similar customer exists")
+    })
+    @RequestMapping(value = "/onboard", method = RequestMethod.POST)
+    public ResponseEntity<ResponseWrapper<UfsCustomer>> onboardCustomer(@Valid @RequestBody CustomerOnboardingWrapper customerOnboarding,
+                                                                        BindingResult validation) {
+        ResponseWrapper response = new ResponseWrapper<>();
+        if (validation.hasErrors()) {
+            loggerService.log("Creating new customer category failed due to validation errors",
+                    UfsCustomer.class.getSimpleName(), null,AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Creating new customer category failed due to validation errors");
+            response.setMessage("Validation error occured");
+            response.setCode(400);
+            response.setData(SharedMethods.getFieldMapErrors(validation));
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
-        UfsCustomer cust = new UfsCustomer();
-        cust.setAccountNumber(accountNumber);
-        cust.setPin("1234355");
-        cust.setLocalRegNumber("QWER122334");
-        cust.setBusinessLicenceNumber("AS1234");
-        response.setData(cust);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        //Errors Occurred While Onboarding Customer
+        ArrayList<BigDecimal> errors = new ArrayList<>();
 
+        //saving customer Info
+        UfsCustomer customer = new UfsCustomer();
+        customer.setPhonenumber(customerOnboarding.getBusinessPrimaryContactNo());
+        customer.setDateIssued(customerOnboarding.getDateIssued());
+        customer.setValidTo(customerOnboarding.getValidTo());
+        customer.setBusinessLicenceNumber(customerOnboarding.getBusinessLicenseNumber());
+        customer.setLocalRegNumber(customerOnboarding.getLocalRegistrationNumber());
+        customer.setCustomerName(customerOnboarding.getBusinessName());
+        customer.setClassTypeIds(customerOnboarding.getCustomerClassId());
+        customer.setAddress(customerOnboarding.getAddress());
+        customer.setEmailAddress(customerOnboarding.getBusinessEmailAddress());
+        customer.setPin(customerOnboarding.getPinNumber());
+        customer.setBusinessTypeIds(customerOnboarding.getBusinessTypeId());
+        customer.setSecondary_phone(customerOnboarding.getBusinessSecondaryContactNo());
+        customerService.saveCustomer(customer);
+
+        //saving directors
+        if(!customerOnboarding.getDirectors().isEmpty()){
+            customerOnboarding.getDirectors().stream().forEach(director->{
+              UfsCustomerOwners dir = new UfsCustomerOwners();
+              dir.setName(director.getDirectorName());
+              dir.setCustomerIds(BigDecimal.valueOf(customer.getId()));
+              dir.setEmail(director.getDirectorEmailAddress());
+              dir.setDesignationId(director.getDirectorDesignationId());
+              dir.setPhoneNumber(director.getDirectorPrimaryContactNumber());
+              dir.setSecondary_phone(director.getDirectorSecondaryContactNumber());
+              dir.setIdNumber(director.getDirectorIdNumber());
+              ownersService.saveOwner(dir);
+            });
+        }
+
+        //saving outlets
+        if(!customerOnboarding.getOutletsInfo().isEmpty()){
+            customerOnboarding.getOutletsInfo().stream().forEach(outlet->{
+              UfsCustomerOutlet custOutlet = new UfsCustomerOutlet();
+              custOutlet.setCustomerIds(BigDecimal.valueOf(customer.getId()));
+              custOutlet.setBankBranchIds(outlet.getBankBranchId());
+              custOutlet.setGpsCoordinates(outlet.getGpsCoordinates());
+              custOutlet.setOutletCode(outlet.getOutletCode());
+              custOutlet.setOutletName(outlet.getOutletName());
+              custOutlet.setOperatingHours(outlet.getOperatingHours());
+              outletService.saveOutlet(custOutlet);
+               //save contact person
+              if(!outlet.getContactPerson().isEmpty()){
+                  outlet.getContactPerson().stream().forEach(contactPerson->{
+                    UfsContactPerson person = new UfsContactPerson();
+                    person.setName(contactPerson.getContactPersonName());
+                    person.setIdNumber(contactPerson.getContactPersonIdNumber());
+                    person.setUfsWorkgroupId(contactPerson.getWorkGroupId());
+                    person.setEmail(contactPerson.getContactPersonEmail());
+                    person.setPhoneNumber(contactPerson.getContactPersonTelephone());
+                    person.setCustomerOutletId(custOutlet.getId());
+                    contactPersonService.saveContactPerson(person);
+                  });
+              }
+            });
+
+        }
+
+        response.setCode(201);
+        response.setMessage("Customer Onboarded successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
 
     @RequestMapping(value = "/terminate" , method = RequestMethod.PUT)
     @Transactional
@@ -197,7 +279,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         for(UfsCustomer customer: terminatedCustomers ){
             AgentTerminationResponseWrapper terminationResponse  = new AgentTerminationResponseWrapper();
             terminationResponse.setAgentName(customer.getCustomerName());
-            terminationResponse.setGeographicalRegion(customer.getGeographicalRegId().getRegionName());
             terminationResponse.setEmail(this.getOwnerDetails(customerOwners,customer.getId()).getEmail());
             terminationResponse.setOwnerName(this.getOwnerDetails(customerOwners,customer.getId()).getOwnerName());
             terminationResponse.setTerminationDate(customer.getTerminationDate());

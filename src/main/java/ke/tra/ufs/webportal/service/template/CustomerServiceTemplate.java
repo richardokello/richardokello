@@ -34,8 +34,8 @@ public class CustomerServiceTemplate implements CustomerService {
     }
 
     @Override
-    public void saveCustomer(UfsCustomer customer) {
-        this.customerRepository.save(customer);
+    public UfsCustomer saveCustomer(UfsCustomer customer) {
+        return this.customerRepository.save(customer);
     }
 
 

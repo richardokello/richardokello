@@ -7,4 +7,6 @@ import java.math.BigDecimal;
 public interface UfsCustomerOutletService {
 
     UfsCustomerOutlet findByCustomerId(BigDecimal customerId);
+
+    UfsCustomerOutlet saveOutlet(UfsCustomerOutlet outlet);
 }
