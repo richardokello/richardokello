@@ -6,6 +6,7 @@
 package ke.tra.ufs.webportal.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.ModifiableField;
 
 import javax.persistence.*;
@@ -62,8 +63,10 @@ public class UfsWorkgroup implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdOn;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workgroup")
+    @JsonIgnore
     private List<UfsWorkgroupRole> ufsWorkgroupRoleList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workgroup")
+    @JsonIgnore
     private List<UfsUserWorkgroup> ufsUserWorkgroupList;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne

@@ -29,9 +29,6 @@ import org.hibernate.annotations.GenericGenerator;
 @NamedQueries({
     @NamedQuery(name = "UfsCustomerOwners.findAll", query = "SELECT u FROM UfsCustomerOwners u"),
     @NamedQuery(name = "UfsCustomerOwners.findById", query = "SELECT u FROM UfsCustomerOwners u WHERE u.id = :id"),
-    @NamedQuery(name = "UfsCustomerOwners.findByName", query = "SELECT u FROM UfsCustomerOwners u WHERE u.name = :name"),
-    @NamedQuery(name = "UfsCustomerOwners.findByPhoneNumber", query = "SELECT u FROM UfsCustomerOwners u WHERE u.phoneNumber = :phoneNumber"),
-    @NamedQuery(name = "UfsCustomerOwners.findByEmail", query = "SELECT u FROM UfsCustomerOwners u WHERE u.email = :email"),
     @NamedQuery(name = "UfsCustomerOwners.findByCreatedAt", query = "SELECT u FROM UfsCustomerOwners u WHERE u.createdAt = :createdAt"),
     @NamedQuery(name = "UfsCustomerOwners.findByAction", query = "SELECT u FROM UfsCustomerOwners u WHERE u.action = :action"),
     @NamedQuery(name = "UfsCustomerOwners.findByActionStatus", query = "SELECT u FROM UfsCustomerOwners u WHERE u.actionStatus = :actionStatus"),
@@ -57,30 +54,30 @@ public class UfsCustomerOwners implements Serializable {
     @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "NAME")
-    private String name;
+    private String directorName;
     @JoinColumn(name = "DESIGNATION", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne
     private UfsBusinessDesignations designation;
     @Column(name = "DESIGNATION")
-    private Long designationId;
+    private Long directorDesignationId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 15)
     @Column(name = "PHONE_NUMBER")
-    private String phoneNumber;
+    private String directorPrimaryContactNumber;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 15)
     @Column(name = "ID_NUMBER")
-    private String idNumber;
+    private String directorIdNumber;
     @NotNull
     @Size(min = 1, max = 15)
     @Column(name = "SECONDARY_PHONE")
-    private String secondary_phone;
+    private String directorSecondaryContactNumber;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 30)
     @Column(name = "EMAIL")
-    private String email;
+    private String directorEmailAddress;
     @Column(name = "CREATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -95,7 +92,7 @@ public class UfsCustomerOwners implements Serializable {
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID",insertable = false,updatable = false)
-    @ManyToOne
+    @ManyToOne(optional = true)
     private UfsCustomer customerId;
     @Column(name = "CUSTOMER_ID")
     private BigDecimal customerIds;
@@ -115,10 +112,10 @@ public class UfsCustomerOwners implements Serializable {
         this.id = id;
     }
 
-    public UfsCustomerOwners(Long id, String name, String phoneNumber) {
+    public UfsCustomerOwners(Long id, String directorName, String directorPrimaryContactNumber) {
         this.id = id;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
+        this.directorName = directorName;
+        this.directorPrimaryContactNumber = directorPrimaryContactNumber;
     }
 
     public Long getId() {
@@ -127,32 +124,6 @@ public class UfsCustomerOwners implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Date getCreatedAt() {
@@ -227,28 +198,52 @@ public class UfsCustomerOwners implements Serializable {
         this.designation = designation;
     }
 
-    public Long getDesignationId() {
-        return designationId;
+    public String getDirectorName() {
+        return directorName;
     }
 
-    public void setDesignationId(Long designationId) {
-        this.designationId = designationId;
+    public void setDirectorName(String directorName) {
+        this.directorName = directorName;
     }
 
-    public String getSecondary_phone() {
-        return secondary_phone;
+    public Long getDirectorDesignationId() {
+        return directorDesignationId;
     }
 
-    public void setSecondary_phone(String secondary_phone) {
-        this.secondary_phone = secondary_phone;
+    public void setDirectorDesignationId(Long directorDesignationId) {
+        this.directorDesignationId = directorDesignationId;
     }
 
-    public String getIdNumber() {
-        return idNumber;
+    public String getDirectorPrimaryContactNumber() {
+        return directorPrimaryContactNumber;
     }
 
-    public void setIdNumber(String idNumber) {
-        this.idNumber = idNumber;
+    public void setDirectorPrimaryContactNumber(String directorPrimaryContactNumber) {
+        this.directorPrimaryContactNumber = directorPrimaryContactNumber;
+    }
+
+    public String getDirectorIdNumber() {
+        return directorIdNumber;
+    }
+
+    public void setDirectorIdNumber(String directorIdNumber) {
+        this.directorIdNumber = directorIdNumber;
+    }
+
+    public String getDirectorSecondaryContactNumber() {
+        return directorSecondaryContactNumber;
+    }
+
+    public void setDirectorSecondaryContactNumber(String directorSecondaryContactNumber) {
+        this.directorSecondaryContactNumber = directorSecondaryContactNumber;
+    }
+
+    public String getDirectorEmailAddress() {
+        return directorEmailAddress;
+    }
+
+    public void setDirectorEmailAddress(String directorEmailAddress) {
+        this.directorEmailAddress = directorEmailAddress;
     }
 
     @Override

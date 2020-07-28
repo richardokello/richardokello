@@ -71,7 +71,7 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
 
            UfsTrainedAgents ufsTrainedAgents = new UfsTrainedAgents();
            if(Objects.nonNull(this.customerService.findByCustomerId(trainedAgent.getCustomerId()))){
-            ufsTrainedAgents.setAgentName(this.customerService.findByCustomerId(trainedAgent.getCustomerId()).getCustomerName());
+            ufsTrainedAgents.setAgentName(this.customerService.findByCustomerId(trainedAgent.getCustomerId()).getBusinessName());
            }else{
                throw  new NotFoundException("Customer Does Not Exist in The System");
            }
@@ -121,7 +121,7 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
             UfsCustomerOutlet customerOutletDb = this.customerService.findByOutletCode(trainedAgent.getOutletCode());
             //save customer Name
             if(Objects.nonNull(this.customerService.findByCustomerId(customerOutletDb.getCustomerIds().longValue()))){
-                ufsTrainedAgents.setAgentName(this.customerService.findByCustomerId(customerOutletDb.getCustomerIds().longValue()).getCustomerName());
+                ufsTrainedAgents.setAgentName(this.customerService.findByCustomerId(customerOutletDb.getCustomerIds().longValue()).getBusinessName());
             }else{
                 throw  new NotFoundException("Customer Does Not Exist in The System");
             }

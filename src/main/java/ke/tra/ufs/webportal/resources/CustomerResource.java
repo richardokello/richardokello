@@ -86,31 +86,32 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
         //saving customer Info
         UfsCustomer customer = new UfsCustomer();
-        customer.setPhonenumber(customerOnboarding.getBusinessPrimaryContactNo());
+        customer.setBusinessPrimaryContactNo(customerOnboarding.getBusinessPrimaryContactNo());
         customer.setDateIssued(customerOnboarding.getDateIssued());
         customer.setValidTo(customerOnboarding.getValidTo());
         customer.setBusinessLicenceNumber(customerOnboarding.getBusinessLicenseNumber());
-        customer.setLocalRegNumber(customerOnboarding.getLocalRegistrationNumber());
-        customer.setCustomerName(customerOnboarding.getBusinessName());
-        customer.setClassTypeIds(customerOnboarding.getCustomerClassId());
+        customer.setLocalRegistrationNumber(customerOnboarding.getLocalRegistrationNumber());
+        customer.setBusinessName(customerOnboarding.getBusinessName());
+        customer.setCustomerClassId(customerOnboarding.getCustomerClassId());
         customer.setAddress(customerOnboarding.getAddress());
-        customer.setEmailAddress(customerOnboarding.getBusinessEmailAddress());
-        customer.setPin(customerOnboarding.getPinNumber());
+        customer.setBusinessEmailAddress(customerOnboarding.getBusinessEmailAddress());
+        customer.setPinNumber(customerOnboarding.getPinNumber());
         customer.setBusinessTypeIds(customerOnboarding.getBusinessTypeId());
-        customer.setSecondary_phone(customerOnboarding.getBusinessSecondaryContactNo());
+        customer.setBusinessSecondaryContactNo(customerOnboarding.getBusinessSecondaryContactNo());
+        customer.setCustomerTypeId(customerOnboarding.getCustomerTypeId());
         customerService.saveCustomer(customer);
 
         //saving directors
         if(!customerOnboarding.getDirectors().isEmpty()){
             customerOnboarding.getDirectors().stream().forEach(director->{
               UfsCustomerOwners dir = new UfsCustomerOwners();
-              dir.setName(director.getDirectorName());
+              dir.setDirectorName(director.getDirectorName());
               dir.setCustomerIds(BigDecimal.valueOf(customer.getId()));
-              dir.setEmail(director.getDirectorEmailAddress());
-              dir.setDesignationId(director.getDirectorDesignationId());
-              dir.setPhoneNumber(director.getDirectorPrimaryContactNumber());
-              dir.setSecondary_phone(director.getDirectorSecondaryContactNumber());
-              dir.setIdNumber(director.getDirectorIdNumber());
+              dir.setDirectorEmailAddress(director.getDirectorEmailAddress());
+              dir.setDirectorDesignationId(director.getDirectorDesignationId());
+              dir.setDirectorPrimaryContactNumber(director.getDirectorPrimaryContactNumber());
+              dir.setDirectorSecondaryContactNumber(director.getDirectorSecondaryContactNumber());
+              dir.setDirectorIdNumber(director.getDirectorIdNumber());
               ownersService.saveOwner(dir);
             });
         }
@@ -279,7 +280,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
         for(UfsCustomer customer: terminatedCustomers ){
             AgentTerminationResponseWrapper terminationResponse  = new AgentTerminationResponseWrapper();
-            terminationResponse.setAgentName(customer.getCustomerName());
+            terminationResponse.setAgentName(customer.getBusinessName());
             terminationResponse.setEmail(this.getOwnerDetails(customerOwners,customer.getId()).getEmail());
             terminationResponse.setOwnerName(this.getOwnerDetails(customerOwners,customer.getId()).getOwnerName());
             terminationResponse.setTerminationDate(customer.getTerminationDate());
@@ -313,8 +314,8 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 .filter(ownerFromDb -> ownerFromDb.getCustomerId().getId().equals(customerId))
                 .findFirst();
         if (owner.isPresent()) {
-            detailsWrapper.setOwnerName(owner.get().getName());
-            detailsWrapper.setEmail(owner.get().getEmail());
+            detailsWrapper.setOwnerName(owner.get().getDirectorName());
+            detailsWrapper.setEmail(owner.get().getDirectorEmailAddress());
 
         }
         return detailsWrapper;
