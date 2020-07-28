@@ -66,8 +66,8 @@ public class UfsCustomerComplaintsResource extends ChasisResource<UfsCustomerCom
         ResponseWrapper response = new ResponseWrapper();
         UfsCustomerComplaints ufsCustomerComplaints = new UfsCustomerComplaints();
         if(Objects.nonNull(this.customerService.findByCustomerId(customerComplaints.getCustomerId()))){
-            ufsCustomerComplaints.setAgentComplained(this.customerService.findByCustomerId(customerComplaints.getCustomerId()).getCustomerName());
-            ufsCustomerComplaints.setAgentPhonenumber(this.customerService.findByCustomerId(customerComplaints.getCustomerId()).getPhonenumber());
+            ufsCustomerComplaints.setAgentComplained(this.customerService.findByCustomerId(customerComplaints.getCustomerId()).getBusinessName());
+            ufsCustomerComplaints.setAgentPhonenumber(this.customerService.findByCustomerId(customerComplaints.getCustomerId()).getBusinessPrimaryContactNo());
         }else{
             throw  new NotFoundException("Customer Does Not Exist in The System");
         }

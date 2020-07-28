@@ -90,20 +90,20 @@ public class UfsCustomerOutlet implements Serializable {
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
     @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private UfsBankBranches bankBranchId;
     @Column(name = "BANK_BRANCH_ID")
     @ModifiableField
     private BigDecimal bankBranchIds;
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID",insertable = false, updatable = false)
-    @ManyToOne
+    @ManyToOne(optional = true)
     private UfsCustomer customerId;
     @Column(name = "CUSTOMER_ID")
     @Filter
     @ModifiableField
     private BigDecimal customerIds;
     @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID",insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private UfsGeographicalRegion geographicalRegionId;
     @Column(name = "GEOGRAPHICAL_REGION_ID")
     @ModifiableField

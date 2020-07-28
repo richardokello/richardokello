@@ -67,7 +67,7 @@ public class UfsBankBranches implements Serializable {
     @com.fasterxml.jackson.annotation.JsonIgnore
     private Set<UfsGls> ufsGlsSet;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JsonIgnore
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
@@ -96,7 +96,7 @@ public class UfsBankBranches implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @JoinColumn(name = "BANK_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private UfsBanks bankId;
     @Column(name = "BANK_ID")
     private Long bankIds;
@@ -107,7 +107,7 @@ public class UfsBankBranches implements Serializable {
     @Column(name = "BANK_REGION_ID")
     private BigDecimal bankRegionIds;
     @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private UfsGeographicalRegion geographicalRegionId;
     @Column(name = "GEOGRAPHICAL_REGION_ID")
     private BigDecimal geographicalRegionIds;
