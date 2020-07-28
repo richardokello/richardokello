@@ -19,7 +19,8 @@ public class OutletsInformationWrapper {
     private String outletCode;
     @NotNull
     private BigDecimal bankBranchId;
-    private String gpsCoordinates;
+    private String longitude;
+    private String latitude;
 
     /*Outlet Operating Hours*/
     @NotNull

@@ -121,7 +121,8 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
               UfsCustomerOutlet custOutlet = new UfsCustomerOutlet();
               custOutlet.setCustomerIds(BigDecimal.valueOf(customer.getId()));
               custOutlet.setBankBranchIds(outlet.getBankBranchId());
-              custOutlet.setGpsCoordinates(outlet.getGpsCoordinates());
+              custOutlet.setLongitude(outlet.getLongitude());
+              custOutlet.setLatitude(outlet.getLatitude());
               custOutlet.setOutletCode(outlet.getOutletCode());
               custOutlet.setOutletName(outlet.getOutletName());
               custOutlet.setOperatingHours(outlet.getOperatingHours());
