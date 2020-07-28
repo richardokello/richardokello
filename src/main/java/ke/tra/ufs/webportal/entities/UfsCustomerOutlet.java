@@ -66,9 +66,12 @@ public class UfsCustomerOutlet implements Serializable {
     @ModifiableField
     @Column(name = "OUTLET_CODE")
     private String outletCode;
-    @Size(max = 15)
-    @Column(name = "GPS_COORDINATES")
-    private String gpsCoordinates;
+    @Size(max = 30)
+    @Column(name = "LATITUDE")
+    private String latitude;
+    @Size(max = 30)
+    @Column(name = "LONGITUDE")
+    private String longitude;
     @Size(max = 4000)
     @ModifiableField
     @Column(name = "OPERATING_HOURS")
@@ -224,12 +227,20 @@ public class UfsCustomerOutlet implements Serializable {
         this.geographicalRegionIds = geographicalRegionIds;
     }
 
-    public String getGpsCoordinates() {
-        return gpsCoordinates;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setGpsCoordinates(String gpsCoordinates) {
-        this.gpsCoordinates = gpsCoordinates;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
     public String getOperatingHours() {
