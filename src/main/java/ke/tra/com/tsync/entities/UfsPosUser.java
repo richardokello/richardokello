@@ -6,8 +6,8 @@
 
 package ke.tra.com.tsync.entities;
 
-import org.hibernate.annotations.GenericGenerator;
 
+import org.hibernate.annotations.GenericGenerator;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -86,7 +86,7 @@ public class UfsPosUser implements Serializable {
     @Column(name = "INTRASH",insertable = false)
     private String intrash;
     @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID",insertable = false,updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne
     private UfsUser userId;
 
     @Column(name = "USERNAME")
@@ -100,7 +100,6 @@ public class UfsPosUser implements Serializable {
     private UfsCustomerOutlet outletId;
 
     @Column(name = "OUTLET_ID")
-    @Basic(optional = true)
     private Long outletIds;
 
     public UfsPosUser() {
@@ -259,7 +258,7 @@ public class UfsPosUser implements Serializable {
 
     @Override
     public String toString() {
-        return "tra.boa.entities.ufs.UfsPosUser[ posUserId=" + posUserId + " ]";
+        return "UfsPosUser[ posUserId=" + posUserId + " ]";
     }
 
 }

@@ -24,8 +24,9 @@ public class TestClass {
             System.out.printf("~~~~~~~~~~~~~~~~~~~~~~");
             ISOMsg isoMsg;
             //isoMsg = posUserCreation();
+            isoMsg = logout();
             //isoMsg = deletePosUser();
-            isoMsg = posUserLogin();
+            //isoMsg = posUserLogin();
             //isoMsg = firstTimePosUserLogin();
             //isoMsg = resetUserPin();
             //isoMsg = changeUserPin();
@@ -49,8 +50,9 @@ public class TestClass {
             System.out.println(ISOUtil.hexdump(data));
             String server;
             server = "127.0.0.1"; // port = 9000; // dev server
+            //server = "41.215.130.247";
             //BaseChannel channel = new NCCChannel(ip, port, packager, TPDU);
-            NACChannel channel = new NACChannel(server, 9065, packager, TPDU);
+            NACChannel channel = new NACChannel(server, 4123, packager, TPDU);
             //ISOChannel channel = new NCCChannel(ip, port, packager, TPDU);
             // System.out.println("Count kwa sender : " + n + " \n");
             channel.connect();
@@ -94,7 +96,7 @@ public class TestClass {
         msg.set(11, "000010"); // System trace audit number (STAN)
         msg.set(41, "PO400001"); // Card acceptor terminal identification
         msg.set(42, "100000RW0010408"); // 	Card acceptor identification code
-        msg.set(47, "025008111111110260241612773132210173010653100290011030008CoolKids031015collins collins032014colo@gmail.com03301007822781910340082900000103500499990360040000037005[1,3]");; // additional data
+        msg.set(47, "0250081111111102602416169WL82177898231245678030008CoolKid2031013collins troon032016colo12@gmail.com03301007122781910340082900000103500411230360040000037005[1,3]0400049991");; // additional data
 
         System.out.println(msg);
         return msg;
@@ -153,6 +155,20 @@ public class TestClass {
         System.out.println(msg);
         return msg;
     }
+
+    private static ISOMsg logout() throws ISOException {
+        ISOMsg msg = new ISOMsg();
+
+        msg.setMTI("1100"); // mti
+        msg.set(3, "000021"); // processing code
+        msg.set(11, "000010"); // System trace audit number (STAN) if any
+        msg.set(41, "PO400001"); // Card acceptor terminal identification(TID)
+        msg.set(42, "100000RW0010408"); // 	Card acceptor identification code(MID)
+        msg.set(47, "026024161277313221017301065310030006KeSeal"); // additional data where we
+        System.out.println(msg);
+        return msg;
+    }
+
     public static ISOMsg getPurchase() throws ISOException {
         Date today = new Date();
         String mti = "0700";

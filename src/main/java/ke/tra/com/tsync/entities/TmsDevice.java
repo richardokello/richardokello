@@ -7,24 +7,13 @@
 package ke.tra.com.tsync.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  *
@@ -38,6 +27,18 @@ public class TmsDevice implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
+    @GenericGenerator(
+            name = "TMS_DEVICE_SEQ2",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "TMS_DEVICE_SEQ2")
+                    ,
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0")
+                    ,
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    @GeneratedValue(generator = "TMS_DEVICE_SEQ2")
     @Basic(optional = false)
     @Column(name = "DEVICE_ID")
     private BigDecimal deviceId;
@@ -369,5 +370,5 @@ public class TmsDevice implements Serializable {
     public String toString() {
         return "com.mycompany.oracleufs.TmsDevice[ deviceId=" + deviceId + " ]";
     }
-    
+
 }

@@ -425,5 +425,37 @@ public class UserManagementService implements UserManagementTmpl {
 
         return isoMsg;
     }
+    public  ISOMsg logout (ISOMsg isoMsg, PosUserWrapper wrapper){
 
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+        try{
+            responseWrapper = userService.logout(wrapper);
+            Integer code = Integer.valueOf(responseWrapper.getCode());
+            if(code == 200){
+                isoMsg.set(39, "00");
+                isoMsg.set(47, responseWrapper.getMessage());
+            }
+            else{
+                setResponse(isoMsg, responseWrapper);
+            }
+            System.out.println(responseWrapper.getMessage());
+        }catch (Exception e){
+            isoMsg.set(39, "06"); // system error
+            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
+            e.printStackTrace();
+        }
+        return isoMsg;
+
+    }
+
+    private void setResponse(ISOMsg isoMsg, ResponseWrapper responseWrapper){
+        // set field 47 and 39
+        if(Integer.toString(responseWrapper.getCode()).trim().length()>2){
+            isoMsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1,3));
+            isoMsg.set(47, responseWrapper.getMessage());
+        }else{
+            isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
+            isoMsg.set(47, responseWrapper.getMessage());
+        }
+    }
 }

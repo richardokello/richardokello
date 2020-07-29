@@ -1,0 +1,91 @@
+IP AND PORT => 41.215.130.247 4123
+
+Constant fields:
+- MTI                                           => field  0, size 4 must be 4
+- processing code                               => field  3, size 6 must be 4
+- system trace audit number (STAN) if any       => field  11, size 6 max
+- Card acceptor terminal identification (TID)   => field  41, size 15 max
+- Card acceptor identification code(MID)        => field  42, size 15 max
+- additional data                               => field  47  size 999 max any data sent from pos to be here (Any message from Gateway also be here)
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+1100 -> user management MTI
+
+user management processing code(field 3, Size 6 )
+
+case "001000" // processing code( field 3)
+    Login request
+
+case "001111" // processing code( field 3)
+    UserChangePin
+case "001110" // processing code( field 3)
+    loadUserNames
+
+case "001110" // processing code( field 3)
+    resetPassword(reset user pin)
+
+case "011114" processing codes( field 3)
+    firstTimeLogin
+
+case "000020" processing codes( field 3)
+                  createUser
+case "000021" processing codes( field 3)
+    logout
+
+case "011113" processing codes( field 3)
+    deleteUser
+
+
+
+ TAGS:
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ N/B Provide what is relevant to you!! you might not need to supply all these
+ 025 => AppVersion
+ 026 => Serial number
+ 029 => Gender
+ 030 => username
+ 031 => FullName
+ 032 => email
+ 033 => Phone Number
+ 034 => IdNumber
+ 035 => UserAccessCode
+ 036 => Pin/Password
+ 037 => workgroup
+ 039 => First Name
+ 040 => Confirm Pin/Password
+ 041 => CurrentPin
+
+Response Code from Gateway(field 39) on field 39 and response message
+00 => Success
+03 => Forbidden/Unauthorised/ Incorrect PiN
+04 => Not found eg user not found on login(username non existing)
+05 => X!=Y when X should be equal to Y eg When Confirm Pin Not equal to Pin(IF validation can happen on POS then Fine)
+06 System error eg internal server error
+07 => Null values
+08 => BAD Request
+09 => Conflicting state eg Trying to create two users with same phone contact.
+23 => Account locked(When pin is entered more than the allowable times)
+51 => Wrong processing code was sent(that which does not exist)
+41 => TID missing
+42 => MID missing
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+0220 -> Advice MTI
+    primary account number  =>            field 2,  size 19
+    processing code         =>            field 3,  size 6
+    transaction amount      =>            field 4,  size 12
+    date local transmission =>            field 7,  size 10
+    STAN                                  =>  field 11, size 6
+    Date Local                            =>  field 12, size 12
+    Retrieval reference number            =>  field 37, size  12
+    Response Code                         =>  field 39, Size 2
+    TID                                   =>  field 41, size 15 max
+    MID                                   =>  field 42, size 15 max
+    Data                                  =>  field 47, size 999 max
+    Currency code, Transaction            =>  field 49, size 3
+    Data record                           =>  field 72, size 999 max
+
+

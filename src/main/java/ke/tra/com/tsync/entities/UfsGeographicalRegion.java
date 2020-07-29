@@ -3,74 +3,108 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ke.tra.com.tsync.entities;
 
+import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.TreeRoot;
+import ke.tra.com.tsync.entities.UfsBankBranches;
+import ke.tra.com.tsync.entities.UfsOrganizationUnits;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.List;
+import java.util.Set;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
- *
- * @author Mwagiru Kamoni
+ * @author ASUS
  */
 @Entity
 @Table(name = "UFS_GEOGRAPHICAL_REGION")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsGeographicalRegion.findAll", query = "SELECT u FROM UfsGeographicalRegion u")})
+        @NamedQuery(name = "UfsGeographicalRegion.findAll", query = "SELECT u FROM UfsGeographicalRegion u")
+        , @NamedQuery(name = "UfsGeographicalRegion.findById", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsGeographicalRegion.findByGeographicalId", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsGeographicalRegion.findByRegionName", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.regionName = :regionName")
+        , @NamedQuery(name = "UfsGeographicalRegion.findByCode", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.code = :code")
+        , @NamedQuery(name = "UfsGeographicalRegion.findByIsParent", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.isParent = :isParent")
+        , @NamedQuery(name = "UfsGeographicalRegion.findByCreationDate", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.creationDate = :creationDate")
+        , @NamedQuery(name = "UfsGeographicalRegion.findByAction", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsGeographicalRegion.findByActionStatus", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsGeographicalRegion.findByIntrash", query = "SELECT u FROM UfsGeographicalRegion u WHERE u.intrash = :intrash")})
 public class UfsGeographicalRegion implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "REGION_NAME")
+    private String regionName;
+    @Size(max = 20)
+    @Column(name = "CODE")
+    private String code;
+    @Size(max = 15)
+    @Column(name = "ACTION")
+    private String action;
+    @Size(max = 15)
+    @Filter
+    @Column(name = "ACTION_STATUS")
+    private String actionStatus;
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "geographicalRegionId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Set<UfsBankBranches> ufsBankBranchesSet;
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
+    @GenericGenerator(
+            name = "UFS_GEOGRAPHICAL_REGION_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_GEOGRAPHICAL_REGION_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    @GeneratedValue(generator = "UFS_GEOGRAPHICAL_REGION_SEQ")
     @Column(name = "ID")
     private BigDecimal id;
-    @Basic(optional = false)
-    @Column(name = "REGION_NAME")
-    private String regionName;
-    @Column(name = "CODE")
-    private String code;
     @Column(name = "IS_PARENT")
     private Short isParent;
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE",insertable = false , updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
-    @Column(name = "ACTION")
-    private String action;
-    @Column(name = "ACTION_STATUS")
-    private String actionStatus;
-    @Column(name = "INTRASH")
-    private String intrash;
-    @OneToMany(mappedBy = "geographRegId")
-    private Collection<TmsDevice> tmsDeviceCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "geographicalRegionId")
-    private Collection<UfsBankBranches> ufsBankBranchesCollection;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
+    @OneToMany(mappedBy = "parentId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsGeographicalRegion> ufsGeographicalRegionList;
+    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private UfsGeographicalRegion parentId;
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
-    @OneToMany(mappedBy = "parentId")
-    private Collection<UfsGeographicalRegion> ufsGeographicalRegionCollection;
-    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsGeographicalRegion parentId;
-    @OneToMany(mappedBy = "geographicalRegId")
-    private Collection<UfsCustomer> ufsCustomerCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "geographicalRegionId")
-    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
+    @Column(name = "PARENT_ID")
+    @TreeRoot
+    private BigDecimal parentIds;
+    @Column(name = "TENANT_ID")
+    private String tenantIds;
+    @Transient
+    private MultipartFile file;
+
 
     public UfsGeographicalRegion() {
     }
@@ -100,13 +134,6 @@ public class UfsGeographicalRegion implements Serializable {
         this.regionName = regionName;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public Short getIsParent() {
         return isParent;
@@ -124,13 +151,6 @@ public class UfsGeographicalRegion implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -140,44 +160,32 @@ public class UfsGeographicalRegion implements Serializable {
         this.actionStatus = actionStatus;
     }
 
-    public String getIntrash() {
-        return intrash;
+
+
+    public BigDecimal getParentIds() {
+        return parentIds;
     }
 
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
+    public void setParentIds(BigDecimal parentIds) {
+        this.parentIds = parentIds;
     }
 
-    public Collection<TmsDevice> getTmsDeviceCollection() {
-        return tmsDeviceCollection;
+    public String getTenantIds() {
+        return tenantIds;
     }
 
-    public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
-        this.tmsDeviceCollection = tmsDeviceCollection;
+    public void setTenantIds(String tenantIds) {
+        this.tenantIds = tenantIds;
     }
 
-    public Collection<UfsBankBranches> getUfsBankBranchesCollection() {
-        return ufsBankBranchesCollection;
+    @XmlTransient
+    @JsonIgnore
+    public List<UfsGeographicalRegion> getUfsGeographicalRegionList() {
+        return ufsGeographicalRegionList;
     }
 
-    public void setUfsBankBranchesCollection(Collection<UfsBankBranches> ufsBankBranchesCollection) {
-        this.ufsBankBranchesCollection = ufsBankBranchesCollection;
-    }
-
-    public UfsOrganizationUnits getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UfsOrganizationUnits tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public Collection<UfsGeographicalRegion> getUfsGeographicalRegionCollection() {
-        return ufsGeographicalRegionCollection;
-    }
-
-    public void setUfsGeographicalRegionCollection(Collection<UfsGeographicalRegion> ufsGeographicalRegionCollection) {
-        this.ufsGeographicalRegionCollection = ufsGeographicalRegionCollection;
+    public void setUfsGeographicalRegionList(List<UfsGeographicalRegion> ufsGeographicalRegionList) {
+        this.ufsGeographicalRegionList = ufsGeographicalRegionList;
     }
 
     public UfsGeographicalRegion getParentId() {
@@ -188,20 +196,20 @@ public class UfsGeographicalRegion implements Serializable {
         this.parentId = parentId;
     }
 
-    public Collection<UfsCustomer> getUfsCustomerCollection() {
-        return ufsCustomerCollection;
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
     }
 
-    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
-        this.ufsCustomerCollection = ufsCustomerCollection;
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
     }
 
-    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
-        return ufsCustomerOutletCollection;
+    public MultipartFile getFile() {
+        return file;
     }
 
-    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
-        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 
     @Override
@@ -226,7 +234,42 @@ public class UfsGeographicalRegion implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.UfsGeographicalRegion[ id=" + id + " ]";
+        return "ke.tracom.ufs.entities.UfsGeographicalRegion[ id=" + id + " ]";
     }
-    
+
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsBankBranches> getUfsBankBranchesSet() {
+        return ufsBankBranchesSet;
+    }
+
+    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
+        this.ufsBankBranchesSet = ufsBankBranchesSet;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
 }

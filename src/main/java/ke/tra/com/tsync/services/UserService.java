@@ -10,7 +10,9 @@ import ke.tra.com.tsync.wrappers.ChangePin;
 import ke.tra.com.tsync.wrappers.PosUserWrapper;
 import ke.tra.com.tsync.wrappers.ResponseWrapper;
 import lombok.extern.apachecommons.CommonsLog;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
@@ -23,6 +25,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 
 @Service
@@ -225,22 +228,29 @@ public class UserService implements UserServiceTempl {
 
         return responseWrapper;
     }
+    private void setLogIpAddress(UfsAuditLog auditLog){
+        try {
+            auditLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            auditLog.setNotes("Unknown IP address");
+            e.printStackTrace();
+        }
+    }
 
     @Override
+    @Transactional
     public ResponseWrapper login(PosUserWrapper wrapper) {
 
 
         ResponseWrapper responseWrapper = new ResponseWrapper();
-        UserDetailsWrapper detailsWrapper = new UserDetailsWrapper();
 
         UfsAuditLog auditLog = new UfsAuditLog();
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
+        setLogIpAddress(auditLog); // log ip address
 
         // validate Device details
 
-        System.out.println("+++++++++++++__+_+_+_++__");
-        System.out.println(wrapper);
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
         if(validate.getError()){
             auditLogRepository.save(auditLog);
@@ -317,13 +327,46 @@ public class UserService implements UserServiceTempl {
         return responseWrapper;
     }
 
+    private ResponseWrapper validateDeviceDetails(PosUserWrapper wrapper, ResponseWrapper responseWrapper, UfsAuditLog auditLog){
+        String posSerialNumber = wrapper.getSerialNumber();
+        String posTID = wrapper.getTID();
+        String posMID = wrapper.getMID();
+
+        // validation for serial number
+        if (posSerialNumber == null || posSerialNumber.trim() == ""){
+            responseWrapper.setCode(26);
+            responseWrapper.setMessage("Serial Number Missing");
+            auditLog.setNotes("Serial Number Missing");
+            responseWrapper.setError(true);
+            auditLogRepository.save(auditLog);
+            return responseWrapper;
+        }
+        // validation for MID
+        if (posMID == null || posMID.trim() == ""){
+            responseWrapper.setCode(42);
+            responseWrapper.setMessage("Merchant ID Missing");
+            auditLog.setNotes("Merchant ID Missing");
+            responseWrapper.setError(true);
+            auditLogRepository.save(auditLog);
+            return responseWrapper;
+        }
+        // validation for TID
+        if (posTID == null || posTID.trim() == ""){
+            responseWrapper.setCode(41);
+            auditLog.setNotes("Terminal ID Missing");
+            responseWrapper.setMessage("Terminal ID Missing");
+            responseWrapper.setError(true);
+            auditLogRepository.save(auditLog);
+            return responseWrapper;
+        }
+        return responseWrapper;
+    }
+
+
     @Override
     @Transactional
     public ResponseWrapper makePosUser(PosUserWrapper wrapper){
         ResponseWrapper responseWrapper =  new ResponseWrapper();
-        String posSerialNumber = wrapper.getSerialNumber();
-        String posTID = wrapper.getTID();
-        String posMID = wrapper.getMID();
         UfsAuditLog auditLog = new UfsAuditLog();
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_CREATE);
@@ -332,59 +375,32 @@ public class UserService implements UserServiceTempl {
         auditLog.setClientId(AppConstants.CLIENT_ID);
 
 
-        try {
-            auditLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
-        } catch (UnknownHostException e) {
-            auditLog.setNotes("Unknown IP address");
-           e.printStackTrace();
-        }
+        setLogIpAddress(auditLog); // log ip address
 
         try {
+            validateDeviceDetails(wrapper, responseWrapper, auditLog);
 
-            // validation for serial number
-            if (posSerialNumber == null){
-                responseWrapper.setCode(26);
-                responseWrapper.setMessage("Serial Number Missing");
-                auditLog.setNotes("Serial Number Missing");
-                responseWrapper.setError(true);
-                auditLogRepository.save(auditLog);
+            if(responseWrapper.getError()){
                 return responseWrapper;
             }
-            // validation for MID
-            if (posMID == null){
-                responseWrapper.setCode(42);
-                responseWrapper.setMessage("Merchant ID Missing");
-                auditLog.setNotes("Merchant ID Missing");
-                responseWrapper.setError(true);
-                auditLogRepository.save(auditLog);
-                return responseWrapper;
-            }
-            // validation for TID
-            if (posTID == null){
-                responseWrapper.setCode(41);
-                auditLog.setNotes("Terminal ID Missing");
-                responseWrapper.setMessage("Terminal ID Missing");
-                responseWrapper.setError(true);
-                auditLogRepository.save(auditLog);
-                return responseWrapper;
-            }
+
             // validation for first name
             if (wrapper.getFullName() == null){
                 responseWrapper.setCode(400);
-                responseWrapper.setMessage("POS user full name missing");
-                auditLog.setNotes("POS user full name missing");
+                responseWrapper.setMessage("first name missing");
+                auditLog.setNotes("first name missing");
                 responseWrapper.setError(true);
                 auditLogRepository.save(auditLog);
                 return responseWrapper;
             }
 
-//            if (wrapper.getConfirmPin() == null){
-//                responseWrapper.setCode(400);
-//                responseWrapper.setMessage("pin/password missing");
-//                responseWrapper.setError(true);
-//                auditLogRepository.save(auditLog);
-//                return responseWrapper;
-//            }
+            if (wrapper.getConfirmPin() == null){
+                responseWrapper.setCode(400);
+                responseWrapper.setMessage("pin/password missing");
+                responseWrapper.setError(true);
+                auditLogRepository.save(auditLog);
+                return responseWrapper;
+            }
 
 
             UfsUser ufsUser;
@@ -435,10 +451,10 @@ public class UserService implements UserServiceTempl {
                     ufsUser = ufsUserExist;
                 }
                 // lets check if a user exist by the unique username provide during creation
-                if (Objects.nonNull(ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(),"NO"))) {
+                if (Objects.nonNull(ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO"))) {
                     // if they exist then lets just communicate back to  the terminal
                     responseWrapper.setCode(409);
-                    responseWrapper.setMessage("Pos user already exist for " + wrapper.getPhoneNumber());
+                    responseWrapper.setMessage("Pos user already exist for " + wrapper.getUsername());
                     auditLog.setNotes("Pos user already exist for " + wrapper.getPhoneNumber());
                     auditLogRepository.save(auditLog);
                     return responseWrapper;
@@ -454,10 +470,10 @@ public class UserService implements UserServiceTempl {
                     user.setPinStatus(AppConstants.PIN_STATUS_INACTIVE);
                     // save user
                     ufsUserRepository.save(ufsUser);
-                    auditLog.setUserId(ufsUser.getUserId().longValue());
+                    auditLog.setUserId(ufsUser.getUserId());
 
-                    user.setUserIds(ufsUser.getUserId().longValue());
-                    String username = wrapper.getUsername() == null?wrapper.getUsername(): wrapper.getUsername();
+                    user.setUserIds(ufsUser.getUserId());
+                    String username = wrapper.getUsername();
                     user.setUsername(username);
                     TmsDevice tmsDevice = tmsDeviceRepository.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", AppConstants.STATUS_APPROVED);
                     // assign user to the outlet which the serial number belongs
@@ -484,16 +500,25 @@ public class UserService implements UserServiceTempl {
                         return responseWrapper;
                     }
 
+
                     // in-case no new pos user is created then save ufs user will not be called
                     //save pos user
-                    ufsPosUserRepository.save(user);
-                    auditLog.setStatus(AppConstants.STATUS_COMPLETED);
-                    auditLog.setEntityId(String.valueOf(user.getPosUserId()));
-                    auditLog.setNotes("Pos user created successfully");
-                    auditLog.setDescription("Pos user "+wrapper.getPhoneNumber()+" created successfully");
-                    responseWrapper.setMessage("Pos user created successfully");
-                    responseWrapper.setCode(200);
-
+                    UfsPosUser PosUserAlreadyExists = ufsPosUserRepository.findByUserIds(ufsUser.getUserId());
+                    if(Objects.isNull(PosUserAlreadyExists)) {
+                        ufsPosUserRepository.save(user);
+                        auditLog.setStatus(AppConstants.STATUS_COMPLETED);
+                        auditLog.setEntityId(String.valueOf(user.getPosUserId()));
+                        auditLog.setNotes("Pos user created successfully");
+                        auditLog.setDescription("Pos user " + wrapper.getPhoneNumber() + " created successfully");
+                        responseWrapper.setMessage("Pos user created successfully");
+                        responseWrapper.setCode(200);
+                    }else {
+                        responseWrapper.setCode(400);
+                        auditLog.setDescription("User with |"+ wrapper.getPhoneNumber()+ "and ID number " +wrapper.getIdNumber()+" has already been created as a POS user");
+                        responseWrapper.setMessage("User with | "+ wrapper.getPhoneNumber()+ "and ID number " +wrapper.getIdNumber()+" has already been created as a POS user");
+                        auditLogRepository.save(auditLog);
+                        return responseWrapper;
+                    }
                 }
 
             } catch (IncorrectResultSizeDataAccessException e) {
@@ -505,8 +530,7 @@ public class UserService implements UserServiceTempl {
                 return responseWrapper;
             }
 
-
-        }catch(Exception ex){
+          } catch (DataIntegrityViolationException ex){
             ex.printStackTrace();
             responseWrapper.setCode(06);
             auditLog.setDescription("System error when trying to create User from terminal with serial No "+wrapper.getSerialNumber());
@@ -515,7 +539,7 @@ public class UserService implements UserServiceTempl {
 
         auditLogRepository.save(auditLog);
         return responseWrapper;
-        }
+    }
 
 
     @Override
@@ -528,6 +552,7 @@ public class UserService implements UserServiceTempl {
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
 
+        setLogIpAddress(auditLog); // log ip address
         // validate Device details
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
         if(validate.getError()){
@@ -535,12 +560,12 @@ public class UserService implements UserServiceTempl {
         }else {
 
             UfsPosUser user = ufsPosUserRepository.findByUsername(wrapper.getUsername());
-            // String randomPin = RandomStringUtils.random(Integer.parseInt(ufsSysConfig.getValue()),false,true);
-            user.setPin(encoder.encode("0000"));
-            System.out.println("YYYYYYYYY");
+            String randomPin = RandomStringUtils.random(Integer.parseInt(ufsSysConfig.getValue()),false,true);
+            user.setPin(encoder.encode(randomPin));
+
             user.setActiveStatus(AppConstants.STATUS_INACTIVE);
             user.setPinStatus(AppConstants.PIN_STATUS_INACTIVE);
-            responseWrapper.setMessage("Reset password successful");
+            responseWrapper.setMessage(randomPin);
             responseWrapper.setCode(200);
             auditLog.setNotes("Reset password successful for "+ wrapper.getUsername());
             auditLog.setEntityId(String.valueOf(user.getPosUserId()));
@@ -552,7 +577,7 @@ public class UserService implements UserServiceTempl {
             auditLog.setDescription("Reset password for "+ wrapper.getUsername() +" was success");
             ufsPosUserRepository.save(user);
         }
-        auditLogRepository.save(auditLog);
+        //auditLogRepository.save(auditLog);
         return responseWrapper;
     }
 
@@ -680,6 +705,7 @@ public class UserService implements UserServiceTempl {
 
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType("Deletion");
+        setLogIpAddress(auditLog); // log ip address
 
         try{
 
@@ -713,6 +739,26 @@ public class UserService implements UserServiceTempl {
         responseWrapper.setCode(200);
         responseWrapper.setMessage("User deleted successfully");
         auditLog.setNotes(wrapper.getUsername() +" deleted successfully");
+        auditLogRepository.save(auditLog);
+        return responseWrapper;
+    }
+    public ResponseWrapper logout(PosUserWrapper wrapper){
+        UfsAuditLog auditLog = new UfsAuditLog();
+        ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+
+        setLogIpAddress(auditLog); // log ip address
+
+        auditLog.setOccurenceTime(new Date());
+        auditLog.setActivityType("Logout");
+
+        if (validate.getError()){
+            return responseWrapper;
+        }
+        auditLog.setStatus(AppConstants.STATUS_COMPLETED);
+        responseWrapper.setCode(200);
+        responseWrapper.setMessage("log out was successful");
+        auditLog.setNotes(wrapper.getUsername() +" log out was successful");
         auditLogRepository.save(auditLog);
         return responseWrapper;
     }

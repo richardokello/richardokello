@@ -1,0 +1,23 @@
+553  [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 14452 (E:\projects\crdb_tsync\target\classes started by cotuoma in E:\projects\crdb_tsync) 
+555  [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: remote 
+1436 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+1552 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 106ms. Found 23 repository interfaces. 
+1809 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$b31f3df5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+1973 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+1987 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+2098 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+2099 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+2235 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+2235 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1633 ms 
+2612 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+3173 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+3251 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+3252 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+3316 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+3450 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+6107 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+6232 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+6252 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+6254 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+6413 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+6418 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 

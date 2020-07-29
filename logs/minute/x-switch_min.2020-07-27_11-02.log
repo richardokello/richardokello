@@ -1,0 +1,47 @@
+432  [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 5700 (E:\projects\crdb_tsync\target\classes started by cotuoma in E:\projects\crdb_tsync) 
+434  [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: remote 
+1298 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+1397 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 91ms. Found 23 repository interfaces. 
+1638 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$c69b44db] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+1826 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+1839 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+1951 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+1952 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+2107 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+2107 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1635 ms 
+2433 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+3158 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+3243 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+3244 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+3307 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+3454 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+6103 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+6380 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+7643 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+7802 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+8028 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: e8f9ed4b-7afa-409b-bbde-17f800f2bdb9
+ 
+8081 [main] INFO  o.s.s.w.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1716bfb9, org.springframework.security.web.context.SecurityContextPersistenceFilter@24981ef0, org.springframework.security.web.header.HeaderWriterFilter@ad831c6, org.springframework.security.web.csrf.CsrfFilter@32ef162b, org.springframework.security.web.authentication.logout.LogoutFilter@1f3d9f, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@352b8fb6, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@74991745, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@5561f343, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@42edab5a, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@77d89cf4, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6178eb74, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@aad8d7f, org.springframework.security.web.session.SessionManagementFilter@62d8a9f7, org.springframework.security.web.access.ExceptionTranslationFilter@6ef80f24, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1adde386] 
+8126 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator' 
+8147 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+8193 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+8209 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+8211 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 8.118 seconds (JVM running for 8.768) 
+8227 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+8228 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+8676 [RMI TCP Connection(2)-192.168.254.139] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+8677 [RMI TCP Connection(2)-192.168.254.139] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+8684 [RMI TCP Connection(2)-192.168.254.139] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 7 ms 
+1071 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on DESKTOP-41KACUO with PID 18004 (started by cotuoma in E:\projects\crdb_tsync) 
+1073 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: remote 
+2701 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+2871 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 153ms. Found 23 repository interfaces. 
+3686 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$6c023875] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+4140 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+5073 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+5215 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+5216 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+5340 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+5586 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 

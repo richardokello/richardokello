@@ -9,12 +9,12 @@ package ke.tra.com.tsync.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
-import ke.axle.chassis.annotations.Searchable;
+
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
+
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
@@ -46,11 +46,10 @@ public class UfsUser implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @ModifiableField
+
     @Size(min = 1, max = 100)
     @Column(name = "FULL_NAME")
-    @Filter
-    @Searchable
+
     private String fullName;
     @Size(max = 255)
     @Column(name = "AVATAR")
@@ -61,17 +60,17 @@ public class UfsUser implements Serializable {
     private short status;
     @Size(max = 15)
     @Column(name = "ACTION",insertable = false)
-    @Filter
+
     private String action;
     @Size(max = 15)
-    @Filter
+
     @Column(name = "ACTION_STATUS",insertable = false)
     private String actionStatus;
     @Size(max = 3)
     @Column(name = "INTRASH",insertable = false)
     private String intrash;
     @Size(max = 15)
-    @ModifiableField
+
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
     @OneToMany(mappedBy = "uploadedBy")

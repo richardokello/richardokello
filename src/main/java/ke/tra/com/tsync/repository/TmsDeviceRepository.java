@@ -14,6 +14,7 @@ import ke.tra.com.tsync.entities.TmsEstateItem;
 import ke.tra.com.tsync.entities.UfsDeviceModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -21,7 +22,7 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * @author Owori Juma
  */
-public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecimal> {
+public interface TmsDeviceRepository extends JpaRepository<TmsDevice, BigDecimal> {
 
     /**
      * @param serialNo

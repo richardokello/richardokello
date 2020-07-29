@@ -1,0 +1,17 @@
+9664 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+9984 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+11484 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+12543 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+14185 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 9ddc88a6-61d0-42b2-9c48-e969d87c1bb3
+ 
+14417 [main] INFO  o.s.s.w.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@51e92ae3, org.springframework.security.web.context.SecurityContextPersistenceFilter@27342c75, org.springframework.security.web.header.HeaderWriterFilter@2de6241c, org.springframework.security.web.csrf.CsrfFilter@2391117e, org.springframework.security.web.authentication.logout.LogoutFilter@52483ae4, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@700f5dc8, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@3216feae, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@486e000a, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@63fe4487, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@20d6746b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4d07c08d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1d2bbf7d, org.springframework.security.web.session.SessionManagementFilter@56f53d8d, org.springframework.security.web.access.ExceptionTranslationFilter@3d5650de, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@bdc973a] 
+14674 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator' 
+14733 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+14869 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Started TsyncApplicationTests in 14.521 seconds (JVM running for 15.216) 
+14936 [Thread-3] INFO  o.s.s.c.ThreadPoolTaskScheduler - Shutting down ExecutorService 'taskScheduler' 
+14939 [Thread-3] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
+14950 [Thread-3] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+14952 [Thread-3] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+15152 [Thread-3] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 

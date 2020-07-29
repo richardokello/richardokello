@@ -149,6 +149,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
 
                         case 35:
                             wrapper.setUserAccessCode(TagValue);
+                            System.out.println("+++++++++++++ setUserAccessCode "+TagValue);
                             break;
 
                         case 36:
@@ -162,10 +163,10 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                             break;
                         case 40:
                             wrapper.setConfirmPin(TagValue); //  confirm
-                            System.out.println("confirm Pin "+ TagValue);
+                            System.out.println("-----confirm Pin "+ TagValue);
                         case 41:
                             wrapper.setCurrentPin(TagValue); //  confirm
-                            System.out.println("Current Pin "+ TagValue); // pin that is being changed
+                            System.out.println("++++++Current Pin "+ TagValue); // pin that is being changed
                         default:
                             break;
                     }
@@ -175,6 +176,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                         more = false;
                     }
                 } catch (NumberFormatException e) {
+                    e.printStackTrace();
                     break;
                 } catch(StringIndexOutOfBoundsException e){
                     e.printStackTrace();

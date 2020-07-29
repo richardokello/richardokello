@@ -81,8 +81,8 @@ public class UfsBankRegion implements Serializable {
     private Collection<UfsUserAgentSupervisor> ufsUserAgentSupervisorCollection;
     @OneToMany(mappedBy = "bankRegionId")
     private Collection<FieldTickets> fieldTicketsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
-    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
+//    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
 
     public UfsBankRegion() {
     }
@@ -251,13 +251,13 @@ public class UfsBankRegion implements Serializable {
         this.fieldTicketsCollection = fieldTicketsCollection;
     }
 
-    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
-        return ufsCustomerOutletCollection;
-    }
-
-    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
-        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
-    }
+//    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
+//        return ufsCustomerOutletCollection;
+//    }
+//
+//    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
+//        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
+//    }
 
     @Override
     public int hashCode() {
