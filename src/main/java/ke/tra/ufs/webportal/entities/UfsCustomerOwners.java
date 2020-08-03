@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Searchable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -52,6 +54,9 @@ public class UfsCustomerOwners implements Serializable {
     private Long id;
     @Basic(optional = false)
     @NotNull
+    @Filter
+    @Searchable
+    @ModifiableField
     @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String directorName;
@@ -59,23 +64,36 @@ public class UfsCustomerOwners implements Serializable {
     @ManyToOne
     private UfsBusinessDesignations designation;
     @Column(name = "DESIGNATION")
+    @ModifiableField
     private Long directorDesignationId;
     @Basic(optional = false)
     @NotNull
+    @Filter
+    @Searchable
+    @ModifiableField
     @Size(min = 1, max = 15)
     @Column(name = "PHONE_NUMBER")
     private String directorPrimaryContactNumber;
     @Basic(optional = false)
     @NotNull
+    @Filter
+    @Searchable
+    @ModifiableField
     @Size(min = 1, max = 15)
     @Column(name = "ID_NUMBER")
     private String directorIdNumber;
     @NotNull
+    @Filter
+    @Searchable
+    @ModifiableField
     @Size(min = 1, max = 15)
     @Column(name = "SECONDARY_PHONE")
     private String directorSecondaryContactNumber;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 30)
+    @Filter
+    @Searchable
+    @ModifiableField
     @Column(name = "EMAIL")
     private String directorEmailAddress;
     @Column(name = "CREATED_AT",insertable = false, updatable = false)
@@ -95,6 +113,7 @@ public class UfsCustomerOwners implements Serializable {
     @ManyToOne(optional = true)
     private UfsCustomer customerId;
     @Column(name = "CUSTOMER_ID")
+    @ModifiableField
     private BigDecimal customerIds;
 
     @Filter
