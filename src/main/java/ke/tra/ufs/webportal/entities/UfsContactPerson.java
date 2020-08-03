@@ -80,6 +80,7 @@ public class UfsContactPerson implements Serializable {
     private UfsCustomerOutlet customerOutlet;
     @Column(name = "OUTLET_ID")
     @ModifiableField
+    @Filter
     private Long customerOutletId;
     @Column(name = "CREATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
