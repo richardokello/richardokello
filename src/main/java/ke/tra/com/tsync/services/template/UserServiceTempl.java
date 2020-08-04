@@ -55,7 +55,7 @@ public interface UserServiceTempl {
 
     ResponseWrapper resetPassword(PosUserWrapper wrapper);
 
-    ResponseWrapper makePosUser(PosUserWrapper wrapper);
+    ResponseWrapper createPosUser(PosUserWrapper wrapper);
 
     ResponseWrapper deletePosUser(PosUserWrapper wrapper);
 }

@@ -2,7 +2,6 @@ package ke.tra.com.tsync.services;
 
 import ke.tra.com.tsync.entities.*;
 import ke.tra.com.tsync.entities.wrappers.ActionWrapper;
-import ke.tra.com.tsync.entities.wrappers.UserDetailsWrapper;
 import ke.tra.com.tsync.repository.*;
 import ke.tra.com.tsync.services.template.UserServiceTempl;
 import ke.tra.com.tsync.utils.annotations.AppConstants;
@@ -25,7 +24,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 
 @Service
@@ -58,7 +56,6 @@ public class UserService implements UserServiceTempl {
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.ufsCustomerRepository = ufsCustomerRepository;
         this.worKGroupRoleRepository = worKGroupRoleRepository;
-
         this.ufsDepartmentRepository = departmentRepository;
         this.auditLogRepository = auditLogRepository;
         this.ufsUserRepository = ufsUserRepository1;
@@ -82,7 +79,7 @@ public class UserService implements UserServiceTempl {
         posUserWrapper.setConfirmPin(wrapper.getConfirmPin());
 
         // create audit log instance to log this activity
-        UfsAuditLog auditLog = new UfsAuditLog();
+        UfsPosAuditLog auditLog = new UfsPosAuditLog();
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_PIN_CHANGE);
 
@@ -149,7 +146,7 @@ public class UserService implements UserServiceTempl {
         ResponseWrapper responseWrapper = new ResponseWrapper();
         UfsPosUser ufsPosUser = ufsPosUserRepository.findByUsername(wrapper.getUsername());
         // create audit log instance to log this activity
-        UfsAuditLog auditLog = new UfsAuditLog();
+        UfsPosAuditLog auditLog = new UfsPosAuditLog();
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
 
         auditLog.setOccurenceTime(new Date());
@@ -228,7 +225,7 @@ public class UserService implements UserServiceTempl {
 
         return responseWrapper;
     }
-    private void setLogIpAddress(UfsAuditLog auditLog){
+    private void setLogIpAddress(UfsPosAuditLog auditLog){
         try {
             auditLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
         } catch (UnknownHostException e) {
@@ -244,7 +241,7 @@ public class UserService implements UserServiceTempl {
 
         ResponseWrapper responseWrapper = new ResponseWrapper();
 
-        UfsAuditLog auditLog = new UfsAuditLog();
+        UfsPosAuditLog auditLog = new UfsPosAuditLog();
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
         setLogIpAddress(auditLog); // log ip address
@@ -327,13 +324,13 @@ public class UserService implements UserServiceTempl {
         return responseWrapper;
     }
 
-    private ResponseWrapper validateDeviceDetails(PosUserWrapper wrapper, ResponseWrapper responseWrapper, UfsAuditLog auditLog){
+    private ResponseWrapper validateDeviceDetails(PosUserWrapper wrapper, ResponseWrapper responseWrapper, UfsPosAuditLog auditLog){
         String posSerialNumber = wrapper.getSerialNumber();
         String posTID = wrapper.getTID();
         String posMID = wrapper.getMID();
 
         // validation for serial number
-        if (posSerialNumber == null || posSerialNumber.trim() == ""){
+        if (posSerialNumber == null || posSerialNumber.isBlank()){
             responseWrapper.setCode(26);
             responseWrapper.setMessage("Serial Number Missing");
             auditLog.setNotes("Serial Number Missing");
@@ -365,9 +362,9 @@ public class UserService implements UserServiceTempl {
 
     @Override
     @Transactional
-    public ResponseWrapper makePosUser(PosUserWrapper wrapper){
+    public ResponseWrapper createPosUser(PosUserWrapper wrapper){
         ResponseWrapper responseWrapper =  new ResponseWrapper();
-        UfsAuditLog auditLog = new UfsAuditLog();
+        UfsPosAuditLog auditLog = new UfsPosAuditLog();
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_CREATE);
         auditLog.setStatus(AppConstants.STATUS_FAILED);
@@ -548,7 +545,7 @@ public class UserService implements UserServiceTempl {
         ResponseWrapper responseWrapper =  new ResponseWrapper();
         UfsSysConfig ufsSysConfig = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration","posPin");
 
-        UfsAuditLog auditLog = new UfsAuditLog();
+        UfsPosAuditLog auditLog = new UfsPosAuditLog();
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
 
@@ -572,7 +569,6 @@ public class UserService implements UserServiceTempl {
             auditLog.setStatus(AppConstants.STATUS_COMPLETED);
 
             responseWrapper.setCode(200);
-            responseWrapper.setMessage("Reset password successful");
             auditLog.setNotes("Reset password for "+ wrapper.getUsername() +" was success");
             auditLog.setDescription("Reset password for "+ wrapper.getUsername() +" was success");
             ufsPosUserRepository.save(user);
@@ -581,7 +577,7 @@ public class UserService implements UserServiceTempl {
         return responseWrapper;
     }
 
-    private ResponseWrapper validatePosRequest(PosUserWrapper wrapper, boolean b, UfsAuditLog auditLog){
+    private ResponseWrapper validatePosRequest(PosUserWrapper wrapper, boolean b,UfsPosAuditLog auditLog){
         // common validator method for members that need its
         // TODO: 03/07/2020 : if possible extend to validate for rogue terminal details.
         String posSerialNumber = wrapper.getSerialNumber();
@@ -699,7 +695,7 @@ public class UserService implements UserServiceTempl {
     @Override
     @Transactional
     public ResponseWrapper deletePosUser(PosUserWrapper wrapper){
-        UfsAuditLog auditLog = new UfsAuditLog();
+        UfsPosAuditLog auditLog = new UfsPosAuditLog();
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
         ResponseWrapper responseWrapper = new ResponseWrapper();
 
@@ -743,7 +739,7 @@ public class UserService implements UserServiceTempl {
         return responseWrapper;
     }
     public ResponseWrapper logout(PosUserWrapper wrapper){
-        UfsAuditLog auditLog = new UfsAuditLog();
+        UfsPosAuditLog auditLog = new UfsPosAuditLog();
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
         ResponseWrapper responseWrapper = new ResponseWrapper();
 
@@ -751,6 +747,7 @@ public class UserService implements UserServiceTempl {
 
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType("Logout");
+
 
         if (validate.getError()){
             return responseWrapper;

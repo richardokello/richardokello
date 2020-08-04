@@ -8,11 +8,9 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ke.tra.com.tsync.packager.TracomPackager;
-import org.jpos.iso.ISOChannel;
 import org.jpos.iso.ISOPackager;
 import org.jpos.iso.ISOUtil;
 import org.jpos.iso.channel.NACChannel;
-import org.jpos.iso.channel.NCCChannel;
 import org.jpos.util.SimpleLogListener;
 
 public class TestClass {
@@ -24,9 +22,9 @@ public class TestClass {
             System.out.printf("~~~~~~~~~~~~~~~~~~~~~~");
             ISOMsg isoMsg;
             //isoMsg = posUserCreation();
-            isoMsg = logout();
+            //isoMsg = logout();
             //isoMsg = deletePosUser();
-            //isoMsg = posUserLogin();
+            isoMsg = posUserLogin();
             //isoMsg = firstTimePosUserLogin();
             //isoMsg = resetUserPin();
             //isoMsg = changeUserPin();
@@ -50,7 +48,7 @@ public class TestClass {
             System.out.println(ISOUtil.hexdump(data));
             String server;
             server = "127.0.0.1"; // port = 9000; // dev server
-            //server = "41.215.130.247";
+            server = "41.215.130.247";
             //BaseChannel channel = new NCCChannel(ip, port, packager, TPDU);
             NACChannel channel = new NACChannel(server, 4123, packager, TPDU);
             //ISOChannel channel = new NCCChannel(ip, port, packager, TPDU);
