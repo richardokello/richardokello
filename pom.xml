@@ -54,11 +54,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.oracle</groupId>-->
+<!--            <artifactId>jdbc7</artifactId>-->
+<!--            <version>1</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>jdbc7</artifactId>
-            <version>1</version>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>19.7.0.0</version>
         </dependency>
+
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -206,6 +212,4 @@
             <url>https://repo.spring.io/libs-release</url>
         </pluginRepository>
     </pluginRepositories>
-
-
 </project>
