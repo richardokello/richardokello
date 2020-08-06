@@ -1,38 +1,46 @@
 package ke.tra.ufs.webportal.entities;
 
-import ke.tra.ufs.webportal.entities.wrapper.TariffType;
 import lombok.Data;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.Set;
 
 @Data
-@Entity(name = "UFS_TARIFFS")
-public class UfsTariffs implements Serializable {
+@Entity(name = "UFS_TARIFF_PRODUCTS")
+public class UfsTariffProducts implements Serializable {
 
     @Id
-    @SequenceGenerator(name = "UFS_TARIFFS_SEQ", sequenceName = "UFS_TARIFFS_SEQ")
-    @GeneratedValue(generator = "UFS_TARIFFS_SEQ")
+    @SequenceGenerator(name = "UFS_TARIFF_PRODUCTS_SEQ", sequenceName = "UFS_TARIFF_PRODUCTS_SEQ")
+    @GeneratedValue(generator = "UFS_TARIFF_PRODUCTS_SEQ")
     @Column(name = "ID")
     private BigInteger id;
 
+    @NotNull
     @Column(name = "NAME")
     private String name;
 
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "TYPE")
-    private TariffType type;
+    @Column(name = "MIN_LIMIT")
+    private Double minLimit;
 
-    @Column(name = "TARIFF_VALUES")
-    private String values;
+    @Column(name = "MAX_LIMIT")
+    private Double maxLimit;
+
+    @Column(name = "PRODUCT_CODE")
+    private String productCode;
+
+    @Column(name = "TARIFF")
+    private BigInteger tariffId;
+
+    @ManyToOne(targetEntity = UfsTariffs.class)
+    @JoinColumn(name = "TARIFF", insertable = false, updatable = false)
+    private UfsTariffs tariff;
 
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -49,4 +57,5 @@ public class UfsTariffs implements Serializable {
     @Size(max = 5)
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
+
 }
