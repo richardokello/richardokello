@@ -1,4 +1,4 @@
-package ke.tra.ufs.webportal.entities.wrapper;
+package ke.tra.ufs.webportal.entities.enums;
 
 public enum TariffType {
     FIXED_RATE,

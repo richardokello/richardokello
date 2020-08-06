@@ -1,6 +1,7 @@
 package ke.tra.ufs.webportal.entities;
 
 import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class UfsTariffProducts implements Serializable {
     @Column(name = "ID")
     private BigInteger id;
 
+    @ModifiableField
     @NotNull
     @Column(name = "NAME")
     private String name;
@@ -27,9 +29,11 @@ public class UfsTariffProducts implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @ModifiableField
     @Column(name = "MIN_LIMIT")
     private Double minLimit;
 
+    @ModifiableField
     @Column(name = "MAX_LIMIT")
     private Double maxLimit;
 

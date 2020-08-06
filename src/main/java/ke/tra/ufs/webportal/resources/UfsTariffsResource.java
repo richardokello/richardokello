@@ -5,7 +5,7 @@ import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.entities.UfsTariffs;
-import ke.tra.ufs.webportal.entities.wrapper.TariffType;
+import ke.tra.ufs.webportal.entities.enums.TariffType;
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,12 +45,9 @@ public class UfsTariffsResource extends ChasisResource<UfsTariffs, BigInteger, U
     }
 
     private boolean isValidJson(String value) {
-        boolean valid = true;
-
-        if (!value.startsWith("{") || !value.startsWith("[")) valid = false;
-        if (!value.endsWith("}") || !value.endsWith("]")) valid = false;
-
-        return valid;
+        if (!value.trim().startsWith("{") || !value.trim().startsWith("[")) return false;
+        if (!value.trim().endsWith("}") || !value.trim().endsWith("]")) return false;
+        return true;
     }
 
     private boolean isValidTariff(JSONObject json) {

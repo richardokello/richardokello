@@ -1,9 +1,11 @@
 package ke.tra.ufs.webportal.entities;
 
+
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
-import ke.tra.ufs.webportal.entities.enums.TariffType;
+import ke.tra.ufs.webportal.entities.enums.FeeCycleType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -12,12 +14,13 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Data
-@Entity(name = "UFS_TARIFFS")
-public class UfsTariffs implements Serializable {
+@NoArgsConstructor
+@Entity(name = "UFS_FEE_CYCLE")
+public class UfsFeeCycle implements Serializable {
 
     @Id
-    @SequenceGenerator(name = "UFS_TARIFFS_SEQ", sequenceName = "UFS_TARIFFS_SEQ")
-    @GeneratedValue(generator = "UFS_TARIFFS_SEQ")
+    @SequenceGenerator(name = "UFS_FEE_CYCLE_SEQ", sequenceName = "UFS_FEE_CYCLE_SEQ")
+    @GeneratedValue(generator = "UFS_FEE_CYCLE_SEQ")
     @Column(name = "ID")
     private BigInteger id;
 
@@ -25,17 +28,14 @@ public class UfsTariffs implements Serializable {
     @Column(name = "NAME")
     private String name;
 
-    @Column(name = "DESCRIPTION")
-    private String description;
-
-    @ModifiableField
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "TYPE")
-    private TariffType type;
+    @ModifiableField
+    @Column(name = "FEE_CYCLE_TYPE")
+    private FeeCycleType cycle;
 
     @ModifiableField
-    @Column(name = "TARIFF_VALUES")
-    private String values;
+    @Column(name = "TIMES")
+    private Long times;
 
     @Filter(isDateRange = true)
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
@@ -54,4 +54,9 @@ public class UfsTariffs implements Serializable {
     @Size(max = 5)
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
+
+    @Transient
+    public Long getPeriod() {
+        return times * cycle.getHours();
+    }
 }

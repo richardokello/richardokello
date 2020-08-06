@@ -1,23 +1,21 @@
-package ke.tra.ufs.webportal.entities;
+package ke.tra.ufs.webportal;
 
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
+import ke.tra.ufs.webportal.entities.UfsFeeCycle;
 import ke.tra.ufs.webportal.entities.enums.TariffType;
-import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 
-@Data
-@Entity(name = "UFS_TARIFFS")
-public class UfsTariffs implements Serializable {
+@Entity(name = "UFS_TARIFF_FEE")
+public class UfsTariffFee {
 
     @Id
-    @SequenceGenerator(name = "UFS_TARIFFS_SEQ", sequenceName = "UFS_TARIFFS_SEQ")
-    @GeneratedValue(generator = "UFS_TARIFFS_SEQ")
+    @SequenceGenerator(name = "UFS_TARIFF_FEE_SEQ", sequenceName = "UFS_TARIFF_FEE_SEQ")
+    @GeneratedValue(generator = "UFS_TARIFF_FEE_SEQ")
     @Column(name = "ID")
     private BigInteger id;
 
@@ -25,13 +23,17 @@ public class UfsTariffs implements Serializable {
     @Column(name = "NAME")
     private String name;
 
-    @Column(name = "DESCRIPTION")
-    private String description;
+    @Column(name = "FEE_CYCLE")
+    private BigInteger cycleId;
 
-    @ModifiableField
+    @ManyToOne
+    @JoinColumn(name = "FEE_CYCLE")
+    private UfsFeeCycle cycle;
+
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "TYPE")
-    private TariffType type;
+    @ModifiableField
+    @Column(name = "TARIFF_TYPE")
+    private TariffType tariffType;
 
     @ModifiableField
     @Column(name = "TARIFF_VALUES")
