@@ -134,7 +134,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                     UfsContactPerson person = new UfsContactPerson();
                     person.setName(contactPerson.getContactPersonName());
                     person.setIdNumber(contactPerson.getContactPersonIdNumber());
-                    person.setUfsWorkgroupId(contactPerson.getWorkGroupId());
+                    person.setPosRole(contactPerson.getPosRole());
                     person.setEmail(contactPerson.getContactPersonEmail());
                     person.setPhoneNumber(contactPerson.getContactPersonTelephone());
                     person.setCustomerOutletId(custOutlet.getId());
