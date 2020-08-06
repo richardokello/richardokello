@@ -15,12 +15,12 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-@Entity(name = "UFS_FEE_CYCLE")
+@Entity(name = "UFS_TARIFF_FEE_CYCLE")
 public class UfsFeeCycle implements Serializable {
 
     @Id
-    @SequenceGenerator(name = "UFS_FEE_CYCLE_SEQ", sequenceName = "UFS_FEE_CYCLE_SEQ")
-    @GeneratedValue(generator = "UFS_FEE_CYCLE_SEQ")
+    @SequenceGenerator(name = "UFS_TARIFF_FEE_CYCLE_SEQ", sequenceName = "UFS_TARIFF_FEE_CYCLE_SEQ")
+    @GeneratedValue(generator = "UFS_TARIFF_FEE_CYCLE_SEQ")
     @Column(name = "ID")
     private BigInteger id;
 
@@ -34,8 +34,8 @@ public class UfsFeeCycle implements Serializable {
     private FeeCycleType cycle;
 
     @ModifiableField
-    @Column(name = "TIMES")
-    private Long times;
+    @Column(name = "PERIOD")
+    private Integer frequency;
 
     @Filter(isDateRange = true)
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
@@ -57,6 +57,6 @@ public class UfsFeeCycle implements Serializable {
 
     @Transient
     public Long getPeriod() {
-        return times * cycle.getHours();
+        return frequency * cycle.getHours();
     }
 }
