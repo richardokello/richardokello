@@ -1,5 +1,6 @@
 package ke.tra.ufs.webportal.entities;
 
+import ke.axle.chassis.annotations.Filter;
 import ke.tra.ufs.webportal.entities.wrapper.TariffType;
 import lombok.Data;
 import net.minidev.json.annotate.JsonIgnore;
@@ -34,6 +35,7 @@ public class UfsTariffs implements Serializable {
     @Column(name = "TARIFF_VALUES")
     private String values;
 
+    @Filter(isDateRange = true)
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
@@ -42,6 +44,7 @@ public class UfsTariffs implements Serializable {
     @Column(name = "ACTION", insertable = false)
     private String action;
 
+    @Filter
     @Size(max = 20)
     @Column(name = "ACTION_STATUS", insertable = false)
     private String actionStatus;

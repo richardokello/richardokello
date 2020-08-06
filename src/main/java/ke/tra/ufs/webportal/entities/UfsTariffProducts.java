@@ -1,5 +1,6 @@
 package ke.tra.ufs.webportal.entities;
 
+import ke.axle.chassis.annotations.Filter;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -32,6 +33,7 @@ public class UfsTariffProducts implements Serializable {
     @Column(name = "MAX_LIMIT")
     private Double maxLimit;
 
+    @Filter
     @Column(name = "PRODUCT_CODE")
     private String productCode;
 
@@ -42,6 +44,7 @@ public class UfsTariffProducts implements Serializable {
     @JoinColumn(name = "TARIFF", insertable = false, updatable = false)
     private UfsTariffs tariff;
 
+    @Filter(isDateRange = true)
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
@@ -50,6 +53,7 @@ public class UfsTariffProducts implements Serializable {
     @Column(name = "ACTION", insertable = false)
     private String action;
 
+    @Filter
     @Size(max = 20)
     @Column(name = "ACTION_STATUS", insertable = false)
     private String actionStatus;
