@@ -45,8 +45,9 @@ public class UfsTariffsResource extends ChasisResource<UfsTariffs, BigInteger, U
     }
 
     private boolean isValidJson(String value) {
-        if (!value.trim().startsWith("{") || !value.trim().startsWith("[")) return false;
-        if (!value.trim().endsWith("}") || !value.trim().endsWith("]")) return false;
+        System.out.println(value);
+//        if (!value.trim().startsWith("{") || !value.trim().startsWith("[{")) return false;
+//        if (!value.trim().endsWith("}") || !value.trim().endsWith("}]")) return false;
         return true;
     }
 
