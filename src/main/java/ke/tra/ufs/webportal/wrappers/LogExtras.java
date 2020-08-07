@@ -62,7 +62,6 @@ public class LogExtras {
     - id of maker
      */
     public Long getUserId() {
-
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {

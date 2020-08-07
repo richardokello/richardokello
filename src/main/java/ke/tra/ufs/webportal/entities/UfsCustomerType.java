@@ -41,30 +41,6 @@ import org.hibernate.annotations.GenericGenerator;
         @NamedQuery(name = "UfsCustomerType.findByIntrash", query = "SELECT u FROM UfsCustomerType u WHERE u.intrash = :intrash")})
 public class UfsCustomerType implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @ModifiableField
-    @Unique
-    @Size(min = 1, max = 50)
-    @Column(name = "NAME")
-    private String name;
-    @Size(max = 100)
-    @ModifiableField
-    @Column(name = "DESCRIPTION")
-    private String description;
-    @Size(max = 20)
-    @Column(name = "ACTION")
-    private String action;
-    @Size(max = 20)
-    @Filter
-    @Column(name = "ACTION_STATUS")
-    private String actionStatus;
-    @Size(max = 3)
-    @Column(name = "INTRASH")
-    private String intrash;
-    
-
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -81,16 +57,45 @@ public class UfsCustomerType implements Serializable {
     @Column(name = "ID")
     private BigDecimal id;
 
+    @Basic(optional = false)
+    @NotNull
+    @ModifiableField
+    @Unique
+    @Size(min = 1, max = 50)
+    @Column(name = "NAME")
+    private String name;
+
+    @Column(name = "TENANT_ID")
+    @Filter
+    private String tenantIds;
+
+    @Size(max = 100)
+    @ModifiableField
+    @Column(name = "DESCRIPTION")
+    private String description;
+
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
+
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne(optional = true)
     @JsonIgnore
     private UfsOrganizationUnits tenantId;
-    @Column(name = "TENANT_ID")
+
+    @Size(max = 20)
+    @Column(name = "ACTION")
+    private String action;
+
+    @Size(max = 20)
     @Filter
-    private String tenantIds;
+    @Column(name = "ACTION_STATUS")
+    private String actionStatus;
+
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
+
     @Transient
     private List<Long> ruleIds;
 
