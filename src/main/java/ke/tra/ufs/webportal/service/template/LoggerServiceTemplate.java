@@ -56,7 +56,7 @@ public class LoggerServiceTemplate implements LoggerService {
 
     @Override
     public boolean isInitiator(String Entity, Object entityId, String activity) {
-        //return false;
+//        return false;
         RestTemplate temp = new RestTemplate();
         List<IsInitiatorWrapper> payload = new ArrayList<>();
         IsInitiatorWrapper ismaker = new IsInitiatorWrapper(new BigDecimal(extras.getUserId()), Entity, entityId.toString(), activity);

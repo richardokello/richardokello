@@ -41,6 +41,11 @@ public class UfsTariffProducts implements Serializable {
     @Column(name = "PRODUCT_CODE")
     private String productCode;
 
+    @ModifiableField
+    @Filter
+    @Column(name = "BANK_ACCOUNT")
+    private String glAccount;
+
     @Column(name = "TARIFF")
     private BigInteger tariffId;
 

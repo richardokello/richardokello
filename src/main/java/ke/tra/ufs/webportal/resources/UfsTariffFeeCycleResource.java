@@ -6,7 +6,6 @@ import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.entities.UfsFeeCycle;
 import ke.tra.ufs.webportal.entities.enums.FeeCycleType;
-import ke.tra.ufs.webportal.entities.enums.TariffType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
