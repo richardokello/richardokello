@@ -16,5 +16,5 @@ public class OutletContactPerson {
     private String contactPersonTelephone;
     @NotNull
     private String contactPersonEmail;
-    private Long workGroupId;
+    private String posRole;
 }
