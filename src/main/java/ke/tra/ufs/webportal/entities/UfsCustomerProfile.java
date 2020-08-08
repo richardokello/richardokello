@@ -1,27 +1,24 @@
 package ke.tra.ufs.webportal.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
-import ke.tra.ufs.webportal.entities.enums.TariffType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
-@Entity(name = "UFS_TARIFFS")
-public class UfsTariffs implements Serializable {
+@Entity(name = "UFS_CUSTOMER_PROFILE")
+public class UfsCustomerProfile {
 
     @Id
-    @SequenceGenerator(name = "UFS_TARIFFS_SEQ", sequenceName = "UFS_TARIFFS_SEQ")
-    @GeneratedValue(generator = "UFS_TARIFFS_SEQ")
+    @SequenceGenerator(name = "UFS_CUSTOMER_PROFILE_SEQ", sequenceName = "UFS_CUSTOMER_PROFILE_SEQ")
+    @GeneratedValue(generator = "UFS_CUSTOMER_PROFILE_SEQ")
     @Column(name = "ID")
     private BigInteger id;
 
@@ -29,16 +26,18 @@ public class UfsTariffs implements Serializable {
     @Column(name = "NAME")
     private String name;
 
+    @Column(name = "CUSTOMER_CLASS")
+    private BigInteger customerClass;
+
+    @ManyToOne
+    @JoinColumn(name = "CUSTOMER_CLASS", referencedColumnName = "ID", insertable = false, updatable = false)
+    private UfsCustomerClass ufsCustomerClass;
+
     @Column(name = "DESCRIPTION")
     private String description;
 
     @ModifiableField
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "TYPE")
-    private TariffType type;
-
-    @ModifiableField
-    @Column(name = "TARIFF_VALUES")
+    @Column(name = "PROFILE_VALUES")
     private String values;
 
     @Filter(isDateRange = true)
@@ -58,8 +57,4 @@ public class UfsTariffs implements Serializable {
     @Size(max = 5)
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
-
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tariff")
-    private List<UfsTariffProducts> ufsTariffProductsList;
 }

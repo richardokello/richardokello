@@ -1,6 +1,7 @@
 package ke.tra.ufs.webportal.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import ke.tra.ufs.webportal.entities.enums.FeeCycleType;
@@ -12,11 +13,12 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @Entity(name = "UFS_TARIFF_FEE_CYCLE")
-public class UfsFeeCycle implements Serializable {
+public class UfsTariffFeeCycle implements Serializable {
 
     @Id
     @SequenceGenerator(name = "UFS_TARIFF_FEE_CYCLE_SEQ", sequenceName = "UFS_TARIFF_FEE_CYCLE_SEQ")
@@ -59,4 +61,8 @@ public class UfsFeeCycle implements Serializable {
     public Long getPeriod() {
         return frequency * cycle.getHours();
     }
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cycle")
+    private List<UfsTariffFee> ufsTariffFeeList;
 }

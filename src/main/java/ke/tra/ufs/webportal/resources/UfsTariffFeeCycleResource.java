@@ -4,7 +4,7 @@ import ke.axle.chassis.ChasisResource;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
-import ke.tra.ufs.webportal.entities.UfsFeeCycle;
+import ke.tra.ufs.webportal.entities.UfsTariffFeeCycle;
 import ke.tra.ufs.webportal.entities.enums.FeeCycleType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 @RestController
 @RequestMapping("/fee_cycles")
-public class UfsTariffFeeCycleResource  extends ChasisResource<UfsFeeCycle, BigInteger, UfsEdittedRecord> {
+public class UfsTariffFeeCycleResource  extends ChasisResource<UfsTariffFeeCycle, BigInteger, UfsEdittedRecord> {
     public UfsTariffFeeCycleResource(LoggerService loggerService, EntityManager entityManager) {
         super(loggerService, entityManager);
     }

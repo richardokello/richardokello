@@ -2,9 +2,9 @@ package ke.tra.ufs.webportal.entities;
 
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
-import ke.tra.ufs.webportal.entities.UfsFeeCycle;
 import ke.tra.ufs.webportal.entities.enums.TariffType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -12,6 +12,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 @Entity(name = "UFS_TARIFF_FEE")
 public class UfsTariffFee {
 
@@ -29,8 +30,8 @@ public class UfsTariffFee {
     private BigInteger cycleId;
 
     @ManyToOne
-    @JoinColumn(name = "FEE_CYCLE", insertable = false, updatable = false)
-    private UfsFeeCycle cycle;
+    @JoinColumn(name = "FEE_CYCLE", referencedColumnName = "ID", insertable = false, updatable = false)
+    private UfsTariffFeeCycle cycle;
 
     @Enumerated(value = EnumType.STRING)
     @ModifiableField

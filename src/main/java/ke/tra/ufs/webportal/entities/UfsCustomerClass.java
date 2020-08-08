@@ -8,7 +8,6 @@ package ke.tra.ufs.webportal.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
-import ke.axle.chassis.annotations.TreeRoot;
 import ke.axle.chassis.annotations.Unique;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -39,33 +38,6 @@ import java.util.List;
         @NamedQuery(name = "UfsCustomerClass.findByIntrash", query = "SELECT u FROM UfsCustomerClass u WHERE u.intrash = :intrash")})
 public class UfsCustomerClass implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @ModifiableField
-    @Unique
-    @Size(min = 1, max = 20)
-    @Column(name = "NAME")
-    private String name;
-    @Size(max = 100)
-    @Column(name = "DESCRIPTION")
-    private String description;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 4000)
-    @Column(name = "CLASS_VALUES")
-    private String classValues;
-    @Size(max = 20)
-    @Column(name = "ACTION")
-    @Filter
-    private String action;
-    @Size(max = 20)
-    @Filter
-    @Column(name = "ACTION_STATUS")
-    private String actionStatus;
-    @Size(max = 3)
-    @Column(name = "INTRASH")
-    private String intrash;
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -78,32 +50,74 @@ public class UfsCustomerClass implements Serializable {
                     @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
             }
     )
-
     @GeneratedValue(generator = "UFS_CUSTOMER_CLASS_SEQ")
     @Column(name = "ID")
     private Long id;
+
+    @Basic(optional = false)
+    @NotNull
+    @ModifiableField
+    @Unique
+    @Size(min = 1, max = 20)
+    @Column(name = "NAME")
+    private String name;
+
+    @Size(max = 100)
+    @Column(name = "DESCRIPTION")
+    private String description;
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 4000)
+    @Column(name = "CLASS_VALUES")
+    private String classValues;
+
+    @Size(max = 20)
+    @Column(name = "ACTION")
+    @Filter
+    private String action;
+
+    @Size(max = 20)
+    @Filter
+    @Column(name = "ACTION_STATUS")
+    private String actionStatus;
+
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
+
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
-    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne
-    @JsonIgnore
-    private UfsCustomerClass parentId;
-    @Column(name = "PARENT_ID")
-    @TreeRoot
-    private BigDecimal parentIds;
+
+//    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+//    @ManyToOne
+//    @JsonIgnore
+//    private UfsCustomerClass parentId;
+//    @Column(name = "PARENT_ID")
+//    @TreeRoot
+//    private BigDecimal parentIds;
+
     @JoinColumn(name = "TYPE_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsCustomerType typeId;
+
     @Column(name = "TYPE_ID")
     private BigDecimal typeIds;
+
     @Transient
     private List<UfsCustomerClass> children;
+
     @Transient
     private String text;
-    @OneToMany(mappedBy = "parentId")
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private List<UfsCustomerClass> customerClassesList;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerClass")
+    private List<UfsCustomerProfile> ufsCustomerProfileList;
+
+//    @OneToMany(mappedBy = "parentId")
+//    @com.fasterxml.jackson.annotation.JsonIgnore
+//    private List<UfsCustomerClass> customerClassesList;
 
     public UfsCustomerClass() {
     }
@@ -151,14 +165,6 @@ public class UfsCustomerClass implements Serializable {
     }
 
 
-    public UfsCustomerClass getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(UfsCustomerClass parentId) {
-        this.parentId = parentId;
-    }
-
     public UfsCustomerType getTypeId() {
         return typeId;
     }
@@ -167,24 +173,12 @@ public class UfsCustomerClass implements Serializable {
         this.typeId = typeId;
     }
 
-    public BigDecimal getParentIds() {
-        return parentIds;
-    }
-
-    public void setParentIds(BigDecimal parentIds) {
-        this.parentIds = parentIds;
-    }
-
     public BigDecimal getTypeIds() {
         return typeIds;
     }
 
     public void setTypeIds(BigDecimal typeIds) {
         this.typeIds = typeIds;
-    }
-
-    public List<UfsCustomerClass> getChildren() {
-        return this.getCustomerClassesList();
     }
 
     public void setChildren(List<UfsCustomerClass> children) {
@@ -197,14 +191,6 @@ public class UfsCustomerClass implements Serializable {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public List<UfsCustomerClass> getCustomerClassesList() {
-        return customerClassesList;
-    }
-
-    public void setCustomerClassesList(List<UfsCustomerClass> customerClassesList) {
-        this.customerClassesList = customerClassesList;
     }
 
     @Override
