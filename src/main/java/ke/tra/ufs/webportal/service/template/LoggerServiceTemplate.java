@@ -37,7 +37,7 @@ public class LoggerServiceTemplate implements LoggerService {
     public void log(String description, String entity, Object entityId, String activity, String activityStatus, String notes) {
         LogWrapper log = wrapper(description, entity, entityId, activity, activityStatus, notes);
         log.set_userId(extras.getUserId());
-        sendLog(log);
+//        sendLog(log);
     }
 
 
@@ -51,19 +51,19 @@ public class LoggerServiceTemplate implements LoggerService {
     public void log(String description, String entity, Object entityId, Long userId, String activity, String activityStatus, String notes) {
         LogWrapper log = wrapper(description, entity, entityId, activity, activityStatus, notes);
         log.set_userId(userId);
-        sendLog(log);
+//        sendLog(log);
     }
 
     @Override
     public boolean isInitiator(String Entity, Object entityId, String activity) {
-//        return false;
-        RestTemplate temp = new RestTemplate();
-        List<IsInitiatorWrapper> payload = new ArrayList<>();
-        IsInitiatorWrapper ismaker = new IsInitiatorWrapper(new BigDecimal(extras.getUserId()), Entity, entityId.toString(), activity);
-        payload.add(ismaker);
-
-        IsInitiatorResonseEntity res = temp.postForObject(url + "ufs-logger-service/api/v1/logger/log/is-initiator", payload, IsInitiatorResonseEntity.class);
-        return res.getData().getAllowewd().size() <= 0;
+        return false;
+//        RestTemplate temp = new RestTemplate();
+//        List<IsInitiatorWrapper> payload = new ArrayList<>();
+//        IsInitiatorWrapper ismaker = new IsInitiatorWrapper(new BigDecimal(extras.getUserId()), Entity, entityId.toString(), activity);
+//        payload.add(ismaker);
+//
+//        IsInitiatorResonseEntity res = temp.postForObject(url + "ufs-logger-service/api/v1/logger/log/is-initiator", payload, IsInitiatorResonseEntity.class);
+//        return res.getData().getAllowewd().size() <= 0;
     }
 
     private LogWrapper wrapper(String description, String entity, Object entityId, String activity, String activityStatus, String notes) {

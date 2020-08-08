@@ -27,6 +27,10 @@ public class UfsCustomerProfile {
     @Column(name = "CUSTOMER_CLASS")
     private BigInteger customerClass;
 
+    @ManyToOne
+    @JoinColumn(name = "CUSTOMER_CLASS", insertable = false, updatable = false)
+    private UfsCustomerClass ufsCustomerClass;
+
     @Column(name = "DESCRIPTION")
     private String description;
 

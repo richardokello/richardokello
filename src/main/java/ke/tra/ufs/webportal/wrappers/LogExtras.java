@@ -62,16 +62,16 @@ public class LogExtras {
     - id of maker
      */
     public Long getUserId() {
-//        return 1421L;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-
-        System.out.println("LOGGED IN USER : " + username);
-        return urepo.findByusernameIgnoreCase(username).getUserId();
+        return 1421L;
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username;
+//        if (principal instanceof UserDetails) {
+//            username = ((UserDetails) principal).getUsername();
+//        } else {
+//            username = principal.toString();
+//        }
+//
+//        System.out.println("LOGGED IN USER : " + username);
+//        return urepo.findByusernameIgnoreCase(username).getUserId();
     }
 }
