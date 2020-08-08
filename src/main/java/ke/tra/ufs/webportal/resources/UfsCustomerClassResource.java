@@ -17,6 +17,4 @@ public class UfsCustomerClassResource extends ChasisResource<UfsCustomerClass, L
     public UfsCustomerClassResource(LoggerService loggerService, EntityManager entityManager) {
         super(loggerService, entityManager);
     }
-
-
 }
