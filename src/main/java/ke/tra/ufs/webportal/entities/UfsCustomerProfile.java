@@ -4,6 +4,7 @@ package ke.tra.ufs.webportal.entities;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -11,6 +12,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 @Entity(name = "UFS_CUSTOMER_PROFILE")
 public class UfsCustomerProfile {
 
@@ -28,7 +30,7 @@ public class UfsCustomerProfile {
     private BigInteger customerClass;
 
     @ManyToOne
-    @JoinColumn(name = "CUSTOMER_CLASS", insertable = false, updatable = false)
+    @JoinColumn(name = "CUSTOMER_CLASS", referencedColumnName = "ID", insertable = false, updatable = false)
     private UfsCustomerClass ufsCustomerClass;
 
     @Column(name = "DESCRIPTION")

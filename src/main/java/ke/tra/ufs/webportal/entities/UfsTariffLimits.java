@@ -1,27 +1,23 @@
 package ke.tra.ufs.webportal.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
-import ke.tra.ufs.webportal.entities.enums.TariffType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
-@Entity(name = "UFS_TARIFFS")
-public class UfsTariffs implements Serializable {
+@Entity(name = "UFS_TARIFF_LIMITS")
+public class UfsTariffLimits {
 
     @Id
-    @SequenceGenerator(name = "UFS_TARIFFS_SEQ", sequenceName = "UFS_TARIFFS_SEQ")
-    @GeneratedValue(generator = "UFS_TARIFFS_SEQ")
+    @SequenceGenerator(name = "UFS_TARIFF_LIMITS_SEQ", sequenceName = "UFS_TARIFF_LIMITS_SEQ")
+    @GeneratedValue(generator = "UFS_TARIFF_LIMITS_SEQ")
     @Column(name = "ID")
     private BigInteger id;
 
@@ -33,13 +29,12 @@ public class UfsTariffs implements Serializable {
     private String description;
 
     @ModifiableField
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "TYPE")
-    private TariffType type;
+    @Column(name = "MINIMUM")
+    private Double minimum;
 
     @ModifiableField
-    @Column(name = "TARIFF_VALUES")
-    private String values;
+    @Column(name = "MAXIMUM")
+    private Double maximum;
 
     @Filter(isDateRange = true)
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
@@ -58,8 +53,4 @@ public class UfsTariffs implements Serializable {
     @Size(max = 5)
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
-
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tariff")
-    private List<UfsTariffProducts> ufsTariffProductsList;
 }

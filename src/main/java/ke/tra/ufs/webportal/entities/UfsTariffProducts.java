@@ -3,6 +3,7 @@ package ke.tra.ufs.webportal.entities;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 @Entity(name = "UFS_TARIFF_PRODUCTS")
 public class UfsTariffProducts implements Serializable {
 
@@ -49,9 +51,10 @@ public class UfsTariffProducts implements Serializable {
     @Column(name = "TARIFF")
     private BigInteger tariffId;
 
-    @ManyToOne(targetEntity = UfsTariffs.class)
-    @JoinColumn(name = "TARIFF", insertable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "TARIFF", referencedColumnName = "ID", insertable = false, updatable = false)
     private UfsTariffs tariff;
+
 
     @Filter(isDateRange = true)
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
