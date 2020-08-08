@@ -7,6 +7,7 @@ package ke.tra.ufs.webportal.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -105,13 +106,13 @@ public class UfsCustomer implements Serializable {
     @ModifiableField
     @Column(name = "BUSINESS_LICENCE_NUMBER")
     private String businessLicenceNumber;
-    @JoinColumn(name = "CLASS_TYPE_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "CUSTOMER_PROFILE", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     //@JsonIgnore
-    private UfsCustomerClass classTypeId;
+    private UfsCustomerProfile customerProfile;
     @ModifiableField
-    @Column(name = "CLASS_TYPE_ID")
-    private BigDecimal customerClassId;
+    @Column(name = "CUSTOMER_PROFILE")
+    private BigInteger customerProfileId;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne
     @JsonIgnore
@@ -232,14 +233,21 @@ public class UfsCustomer implements Serializable {
         this.businessLicenceNumber = businessLicenceNumber;
     }
 
-    public UfsCustomerClass getClassTypeId() {
-        return classTypeId;
+    public UfsCustomerProfile getCustomerProfile() {
+        return customerProfile;
     }
 
-    public void setClassTypeId(UfsCustomerClass classTypeId) {
-        this.classTypeId = classTypeId;
+    public void setCustomerProfile(UfsCustomerProfile customerProfile) {
+        this.customerProfile = customerProfile;
     }
 
+    public BigInteger getCustomerProfileId() {
+        return customerProfileId;
+    }
+
+    public void setCustomerProfileId(BigInteger customerProfileId) {
+        this.customerProfileId = customerProfileId;
+    }
 
     public UfsOrganizationUnits getTenantId() {
         return tenantId;
@@ -316,13 +324,6 @@ public class UfsCustomer implements Serializable {
         this.businessPrimaryContactNo = businessPrimaryContactNo;
     }
 
-    public BigDecimal getCustomerClassId() {
-        return customerClassId;
-    }
-
-    public void setCustomerClassId(BigDecimal customerClassId) {
-        this.customerClassId = customerClassId;
-    }
 
     public String getBusinessName() {
         return businessName;

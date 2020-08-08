@@ -92,7 +92,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setBusinessLicenceNumber(customerOnboarding.getBusinessLicenseNumber());
         customer.setLocalRegistrationNumber(customerOnboarding.getLocalRegistrationNumber());
         customer.setBusinessName(customerOnboarding.getBusinessName());
-        customer.setCustomerClassId(customerOnboarding.getCustomerClassId());
+        customer.setCustomerProfileId(customerOnboarding.getCustomerProfileId());
         customer.setAddress(customerOnboarding.getAddress());
         customer.setBusinessEmailAddress(customerOnboarding.getBusinessEmailAddress());
         customer.setPinNumber(customerOnboarding.getPinNumber());

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class CustomerOnboardingWrapper {
     @NotNull
     private BigDecimal customerTypeId;
     @NotNull
-    private BigDecimal customerClassId;
+    private BigInteger customerProfileId;
     @NotNull
     private Long businessTypeId;
     @NotNull
