@@ -6,7 +6,6 @@
 
 package ke.tra.com.tsync.entities;
 
-
 import org.hibernate.annotations.GenericGenerator;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -19,23 +18,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Mwagiru Kamoni
+ * @author cotuoma
  */
 @Entity
 @Table(name = "UFS_POS_USER")
 @XmlRootElement
 @NamedQueries({
-        @NamedQuery(name = "UfsPosUser.findAll", query = "SELECT u FROM UfsPosUser u")
-        , @NamedQuery(name = "UfsPosUser.findByPosUserId", query = "SELECT u FROM UfsPosUser u WHERE u.posUserId = :posUserId")
-        , @NamedQuery(name = "UfsPosUser.findByActiveStatus", query = "SELECT u FROM UfsPosUser u WHERE u.activeStatus = :activeStatus")
-        , @NamedQuery(name = "UfsPosUser.findByPin", query = "SELECT u FROM UfsPosUser u WHERE u.pin = :pin")
-        , @NamedQuery(name = "UfsPosUser.findByPinStatus", query = "SELECT u FROM UfsPosUser u WHERE u.pinStatus = :pinStatus")
-        , @NamedQuery(name = "UfsPosUser.findByPinLastLogin", query = "SELECT u FROM UfsPosUser u WHERE u.pinLastLogin = :pinLastLogin")
-        , @NamedQuery(name = "UfsPosUser.findByPinLoginAttemtps", query = "SELECT u FROM UfsPosUser u WHERE u.pinLoginAttemtps = :pinLoginAttemtps")
-        , @NamedQuery(name = "UfsPosUser.findByPinChangeDate", query = "SELECT u FROM UfsPosUser u WHERE u.pinChangeDate = :pinChangeDate")
-        , @NamedQuery(name = "UfsPosUser.findByAction", query = "SELECT u FROM UfsPosUser u WHERE u.action = :action")
-        , @NamedQuery(name = "UfsPosUser.findByActionStatus", query = "SELECT u FROM UfsPosUser u WHERE u.actionStatus = :actionStatus")
-        , @NamedQuery(name = "UfsPosUser.findByIntrash", query = "SELECT u FROM UfsPosUser u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsPosUser.findAll", query = "SELECT u FROM UfsPosUser u"),
+        @NamedQuery(name = "UfsPosUser.findByPosUserId", query = "SELECT u FROM UfsPosUser u WHERE u.posUserId = :posUserId"),
+        @NamedQuery(name = "UfsPosUser.findByActiveStatus", query = "SELECT u FROM UfsPosUser u WHERE u.activeStatus = :activeStatus"),
+        @NamedQuery(name = "UfsPosUser.findByPin", query = "SELECT u FROM UfsPosUser u WHERE u.pin = :pin"),
+        @NamedQuery(name = "UfsPosUser.findByPinStatus", query = "SELECT u FROM UfsPosUser u WHERE u.pinStatus = :pinStatus"),
+        @NamedQuery(name = "UfsPosUser.findByPinLastLogin", query = "SELECT u FROM UfsPosUser u WHERE u.pinLastLogin = :pinLastLogin"),
+        @NamedQuery(name = "UfsPosUser.findByPinLoginAttemtps", query = "SELECT u FROM UfsPosUser u WHERE u.pinLoginAttemtps = :pinLoginAttemtps"),
+        @NamedQuery(name = "UfsPosUser.findByPinChangeDate", query = "SELECT u FROM UfsPosUser u WHERE u.pinChangeDate = :pinChangeDate"),
+        @NamedQuery(name = "UfsPosUser.findByAction", query = "SELECT u FROM UfsPosUser u WHERE u.action = :action"),
+        @NamedQuery(name = "UfsPosUser.findByActionStatus", query = "SELECT u FROM UfsPosUser u WHERE u.actionStatus = :actionStatus"),
+        @NamedQuery(name = "UfsPosUser.findByIntrash", query = "SELECT u FROM UfsPosUser u WHERE u.intrash = :intrash"),
+        @NamedQuery(name = "UfsPosUser.findByUsername", query = "SELECT u FROM UfsPosUser u WHERE u.username = :username"),
+        @NamedQuery(name = "UfsPosUser.findByPosRole", query = "SELECT u FROM UfsPosUser u WHERE u.posRole = :posRole")})
 public class UfsPosUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -74,33 +75,54 @@ public class UfsPosUser implements Serializable {
     @Column(name = "PIN_CHANGE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date pinChangeDate;
-    @Basic(optional = false)
-    @Size(min = 1, max = 10)
-    @Column(name = "ACTION",insertable = false)
+    @Size(max = 10)
+    @Column(name = "ACTION", insertable = false)
     private String action;
-    @Basic(optional = false)
-    @Size(min = 1, max = 10)
-    @Column(name = "ACTION_STATUS",insertable = false)
+    @Size(max = 10)
+    @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 5)
-    @Column(name = "INTRASH",insertable = false)
+    @Column(name = "INTRASH", insertable = false)
     private String intrash;
-    @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID",insertable = false,updatable = false)
-    @ManyToOne
-    private UfsUser userId;
-
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
     @Column(name = "USERNAME")
     private String username;
-
-    @Column(name = "USER_ID")
-    private Long userIds;
-
-    @JoinColumn(name = "OUTLET_ID",referencedColumnName = "ID",insertable = false,updatable = false)
+    @Size(max = 30)
+    @Column(name = "POS_ROLE")
+    private String posRole;
+    @JoinColumn(name = "DEVICE_ID", referencedColumnName = "DEVICE_ID", insertable = false, updatable = false)
     @ManyToOne
-    private UfsCustomerOutlet outletId;
+    private TmsDevice deviceId;
 
-    @Column(name = "OUTLET_ID")
-    private Long outletIds;
+    @Column(name = "DEVICE_ID")
+    private BigDecimal deviceIds;
+
+    @JoinColumn(name = "CONTACT_PERSON_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    private UfsContactPerson contactPersonId;
+    @Column(name = "CONTACT_PERSON_ID")
+    private Long contactPersonIds;
+    @JoinColumn(name = "CUSTOMER_OWNER_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    private UfsCustomerOwners customerOwnerId;
+
+    @Column(name = "CUSTOMER_OWNER_ID")
+    private Long customerOwnerIds;
+
+    @Column(name = "PHONE_NUMBER")
+    private String phoneNumber;
+
+    @Column(name = "ID_NUMBER")
+    private String idNumber;
+
+    @Column(name = "FIRSTNAME")
+    private String firstName;
+
+    @Column(name = "OTHERNAME")
+    private String otherName;
+
 
     public UfsPosUser() {
     }
@@ -109,11 +131,10 @@ public class UfsPosUser implements Serializable {
         this.posUserId = posUserId;
     }
 
-    public UfsPosUser(BigDecimal posUserId, String activeStatus, String action, String actionStatus) {
+    public UfsPosUser(BigDecimal posUserId, String activeStatus, String username) {
         this.posUserId = posUserId;
         this.activeStatus = activeStatus;
-        this.action = action;
-        this.actionStatus = actionStatus;
+        this.username = username;
     }
 
     public BigDecimal getPosUserId() {
@@ -134,14 +155,6 @@ public class UfsPosUser implements Serializable {
 
     public String getPin() {
         return pin;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public void setPin(String pin) {
@@ -204,36 +217,100 @@ public class UfsPosUser implements Serializable {
         this.intrash = intrash;
     }
 
-    public void setUserId(UfsUser userId) {
-        this.userId = userId;
+    public String getUsername() {
+        return username;
     }
 
-    public UfsUser getUserId() {
-        return userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public Long getUserIds() {
-        return userIds;
+    public String getPosRole() {
+        return posRole;
     }
 
-    public void setUserIds(Long userIds) {
-        this.userIds = userIds;
+    public void setPosRole(String posRole) {
+        this.posRole = posRole;
     }
 
-    public UfsCustomerOutlet getOutletId() {
-        return outletId;
+    public TmsDevice getDeviceId() {
+        return deviceId;
     }
 
-    public void setOutletId(UfsCustomerOutlet outletId) {
-        this.outletId = outletId;
+    public void setDeviceId(TmsDevice deviceId) {
+        this.deviceId = deviceId;
     }
 
-    public Long getOutletIds() {
-        return outletIds;
+    public UfsContactPerson getContactPersonId() {
+        return contactPersonId;
     }
 
-    public void setOutletIds(Long outletIds) {
-        this.outletIds = outletIds;
+    public void setContactPersonId(UfsContactPerson contactPersonId) {
+        this.contactPersonId = contactPersonId;
+    }
+
+    public UfsCustomerOwners getCustomerOwnerId() {
+        return customerOwnerId;
+    }
+
+    public void setCustomerOwnerId(UfsCustomerOwners customerOwnerId) {
+        this.customerOwnerId = customerOwnerId;
+    }
+
+    public Long getContactPersonIds() {
+        return contactPersonIds;
+    }
+
+    public void setContactPersonIds(Long contactPersonIds) {
+        this.contactPersonIds = contactPersonIds;
+    }
+
+    public Long getCustomerOwnerIds() {
+        return customerOwnerIds;
+    }
+
+    public void setCustomerOwnerIds(Long customerOwnerIds) {
+        this.customerOwnerIds = customerOwnerIds;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getIdNumber() {
+        return idNumber;
+    }
+
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getOtherName() {
+        return otherName;
+    }
+
+    public void setOtherName(String otherName) {
+        this.otherName = otherName;
+    }
+
+    public BigDecimal getDeviceIds() {
+        return deviceIds;
+    }
+
+    public void setDeviceIds(BigDecimal deviceIds) {
+        this.deviceIds = deviceIds;
     }
 
     @Override
@@ -258,7 +335,7 @@ public class UfsPosUser implements Serializable {
 
     @Override
     public String toString() {
-        return "UfsPosUser[ posUserId=" + posUserId + " ]";
+        return "ke.tra.boa.ufs.entities.UfsPosUser[ posUserId=" + posUserId + " ]";
     }
 
 }

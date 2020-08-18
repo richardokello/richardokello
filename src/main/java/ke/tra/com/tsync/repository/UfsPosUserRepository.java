@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UfsPosUserRepository extends JpaRepository<UfsPosUser, BigDecimal> {
@@ -16,7 +17,7 @@ public interface UfsPosUserRepository extends JpaRepository<UfsPosUser, BigDecim
 
     List<UfsPosUser> findByUsernameStartsWithIgnoreCaseAndActionStatusAndIntrash(String username, String actionStatus, String inTrash);
 
-    UfsPosUser findByUsernameIgnoreCaseAndIntrash(String username, String intrash);
-    UfsPosUser findByUserIds(Long ids);
+    Optional<UfsPosUser> findByUsernameIgnoreCaseAndIntrash(String username, String intrash);
+    Optional<UfsPosUser> findByIdNumberAndIntrash(String idNumber, String intrash);
 
 }

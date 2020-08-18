@@ -6,6 +6,8 @@
 
 package ke.tra.com.tsync.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -21,45 +23,65 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Mwagiru Kamoni
  */
+
 @Entity
 @Table(name = "UFS_PRODUCT")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsProduct.findAll", query = "SELECT u FROM UfsProduct u")})
+        @NamedQuery(name = "UfsProduct.findAll", query = "SELECT u FROM UfsProduct u"),
+        @NamedQuery(name = "UfsProduct.findByProductId", query = "SELECT u FROM UfsProduct u WHERE u.productId = :productId"),
+        @NamedQuery(name = "UfsProduct.findByProductName", query = "SELECT u FROM UfsProduct u WHERE u.productName = :productName"),
+        @NamedQuery(name = "UfsProduct.findByDescription", query = "SELECT u FROM UfsProduct u WHERE u.description = :description"),
+        @NamedQuery(name = "UfsProduct.findByStatus", query = "SELECT u FROM UfsProduct u WHERE u.status = :status"),
+        @NamedQuery(name = "UfsProduct.findByCreationDate", query = "SELECT u FROM UfsProduct u WHERE u.creationDate = :creationDate"),
+        @NamedQuery(name = "UfsProduct.findByAction", query = "SELECT u FROM UfsProduct u WHERE u.action = :action"),
+        @NamedQuery(name = "UfsProduct.findByActionStatus", query = "SELECT u FROM UfsProduct u WHERE u.actionStatus = :actionStatus"),
+        @NamedQuery(name = "UfsProduct.findByIntrash", query = "SELECT u FROM UfsProduct u WHERE u.intrash = :intrash")})
 public class UfsProduct implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "PRODUCT_ID")
     private BigDecimal productId;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "PRODUCT_NAME")
     private String productName;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
     @Column(name = "DESCRIPTION")
     private String description;
+    @Size(max = 10)
     @Column(name = "STATUS")
     private String status;
     @Column(name = "CREATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
+    @Size(max = 10)
     @Column(name = "ACTION")
     private String action;
+    @Size(max = 10)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
+    @Size(max = 5)
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "productId")
-    private Collection<TmsApp> tmsAppCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productId")
-    private Collection<TmsProductModelRepo> tmsProductModelRepoCollection;
-    @OneToMany(mappedBy = "productId")
-    private Collection<TmsParamDefinition> tmsParamDefinitionCollection;
+    private Collection<TmsEstateHierachy> tmsEstateHierachyCollection;
 
     public UfsProduct() {
     }
@@ -138,28 +160,14 @@ public class UfsProduct implements Serializable {
         this.intrash = intrash;
     }
 
-    public Collection<TmsApp> getTmsAppCollection() {
-        return tmsAppCollection;
+    @XmlTransient
+    @JsonIgnore
+    public Collection<TmsEstateHierachy> getTmsEstateHierachyCollection() {
+        return tmsEstateHierachyCollection;
     }
 
-    public void setTmsAppCollection(Collection<TmsApp> tmsAppCollection) {
-        this.tmsAppCollection = tmsAppCollection;
-    }
-
-    public Collection<TmsProductModelRepo> getTmsProductModelRepoCollection() {
-        return tmsProductModelRepoCollection;
-    }
-
-    public void setTmsProductModelRepoCollection(Collection<TmsProductModelRepo> tmsProductModelRepoCollection) {
-        this.tmsProductModelRepoCollection = tmsProductModelRepoCollection;
-    }
-
-    public Collection<TmsParamDefinition> getTmsParamDefinitionCollection() {
-        return tmsParamDefinitionCollection;
-    }
-
-    public void setTmsParamDefinitionCollection(Collection<TmsParamDefinition> tmsParamDefinitionCollection) {
-        this.tmsParamDefinitionCollection = tmsParamDefinitionCollection;
+    public void setTmsEstateHierachyCollection(Collection<TmsEstateHierachy> tmsEstateHierachyCollection) {
+        this.tmsEstateHierachyCollection = tmsEstateHierachyCollection;
     }
 
     @Override
@@ -184,7 +192,8 @@ public class UfsProduct implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.UfsProduct[ productId=" + productId + " ]";
+        return "UfsProduct[ productId=" + productId + " ]";
     }
-    
+
 }
+

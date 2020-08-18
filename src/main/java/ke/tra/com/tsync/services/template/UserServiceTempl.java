@@ -58,4 +58,6 @@ public interface UserServiceTempl {
     ResponseWrapper createPosUser(PosUserWrapper wrapper);
 
     ResponseWrapper deletePosUser(PosUserWrapper wrapper);
+
+    ResponseWrapper terminalWasReset(PosUserWrapper wrapper);
 }

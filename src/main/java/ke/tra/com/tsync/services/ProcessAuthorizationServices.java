@@ -30,7 +30,7 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
         switch (isoMsg.getString(3)){
             case "001000":
                 //pos agent login
-                System.out.println(wrapper);
+                logger.info("wrapper at process auth service--------- "+wrapper);
                 isoMsg = userManagementService.processUserLogin(isoMsg,wrapper);
 
                 break;
@@ -44,25 +44,30 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                 break;
 
             case "001111":
-                //password change
+
                 //String newpass = isoMsg.getString(72).trim();
 //                if((userManagementService.processUserLogin(isoMsg,wrapper))
 //                        .getString(39).equalsIgnoreCase("00"))
                 isoMsg = userManagementService.changeUserPassword(isoMsg,wrapper);
                 break;
             case "000020":
-                //password change
+
                 //String newpass = isoMsg.getString(72).trim();
 //                if((userManagementService.processUserLogin(isoMsg,wrapper))
 //                        .getString(39).equalsIgnoreCase("00"))
                 isoMsg = userManagementService.createUser(isoMsg,wrapper);
                 break;
             case "011113":
-                //password change
+
                 //String newpass = isoMsg.getString(72).trim();
 //                if((userManagementService.processUserLogin(isoMsg,wrapper))
 //                        .getString(39).equalsIgnoreCase("00"))
                 isoMsg = userManagementService.deleteUser(isoMsg,wrapper);
+                break;
+
+            case "011115":
+
+                isoMsg = userManagementService.processTerminalReset(isoMsg,wrapper);
                 break;
 
             case "011114":

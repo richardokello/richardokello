@@ -1,13 +1,11 @@
 package ke.tra.com.tsync.wrappers;
 
-import ke.tra.com.tsync.entities.UfsWorkgroup;
+
 import ke.tra.com.tsync.wrappers.ufslogin.TidMid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -15,7 +13,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class PosUserWrapper {
     // generic pos user wrapper for most(all requests)
-    private String fullName;
+    private String firstName;
+    private String otherName;
     private  String idNumber;
     private String phoneNumber;
     private String password;
@@ -32,8 +31,8 @@ public class PosUserWrapper {
     private Integer gender;
     private String email;
     private String userAccessCode;
-    private List<ke.tra.com.tsync.entities.wrappers.filters.PosUserWrapper> posUserWrapper;
-    private String ufsWorkgroup;
+    private String ufsWorkgroup; // refered as pos user role on the db
+
 
 }
 

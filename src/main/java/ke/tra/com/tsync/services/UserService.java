@@ -7,7 +7,9 @@ import ke.tra.com.tsync.services.template.UserServiceTempl;
 import ke.tra.com.tsync.utils.annotations.AppConstants;
 import ke.tra.com.tsync.wrappers.ChangePin;
 import ke.tra.com.tsync.wrappers.PosUserWrapper;
+
 import ke.tra.com.tsync.wrappers.ResponseWrapper;
+import ke.tra.com.tsync.wrappers.UserExistWrapper;
 import lombok.extern.apachecommons.CommonsLog;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,40 +27,30 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @CommonsLog
 public class UserService implements UserServiceTempl {
 
-    private final UfsUserWorkgroupRepository ufsUserWorkgroupRepository;
     private final UfsPosUserRepository ufsPosUserRepository;
-    private final UfsWorkgroupRepository workgroupRepository;
-    private final UfsGenderRepository ufsGenderRepository;
-    private final UfsUserTypeRepository userTypeRepository;
     private final UfsSysConfigRepository ufsSysConfigRepository;
     private final TmsDeviceRepository tmsDeviceRepository;
-    private final UfsCustomerRepository ufsCustomerRepository;
-    private final UfsWorKGroupRoleRepository worKGroupRoleRepository;
-    private final UfsDepartmentRepository ufsDepartmentRepository;
     private final UfsAuditLogRepository auditLogRepository;
+    private final UfsContactPersonRepository contactPersonRepository;
+    private final UfsCustomerOwnersRepository customerOwnersRepository;
 
-    private final UfsUserRepository ufsUserRepository;
 
 
 
-    public UserService(UfsPosUserRepository ufsPosUserRepository, UfsUserWorkgroupRepository ufsUserWorkgroupRepository, UfsWorkgroupRepository workgroupRepository, UfsDepartmentRepository ufsDepartmentRepository, UfsUserRepository ufsUserRepository, UfsGenderRepository ufsGenderRepository, UfsUserTypeRepository userTypeRepository, UfsSysConfigRepository ufsSysConfigRepository, TmsDeviceRepository tmsDeviceRepository, UfsCustomerRepository ufsCustomerRepository, UfsWorKGroupRoleRepository worKGroupRoleRepository, UfsDepartmentRepository departmentRepository, UfsAuditLogRepository auditLogRepository, UfsUserRepository ufsUserRepository1) {
+    public UserService(UfsPosUserRepository ufsPosUserRepository, UfsSysConfigRepository ufsSysConfigRepository, TmsDeviceRepository tmsDeviceRepository, UfsAuditLogRepository auditLogRepository, UfsContactPersonRepository contactPersonRepository, UfsCustomerOwnersRepository customerOwnersRepository) {
         this.ufsPosUserRepository = ufsPosUserRepository;
-        this.ufsUserWorkgroupRepository = ufsUserWorkgroupRepository;
-        this.workgroupRepository = workgroupRepository;
-        this.ufsGenderRepository = ufsGenderRepository;
-        this.userTypeRepository = userTypeRepository;
         this.ufsSysConfigRepository = ufsSysConfigRepository;
         this.tmsDeviceRepository = tmsDeviceRepository;
-        this.ufsCustomerRepository = ufsCustomerRepository;
-        this.worKGroupRoleRepository = worKGroupRoleRepository;
-        this.ufsDepartmentRepository = departmentRepository;
+        this.contactPersonRepository = contactPersonRepository;
         this.auditLogRepository = auditLogRepository;
-        this.ufsUserRepository = ufsUserRepository1;
+
+        this.customerOwnersRepository = customerOwnersRepository;
     }
     @Autowired
     PasswordEncoder encoder;
@@ -67,8 +59,7 @@ public class UserService implements UserServiceTempl {
     @Transactional
     public ResponseWrapper changePin(ChangePin wrapper) {
         ResponseWrapper responseWrapper = new ResponseWrapper();
-        System.out.println("--------------------+++_____-______=--"+ wrapper.getUsername());
-        UfsPosUser ufsPosUser = ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO");
+
         PosUserWrapper posUserWrapper = new PosUserWrapper();
         posUserWrapper.setTID(wrapper.getTID());
         posUserWrapper.setMID(wrapper.getMID());
@@ -85,56 +76,44 @@ public class UserService implements UserServiceTempl {
 
 
         ResponseWrapper validate = validatePosRequest(posUserWrapper, false, auditLog);
-
+        Optional<UfsPosUser> ufsPosUser = validate.getPosUser();
 
         try {
             if(validate.getError()){
                 responseWrapper = validate;
+                auditLogRepository.save(auditLog);
+                return responseWrapper;
             }
 
-            else if (ufsPosUser == null) {
-                responseWrapper.setMessage("Username doesnt Exist");
-                responseWrapper.setCode(HttpStatus.NOT_FOUND.value());
-
-                auditLog.setNotes("Username doesnt Exist for "+wrapper.getUsername());
-
-            }
-
-            else if (ufsPosUser.getPinStatus().equalsIgnoreCase(AppConstants.PIN_STATUS_INACTIVE) || ufsPosUser.getActiveStatus().equalsIgnoreCase(AppConstants.STATUS_INACTIVE)) {
+            if (ufsPosUser.get().getPinStatus().equalsIgnoreCase(AppConstants.PIN_STATUS_INACTIVE) || ufsPosUser.get().getActiveStatus().equalsIgnoreCase(AppConstants.STATUS_INACTIVE)) {
                 responseWrapper.setMessage("Please Login For The First Time");
                 auditLog.setNotes("Pin status "+AppConstants.PIN_STATUS_INACTIVE + "+ User status "+AppConstants.STATUS_INACTIVE);
                 responseWrapper.setCode(HttpStatus.BAD_REQUEST.value());
 
             }
 
-            else if (!encoder.matches(wrapper.getPin(), ufsPosUser.getPin())) {
+            else if (!encoder.matches(wrapper.getPin(), ufsPosUser.get().getPin())) {
                 responseWrapper.setCode(HttpStatus.FORBIDDEN.value());
                 responseWrapper.setMessage("Invalid Old Password");
                 auditLog.setNotes("Invalid Old Password");
 
-            }
-            else if (wrapper.getPin() == null || wrapper.getNewpin() == null) {
-                responseWrapper.setCode(400);
-                responseWrapper.setMessage("Pin missing");
-                auditLog.setNotes("Pin missing or confirm pin missing");
-                auditLog.setDescription("User creation failed because no pin or confirm or both were not provided");
-
-            }else {
+            } else {
 
 
-                ufsPosUser.setPin(encoder.encode(wrapper.getNewpin()));
-                ufsPosUser.setPinChangeDate(Calendar.getInstance().getTime());
-                ufsPosUserRepository.save(ufsPosUser);
+                ufsPosUser.get().setPin(encoder.encode(wrapper.getNewpin()));
+                ufsPosUser.get().setPinChangeDate(Calendar.getInstance().getTime());
+                ufsPosUserRepository.save(ufsPosUser.get());
                 responseWrapper.setCode(200);
                 auditLog.setStatus(AppConstants.STATUS_COMPLETED);
                 responseWrapper.setMessage("Pin reset was a success.");
             }
         }catch(Exception ex){
+            ex.printStackTrace();
             responseWrapper.setCode(06);
             responseWrapper.setMessage("System error occurred");
             auditLog.setNotes("System error occurred");
             auditLog.setDescription("application error occurred while terminal with "+ wrapper.getSerialNumber() +"tried to login for the first time");
-            ex.printStackTrace();
+
         }
         auditLogRepository.save(auditLog);
         return responseWrapper;
@@ -144,41 +123,43 @@ public class UserService implements UserServiceTempl {
     @Transactional
     public ResponseWrapper firstTimeLogin(PosUserWrapper wrapper) {
         ResponseWrapper responseWrapper = new ResponseWrapper();
-        UfsPosUser ufsPosUser = ufsPosUserRepository.findByUsername(wrapper.getUsername());
+
         // create audit log instance to log this activity
         UfsPosAuditLog auditLog = new UfsPosAuditLog();
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
 
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.FIRST_TIME_LOGIN);
-        System.out.println("++++++==================="+ wrapper);
-
-        // validates Device details
-
+        setLogIpAddress(auditLog);
         try {
+            Optional<UfsPosUser> ufsPosUser = validate.getPosUser();
             if(validate.getError()){
                 responseWrapper = validate;
             }
-            else if (!encoder.matches(wrapper.getPin(), ufsPosUser.getPin())) {
-                responseWrapper.setCode(HttpStatus.BAD_REQUEST.value());
+
+            else if (!encoder.matches(wrapper.getPin(), ufsPosUser.get().getPin())) {
+                responseWrapper.setCode(403);
                 responseWrapper.setMessage("Wrong Password");
-                auditLog.setEntityId(String.valueOf(ufsPosUser.getPosUserId()));
                 auditLog.setNotes("Wrong Password");
 
             }else {
 
-                ufsPosUser.setPinStatus(AppConstants.PIN_STATUS_ACTIVE);
-                ufsPosUser.setActiveStatus(AppConstants.STATUS_ACTIVE);
-                ufsPosUser.setPinLastLogin(Calendar.getInstance().getTime());
+                ufsPosUser.get().setPinStatus(AppConstants.PIN_STATUS_ACTIVE);
+                ufsPosUser.get().setActiveStatus(AppConstants.STATUS_ACTIVE);
+                ufsPosUser.get().setPinLastLogin(Calendar.getInstance().getTime());
 
-                ufsPosUserRepository.save(ufsPosUser);
+                ufsPosUserRepository.save(ufsPosUser.get());
                 auditLog.setStatus(AppConstants.STATUS_COMPLETED);
+                responseWrapper.setMessage("First time login was successful");
                 responseWrapper.setCode(200);
             }
+
+
         }catch (Exception ex){
             ex.printStackTrace();
             responseWrapper.setMessage("System error occurred");
             responseWrapper.setCode(06);
+
             auditLog.setNotes("System error occurred");
             auditLog.setDescription("application error occurred while terminal with "+ wrapper.getSerialNumber() +"tried to login for the first time");
 
@@ -235,130 +216,83 @@ public class UserService implements UserServiceTempl {
     }
 
     @Override
-    @Transactional
     public ResponseWrapper login(PosUserWrapper wrapper) {
-
-
         ResponseWrapper responseWrapper = new ResponseWrapper();
 
         UfsPosAuditLog auditLog = new UfsPosAuditLog();
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
-        setLogIpAddress(auditLog); // log ip address
 
         // validate Device details
 
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
+
         if(validate.getError()){
             auditLogRepository.save(auditLog);
             return validate;
         }
 
+        ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO").ifPresentOrElse(
+                ufsPosUser->{
 
-        UfsPosUser ufsPosUser = ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO");
+                    if (ufsPosUser.getActiveStatus().equalsIgnoreCase(AppConstants.PASS_LOCKED_STATUS)) {
+                        responseWrapper.setCode(423);
+                        responseWrapper.setMessage("Account is Locked");
+                        auditLog.setNotes("Account Locked for "+wrapper.getUsername());
 
-        if (ufsPosUser.getActiveStatus().equalsIgnoreCase(AppConstants.PASS_LOCKED_STATUS)) {
-            responseWrapper.setCode(423);
-            responseWrapper.setMessage("Account is Locked");
-            auditLog.setNotes("Account Locked for "+wrapper.getUsername());
-            auditLogRepository.save(auditLog);
-            return responseWrapper;
-        }
-        if (ufsPosUser.getActiveStatus().equalsIgnoreCase(AppConstants.PASS_INACTIVE_STATUS)) {
-            responseWrapper.setCode(423);
-            responseWrapper.setMessage("Account is Inactive");
-            auditLog.setNotes("Account is Inactive for "+wrapper.getUsername());
-            auditLogRepository.save(auditLog);
-            return responseWrapper;
-        }
+                    }
+                    else if(ufsPosUser.getPinStatus().equalsIgnoreCase(AppConstants.STATUS_INACTIVE)){
 
-        if (!encoder.matches(wrapper.getPin(),ufsPosUser.getPin())) {
-            BigInteger attempts = ufsPosUser.getPinLoginAttemtps();
+                        // lets use Pin status to chack for first time login so that we can use active status if need be to deactivate
+                        // user account
+                        responseWrapper.setMessage("Login for the first time to activate account");
 
-            ufsPosUser.setPinLoginAttemtps((attempts != null) ? attempts.add(new BigInteger("1")) : new BigInteger("1"));
-            if (ufsPosUser.getPinLoginAttemtps().intValue() == 3) {
-                ufsPosUser.setActiveStatus(AppConstants.PASS_LOCKED_STATUS);
-                auditLog.setNotes("Account Locked for " + wrapper.getUsername());
-            }
+                        responseWrapper.setCode(403);
+                    }
+                    else if (!encoder.matches(wrapper.getPin(),ufsPosUser.getPin())) {
+                        BigInteger attempts = ufsPosUser.getPinLoginAttemtps();
 
-            ufsPosUserRepository.save(ufsPosUser);
-            responseWrapper.setMessage("Wrong Password");
-            responseWrapper.setCode(403);
-            auditLogRepository.save(auditLog);
-            return responseWrapper;
-        }
-        //reset pin attempts after successfully login
-        if (ufsPosUser.getPinLoginAttemtps() != null ) {
-            ufsPosUser.setPinLoginAttemtps(null);
-            ufsPosUserRepository.save(ufsPosUser);
-        }
-
-        List<UfsUserWorkgroup> ufsUserWorkgroupList = ufsUserWorkgroupRepository.findAllByUserId(ufsPosUser.getUserIds());
-        List<Long> workgroupIDs =  new ArrayList<>();
-        if(Objects.nonNull(ufsUserWorkgroupList)){
-            ufsUserWorkgroupList.forEach(usrwgrp ->{
-                workgroupIDs.add(usrwgrp.getWorkgroupId());
-
-            });
-        }
-        // if roles needs to be returned to the POS
-        List<UfsWorkgroupRole> workgroupRoles = worKGroupRoleRepository.findAllByGroupIdIn(workgroupIDs);
-        String userRoles = "";
-        if(!workgroupRoles.isEmpty()){
-            for (UfsWorkgroupRole workgroupRole : workgroupRoles) {
-
-                userRoles += workgroupRole.getRole().getRoleName()+"|";
-
-            }
-        }
+                        ufsPosUser.setPinLoginAttemtps((attempts != null) ? attempts.add(new BigInteger("1")) : new BigInteger("1"));
 
 
-        responseWrapper.setMessage(userRoles);
-        responseWrapper.setCode(HttpStatus.OK.value());
-        auditLog.setNotes("Login Successfully by "+wrapper.getUsername());
-        auditLog.setUserId(ufsPosUser.getUserIds());
+                        if (ufsPosUser.getPinLoginAttemtps().intValue() == 3) {
+                            ufsPosUser.setActiveStatus(AppConstants.PASS_LOCKED_STATUS);
+                        }
 
-        auditLog.setStatus(AppConstants.STATUS_COMPLETED);
+                        ufsPosUserRepository.save(ufsPosUser);
+                        auditLog.setNotes("Wrong Password for " + wrapper.getUsername() );
+
+                        responseWrapper.setMessage("Wrong Password"+ ufsPosUser.getPinStatus());
+
+                        responseWrapper.setCode(403);
+
+                    } else {
+                        responseWrapper.setMessage(ufsPosUser.getPosRole());
+                        responseWrapper.setCode(HttpStatus.OK.value());
+                        auditLog.setNotes("Login Successfully by "+wrapper.getUsername());
+
+                        auditLog.setUserId(ufsPosUser.getPosUserId().longValue());
+                        //reset pin attempts after successfully login
+                        ufsPosUser.setPinLoginAttemtps(null);
+                        ufsPosUser.setPinLastLogin(new Date());
+                        ufsPosUserRepository.save(ufsPosUser);
+                        auditLog.setStatus(AppConstants.STATUS_COMPLETED);
+
+                    }
+
+                },
+                ()->{
+                    auditLog.setNotes("No user found by " + wrapper.getUsername());
+                    responseWrapper.setMessage("No user found by.. " + wrapper.getUsername());
+                    responseWrapper.setCode(404);
+                }
+
+        );
+
         auditLogRepository.save(auditLog);
 
         return responseWrapper;
     }
-
-    private ResponseWrapper validateDeviceDetails(PosUserWrapper wrapper, ResponseWrapper responseWrapper, UfsPosAuditLog auditLog){
-        String posSerialNumber = wrapper.getSerialNumber();
-        String posTID = wrapper.getTID();
-        String posMID = wrapper.getMID();
-
-        // validation for serial number
-        if (posSerialNumber == null || posSerialNumber.isBlank()){
-            responseWrapper.setCode(26);
-            responseWrapper.setMessage("Serial Number Missing");
-            auditLog.setNotes("Serial Number Missing");
-            responseWrapper.setError(true);
-            auditLogRepository.save(auditLog);
-            return responseWrapper;
-        }
-        // validation for MID
-        if (posMID == null || posMID.trim() == ""){
-            responseWrapper.setCode(42);
-            responseWrapper.setMessage("Merchant ID Missing");
-            auditLog.setNotes("Merchant ID Missing");
-            responseWrapper.setError(true);
-            auditLogRepository.save(auditLog);
-            return responseWrapper;
-        }
-        // validation for TID
-        if (posTID == null || posTID.trim() == ""){
-            responseWrapper.setCode(41);
-            auditLog.setNotes("Terminal ID Missing");
-            responseWrapper.setMessage("Terminal ID Missing");
-            responseWrapper.setError(true);
-            auditLogRepository.save(auditLog);
-            return responseWrapper;
-        }
-        return responseWrapper;
-    }
-
 
     @Override
     @Transactional
@@ -371,164 +305,116 @@ public class UserService implements UserServiceTempl {
         auditLog.setEntityName("UfsPosUser");
         auditLog.setClientId(AppConstants.CLIENT_ID);
 
-
-        setLogIpAddress(auditLog); // log ip address
+        try {
+            auditLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            auditLog.setNotes("Unknown IP address");
+            e.printStackTrace();
+        }
 
         try {
+            // validate device details
             validateDeviceDetails(wrapper, responseWrapper, auditLog);
+            //  error will be set true if validateDeviceDetails fail
+            // Validate for missing user details
+            validateUserDetails(wrapper, responseWrapper, auditLog);
 
-            if(responseWrapper.getError()){
-                return responseWrapper;
-            }
+            if(!responseWrapper.getError()){
+                try {
 
-            // validation for first name
-            if (wrapper.getFullName() == null){
-                responseWrapper.setCode(400);
-                responseWrapper.setMessage("first name missing");
-                auditLog.setNotes("first name missing");
-                responseWrapper.setError(true);
-                auditLogRepository.save(auditLog);
-                return responseWrapper;
-            }
-
-            if (wrapper.getConfirmPin() == null){
-                responseWrapper.setCode(400);
-                responseWrapper.setMessage("pin/password missing");
-                responseWrapper.setError(true);
-                auditLogRepository.save(auditLog);
-                return responseWrapper;
-            }
-
-
-            UfsUser ufsUser;
-            try {
-                // get the user by phone number
-                UfsUser ufsUserExist = ufsUserRepository.findByPhoneNumber(wrapper.getPhoneNumber());
-                // check if a user exist on ufs user table and create if nONe
-                if (ufsUserExist == null) {
-                    /*Creating the user*/
-
-                    UfsUser ufsUserNew = new UfsUser();
-
-                    ufsUserNew.setFullName(wrapper.getFullName());
-                    ufsUserNew.setPhoneNumber(wrapper.getPhoneNumber());
-                    ufsUserNew.setGenderId(BigDecimal.valueOf(1)); // mean while use (1) ===>>>>> Gender is required
-                    try {
-                        //check if there is an entry on user type for the user type, if none create one will throw no such element
-                        UfsUserType userType = userTypeRepository.findByUserTypeIgnoreCaseAndIntrash("Pos Agent", "NO");
-                        ufsUserNew.setUserTypeId(userType.getTypeId());
-                    } catch (NoSuchElementException ex) {
-                        UfsUserType ufsUserType = new UfsUserType();
-                        ufsUserType.setUserType("Pos Agent");
-                        ufsUserType.setDescription("System generated Pos Agent");
-                        userTypeRepository.save(ufsUserType);
-                        ufsUserNew.setUserTypeId(ufsUserType.getTypeId());
-                        ex.printStackTrace();
-                    }
-                    try {
-                        // Get User department and if nOne create one
-                        UfsDepartment department = ufsDepartmentRepository.findByDepartmentNameIgnoreCaseAndIntrash("POS Department", "NO");
-                        ufsUserNew.setDepartmentIds(department.getId());
-                    } catch (NoSuchElementException e) {
-
-                        UfsDepartment departmentNew = new UfsDepartment();
-                        departmentNew.setDepartmentName("POS Department");
-                        departmentNew.setDescription("POS");
-                        ufsDepartmentRepository.save(departmentNew);
-                        ufsUserNew.setDepartmentIds(departmentNew.getId());
-                        e.printStackTrace();
+                    UserExistWrapper userExist = checkUserExist(wrapper);
+                    // Validate user by ID
+                    if(userExist.getUserExistByIdNumber()){
+                        responseWrapper.setCode(409);
+                        responseWrapper.setMessage("Pos user already exist for " + wrapper.getIdNumber());
+                        auditLog.setNotes("Pos user already exist for " + wrapper.getIdNumber());
+                        auditLog.setDescription("Pos user already exist for " + wrapper.getIdNumber());
+                    // validate by username
+                    } else if (userExist.getUserExistByUsername()){
+                        responseWrapper.setCode(409);
+                        responseWrapper.setMessage("Pos user already exist for " + wrapper.getUsername());
+                        auditLog.setNotes("Pos user already exist for " + wrapper.getUsername());
+                        auditLog.setDescription("Pos user already exist for " + wrapper.getUsername());
 
                     }
-                    ufsUser = ufsUserNew;
+                    // passed then proceed to validating tms device
+                    else{
+                        TmsDevice tmsDevice = tmsDeviceRepository.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", AppConstants.STATUS_APPROVED);
+
+                        if(Objects.nonNull(tmsDevice)){
+                            try{
+                                //if the ufsUserId exists not then create
+                                UfsPosUser user = new UfsPosUser();
+                                String workgroupStr = wrapper.getUfsWorkgroup(); // role
+
+                                if (workgroupStr != null) {
+
+                                    //UfsSysConfig ufsSysConfig = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration", "posPin");
+
+                                    //String randomPin = RandomStringUtils.random(Integer.parseInt(ufsSysConfig.getValue()), false, true);
+                                    user.setActionStatus(AppConstants.STATUS_APPROVED);
+                                    user.setPin(encoder.encode(wrapper.getPin()));
+                                    user.setActiveStatus(AppConstants.STATUS_INACTIVE);
+                                    user.setPinStatus(AppConstants.PIN_STATUS_INACTIVE);
+
+                                    String username = wrapper.getUsername();
+                                    user.setUsername(username);
+                                    user.setPosRole(workgroupStr);
+                                    user.setFirstName(wrapper.getFirstName());
+                                    user.setOtherName(wrapper.getOtherName());
+                                    user.setPhoneNumber(wrapper.getPhoneNumber());
+                                    user.setIdNumber(wrapper.getIdNumber());
+                                    user.setDeviceIds(tmsDevice.getDeviceId());
 
 
-                }// creating user ended successfully
-                else{
-                    //there is a user then lets scope them for accessibility
-                    ufsUser = ufsUserExist;
-                }
-                // lets check if a user exist by the unique username provide during creation
-                if (Objects.nonNull(ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO"))) {
-                    // if they exist then lets just communicate back to  the terminal
+                                    auditLog.setStatus(AppConstants.STATUS_COMPLETED);
+                                    auditLog.setEntityId(String.valueOf(user.getPosUserId()));
+                                    auditLog.setNotes("Pos user created successfully");
+                                    auditLog.setDescription("Pos user " + wrapper.getPhoneNumber() + " created successfully");
+                                    responseWrapper.setMessage("Pos user created successfully");
+                                    responseWrapper.setCode(200);
+
+                                    ufsPosUserRepository.save(user);
+                                }else{
+                                    auditLog.setEntityId(String.valueOf(user.getPosUserId()));
+                                    auditLog.setNotes("Provide role");
+
+                                    responseWrapper.setMessage("Provide user role");
+                                    responseWrapper.setCode(400);
+                                }
+                            }catch (NullPointerException ex){
+                                ex.printStackTrace();
+                                log.error(ex.getMessage());
+                                responseWrapper.setMessage("System error");
+                                responseWrapper.setCode(06);
+
+                                auditLog.setNotes("Device with Serial No "+tmsDevice.getSerialNo() + " does not have an outlet attached to it");
+
+                            }
+
+                        } else {
+                            // dont create user since this terminal does not belong
+                            responseWrapper.setMessage("No Tms device found with the serial number");
+                            auditLog.setNotes("No Tms device found with the serial number"+ wrapper.getSerialNumber());
+                            responseWrapper.setCode(404);
+                        }
+
+                    }
+
+                } catch (IncorrectResultSizeDataAccessException e) {
+                    e.printStackTrace();
                     responseWrapper.setCode(409);
-                    responseWrapper.setMessage("Pos user already exist for " + wrapper.getUsername());
-                    auditLog.setNotes("Pos user already exist for " + wrapper.getPhoneNumber());
-                    auditLogRepository.save(auditLog);
-                    return responseWrapper;
-                } else{
-                    //if the ufsUserId exists not then create
-                    UfsPosUser user = new UfsPosUser();
-//                    UfsSysConfig ufsSysConfig = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration", "posPin");
-
-//                    String randomPin = RandomStringUtils.random(Integer.parseInt(ufsSysConfig.getValue()), false, true);
-
-                    user.setPin(encoder.encode(wrapper.getPin()));
-                    user.setActiveStatus(AppConstants.STATUS_INACTIVE);
-                    user.setPinStatus(AppConstants.PIN_STATUS_INACTIVE);
-                    // save user
-                    ufsUserRepository.save(ufsUser);
-                    auditLog.setUserId(ufsUser.getUserId());
-
-                    user.setUserIds(ufsUser.getUserId());
-                    String username = wrapper.getUsername();
-                    user.setUsername(username);
-                    TmsDevice tmsDevice = tmsDeviceRepository.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", AppConstants.STATUS_APPROVED);
-                    // assign user to the outlet which the serial number belongs
-
-                    if(Objects.nonNull(tmsDevice)){
-                        try {
-                            UfsCustomerOutlet customerOutlet = tmsDevice.getOutletId();
-                            user.setOutletIds(customerOutlet.getId());
-                        }
-                        catch(NullPointerException ex){
-                            responseWrapper.setMessage("Device does not have an outlet attached to it");
-                            responseWrapper.setCode(400);
-
-                            auditLog.setNotes("Device with Serial No "+tmsDevice.getSerialNo() + " does not have an outlet attached to it");
-                            auditLogRepository.save(auditLog);
-                            return responseWrapper;
-                        }
-                    }else {
-                        // dont create user since this terminal does not belong
-                        responseWrapper.setMessage("No Tms device found with the serial number");
-                        auditLog.setNotes("No Tms device found with the serial number "+ wrapper.getSerialNumber());
-                        responseWrapper.setCode(404);
-                        auditLogRepository.save(auditLog);
-                        return responseWrapper;
-                    }
-
-
-                    // in-case no new pos user is created then save ufs user will not be called
-                    //save pos user
-                    UfsPosUser PosUserAlreadyExists = ufsPosUserRepository.findByUserIds(ufsUser.getUserId());
-                    if(Objects.isNull(PosUserAlreadyExists)) {
-                        ufsPosUserRepository.save(user);
-                        auditLog.setStatus(AppConstants.STATUS_COMPLETED);
-                        auditLog.setEntityId(String.valueOf(user.getPosUserId()));
-                        auditLog.setNotes("Pos user created successfully");
-                        auditLog.setDescription("Pos user " + wrapper.getPhoneNumber() + " created successfully");
-                        responseWrapper.setMessage("Pos user created successfully");
-                        responseWrapper.setCode(200);
-                    }else {
-                        responseWrapper.setCode(400);
-                        auditLog.setDescription("User with |"+ wrapper.getPhoneNumber()+ "and ID number " +wrapper.getIdNumber()+" has already been created as a POS user");
-                        responseWrapper.setMessage("User with | "+ wrapper.getPhoneNumber()+ "and ID number " +wrapper.getIdNumber()+" has already been created as a POS user");
-                        auditLogRepository.save(auditLog);
-                        return responseWrapper;
-                    }
+                    auditLog.setDescription("Either more that two devices have the same serial number or user creation failed due to duplicate username or Id number ");
+                    auditLog.setNotes("Duplicate records");
+                    responseWrapper.setMessage(e.getMessage());
                 }
-
-            } catch (IncorrectResultSizeDataAccessException e) {
-                e.printStackTrace();
-                responseWrapper.setCode(400);
-                auditLog.setNotes("A user with |"+ wrapper.getPhoneNumber()+ " | exist");
-                responseWrapper.setMessage("Phone number is duplicated");
-                auditLogRepository.save(auditLog);
-                return responseWrapper;
             }
 
-          } catch (DataIntegrityViolationException ex){
+
+
+        } catch (DataIntegrityViolationException ex){
             ex.printStackTrace();
+            log.error(ex.getMessage());
             responseWrapper.setCode(06);
             auditLog.setDescription("System error when trying to create User from terminal with serial No "+wrapper.getSerialNumber());
             responseWrapper.setMessage("Request could not be processed");
@@ -538,109 +424,175 @@ public class UserService implements UserServiceTempl {
         return responseWrapper;
     }
 
-
     @Override
     @Transactional
     public ResponseWrapper resetPassword( PosUserWrapper wrapper){
         ResponseWrapper responseWrapper =  new ResponseWrapper();
-        UfsSysConfig ufsSysConfig = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration","posPin");
 
         UfsPosAuditLog auditLog = new UfsPosAuditLog();
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
 
-        setLogIpAddress(auditLog); // log ip address
         // validate Device details
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
+
         if(validate.getError()){
             responseWrapper = validate;
+
         }else {
+            UfsSysConfig ufsSysConfig = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration","posPin");
+            Optional<UfsPosUser> user = validate.getPosUser();
 
-            UfsPosUser user = ufsPosUserRepository.findByUsername(wrapper.getUsername());
             String randomPin = RandomStringUtils.random(Integer.parseInt(ufsSysConfig.getValue()),false,true);
-            user.setPin(encoder.encode(randomPin));
-
-            user.setActiveStatus(AppConstants.STATUS_INACTIVE);
-            user.setPinStatus(AppConstants.PIN_STATUS_INACTIVE);
+            user.get().setPin(encoder.encode(randomPin));
+            user.get().setActiveStatus(AppConstants.STATUS_INACTIVE);
+            user.get().setPinStatus(AppConstants.PIN_STATUS_INACTIVE);
             responseWrapper.setMessage(randomPin);
-            responseWrapper.setCode(200);
+
             auditLog.setNotes("Reset password successful for "+ wrapper.getUsername());
-            auditLog.setEntityId(String.valueOf(user.getPosUserId()));
+            auditLog.setEntityId(String.valueOf(user.get().getPosUserId()));
             auditLog.setStatus(AppConstants.STATUS_COMPLETED);
 
             responseWrapper.setCode(200);
             auditLog.setNotes("Reset password for "+ wrapper.getUsername() +" was success");
             auditLog.setDescription("Reset password for "+ wrapper.getUsername() +" was success");
-            ufsPosUserRepository.save(user);
+            ufsPosUserRepository.save(user.get());
+
         }
-        //auditLogRepository.save(auditLog);
+        auditLogRepository.save(auditLog);
         return responseWrapper;
     }
 
-    private ResponseWrapper validatePosRequest(PosUserWrapper wrapper, boolean b,UfsPosAuditLog auditLog){
+    private UserExistWrapper checkUserExist(PosUserWrapper wrapper) {
+        UserExistWrapper userExistWrapper = new UserExistWrapper();
+        // lets check if a user exist by the unique username provide during creation
+        ufsPosUserRepository.findByIdNumberAndIntrash(wrapper.getIdNumber(), "NO")
+                .ifPresent((posUser)->{
+                    userExistWrapper.setUserExistByIdNumber(true);
+                    userExistWrapper.setUserId(posUser.getPosUserId().longValue());
+                });
+
+        //lets check if a user exist by the unique username provide during creation
+        ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO")
+                .ifPresent(posUser -> {
+                    userExistWrapper.setUserExistByUsername(true);
+                    userExistWrapper.setUserId(posUser.getPosUserId().longValue());
+                });
+        return userExistWrapper;
+    }
+
+    private ResponseWrapper validateUserDetails(PosUserWrapper wrapper, ResponseWrapper responseWrapper, UfsPosAuditLog auditLog) {
+        // validation for first name
+
+        if (wrapper.getFirstName() == null){
+            responseWrapper.setCode(400);
+            responseWrapper.setMessage("first name missing");
+            auditLog.setNotes("first name missing");
+            responseWrapper.setError(true);
+
+        }
+        else if (wrapper.getOtherName() == null){
+            responseWrapper.setCode(400);
+            auditLog.setNotes("other name(s) missing");
+            responseWrapper.setMessage("other name(s) missing");
+            responseWrapper.setError(true);
+
+        }
+        else if  (wrapper.getConfirmPin() == null){
+            responseWrapper.setCode(400);
+            responseWrapper.setMessage("pin/password missing");
+            responseWrapper.setError(true);
+
+        }
+        else if  (wrapper.getIdNumber() == null){
+            responseWrapper.setCode(400);
+            responseWrapper.setMessage("Id number missing");
+            responseWrapper.setError(true);
+
+        }
+        return responseWrapper;
+
+    }
+
+
+    private ResponseWrapper validateDeviceDetails(PosUserWrapper wrapper, ResponseWrapper responseWrapper, UfsPosAuditLog auditLog){
+        String posSerialNumber = wrapper.getSerialNumber();
+        String posTID = wrapper.getTID();
+        String posMID = wrapper.getMID();
+
+        // validation for serial number
+        if (posSerialNumber == null || posSerialNumber.isBlank()){
+            responseWrapper.setCode(26);
+            responseWrapper.setMessage("Serial Number Missing");
+            auditLog.setNotes("Serial Number Missing");
+            auditLog.setDescription("POS making the request did not send its serial Number");
+            responseWrapper.setError(true);
+
+        }
+        // validation for MID
+        else if (posMID == null || posMID.isBlank()){
+            responseWrapper.setCode(42);
+            responseWrapper.setMessage("Merchant ID Missing");
+            auditLog.setDescription("Request from device with serial number " + wrapper.getSerialNumber() + " did not provide MID");
+            auditLog.setNotes("Merchant ID Missing");
+            responseWrapper.setError(true);
+
+        }
+        // validation for TID
+        else if (posTID == null || posTID.isBlank()){
+            responseWrapper.setCode(41);
+            auditLog.setNotes("Terminal ID Missing");
+            auditLog.setDescription("Request from device with serial number " + wrapper.getSerialNumber() + " did not provide TID");
+            responseWrapper.setMessage("Terminal ID Missing");
+            responseWrapper.setError(true);
+
+        }
+        return responseWrapper;
+    }
+
+    private ResponseWrapper validatePosRequest(PosUserWrapper wrapper, boolean b, UfsPosAuditLog auditLog) {
         // common validator method for members that need its
         // TODO: 03/07/2020 : if possible extend to validate for rogue terminal details.
-        String posSerialNumber = wrapper.getSerialNumber();
-        String posMID =  wrapper.getMID();
-        String posTID = wrapper.getTID();
+
         ResponseWrapper responseWrapper = new ResponseWrapper();
 
         auditLog.setOccurenceTime(new Date());
         auditLog.setStatus(AppConstants.STATUS_FAILED);
         auditLog.setEntityName("UfsPosUser");
         auditLog.setClientId(AppConstants.CLIENT_ID);
-        System.out.println("*******************************");
-        System.out.println(wrapper.getUsername());
-        UfsPosUser ufsPosUser = ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO");
-        System.out.println(ufsPosUser);
-        if(Objects.nonNull(ufsPosUser)){
-            // common to all methods so lets set them at a common place
-            auditLog.setEntityId(String.valueOf(ufsPosUser.getPosUserId()));
-            auditLog.setUserId(ufsPosUser.getUserId().getUserId().longValue());
-        }
 
+        Optional<UfsPosUser> ufsPosUser = ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO");
+        ufsPosUser.ifPresent(posUser -> {
+            // common to all methods so lets set them at a common place
+
+            auditLog.setEntityId(String.valueOf(ufsPosUser.get().getPosUserId()));
+            auditLog.setUserId(ufsPosUser.get().getPosUserId().longValue());
+            responseWrapper.setPosUser(ufsPosUser);
+
+        });
+        // log Ip
         try {
             auditLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
         } catch (UnknownHostException e) {
             auditLog.setNotes("Unknown IP address");
-            e.printStackTrace();
+
         }
 
         // validation for login
-        if(b) {
+        if (b) {
             if (wrapper.getUsername() == null) {
                 responseWrapper.setError(true);
                 responseWrapper.setMessage("username cannot be null.");
                 auditLog.setDescription("Username is null");
-                responseWrapper.setCode(407);
+                responseWrapper.setCode(07);
                 return responseWrapper;
             }
         }
-        // validation for serial number
-        if (posSerialNumber == null){
-            responseWrapper.setCode(26);
-            responseWrapper.setMessage("Serial Number Missing");
-            auditLog.setNotes("Serial Number Missing");
-            auditLog.setDescription("POS making the request did not send its serial Number");
-            responseWrapper.setError(true);
-            return responseWrapper;
-        }
-        // validation for MID
-        if (posMID == null){
-            responseWrapper.setCode(42);
-            responseWrapper.setMessage("Merchant ID Missing");
-            auditLog.setDescription("Request from device with serial number "+ wrapper.getSerialNumber() + " did not provide MID");
-            auditLog.setNotes("MID is missing");
-            responseWrapper.setError(true);
-            return responseWrapper;
-        }
-        // validation for TID
-        if (posTID == null){
-            responseWrapper.setCode(41);
-            responseWrapper.setMessage("Terminal ID Missing");
-            auditLog.setDescription("Request from device with serial number "+ wrapper.getSerialNumber() + " did not provide TID");
-            auditLog.setNotes("TID is missing");
-            responseWrapper.setError(true);
+
+        validateDeviceDetails(wrapper, responseWrapper, auditLog);
+        //  error will be set true if validateDeviceDetails fail
+
+        if(responseWrapper.getError()){
             return responseWrapper;
         }
         //Steps:
@@ -648,47 +600,77 @@ public class UserService implements UserServiceTempl {
         // check if a device exist with the supplied serial number
         // If it does do a lookout for the outlet the device belongs to
         // if an out let exist then check if the user belongs to that outlet
-        TmsDevice tmsDevice = tmsDeviceRepository.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", "Approved");
 
-        if(Objects.isNull(ufsPosUser)){
+        if (!ufsPosUser.isPresent()) {
             // common to all methods so lets set them at a common place
-            responseWrapper.setMessage("User with username "+wrapper.getUsername() + " Not found");
-            auditLog.setNotes("User with username " +wrapper.getUsername() + " Not found");
+            responseWrapper.setMessage("User with username " + wrapper.getUsername() + " Not found");
+            auditLog.setNotes("User with username " + wrapper.getUsername() + " Not found");
             responseWrapper.setCode(404);
             responseWrapper.setError(true);
             return responseWrapper;
         }
+        TmsDevice tmsDevice = tmsDeviceRepository.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", "Approved");
 
-        if(Objects.nonNull(tmsDevice)){
-            if(tmsDevice.getOutletIds()!=null && ufsPosUser.getOutletIds() != null){
-                //validate if user belongs to this outlet which the pos terminal belongs
-                if(ufsPosUser.getOutletIds()  != tmsDevice.getOutletId().getId()){
-                    responseWrapper.setMessage(wrapper.getUsername()+" not authorised to access this terminal");
-                    responseWrapper.setCode(403);
-                    auditLog.setNotes("access by "+wrapper.getUsername()+"denied");
-                    auditLog.setDescription(wrapper.getUsername()+" User not authorised to access terminal with serial number:"+ wrapper.getSerialNumber());
-                    responseWrapper.setError(true);
-                    return responseWrapper;
+        if (Objects.nonNull(tmsDevice)) {
+            try{
+                if (tmsDevice.getOutletId() != null && ufsPosUser.get().getDeviceId() != null) {
+                    //validate if user belongs to this outlet which the pos terminal belongs
+                    if (ufsPosUser.get().getDeviceId().getOutletId() ==  null) {
+
+                        responseWrapper.setMessage(wrapper.getSerialNumber() + " not attached to any outlet");
+                        responseWrapper.setCode(409);
+                        auditLog.setNotes("access by " + wrapper.getUsername() + " denied");
+                        auditLog.setDescription(wrapper.getUsername() + " User not authorised to access terminal with serial number:" + wrapper.getSerialNumber()+ " Device not attached to any outlet");
+                        responseWrapper.setError(true);
+                        return responseWrapper;
+                    } else if (ufsPosUser.get().getDeviceId().getOutletId() ==  null){
+                        responseWrapper.setMessage("User device not attached to an outlet");
+                        responseWrapper.setError(true);
+
+                        responseWrapper.setCode(409);
+                        auditLog.setNotes( "User device not attached to an outlet " );
+                        auditLog.setDescription("");
+                        return responseWrapper;
+
+                    }
+                    else if (!ufsPosUser.get().getDeviceId().getOutletId().getId().equals(tmsDevice.getOutletId().getId())) {
+
+                        responseWrapper.setMessage(wrapper.getUsername() + " not authorised to access this terminal..");
+                        responseWrapper.setCode(403);
+                        auditLog.setNotes("access by " + wrapper.getUsername() + "denied");
+                        auditLog.setDescription(wrapper.getUsername() + " User not authorised to access terminal with serial number:" + wrapper.getSerialNumber());
+                        responseWrapper.setError(true);
+                        return responseWrapper;
+                    }
                 }
-            }else{
-                responseWrapper.setMessage(tmsDevice.getOutletIds()==null?"Device does not have an outlet attached to it":"User not attached to an outlet");
+
+            }catch (NoSuchElementException ex){
+
                 responseWrapper.setError(true);
-                responseWrapper.setCode(400);
-                auditLog.setNotes(tmsDevice.getOutletIds()==null?"Device with Serial No "+tmsDevice.getSerialNo() + " does not have an outlet attached to it":"User not attached to an outlet");
+                responseWrapper.setCode(404);
+                auditLog.setNotes("User with username "+wrapper.getUsername() + "Not found");
+                responseWrapper.setMessage("User with username "+wrapper.getUsername() + " Not found");
+                return responseWrapper;
+            }catch (NullPointerException ex){
+                ex.printStackTrace();
+                responseWrapper.setError(true);
+                responseWrapper.setCode(06);
+                auditLog.setNotes("System error");
+                responseWrapper.setMessage("System error");
                 return responseWrapper;
             }
 
-        }else {
+        } else {
 
             responseWrapper.setMessage("No Tms device found with the serial number");
             // common to all methods so lets set them at a common place
             auditLog.setNotes("Serial number Not existing");
-            auditLog.setDescription("No Tms device found with the serial number "+ wrapper.getSerialNumber());
+            auditLog.setDescription("No Tms device found with the serial number " + wrapper.getSerialNumber());
             responseWrapper.setCode(404);
             responseWrapper.setError(true);
             return responseWrapper;
-        }
 
+        }
         return responseWrapper;
     }
 
@@ -701,43 +683,41 @@ public class UserService implements UserServiceTempl {
 
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType("Deletion");
-        setLogIpAddress(auditLog); // log ip address
+        setLogIpAddress(auditLog);
 
         try{
-
+            Optional<UfsPosUser> posUser = validate.getPosUser();
+            UfsCustomerOutlet posCustomerOutlet = posUser.get().getDeviceId().getOutletId();
             if(validate.getError()){
-                auditLogRepository.save(auditLog); // save any logging up to this point and terminate execution by returning
-                return validate;
+                responseWrapper = validate;
             }
-            UfsPosUser posUser = ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO");
 
-            posUser.setIntrash("YES");
-            posUser.setActiveStatus(AppConstants.STATUS_INACTIVE);
-            //UfsCustomerOutlet posCustomerOutlet = posUser.getOutletId();
-//            if(posCustomerOutlet != null){
-//                Date terminationDate = new Date();
-//                UfsCustomer ufsCustomer = posCustomerOutlet.getCustomerId();
-//                ufsCustomer.setTerminationReason(wrapper.getTerminationReason());
-//                ufsCustomer.setTerminationDate(terminationDate);
-//            } else{
-//                responseWrapper.setCode(400);
-//                responseWrapper.setMessage("User not attached to an outlet");
-//            }
+            else if(posCustomerOutlet != null){
 
+                Date terminationDate = new Date();
+                UfsCustomer ufsCustomer = posCustomerOutlet.getCustomerId();
+                ufsCustomer.setTerminationReason(wrapper.getTerminationReason());
+                ufsCustomer.setTerminationDate(terminationDate);
+
+            }
+
+            auditLog.setStatus(AppConstants.STATUS_COMPLETED);
+            responseWrapper.setCode(200);
+            posUser.get().setIntrash("YES");
+            responseWrapper.setMessage("User deleted successfully");
+            auditLog.setNotes(wrapper.getUsername() +" deleted successfully");
 
         }catch (Exception ex){
-            ex.printStackTrace();
+            log.error(ex);
             auditLog.setNotes("System Error, User could not be deleted");
             responseWrapper.setMessage("System Error, User could not be deleted");
             responseWrapper.setCode(06);
         }
-        auditLog.setStatus(AppConstants.STATUS_COMPLETED);
-        responseWrapper.setCode(200);
-        responseWrapper.setMessage("User deleted successfully");
-        auditLog.setNotes(wrapper.getUsername() +" deleted successfully");
+
         auditLogRepository.save(auditLog);
         return responseWrapper;
     }
+
     public ResponseWrapper logout(PosUserWrapper wrapper){
         UfsPosAuditLog auditLog = new UfsPosAuditLog();
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
@@ -748,16 +728,34 @@ public class UserService implements UserServiceTempl {
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType("Logout");
 
-
         if (validate.getError()){
             return responseWrapper;
+        }else{
+            auditLog.setStatus(AppConstants.STATUS_COMPLETED);
+            responseWrapper.setCode(200);
+            responseWrapper.setMessage("log out was successful");
+            auditLog.setNotes(wrapper.getUsername() +" log out was successful");
         }
-        auditLog.setStatus(AppConstants.STATUS_COMPLETED);
-        responseWrapper.setCode(200);
-        responseWrapper.setMessage("log out was successful");
-        auditLog.setNotes(wrapper.getUsername() +" log out was successful");
+
         auditLogRepository.save(auditLog);
         return responseWrapper;
     }
 
+    private String userDetails(UfsPosUser user){
+        String singleRecord = "" + user.getUsername() +","+ user.getFirstName() + ","+user.getOtherName() +
+                ","+user.getIdNumber() + "," + user.getPhoneNumber() + ","+ user.getPosRole();
+        return singleRecord;
+    }
+
+    @Override
+    public ResponseWrapper terminalWasReset(PosUserWrapper wrapper) {
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+        String users = ufsPosUserRepository.findAll().stream()
+                .map(user->userDetails(user))
+                .collect(Collectors.joining("|"));
+        responseWrapper.setMessage(users);
+        responseWrapper.setCode(200);
+
+        return responseWrapper;
+    }
 }

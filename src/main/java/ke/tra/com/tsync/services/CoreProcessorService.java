@@ -88,7 +88,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
         String Tag = null;
         String TagLength = null;
         String TagValue = null;
-        System.out.println("++++++++++++ HERE");
+        LOGGER.info("++++++++++++ HERE");
         boolean more = true;
 
         // Expecting these tags
@@ -120,7 +120,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
 
                         case 29:
                             wrapper.setGender(Integer.valueOf(TagValue));
-                            System.out.println("+++++++++++++ ssetGenderr " +TagValue);
+                            System.out.println("+++++++++++++ Genderr " +TagValue);
                             break;
 
                         case 30:
@@ -129,8 +129,8 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                             break;
 
                         case 31:
-                            wrapper.setFullName(TagValue);
-                            System.out.println("+++++++++++++ setFullName "+TagValue);
+                            wrapper.setOtherName(TagValue);
+                            System.out.println("+++++++++++++ set OtherName"+TagValue);
                             break;
 
                         case 32:
@@ -160,6 +160,10 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                         case 37:
                             wrapper.setUfsWorkgroup(TagValue);
                             System.out.println("+++++++++++++ setUfsWorkgroup "+TagValue);
+                            break;
+                        case 39:
+                            wrapper.setFirstName(TagValue);
+                            System.out.println("+++++++++++++ setFirstName "+TagValue);
                             break;
                         case 40:
                             wrapper.setConfirmPin(TagValue); //  confirm

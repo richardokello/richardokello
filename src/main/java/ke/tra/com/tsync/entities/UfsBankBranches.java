@@ -6,11 +6,12 @@
 
 package ke.tra.com.tsync.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -22,6 +23,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -29,62 +34,62 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "UFS_BANK_BRANCHES")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsBankBranches.findAll", query = "SELECT u FROM UfsBankBranches u")})
+        @NamedQuery(name = "UfsBankBranches.findAll", query = "SELECT u FROM UfsBankBranches u"),
+        @NamedQuery(name = "UfsBankBranches.findById", query = "SELECT u FROM UfsBankBranches u WHERE u.id = :id"),
+        @NamedQuery(name = "UfsBankBranches.findByName", query = "SELECT u FROM UfsBankBranches u WHERE u.name = :name"),
+        @NamedQuery(name = "UfsBankBranches.findByCode", query = "SELECT u FROM UfsBankBranches u WHERE u.code = :code"),
+        @NamedQuery(name = "UfsBankBranches.findByBankId", query = "SELECT u FROM UfsBankBranches u WHERE u.bankId = :bankId"),
+        @NamedQuery(name = "UfsBankBranches.findByAction", query = "SELECT u FROM UfsBankBranches u WHERE u.action = :action"),
+        @NamedQuery(name = "UfsBankBranches.findByActionStatus", query = "SELECT u FROM UfsBankBranches u WHERE u.actionStatus = :actionStatus"),
+        @NamedQuery(name = "UfsBankBranches.findByCreatedAt", query = "SELECT u FROM UfsBankBranches u WHERE u.createdAt = :createdAt"),
+        @NamedQuery(name = "UfsBankBranches.findByIntrash", query = "SELECT u FROM UfsBankBranches u WHERE u.intrash = :intrash")})
 public class UfsBankBranches implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String name;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
     @Column(name = "CODE")
     private String code;
+    @Column(name = "BANK_ID")
+    private Long bankId;
+    @Size(max = 15)
     @Column(name = "ACTION")
     private String action;
+    @Size(max = 15)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Column(name = "CREATED_AT")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "branchId")
-    private Collection<UfsUserBranchManagers> ufsUserBranchManagersCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "branchId")
-    private Collection<FieldFrauds> fieldFraudsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "branchId")
-    private Collection<FieldQuestionsCustomers> fieldQuestionsCustomersCollection;
     @OneToMany(mappedBy = "bankBranchId")
-    private Collection<TmsDevice> tmsDeviceCollection;
-    @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private UfsGeographicalRegion geographicalRegionId;
+    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
     @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private UfsBankRegion bankRegionId;
-    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
-    private UfsBanks bankId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "branchId")
-    private Collection<FieldQuestionsSupervisor> fieldQuestionsSupervisorCollection;
-    @OneToMany(mappedBy = "branchId")
-    private Collection<FieldTasks> fieldTasksCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "branchId")
-    private Collection<UfsUserAgentSupervisor> ufsUserAgentSupervisorCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "branchId")
-    private Collection<FieldTickets> fieldTicketsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankBranchId")
-    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
+    private UfsGeographicalRegion geographicalRegionId;
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
+    @ManyToOne(optional = false)
+    private UfsOrganizationUnits tenantId;
     @OneToMany(mappedBy = "bankBranchId")
-    private Collection<UfsGls> ufsGlsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "currentBranchId")
-    private Collection<UfsCustomerTransfer> ufsCustomerTransferCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "destinationBranchId")
-    private Collection<UfsCustomerTransfer> ufsCustomerTransferCollection1;
+    private Collection<TmsDevice> tmsDeviceCollection;
 
     public UfsBankBranches() {
     }
@@ -123,6 +128,14 @@ public class UfsBankBranches implements Serializable {
         this.code = code;
     }
 
+    public Long getBankId() {
+        return bankId;
+    }
+
+    public void setBankId(Long bankId) {
+        this.bankId = bankId;
+    }
+
     public String getAction() {
         return action;
     }
@@ -155,44 +168,14 @@ public class UfsBankBranches implements Serializable {
         this.intrash = intrash;
     }
 
-    public Collection<UfsUserBranchManagers> getUfsUserBranchManagersCollection() {
-        return ufsUserBranchManagersCollection;
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
+        return ufsCustomerOutletCollection;
     }
 
-    public void setUfsUserBranchManagersCollection(Collection<UfsUserBranchManagers> ufsUserBranchManagersCollection) {
-        this.ufsUserBranchManagersCollection = ufsUserBranchManagersCollection;
-    }
-
-    public Collection<FieldFrauds> getFieldFraudsCollection() {
-        return fieldFraudsCollection;
-    }
-
-    public void setFieldFraudsCollection(Collection<FieldFrauds> fieldFraudsCollection) {
-        this.fieldFraudsCollection = fieldFraudsCollection;
-    }
-
-    public Collection<FieldQuestionsCustomers> getFieldQuestionsCustomersCollection() {
-        return fieldQuestionsCustomersCollection;
-    }
-
-    public void setFieldQuestionsCustomersCollection(Collection<FieldQuestionsCustomers> fieldQuestionsCustomersCollection) {
-        this.fieldQuestionsCustomersCollection = fieldQuestionsCustomersCollection;
-    }
-
-    public Collection<TmsDevice> getTmsDeviceCollection() {
-        return tmsDeviceCollection;
-    }
-
-    public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
-        this.tmsDeviceCollection = tmsDeviceCollection;
-    }
-
-    public UfsGeographicalRegion getGeographicalRegionId() {
-        return geographicalRegionId;
-    }
-
-    public void setGeographicalRegionId(UfsGeographicalRegion geographicalRegionId) {
-        this.geographicalRegionId = geographicalRegionId;
+    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
+        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
     }
 
     public UfsBankRegion getBankRegionId() {
@@ -203,76 +186,30 @@ public class UfsBankBranches implements Serializable {
         this.bankRegionId = bankRegionId;
     }
 
-    public UfsBanks getBankId() {
-        return bankId;
+    public UfsGeographicalRegion getGeographicalRegionId() {
+        return geographicalRegionId;
     }
 
-    public void setBankId(UfsBanks bankId) {
-        this.bankId = bankId;
+    public void setGeographicalRegionId(UfsGeographicalRegion geographicalRegionId) {
+        this.geographicalRegionId = geographicalRegionId;
     }
 
-    public Collection<FieldQuestionsSupervisor> getFieldQuestionsSupervisorCollection() {
-        return fieldQuestionsSupervisorCollection;
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
     }
 
-    public void setFieldQuestionsSupervisorCollection(Collection<FieldQuestionsSupervisor> fieldQuestionsSupervisorCollection) {
-        this.fieldQuestionsSupervisorCollection = fieldQuestionsSupervisorCollection;
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
     }
 
-    public Collection<FieldTasks> getFieldTasksCollection() {
-        return fieldTasksCollection;
+    @XmlTransient
+    @JsonIgnore
+    public Collection<TmsDevice> getTmsDeviceCollection() {
+        return tmsDeviceCollection;
     }
 
-    public void setFieldTasksCollection(Collection<FieldTasks> fieldTasksCollection) {
-        this.fieldTasksCollection = fieldTasksCollection;
-    }
-
-    public Collection<UfsUserAgentSupervisor> getUfsUserAgentSupervisorCollection() {
-        return ufsUserAgentSupervisorCollection;
-    }
-
-    public void setUfsUserAgentSupervisorCollection(Collection<UfsUserAgentSupervisor> ufsUserAgentSupervisorCollection) {
-        this.ufsUserAgentSupervisorCollection = ufsUserAgentSupervisorCollection;
-    }
-
-    public Collection<FieldTickets> getFieldTicketsCollection() {
-        return fieldTicketsCollection;
-    }
-
-    public void setFieldTicketsCollection(Collection<FieldTickets> fieldTicketsCollection) {
-        this.fieldTicketsCollection = fieldTicketsCollection;
-    }
-
-    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
-        return ufsCustomerOutletCollection;
-    }
-
-    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
-        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
-    }
-
-    public Collection<UfsGls> getUfsGlsCollection() {
-        return ufsGlsCollection;
-    }
-
-    public void setUfsGlsCollection(Collection<UfsGls> ufsGlsCollection) {
-        this.ufsGlsCollection = ufsGlsCollection;
-    }
-
-    public Collection<UfsCustomerTransfer> getUfsCustomerTransferCollection() {
-        return ufsCustomerTransferCollection;
-    }
-
-    public void setUfsCustomerTransferCollection(Collection<UfsCustomerTransfer> ufsCustomerTransferCollection) {
-        this.ufsCustomerTransferCollection = ufsCustomerTransferCollection;
-    }
-
-    public Collection<UfsCustomerTransfer> getUfsCustomerTransferCollection1() {
-        return ufsCustomerTransferCollection1;
-    }
-
-    public void setUfsCustomerTransferCollection1(Collection<UfsCustomerTransfer> ufsCustomerTransferCollection1) {
-        this.ufsCustomerTransferCollection1 = ufsCustomerTransferCollection1;
+    public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
+        this.tmsDeviceCollection = tmsDeviceCollection;
     }
 
     @Override
@@ -297,7 +234,7 @@ public class UfsBankBranches implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.UfsBankBranches[ id=" + id + " ]";
+        return "UfsBankBranches[ id=" + id + " ]";
     }
-    
+
 }

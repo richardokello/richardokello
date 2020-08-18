@@ -6,7 +6,10 @@
 
 package ke.tra.com.tsync.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -16,9 +19,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -26,36 +34,69 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "UFS_CUSTOMER_OWNERS")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsCustomerOwners.findAll", query = "SELECT u FROM UfsCustomerOwners u")})
+        @NamedQuery(name = "UfsCustomerOwners.findAll", query = "SELECT u FROM UfsCustomerOwners u"),
+        @NamedQuery(name = "UfsCustomerOwners.findById", query = "SELECT u FROM UfsCustomerOwners u WHERE u.id = :id"),
+        @NamedQuery(name = "UfsCustomerOwners.findByName", query = "SELECT u FROM UfsCustomerOwners u WHERE u.name = :name"),
+        @NamedQuery(name = "UfsCustomerOwners.findByPhoneNumber", query = "SELECT u FROM UfsCustomerOwners u WHERE u.phoneNumber = :phoneNumber"),
+        @NamedQuery(name = "UfsCustomerOwners.findByEmail", query = "SELECT u FROM UfsCustomerOwners u WHERE u.email = :email"),
+        @NamedQuery(name = "UfsCustomerOwners.findByCreatedAt", query = "SELECT u FROM UfsCustomerOwners u WHERE u.createdAt = :createdAt"),
+        @NamedQuery(name = "UfsCustomerOwners.findByAction", query = "SELECT u FROM UfsCustomerOwners u WHERE u.action = :action"),
+        @NamedQuery(name = "UfsCustomerOwners.findByActionStatus", query = "SELECT u FROM UfsCustomerOwners u WHERE u.actionStatus = :actionStatus"),
+        @NamedQuery(name = "UfsCustomerOwners.findByIntrash", query = "SELECT u FROM UfsCustomerOwners u WHERE u.intrash = :intrash"),
+        @NamedQuery(name = "UfsCustomerOwners.findBySecondaryPhone", query = "SELECT u FROM UfsCustomerOwners u WHERE u.secondaryPhone = :secondaryPhone"),
+        @NamedQuery(name = "UfsCustomerOwners.findByIdNumber", query = "SELECT u FROM UfsCustomerOwners u WHERE u.idNumber = :idNumber")})
 public class UfsCustomerOwners implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String name;
-    @Column(name = "POSITION")
-    private String position;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 15)
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Size(max = 30)
     @Column(name = "EMAIL")
     private String email;
     @Column(name = "CREATED_AT")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @Size(max = 20)
     @Column(name = "ACTION")
     private String action;
+    @Size(max = 20)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
+    @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
+    @Size(max = 15)
+    @Column(name = "SECONDARY_PHONE")
+    private String secondaryPhone;
+    @Size(max = 15)
+    @Column(name = "ID_NUMBER")
+    private String idNumber;
+    @JoinColumn(name = "DESIGNATION", referencedColumnName = "ID")
+    @ManyToOne
+    private UfsBusinessDesignations designation;
+    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     private UfsCustomer customerId;
+    @Column(name = "CUSTOMER_ID")
+    private Long customerIds;
+    @OneToMany(mappedBy = "customerOwnerId")
+    private Collection<UfsPosUser> ufsPosUserCollection;
 
     public UfsCustomerOwners() {
     }
@@ -84,14 +125,6 @@ public class UfsCustomerOwners implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
     }
 
     public String getPhoneNumber() {
@@ -142,12 +175,54 @@ public class UfsCustomerOwners implements Serializable {
         this.intrash = intrash;
     }
 
+    public String getSecondaryPhone() {
+        return secondaryPhone;
+    }
+
+    public void setSecondaryPhone(String secondaryPhone) {
+        this.secondaryPhone = secondaryPhone;
+    }
+
+    public String getIdNumber() {
+        return idNumber;
+    }
+
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
+    }
+
+    public UfsBusinessDesignations getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(UfsBusinessDesignations designation) {
+        this.designation = designation;
+    }
+
     public UfsCustomer getCustomerId() {
         return customerId;
     }
 
     public void setCustomerId(UfsCustomer customerId) {
         this.customerId = customerId;
+    }
+
+    public Long getCustomerIds() {
+        return customerIds;
+    }
+
+    public void setCustomerIds(Long customerIds) {
+        this.customerIds = customerIds;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsPosUser> getUfsPosUserCollection() {
+        return ufsPosUserCollection;
+    }
+
+    public void setUfsPosUserCollection(Collection<UfsPosUser> ufsPosUserCollection) {
+        this.ufsPosUserCollection = ufsPosUserCollection;
     }
 
     @Override
@@ -172,7 +247,7 @@ public class UfsCustomerOwners implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.UfsCustomerOwners[ id=" + id + " ]";
+        return "UfsCustomerOwners[ id=" + id + " ]";
     }
-    
+
 }

@@ -6,15 +6,21 @@
 
 package ke.tra.com.tsync.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
+
 
 /**
  *
@@ -25,6 +31,9 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "UfsDeviceType.findAll", query = "SELECT u FROM UfsDeviceType u")})
 public class UfsDeviceType implements Serializable {
+
+    @OneToMany(mappedBy = "deviceType")
+    private Collection<TmsDevice> tmsDeviceCollection;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -128,6 +137,16 @@ public class UfsDeviceType implements Serializable {
     @Override
     public String toString() {
         return "com.mycompany.oracleufs.UfsDeviceType[ deviceTypeId=" + deviceTypeId + " ]";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<TmsDevice> getTmsDeviceCollection() {
+        return tmsDeviceCollection;
+    }
+
+    public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
+        this.tmsDeviceCollection = tmsDeviceCollection;
     }
     
 }

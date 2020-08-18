@@ -9,21 +9,38 @@ package ke.tra.com.tsync.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  *
- * @author Mwagiru Kamoni
+ * @author cotuoma
  */
 @Entity
 @Table(name = "TMS_DEVICE")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "TmsDevice.findAll", query = "SELECT t FROM TmsDevice t")})
+        @NamedQuery(name = "TmsDevice.findAll", query = "SELECT t FROM TmsDevice t"),
+        @NamedQuery(name = "TmsDevice.findByDeviceId", query = "SELECT t FROM TmsDevice t WHERE t.deviceId = :deviceId"),
+        @NamedQuery(name = "TmsDevice.findBySerialNo", query = "SELECT t FROM TmsDevice t WHERE t.serialNo = :serialNo"),
+        @NamedQuery(name = "TmsDevice.findByStatus", query = "SELECT t FROM TmsDevice t WHERE t.status = :status"),
+        @NamedQuery(name = "TmsDevice.findByCreationDate", query = "SELECT t FROM TmsDevice t WHERE t.creationDate = :creationDate"),
+        @NamedQuery(name = "TmsDevice.findByAction", query = "SELECT t FROM TmsDevice t WHERE t.action = :action"),
+        @NamedQuery(name = "TmsDevice.findByActionStatus", query = "SELECT t FROM TmsDevice t WHERE t.actionStatus = :actionStatus"),
+        @NamedQuery(name = "TmsDevice.findByIntrash", query = "SELECT t FROM TmsDevice t WHERE t.intrash = :intrash"),
+        @NamedQuery(name = "TmsDevice.findByPartNumber", query = "SELECT t FROM TmsDevice t WHERE t.partNumber = :partNumber"),
+        @NamedQuery(name = "TmsDevice.findByDeviceOutletName", query = "SELECT t FROM TmsDevice t WHERE t.deviceOutletName = :deviceOutletName"),
+        @NamedQuery(name = "TmsDevice.findByCustomerOwnerName", query = "SELECT t FROM TmsDevice t WHERE t.customerOwnerName = :customerOwnerName"),
+        @NamedQuery(name = "TmsDevice.findByImeiNo", query = "SELECT t FROM TmsDevice t WHERE t.imeiNo = :imeiNo")})
 public class TmsDevice implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -40,75 +57,68 @@ public class TmsDevice implements Serializable {
     )
     @GeneratedValue(generator = "TMS_DEVICE_SEQ2")
     @Basic(optional = false)
+    @NotNull
     @Column(name = "DEVICE_ID")
     private BigDecimal deviceId;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "SERIAL_NO")
     private String serialNo;
+    @Size(max = 10)
     @Column(name = "STATUS")
     private String status;
     @Column(name = "CREATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
+    @Size(max = 15)
     @Column(name = "ACTION")
     private String action;
+    @Size(max = 15)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
+    @Size(max = 5)
     @Column(name = "INTRASH")
     private String intrash;
+    @Size(max = 50)
     @Column(name = "PART_NUMBER")
     private String partNumber;
+    @Size(max = 100)
     @Column(name = "DEVICE_OUTLET_NAME")
     private String deviceOutletName;
-    @Column(name = "DEVICE_OWNER_NAME")
-    private String deviceOwnerName;
+    @Size(max = 30)
     @Column(name = "CUSTOMER_OWNER_NAME")
     private String customerOwnerName;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceId")
-    private Collection<TmsDeviceSimcard> tmsDeviceSimcardCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceId")
-    private Collection<TmsDeviceStatus> tmsDeviceStatusCollection;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
-    @ManyToOne
-    private UfsOrganizationUnits tenantId;
-    @JoinColumn(name = "GEOGRAPH_REG_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsGeographicalRegion geographRegId;
-    @JoinColumn(name = "MODEL_ID", referencedColumnName = "MODEL_ID")
-    @ManyToOne(optional = false)
-    private UfsDeviceModel modelId;
-
-    @JoinColumn(name = "OUTLET_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne
-    @JsonIgnore
-    private UfsCustomerOutlet outletId;
-    @Column(name = "OUTLET_ID")
-    private BigDecimal outletIds;
-
-    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsCustomer customerId;
-    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsBankRegion bankRegionId;
-    @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsBankBranches bankBranchId;
+    @Size(max = 50)
+    @Column(name = "IMEI_NO")
+    private String imeiNo;
     @JoinColumn(name = "ESTATE_ID", referencedColumnName = "UNIT_ITEM_ID")
     @ManyToOne
     private TmsEstateItem estateId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceId")
-    private Collection<TmsDeviceMids> tmsDeviceMidsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceId")
-    private Collection<TmsDeviceLevelParent> tmsDeviceLevelParentCollection;
-    @OneToMany(mappedBy = "tmsDeviceId")
-    private Collection<TmsUpdateLogs> tmsUpdateLogsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceId")
-    private Collection<TmsDeviceTask> tmsDeviceTaskCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceId")
-    private Collection<TmsDeviceTids> tmsDeviceTidsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceId")
-    private Collection<TmsDeviceCurrency> tmsDeviceCurrencyCollection;
+    @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private UfsBankBranches bankBranchId;
+    @JoinColumn(name = "OUTLET_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    private UfsCustomerOutlet outletId;
+
+    @Column(name = "OUTLET_ID")
+    private BigDecimal outletIds;
+
+    @JoinColumn(name = "MODEL_ID", referencedColumnName = "MODEL_ID")
+    @ManyToOne
+    private UfsDeviceModel modelId;
+    @JoinColumn(name = "DEVICE_TYPE", referencedColumnName = "DEVICE_TYPE_ID")
+    @ManyToOne
+    private UfsDeviceType deviceType;
+    @JoinColumn(name = "GEOGRAPH_REG_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private UfsGeographicalRegion geographRegId;
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
+    @ManyToOne
+    private UfsOrganizationUnits tenantId;
+    @OneToMany(mappedBy = "deviceId")
+    private Collection<UfsPosUser> ufsPosUserCollection;
 
     public TmsDevice() {
     }
@@ -194,14 +204,6 @@ public class TmsDevice implements Serializable {
         this.deviceOutletName = deviceOutletName;
     }
 
-    public String getDeviceOwnerName() {
-        return deviceOwnerName;
-    }
-
-    public void setDeviceOwnerName(String deviceOwnerName) {
-        this.deviceOwnerName = deviceOwnerName;
-    }
-
     public String getCustomerOwnerName() {
         return customerOwnerName;
     }
@@ -210,76 +212,12 @@ public class TmsDevice implements Serializable {
         this.customerOwnerName = customerOwnerName;
     }
 
-    public Collection<TmsDeviceSimcard> getTmsDeviceSimcardCollection() {
-        return tmsDeviceSimcardCollection;
+    public String getImeiNo() {
+        return imeiNo;
     }
 
-    public void setTmsDeviceSimcardCollection(Collection<TmsDeviceSimcard> tmsDeviceSimcardCollection) {
-        this.tmsDeviceSimcardCollection = tmsDeviceSimcardCollection;
-    }
-
-    public Collection<TmsDeviceStatus> getTmsDeviceStatusCollection() {
-        return tmsDeviceStatusCollection;
-    }
-
-    public void setTmsDeviceStatusCollection(Collection<TmsDeviceStatus> tmsDeviceStatusCollection) {
-        this.tmsDeviceStatusCollection = tmsDeviceStatusCollection;
-    }
-
-    public UfsOrganizationUnits getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UfsOrganizationUnits tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public UfsGeographicalRegion getGeographRegId() {
-        return geographRegId;
-    }
-
-    public void setGeographRegId(UfsGeographicalRegion geographRegId) {
-        this.geographRegId = geographRegId;
-    }
-
-    public UfsDeviceModel getModelId() {
-        return modelId;
-    }
-
-    public void setModelId(UfsDeviceModel modelId) {
-        this.modelId = modelId;
-    }
-
-    public UfsCustomerOutlet getOutletId() {
-        return outletId;
-    }
-
-    public void setOutletId(UfsCustomerOutlet outletId) {
-        this.outletId = outletId;
-    }
-
-    public UfsCustomer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(UfsCustomer customerId) {
-        this.customerId = customerId;
-    }
-
-    public UfsBankRegion getBankRegionId() {
-        return bankRegionId;
-    }
-
-    public void setBankRegionId(UfsBankRegion bankRegionId) {
-        this.bankRegionId = bankRegionId;
-    }
-
-    public UfsBankBranches getBankBranchId() {
-        return bankBranchId;
-    }
-
-    public void setBankBranchId(UfsBankBranches bankBranchId) {
-        this.bankBranchId = bankBranchId;
+    public void setImeiNo(String imeiNo) {
+        this.imeiNo = imeiNo;
     }
 
     public TmsEstateItem getEstateId() {
@@ -290,8 +228,62 @@ public class TmsDevice implements Serializable {
         this.estateId = estateId;
     }
 
-    public Collection<TmsDeviceMids> getTmsDeviceMidsCollection() {
-        return tmsDeviceMidsCollection;
+    public UfsBankBranches getBankBranchId() {
+        return bankBranchId;
+    }
+
+    public void setBankBranchId(UfsBankBranches bankBranchId) {
+        this.bankBranchId = bankBranchId;
+    }
+
+    public UfsCustomerOutlet getOutletId() {
+        return outletId;
+    }
+
+    public void setOutletId(UfsCustomerOutlet outletId) {
+        this.outletId = outletId;
+    }
+
+    public UfsDeviceModel getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(UfsDeviceModel modelId) {
+        this.modelId = modelId;
+    }
+
+    public UfsDeviceType getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(UfsDeviceType deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public UfsGeographicalRegion getGeographRegId() {
+        return geographRegId;
+    }
+
+    public void setGeographRegId(UfsGeographicalRegion geographRegId) {
+        this.geographRegId = geographRegId;
+    }
+
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsPosUser> getUfsPosUserCollection() {
+        return ufsPosUserCollection;
+    }
+
+    public void setUfsPosUserCollection(Collection<UfsPosUser> ufsPosUserCollection) {
+        this.ufsPosUserCollection = ufsPosUserCollection;
     }
 
     public BigDecimal getOutletIds() {
@@ -300,50 +292,6 @@ public class TmsDevice implements Serializable {
 
     public void setOutletIds(BigDecimal outletIds) {
         this.outletIds = outletIds;
-    }
-
-    public void setTmsDeviceMidsCollection(Collection<TmsDeviceMids> tmsDeviceMidsCollection) {
-        this.tmsDeviceMidsCollection = tmsDeviceMidsCollection;
-    }
-
-    public Collection<TmsDeviceLevelParent> getTmsDeviceLevelParentCollection() {
-        return tmsDeviceLevelParentCollection;
-    }
-
-    public void setTmsDeviceLevelParentCollection(Collection<TmsDeviceLevelParent> tmsDeviceLevelParentCollection) {
-        this.tmsDeviceLevelParentCollection = tmsDeviceLevelParentCollection;
-    }
-
-    public Collection<TmsUpdateLogs> getTmsUpdateLogsCollection() {
-        return tmsUpdateLogsCollection;
-    }
-
-    public void setTmsUpdateLogsCollection(Collection<TmsUpdateLogs> tmsUpdateLogsCollection) {
-        this.tmsUpdateLogsCollection = tmsUpdateLogsCollection;
-    }
-
-    public Collection<TmsDeviceTask> getTmsDeviceTaskCollection() {
-        return tmsDeviceTaskCollection;
-    }
-
-    public void setTmsDeviceTaskCollection(Collection<TmsDeviceTask> tmsDeviceTaskCollection) {
-        this.tmsDeviceTaskCollection = tmsDeviceTaskCollection;
-    }
-
-    public Collection<TmsDeviceTids> getTmsDeviceTidsCollection() {
-        return tmsDeviceTidsCollection;
-    }
-
-    public void setTmsDeviceTidsCollection(Collection<TmsDeviceTids> tmsDeviceTidsCollection) {
-        this.tmsDeviceTidsCollection = tmsDeviceTidsCollection;
-    }
-
-    public Collection<TmsDeviceCurrency> getTmsDeviceCurrencyCollection() {
-        return tmsDeviceCurrencyCollection;
-    }
-
-    public void setTmsDeviceCurrencyCollection(Collection<TmsDeviceCurrency> tmsDeviceCurrencyCollection) {
-        this.tmsDeviceCurrencyCollection = tmsDeviceCurrencyCollection;
     }
 
     @Override
@@ -368,7 +316,7 @@ public class TmsDevice implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.TmsDevice[ deviceId=" + deviceId + " ]";
+        return "TmsDevice[ deviceId=" + deviceId + " ]";
     }
 
 }

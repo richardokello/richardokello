@@ -6,6 +6,8 @@
 
 package ke.tra.com.tsync.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -15,12 +17,18 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -28,43 +36,68 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "TMS_ESTATE_ITEM")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "TmsEstateItem.findAll", query = "SELECT t FROM TmsEstateItem t")})
+        @NamedQuery(name = "TmsEstateItem.findAll", query = "SELECT t FROM TmsEstateItem t"),
+        @NamedQuery(name = "TmsEstateItem.findByUnitItemId", query = "SELECT t FROM TmsEstateItem t WHERE t.unitItemId = :unitItemId"),
+        @NamedQuery(name = "TmsEstateItem.findByName", query = "SELECT t FROM TmsEstateItem t WHERE t.name = :name"),
+        @NamedQuery(name = "TmsEstateItem.findByDescription", query = "SELECT t FROM TmsEstateItem t WHERE t.description = :description"),
+        @NamedQuery(name = "TmsEstateItem.findByStatus", query = "SELECT t FROM TmsEstateItem t WHERE t.status = :status"),
+        @NamedQuery(name = "TmsEstateItem.findByIsParent", query = "SELECT t FROM TmsEstateItem t WHERE t.isParent = :isParent"),
+        @NamedQuery(name = "TmsEstateItem.findByCreationDate", query = "SELECT t FROM TmsEstateItem t WHERE t.creationDate = :creationDate"),
+        @NamedQuery(name = "TmsEstateItem.findByAction", query = "SELECT t FROM TmsEstateItem t WHERE t.action = :action"),
+        @NamedQuery(name = "TmsEstateItem.findByActionStatus", query = "SELECT t FROM TmsEstateItem t WHERE t.actionStatus = :actionStatus"),
+        @NamedQuery(name = "TmsEstateItem.findByIntrash", query = "SELECT t FROM TmsEstateItem t WHERE t.intrash = :intrash")})
 public class TmsEstateItem implements Serializable {
+
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
+    @NotNull
     @Column(name = "UNIT_ITEM_ID")
     private BigDecimal unitItemId;
     @Basic(optional = false)
-    @Column(name = "UNIT_ID")
-    private BigInteger unitId;
-    @Column(name = "PARENT_ID")
-    private BigInteger parentId;
-    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "NAME")
     private String name;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
     @Column(name = "DESCRIPTION")
     private String description;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 10)
     @Column(name = "STATUS")
     private String status;
     @Basic(optional = false)
+    @NotNull
     @Column(name = "IS_PARENT")
     private BigInteger isParent;
     @Column(name = "CREATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
+    @Size(max = 10)
     @Column(name = "ACTION")
     private String action;
+    @Size(max = 10)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
+    @Size(max = 5)
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(mappedBy = "estateId")
     private Collection<TmsDevice> tmsDeviceCollection;
+    @JoinColumn(name = "UNIT_ID", referencedColumnName = "UNIT_ID")
+    @ManyToOne(optional = false)
+    private TmsEstateHierachy unitId;
+    @OneToMany(mappedBy = "parentId")
+    private Collection<TmsEstateItem> tmsEstateItemCollection;
+    @JoinColumn(name = "PARENT_ID", referencedColumnName = "UNIT_ITEM_ID")
+    @ManyToOne
+    private TmsEstateItem parentId;
 
     public TmsEstateItem() {
     }
@@ -73,9 +106,8 @@ public class TmsEstateItem implements Serializable {
         this.unitItemId = unitItemId;
     }
 
-    public TmsEstateItem(BigDecimal unitItemId, BigInteger unitId, String name, String description, String status, BigInteger isParent) {
+    public TmsEstateItem(BigDecimal unitItemId, String name, String description, String status, BigInteger isParent) {
         this.unitItemId = unitItemId;
-        this.unitId = unitId;
         this.name = name;
         this.description = description;
         this.status = status;
@@ -88,22 +120,6 @@ public class TmsEstateItem implements Serializable {
 
     public void setUnitItemId(BigDecimal unitItemId) {
         this.unitItemId = unitItemId;
-    }
-
-    public BigInteger getUnitId() {
-        return unitId;
-    }
-
-    public void setUnitId(BigInteger unitId) {
-        this.unitId = unitId;
-    }
-
-    public BigInteger getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(BigInteger parentId) {
-        this.parentId = parentId;
     }
 
     public String getName() {
@@ -170,12 +186,40 @@ public class TmsEstateItem implements Serializable {
         this.intrash = intrash;
     }
 
+    @XmlTransient
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public Collection<TmsDevice> getTmsDeviceCollection() {
         return tmsDeviceCollection;
     }
 
     public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
         this.tmsDeviceCollection = tmsDeviceCollection;
+    }
+
+    public TmsEstateHierachy getUnitId() {
+        return unitId;
+    }
+
+    public void setUnitId(TmsEstateHierachy unitId) {
+        this.unitId = unitId;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<TmsEstateItem> getTmsEstateItemCollection() {
+        return tmsEstateItemCollection;
+    }
+
+    public void setTmsEstateItemCollection(Collection<TmsEstateItem> tmsEstateItemCollection) {
+        this.tmsEstateItemCollection = tmsEstateItemCollection;
+    }
+
+    public TmsEstateItem getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(TmsEstateItem parentId) {
+        this.parentId = parentId;
     }
 
     @Override
@@ -200,7 +244,7 @@ public class TmsEstateItem implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.oracleufs.TmsEstateItem[ unitItemId=" + unitItemId + " ]";
+        return "TmsEstateItem[ unitItemId=" + unitItemId + " ]";
     }
-    
+
 }

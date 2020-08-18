@@ -12,7 +12,6 @@ package ke.tra.com.tsync.entities;
  */
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -30,32 +29,38 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ke.axle.chassis.annotations.Filter;
-import ke.axle.chassis.annotations.ModifiableField;
+import java.util.Collection;
+import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.hibernate.annotations.GenericGenerator;
 
-/**
- * @author Tracom
- */
 @Entity
 @Table(name = "UFS_CUSTOMER")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "UfsCustomer.findAll", query = "SELECT u FROM UfsCustomer u"),
         @NamedQuery(name = "UfsCustomer.findById", query = "SELECT u FROM UfsCustomer u WHERE u.id = :id"),
-        @NamedQuery(name = "UfsCustomer.findByCustomerId", query = "SELECT u FROM UfsCustomer u WHERE u.id = :id"),
+        @NamedQuery(name = "UfsCustomer.findByPin", query = "SELECT u FROM UfsCustomer u WHERE u.pin = :pin"),
+        @NamedQuery(name = "UfsCustomer.findByLocalRegNumber", query = "SELECT u FROM UfsCustomer u WHERE u.localRegNumber = :localRegNumber"),
         @NamedQuery(name = "UfsCustomer.findByDateIssued", query = "SELECT u FROM UfsCustomer u WHERE u.dateIssued = :dateIssued"),
         @NamedQuery(name = "UfsCustomer.findByValidTo", query = "SELECT u FROM UfsCustomer u WHERE u.validTo = :validTo"),
+        @NamedQuery(name = "UfsCustomer.findByAddress", query = "SELECT u FROM UfsCustomer u WHERE u.address = :address"),
+        @NamedQuery(name = "UfsCustomer.findByPhonenumber", query = "SELECT u FROM UfsCustomer u WHERE u.phonenumber = :phonenumber"),
         @NamedQuery(name = "UfsCustomer.findByCreatedAt", query = "SELECT u FROM UfsCustomer u WHERE u.createdAt = :createdAt"),
         @NamedQuery(name = "UfsCustomer.findByAction", query = "SELECT u FROM UfsCustomer u WHERE u.action = :action"),
         @NamedQuery(name = "UfsCustomer.findByActionStatus", query = "SELECT u FROM UfsCustomer u WHERE u.actionStatus = :actionStatus"),
         @NamedQuery(name = "UfsCustomer.findByIntrash", query = "SELECT u FROM UfsCustomer u WHERE u.intrash = :intrash"),
-        @NamedQuery(name = "UfsCustomer.findByBusinessLicenceNumber", query = "SELECT u FROM UfsCustomer u WHERE u.businessLicenceNumber = :businessLicenceNumber")})
+        @NamedQuery(name = "UfsCustomer.findByBusinessLicenceNumber", query = "SELECT u FROM UfsCustomer u WHERE u.businessLicenceNumber = :businessLicenceNumber"),
+        @NamedQuery(name = "UfsCustomer.findByCustomerName", query = "SELECT u FROM UfsCustomer u WHERE u.customerName = :customerName"),
+        @NamedQuery(name = "UfsCustomer.findByTerminationReason", query = "SELECT u FROM UfsCustomer u WHERE u.terminationReason = :terminationReason"),
+        @NamedQuery(name = "UfsCustomer.findByTerminationDate", query = "SELECT u FROM UfsCustomer u WHERE u.terminationDate = :terminationDate"),
+        @NamedQuery(name = "UfsCustomer.findBySecondaryPhonenumber", query = "SELECT u FROM UfsCustomer u WHERE u.secondaryPhonenumber = :secondaryPhonenumber"),
+        @NamedQuery(name = "UfsCustomer.findByEmailAddress", query = "SELECT u FROM UfsCustomer u WHERE u.emailAddress = :emailAddress")})
 public class UfsCustomer implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
     @GenericGenerator(
             name = "UFS_CUSTOMER_SEQ",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
@@ -66,95 +71,76 @@ public class UfsCustomer implements Serializable {
             }
     )
     @GeneratedValue(generator = "UFS_CUSTOMER_SEQ")
+    @Basic(optional = false)
     @Column(name = "ID")
     private Long id;
     @Size(max = 20)
-    @ModifiableField
     @Column(name = "PIN")
-    private String pinNumber;
+    private String pin;
     @Size(max = 30)
-    @ModifiableField
     @Column(name = "LOCAL_REG_NUMBER")
-    private String localRegistrationNumber;
-    @ModifiableField
+    private String localRegNumber;
     @Column(name = "DATE_ISSUED")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateIssued;
-    @ModifiableField
     @Column(name = "VALID_TO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date validTo;
-    @ModifiableField
+    @Size(max = 45)
     @Column(name = "ADDRESS")
     private String address;
     @Size(max = 15)
-    @ModifiableField
     @Column(name = "PHONENUMBER")
-    private String businessPrimaryContactNo;
-    @Column(name = "CREATED_AT", insertable = false, updatable = false)
+    private String phonenumber;
+    @Column(name = "CREATED_AT")
     @Temporal(TemporalType.TIMESTAMP)
-    @Filter(isDateRange = true)
     private Date createdAt;
     @Size(max = 15)
-    @Filter
-    @Column(name = "ACTION", insertable = false)
+    @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
-    @Filter
-    @Column(name = "ACTION_STATUS", insertable = false)
+    @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
-    @Column(name = "INTRASH", insertable = false)
+    @Column(name = "INTRASH")
     private String intrash;
     @Size(max = 20)
-    @ModifiableField
     @Column(name = "BUSINESS_LICENCE_NUMBER")
     private String businessLicenceNumber;
-    @JoinColumn(name = "CLASS_TYPE_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne
-    //@JsonIgnore
-    private UfsCustomerClass classTypeId;
-    @ModifiableField
-    @Column(name = "CLASS_TYPE_ID")
-    private BigDecimal customerClassId;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
-    @ManyToOne
-    @JsonIgnore
-    private UfsOrganizationUnits tenantId;
-    @Column(name = "TENANT_ID")
-    @ModifiableField
-    private String tenantIds;
-    @ModifiableField
+    @Size(max = 50)
     @Column(name = "CUSTOMER_NAME")
-    private String businessName;
+    private String customerName;
+    @Size(max = 100)
     @Column(name = "TERMINATION_REASON")
     private String terminationReason;
-
     @Column(name = "TERMINATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date terminationDate;
-
-    @JoinColumn(name = "BUSINESS_TYPE_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne
-    //@JsonIgnore
-    private UfsBusinessType businessTypeId;
-    @ModifiableField
-    @Column(name = "BUSINESS_TYPE_ID")
-    private Long businessTypeIds;
     @Size(max = 15)
-    @ModifiableField
     @Column(name = "SECONDARY_PHONENUMBER")
-    private String businessSecondaryContactNo;
+    private String secondaryPhonenumber;
     @Size(max = 50)
-    @ModifiableField
     @Column(name = "EMAIL_ADDRESS")
-    private String businessEmailAddress;
-    @JoinColumn(name = "CUSTOMER_TYPE_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = true)
-    private UfsCustomerType customerType;
-    @ModifiableField
-    @Column(name = "CUSTOMER_TYPE_ID")
-    private BigDecimal customerTypeId;
+    private String emailAddress;
+    @OneToMany(mappedBy = "customerId")
+    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
+    @OneToMany(mappedBy = "customerId")
+    private Collection<UfsCustomerOwners> ufsCustomerOwnersCollection;
+    @JoinColumn(name = "BUSINESS_TYPE_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private UfsBusinessType businessTypeId;
+
+//    @JoinColumn(name = "CLASS_TYPE_ID", referencedColumnName = "ID")
+//    @ManyToOne
+//    private UfsCustomerClass classTypeId;
+
+    @JoinColumn(name = "CUSTOMER_TYPE_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private UfsCustomerType customerTypeId;
+
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
+    @ManyToOne
+    private UfsOrganizationUnits tenantId;
 
     public UfsCustomer() {
     }
@@ -171,6 +157,21 @@ public class UfsCustomer implements Serializable {
         this.id = id;
     }
 
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
+    }
+
+    public String getLocalRegNumber() {
+        return localRegNumber;
+    }
+
+    public void setLocalRegNumber(String localRegNumber) {
+        this.localRegNumber = localRegNumber;
+    }
 
     public Date getDateIssued() {
         return dateIssued;
@@ -196,6 +197,13 @@ public class UfsCustomer implements Serializable {
         this.address = address;
     }
 
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
+    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -237,33 +245,13 @@ public class UfsCustomer implements Serializable {
         this.businessLicenceNumber = businessLicenceNumber;
     }
 
-    public UfsCustomerClass getClassTypeId() {
-        return classTypeId;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setClassTypeId(UfsCustomerClass classTypeId) {
-        this.classTypeId = classTypeId;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
-
-
-    public UfsOrganizationUnits getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UfsOrganizationUnits tenantId) {
-        this.tenantId = tenantId;
-    }
-
-
-
-    public String getTenantIds() {
-        return tenantIds;
-    }
-
-    public void setTenantIds(String tenantIds) {
-        this.tenantIds = tenantIds;
-    }
-
 
     public String getTerminationReason() {
         return terminationReason;
@@ -281,6 +269,42 @@ public class UfsCustomer implements Serializable {
         this.terminationDate = terminationDate;
     }
 
+    public String getSecondaryPhonenumber() {
+        return secondaryPhonenumber;
+    }
+
+    public void setSecondaryPhonenumber(String secondaryPhonenumber) {
+        this.secondaryPhonenumber = secondaryPhonenumber;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
+        return ufsCustomerOutletCollection;
+    }
+
+    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
+        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomerOwners> getUfsCustomerOwnersCollection() {
+        return ufsCustomerOwnersCollection;
+    }
+
+    public void setUfsCustomerOwnersCollection(Collection<UfsCustomerOwners> ufsCustomerOwnersCollection) {
+        this.ufsCustomerOwnersCollection = ufsCustomerOwnersCollection;
+    }
+
     public UfsBusinessType getBusinessTypeId() {
         return businessTypeId;
     }
@@ -289,84 +313,21 @@ public class UfsCustomer implements Serializable {
         this.businessTypeId = businessTypeId;
     }
 
-    public Long getBusinessTypeIds() {
-        return businessTypeIds;
-    }
 
-    public void setBusinessTypeIds(Long businessTypeIds) {
-        this.businessTypeIds = businessTypeIds;
-    }
-
-    public String getPinNumber() {
-        return pinNumber;
-    }
-
-    public void setPinNumber(String pinNumber) {
-        this.pinNumber = pinNumber;
-    }
-
-    public String getLocalRegistrationNumber() {
-        return localRegistrationNumber;
-    }
-
-    public void setLocalRegistrationNumber(String localRegistrationNumber) {
-        this.localRegistrationNumber = localRegistrationNumber;
-    }
-
-    public String getBusinessPrimaryContactNo() {
-        return businessPrimaryContactNo;
-    }
-
-    public void setBusinessPrimaryContactNo(String businessPrimaryContactNo) {
-        this.businessPrimaryContactNo = businessPrimaryContactNo;
-    }
-
-    public BigDecimal getCustomerClassId() {
-        return customerClassId;
-    }
-
-    public void setCustomerClassId(BigDecimal customerClassId) {
-        this.customerClassId = customerClassId;
-    }
-
-    public String getBusinessName() {
-        return businessName;
-    }
-
-    public void setBusinessName(String businessName) {
-        this.businessName = businessName;
-    }
-
-    public String getBusinessSecondaryContactNo() {
-        return businessSecondaryContactNo;
-    }
-
-    public void setBusinessSecondaryContactNo(String businessSecondaryContactNo) {
-        this.businessSecondaryContactNo = businessSecondaryContactNo;
-    }
-
-    public String getBusinessEmailAddress() {
-        return businessEmailAddress;
-    }
-
-    public void setBusinessEmailAddress(String businessEmailAddress) {
-        this.businessEmailAddress = businessEmailAddress;
-    }
-
-    public UfsCustomerType getCustomerType() {
-        return customerType;
-    }
-
-    public void setCustomerType(UfsCustomerType customerType) {
-        this.customerType = customerType;
-    }
-
-    public BigDecimal getCustomerTypeId() {
+    public UfsCustomerType getCustomerTypeId() {
         return customerTypeId;
     }
 
-    public void setCustomerTypeId(BigDecimal customerTypeId) {
+    public void setCustomerTypeId(UfsCustomerType customerTypeId) {
         this.customerTypeId = customerTypeId;
+    }
+
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
     }
 
     @Override
@@ -391,7 +352,7 @@ public class UfsCustomer implements Serializable {
 
     @Override
     public String toString() {
-        return "ke.tra.ufs.webportal.entities.UfsCustomer[ id=" + id + " ]";
+        return "UfsCustomer[ id=" + id + " ]";
     }
 
 }

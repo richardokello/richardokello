@@ -15,6 +15,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Collection;
+import javax.xml.bind.annotation.XmlTransient;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import ke.axle.chassis.annotations.Searchable;
@@ -36,12 +38,14 @@ import org.hibernate.annotations.GenericGenerator;
         @NamedQuery(name = "UfsCustomerOutlet.findByCreatedAt", query = "SELECT u FROM UfsCustomerOutlet u WHERE u.createdAt = :createdAt"),
         @NamedQuery(name = "UfsCustomerOutlet.findByAction", query = "SELECT u FROM UfsCustomerOutlet u WHERE u.action = :action"),
         @NamedQuery(name = "UfsCustomerOutlet.findByActionStatus", query = "SELECT u FROM UfsCustomerOutlet u WHERE u.actionStatus = :actionStatus"),
-        @NamedQuery(name = "UfsCustomerOutlet.findByIntrash", query = "SELECT u FROM UfsCustomerOutlet u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsCustomerOutlet.findByIntrash", query = "SELECT u FROM UfsCustomerOutlet u WHERE u.intrash = :intrash"),
+        @NamedQuery(name = "UfsCustomerOutlet.findByLongitude", query = "SELECT u FROM UfsCustomerOutlet u WHERE u.longitude = :longitude"),
+        @NamedQuery(name = "UfsCustomerOutlet.findByOperatingHours", query = "SELECT u FROM UfsCustomerOutlet u WHERE u.operatingHours = :operatingHours"),
+        @NamedQuery(name = "UfsCustomerOutlet.findByLatitude", query = "SELECT u FROM UfsCustomerOutlet u WHERE u.latitude = :latitude")})
 public class UfsCustomerOutlet implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
     @GenericGenerator(
             name = "CUSTOMER_OUTLET_SEQ",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
@@ -52,65 +56,52 @@ public class UfsCustomerOutlet implements Serializable {
             }
     )
     @GeneratedValue(generator = "CUSTOMER_OUTLET_SEQ")
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "ID")
     private Long id;
     @Basic(optional = false)
-
-    @Filter
-    @Searchable
-    @ModifiableField
+    @NotNull
     @Size(min = 1, max = 30)
     @Column(name = "OUTLET_NAME")
     private String outletName;
     @Size(max = 15)
-    @Filter
-    @Searchable
-    @ModifiableField
     @Column(name = "OUTLET_CODE")
     private String outletCode;
-    @Size(max = 30)
-    @Column(name = "LATITUDE")
-    private String latitude;
+    @Column(name = "CREATED_AT")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Size(max = 15)
+    @Column(name = "ACTION")
+    private String action;
+    @Size(max = 15)
+    @Column(name = "ACTION_STATUS")
+    private String actionStatus;
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
     @Size(max = 30)
     @Column(name = "LONGITUDE")
     private String longitude;
     @Size(max = 4000)
-    @ModifiableField
     @Column(name = "OPERATING_HOURS")
     private String operatingHours;
-    @Column(name = "CREATED_AT",insertable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Size(max = 15)
-    @Column(name = "ACTION", insertable = false)
-    private String action;
-    @Size(max = 15)
-    @Filter
-    @Column(name = "ACTION_STATUS", insertable = false)
-    private String actionStatus;
-    @Size(max = 3)
-    @Column(name = "INTRASH", insertable = false)
-    private String intrash;
-    @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
+    @Size(max = 30)
+    @Column(name = "LATITUDE")
+    private String latitude;
+    @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID")
     @ManyToOne
     private UfsBankBranches bankBranchId;
-    @Column(name = "BANK_BRANCH_ID")
-    @ModifiableField
-    private BigDecimal bankBranchIds;
-    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID",insertable = false, updatable = false)
+    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
     @ManyToOne
     private UfsCustomer customerId;
-    @Column(name = "CUSTOMER_ID")
-    @Filter
-    @ModifiableField
-    private BigDecimal customerIds;
-    @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID",insertable = false, updatable = false)
+    @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID")
     @ManyToOne
     private UfsGeographicalRegion geographicalRegionId;
-    @Column(name = "GEOGRAPHICAL_REGION_ID")
-    @ModifiableField
-    private BigDecimal geographicalRegionIds;
-
+    @OneToMany(mappedBy = "outletId")
+    private Collection<TmsDevice> tmsDeviceCollection;
+    @OneToMany(mappedBy = "outletId")
+    private Collection<UfsContactPerson> ufsContactPersonCollection;
 
     public UfsCustomerOutlet() {
     }
@@ -122,7 +113,6 @@ public class UfsCustomerOutlet implements Serializable {
     public UfsCustomerOutlet(Long id, String outletName) {
         this.id = id;
         this.outletName = outletName;
-
     }
 
     public Long getId() {
@@ -181,6 +171,30 @@ public class UfsCustomerOutlet implements Serializable {
         this.intrash = intrash;
     }
 
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getOperatingHours() {
+        return operatingHours;
+    }
+
+    public void setOperatingHours(String operatingHours) {
+        this.operatingHours = operatingHours;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
     public UfsBankBranches getBankBranchId() {
         return bankBranchId;
     }
@@ -205,52 +219,24 @@ public class UfsCustomerOutlet implements Serializable {
         this.geographicalRegionId = geographicalRegionId;
     }
 
-    public BigDecimal getBankBranchIds() {
-        return bankBranchIds;
+    @XmlTransient
+    @JsonIgnore
+    public Collection<TmsDevice> getTmsDeviceCollection() {
+        return tmsDeviceCollection;
     }
 
-    public void setBankBranchIds(BigDecimal bankBranchIds) {
-        this.bankBranchIds = bankBranchIds;
+    public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
+        this.tmsDeviceCollection = tmsDeviceCollection;
     }
 
-    public BigDecimal getCustomerIds() {
-        return customerIds;
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsContactPerson> getUfsContactPersonCollection() {
+        return ufsContactPersonCollection;
     }
 
-    public void setCustomerIds(BigDecimal customerIds) {
-        this.customerIds = customerIds;
-    }
-
-    public BigDecimal getGeographicalRegionIds() {
-        return geographicalRegionIds;
-    }
-
-    public void setGeographicalRegionIds(BigDecimal geographicalRegionIds) {
-        this.geographicalRegionIds = geographicalRegionIds;
-    }
-
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getOperatingHours() {
-        return operatingHours;
-    }
-
-    public void setOperatingHours(String operatingHours) {
-        this.operatingHours = operatingHours;
+    public void setUfsContactPersonCollection(Collection<UfsContactPerson> ufsContactPersonCollection) {
+        this.ufsContactPersonCollection = ufsContactPersonCollection;
     }
 
     @Override
@@ -275,7 +261,9 @@ public class UfsCustomerOutlet implements Serializable {
 
     @Override
     public String toString() {
-        return "ke.tra.ufs.webportal.entities.UfsCustomerOutlet[ id=" + id + " ]";
+        return "ke.tra.boa.ufs.entities.UfsCustomerOutlet[ id=" + id + " ]";
     }
 
 }
+
+

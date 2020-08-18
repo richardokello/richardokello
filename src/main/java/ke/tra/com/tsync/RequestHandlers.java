@@ -93,6 +93,7 @@ public class RequestHandlers implements ISORequestListener {
 
 
             logger.info(" HERE WE ARE" + m.getString(39));
+
             // change depending on field used for this data
             if (m.getString(39).equalsIgnoreCase("00"))
                 m = coreProcessor.processTransactionsbyMTI(m);

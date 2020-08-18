@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -30,6 +31,10 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "UfsCountries.findAll", query = "SELECT u FROM UfsCountries u")})
 public class UfsCountries implements Serializable {
+
+    @Size(max = 64)
+    @Column(name = "TENANT_ID")
+    private String tenantId;
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -179,6 +184,14 @@ public class UfsCountries implements Serializable {
     @Override
     public String toString() {
         return "com.mycompany.oracleufs.UfsCountries[ id=" + id + " ]";
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
     
 }

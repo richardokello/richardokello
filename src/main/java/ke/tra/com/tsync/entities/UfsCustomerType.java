@@ -6,6 +6,8 @@
 
 package ke.tra.com.tsync.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -22,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,6 +35,9 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "UfsCustomerType.findAll", query = "SELECT u FROM UfsCustomerType u")})
 public class UfsCustomerType implements Serializable {
+
+    @OneToMany(mappedBy = "customerTypeId")
+    private Collection<UfsCustomer> ufsCustomerCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -174,6 +180,16 @@ public class UfsCustomerType implements Serializable {
     @Override
     public String toString() {
         return "com.mycompany.oracleufs.UfsCustomerType[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UfsCustomer> getUfsCustomerCollection() {
+        return ufsCustomerCollection;
+    }
+
+    public void setUfsCustomerCollection(Collection<UfsCustomer> ufsCustomerCollection) {
+        this.ufsCustomerCollection = ufsCustomerCollection;
     }
     
 }

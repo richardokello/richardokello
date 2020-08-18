@@ -21,8 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 
-import java.util.Optional;
-
 /**
  * @author Tracom
  */
@@ -71,9 +69,9 @@ public class UserManagementService implements UserManagementTmpl {
 
 
         // if any of the required data is null, then it's time to exit
-        if (currentPin == null || newPin == null || confirmPin == null){
+        if (currentPin == null || newPin == null){
             isomsg.set(39, "07");
-            isomsg.set(47,"current pin || new pin || confirm pin missing");
+            isomsg.set(47,"current pin || new pin ||");
             return isomsg;
         }
 
@@ -97,25 +95,9 @@ public class UserManagementService implements UserManagementTmpl {
                     if(code == 200){
                         isomsg.set(39, "00");
                         isomsg.set(47, "Password change was a success");
-                    }
-                    else if( code == 403){
-                        isomsg.set(39, "03");
-                        isomsg.set(47, "Invalid old password");
-                    }
-                    else if( code == 400){
-                        isomsg.set(39, "08");
-                        isomsg.set(47, response.getMessage());
                     }else{
-                        isomsg.set(47,response.getMessage());
-                        if(Integer.toString(response.getCode()).trim().length()>2){
-                            isomsg.set(39, Integer.toString(response.getCode()).substring(1,3));
-                        }else{
-                            isomsg.set(39, Integer.toString(response.getCode()));
-                        }
+                        setResponse(isomsg, response);
                     }
-                    System.out.println("++++++++++++++++++++++++++++++++++");
-                    System.out.println(response.getCode());
-                    System.out.println(response.getMessage());
                 }catch(Exception e){
                     usemanagelog.error("An error occurred UFS-TMS service could not process the request", e.getMessage());
                     isomsg.set(39, "06");
@@ -179,7 +161,7 @@ public class UserManagementService implements UserManagementTmpl {
 
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try{
-            responseWrapper = userService.makePosUser(wrapper);
+            responseWrapper = userService.createPosUser(wrapper);
             Integer code = Integer.valueOf(responseWrapper.getCode());
             if(code == 200){
                 isoMsg.set(39, "00");
@@ -198,8 +180,8 @@ public class UserManagementService implements UserManagementTmpl {
                 isoMsg.set(39, "03"); // forbidden
             }
             else{
-                System.out.println(responseWrapper.getCode());
-                if(Integer.toString(responseWrapper.getCode()).trim().length()>2){
+
+                if(Integer.toString(responseWrapper.getCode()).strip().length()>2){
                     isoMsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1,3));
                     isoMsg.set(47, responseWrapper.getMessage());
                 }else{
@@ -221,15 +203,13 @@ public class UserManagementService implements UserManagementTmpl {
     @Override
     public ISOMsg processUserLogin(ISOMsg isomsg, PosUserWrapper wrapper) {
 
-        System.out.println(wrapper);
-
         PosUserWrapper req = new PosUserWrapper();
 
         //req.setUfsWorkgroup((String) wrapper.get("userWorkGroup"));
         req.setTID(isomsg.getString(41));
         req.setMID(isomsg.getString(42));
 
-        ResponseWrapper responseWrapper = new ResponseWrapper<UserDetailsWrapper>();
+        ResponseWrapper responseWrapper = new ResponseWrapper();
 
         // additional data
         isomsg.unset(47);
@@ -248,16 +228,16 @@ public class UserManagementService implements UserManagementTmpl {
             System.out.println(responseWrapper.getMessage());
 
 
-            if(code == 403){
-                isomsg.set(39, "03"); // forbidden
-                isomsg.set(47, "Wrong password");
+            if(code == 400){
+                isomsg.set(39, "08");
+                isomsg.set(47, responseWrapper.getMessage());
             }
 
             else if(code == 200){
                 isomsg.set(39, "00"); // login success
                 isomsg.set(47, responseWrapper.getMessage());
             } else{
-                if(Integer.toString(responseWrapper.getCode()).trim().length()>2){
+                if(Integer.toString(responseWrapper.getCode()).strip().length()>2){
                     isomsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1,3));
                 }else{
                     isomsg.set(39, Integer.toString(responseWrapper.getCode()));
@@ -446,6 +426,26 @@ public class UserManagementService implements UserManagementTmpl {
         }
         return isoMsg;
 
+    }
+
+    public ISOMsg processTerminalReset(ISOMsg isoMsg, PosUserWrapper wrapper){
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+        try{
+            responseWrapper = userService.terminalWasReset(wrapper);
+            Integer code = Integer.valueOf(responseWrapper.getCode());
+            if(code == 200){
+                isoMsg.set(39, "00");
+                isoMsg.set(47, responseWrapper.getMessage());
+            }
+            else{
+                setResponse(isoMsg, responseWrapper);
+            }
+        }catch (Exception e){
+            isoMsg.set(39, "06"); // system error
+            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
+            e.printStackTrace();
+        }
+        return isoMsg;
     }
 
     private void setResponse(ISOMsg isoMsg, ResponseWrapper responseWrapper){

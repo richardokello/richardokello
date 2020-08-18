@@ -1,7 +1,10 @@
 package ke.tra.com.tsync.wrappers;
 
+import ke.tra.com.tsync.entities.UfsPosUser;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
 public class ResponseWrapper<T> implements Serializable {
 
@@ -10,12 +13,14 @@ public class ResponseWrapper<T> implements Serializable {
     private T data;
     private Long timestamp;
     private Boolean error;
+    private Optional<UfsPosUser> posUser;
 
     public ResponseWrapper() {
         this.code = 424;
         this.message = "Request could not be completed";
         this.timestamp = new Date().getTime();
         this.error = false;
+
 
     }
 
@@ -57,5 +62,14 @@ public class ResponseWrapper<T> implements Serializable {
 
     public void setError(Boolean error) {
         this.error = error;
+    }
+
+
+    public Optional<UfsPosUser> getPosUser() {
+        return posUser;
+    }
+
+    public void setPosUser(Optional<UfsPosUser> posUser) {
+        this.posUser = posUser;
     }
 }

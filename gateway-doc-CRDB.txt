@@ -37,6 +37,9 @@ case "000021" processing codes( field 3)
 case "011113" processing codes( field 3)
     deleteUser
 
+case "011115":
+      terminalWasReset
+
 
 
  TAGS:
@@ -46,7 +49,7 @@ case "011113" processing codes( field 3)
  026 => Serial number
  029 => Gender
  030 => username
- 031 => FullName
+ 031 => Othername
  032 => email
  033 => Phone Number
  034 => IdNumber
@@ -89,3 +92,14 @@ Response Code from Gateway(field 39) on field 39 and response message
     Data record                           =>  field 72, size 999 max
 
 
+TerminalWasReset
+**********************************************************************************************************
+Username            ->            0
+Firstname           ->            1
+Othername           ->            2
+Id Number           ->            3
+Phone Number        ->            4
+POS Role            ->            5
+
+example of how field 47 shall represent this:
+"KeSeal,Collins,Otuoma,30000011,0723457676,Supervisor|CeaserC, Julius Ceaser, 12000010,0772782782,Administrator"
