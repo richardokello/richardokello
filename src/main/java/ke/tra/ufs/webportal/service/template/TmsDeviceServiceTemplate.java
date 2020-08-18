@@ -21,8 +21,8 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         return tmsDeviceRepository.findByDeviceId(deviceId);
     }
 
-    @Override
+    /*@Override
     public TmsDevice findByCustomerIds(BigDecimal customerIds) {
         return tmsDeviceRepository.findByCustomerIds(customerIds);
-    }
+    }*/
 }
