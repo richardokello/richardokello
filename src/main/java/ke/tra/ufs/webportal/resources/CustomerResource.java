@@ -99,6 +99,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setBusinessTypeIds(customerOnboarding.getBusinessTypeId());
         customer.setBusinessSecondaryContactNo(customerOnboarding.getBusinessSecondaryContactNo());
         customer.setCustomerTypeId(customerOnboarding.getCustomerTypeId());
+        customer.setCommercialActivityId(customerOnboarding.getCommercialActivityId());
         customerService.saveCustomer(customer);
 
         //saving directors
@@ -151,7 +152,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     }
 
 
-    @RequestMapping(value = "/terminate" , method = RequestMethod.PUT)
+   /* @RequestMapping(value = "/terminate" , method = RequestMethod.PUT)
     @Transactional
     @ApiOperation(value = "Terminate Agent", notes = "Terminate multiple agents.")
     public ResponseEntity<ResponseWrapper<UfsCustomer>> terminateAgent(@Valid @RequestBody AgentTerminationWrapper<Long> actions) {
@@ -183,7 +184,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
         response.setMessage("Agent Terminated successfully");
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+    }*/
 
     @Override
     @Transactional

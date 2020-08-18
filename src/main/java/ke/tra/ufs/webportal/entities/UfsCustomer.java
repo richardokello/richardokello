@@ -21,7 +21,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -151,6 +150,13 @@ public class UfsCustomer implements Serializable {
     @ModifiableField
     @Column(name = "CUSTOMER_TYPE_ID")
     private BigDecimal customerTypeId;
+    @JoinColumn(name = "COMMERCIAL_ACTIVITY", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    //@JsonIgnore
+    private UfsCommercialActivities commercialActivity;
+    @ModifiableField
+    @Column(name = "COMMERCIAL_ACTIVITY")
+    private Long commercialActivityId;
 
     public UfsCustomer() {
     }
@@ -363,6 +369,22 @@ public class UfsCustomer implements Serializable {
 
     public void setCustomerTypeId(BigDecimal customerTypeId) {
         this.customerTypeId = customerTypeId;
+    }
+
+    public UfsCommercialActivities getCommercialActivity() {
+        return commercialActivity;
+    }
+
+    public void setCommercialActivity(UfsCommercialActivities commercialActivity) {
+        this.commercialActivity = commercialActivity;
+    }
+
+    public Long getCommercialActivityId() {
+        return commercialActivityId;
+    }
+
+    public void setCommercialActivityId(Long commercialActivityId) {
+        this.commercialActivityId = commercialActivityId;
     }
 
     @Override

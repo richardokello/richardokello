@@ -35,6 +35,8 @@ public class CustomerOnboardingWrapper {
     private String pinNumber;
     @NotNull
     private String address;
+    @NotNull
+    private Long commercialActivityId;
 
     /*Business Location*/
     @NotNull

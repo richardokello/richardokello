@@ -101,7 +101,8 @@ public class ReportsServiceTemplate implements ReportsService {
 
         };*/
         //totals
-        Row totals = new Row();
+        //REMEMBER TO UNCOMMENT LATER
+        /*Row totals = new Row();
         totals.setTransactionType("Totals");
         List<Values> values_total = new ArrayList<>();
 
@@ -156,7 +157,7 @@ public class ReportsServiceTemplate implements ReportsService {
 //        rowList.add(totals);
         reportData.setRows(rowList);
 
-        responseWrapper.setData(reportData);
+        responseWrapper.setData(reportData);*/
 
         return responseWrapper;
     }

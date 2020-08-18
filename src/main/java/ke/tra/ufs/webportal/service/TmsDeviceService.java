@@ -8,6 +8,6 @@ public interface TmsDeviceService {
 
     TmsDevice findByDeviceId(BigDecimal deviceId);
 
-    TmsDevice findByCustomerIds(BigDecimal customerIds);
+    //TmsDevice findByCustomerIds(BigDecimal customerIds);
 
 }
