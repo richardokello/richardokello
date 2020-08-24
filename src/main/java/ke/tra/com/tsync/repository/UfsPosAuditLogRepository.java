@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 
 @Repository
-public interface UfsAuditLogRepository extends JpaRepository<UfsPosAuditLog, BigDecimal> {
+public interface UfsPosAuditLogRepository extends JpaRepository<UfsPosAuditLog, BigDecimal> {
 }
