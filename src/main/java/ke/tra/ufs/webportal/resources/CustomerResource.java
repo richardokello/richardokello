@@ -92,7 +92,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setBusinessLicenceNumber(customerOnboarding.getBusinessLicenseNumber());
         customer.setLocalRegistrationNumber(customerOnboarding.getLocalRegistrationNumber());
         customer.setBusinessName(customerOnboarding.getBusinessName());
-        customer.setCustomerProfileId(customerOnboarding.getCustomerProfileId());
+        customer.setCustomerClassId(customerOnboarding.getCustomerClassId());
         customer.setAddress(customerOnboarding.getAddress());
         customer.setBusinessEmailAddress(customerOnboarding.getBusinessEmailAddress());
         customer.setPinNumber(customerOnboarding.getPinNumber());
@@ -100,6 +100,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setBusinessSecondaryContactNo(customerOnboarding.getBusinessSecondaryContactNo());
         customer.setCustomerTypeId(customerOnboarding.getCustomerTypeId());
         customer.setCommercialActivityId(customerOnboarding.getCommercialActivityId());
+        customer.setEstateId(customerOnboarding.getEstateId());
         customerService.saveCustomer(customer);
 
         //saving directors
@@ -128,6 +129,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
               custOutlet.setOutletCode(outlet.getOutletCode());
               custOutlet.setOutletName(outlet.getOutletName());
               custOutlet.setOperatingHours(outlet.getOperatingHours());
+              custOutlet.setGeographicalRegionIds(outlet.getGeographicalRegionIds());
               outletService.saveOutlet(custOutlet);
                //save contact person
               if(!outlet.getContactPerson().isEmpty()){

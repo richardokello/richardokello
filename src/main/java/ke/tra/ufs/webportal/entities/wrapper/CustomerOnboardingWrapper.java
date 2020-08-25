@@ -16,7 +16,7 @@ public class CustomerOnboardingWrapper {
     @NotNull
     private BigDecimal customerTypeId;
     @NotNull
-    private BigInteger customerProfileId;
+    private BigInteger customerClassId;
     @NotNull
     private Long businessTypeId;
     @NotNull
@@ -37,6 +37,7 @@ public class CustomerOnboardingWrapper {
     private String address;
     @NotNull
     private Long commercialActivityId;
+    private BigDecimal estateId;
 
     /*Business Location*/
     @NotNull
