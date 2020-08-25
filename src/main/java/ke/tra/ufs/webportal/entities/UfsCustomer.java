@@ -105,13 +105,13 @@ public class UfsCustomer implements Serializable {
     @ModifiableField
     @Column(name = "BUSINESS_LICENCE_NUMBER")
     private String businessLicenceNumber;
-    @JoinColumn(name = "CUSTOMER_PROFILE", referencedColumnName = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "CUSTOMER_CLASS", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     //@JsonIgnore
-    private UfsCustomerProfile customerProfile;
+    private UfsCustomerClass customerClass;
     @ModifiableField
-    @Column(name = "CUSTOMER_PROFILE")
-    private BigInteger customerProfileId;
+    @Column(name = "CUSTOMER_CLASS")
+    private BigInteger customerClassId;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne
     @JsonIgnore
@@ -157,6 +157,13 @@ public class UfsCustomer implements Serializable {
     @ModifiableField
     @Column(name = "COMMERCIAL_ACTIVITY")
     private Long commercialActivityId;
+    @JoinColumn(name = "ESTATE_ID", referencedColumnName = "UNIT_ITEM_ID", insertable = false, updatable = false)
+    @ManyToOne
+    @JsonIgnore
+    private TmsEstateItem estate;
+    @Column(name = "ESTATE_ID")
+    @ModifiableField
+    private BigDecimal estateId;
 
     public UfsCustomer() {
     }
@@ -239,20 +246,20 @@ public class UfsCustomer implements Serializable {
         this.businessLicenceNumber = businessLicenceNumber;
     }
 
-    public UfsCustomerProfile getCustomerProfile() {
-        return customerProfile;
+    public UfsCustomerClass getCustomerClass() {
+        return customerClass;
     }
 
-    public void setCustomerProfile(UfsCustomerProfile customerProfile) {
-        this.customerProfile = customerProfile;
+    public void setCustomerClass(UfsCustomerClass customerClass) {
+        this.customerClass = customerClass;
     }
 
-    public BigInteger getCustomerProfileId() {
-        return customerProfileId;
+    public BigInteger getCustomerClassId() {
+        return customerClassId;
     }
 
-    public void setCustomerProfileId(BigInteger customerProfileId) {
-        this.customerProfileId = customerProfileId;
+    public void setCustomerClassId(BigInteger customerClassId) {
+        this.customerClassId = customerClassId;
     }
 
     public UfsOrganizationUnits getTenantId() {
@@ -385,6 +392,22 @@ public class UfsCustomer implements Serializable {
 
     public void setCommercialActivityId(Long commercialActivityId) {
         this.commercialActivityId = commercialActivityId;
+    }
+
+    public TmsEstateItem getEstate() {
+        return estate;
+    }
+
+    public void setEstate(TmsEstateItem estate) {
+        this.estate = estate;
+    }
+
+    public BigDecimal getEstateId() {
+        return estateId;
+    }
+
+    public void setEstateId(BigDecimal estateId) {
+        this.estateId = estateId;
     }
 
     @Override

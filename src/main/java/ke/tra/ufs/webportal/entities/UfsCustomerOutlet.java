@@ -251,6 +251,8 @@ public class UfsCustomerOutlet implements Serializable {
         this.operatingHours = operatingHours;
     }
 
+
+
     @Override
     public int hashCode() {
         int hash = 0;
