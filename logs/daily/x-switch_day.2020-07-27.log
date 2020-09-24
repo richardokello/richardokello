@@ -1,0 +1,123 @@
+11:01:05.566 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 14452 (E:\projects\crdb_tsync\target\classes started by cotuoma in E:\projects\crdb_tsync) 
+11:01:05.568 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: remote 
+11:01:06.449 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:01:06.565 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 106ms. Found 23 repository interfaces. 
+11:01:06.822 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$b31f3df5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+11:01:06.986 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+11:01:07.000 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+11:01:07.111 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+11:01:07.112 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+11:01:07.248 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+11:01:07.248 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1633 ms 
+11:01:07.625 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+11:01:08.186 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+11:01:08.264 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+11:01:08.265 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+11:01:08.329 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+11:01:08.463 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+11:01:11.120 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+11:01:11.245 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+11:01:11.265 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+11:01:11.267 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+11:01:11.426 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+11:01:11.431 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+11:02:08.743 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 5700 (E:\projects\crdb_tsync\target\classes started by cotuoma in E:\projects\crdb_tsync) 
+11:02:08.745 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: remote 
+11:02:09.609 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:02:09.708 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 91ms. Found 23 repository interfaces. 
+11:02:09.949 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$c69b44db] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+11:02:10.137 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+11:02:10.150 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+11:02:10.262 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+11:02:10.263 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+11:02:10.418 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+11:02:10.418 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1635 ms 
+11:02:10.744 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+11:02:11.469 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+11:02:11.554 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+11:02:11.555 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+11:02:11.618 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+11:02:11.765 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+11:02:14.414 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+11:02:14.691 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+11:02:15.954 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+11:02:16.113 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+11:02:16.339 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: e8f9ed4b-7afa-409b-bbde-17f800f2bdb9
+ 
+11:02:16.392 [main] INFO  o.s.s.w.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1716bfb9, org.springframework.security.web.context.SecurityContextPersistenceFilter@24981ef0, org.springframework.security.web.header.HeaderWriterFilter@ad831c6, org.springframework.security.web.csrf.CsrfFilter@32ef162b, org.springframework.security.web.authentication.logout.LogoutFilter@1f3d9f, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@352b8fb6, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@74991745, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@5561f343, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@42edab5a, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@77d89cf4, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6178eb74, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@aad8d7f, org.springframework.security.web.session.SessionManagementFilter@62d8a9f7, org.springframework.security.web.access.ExceptionTranslationFilter@6ef80f24, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1adde386] 
+11:02:16.437 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator' 
+11:02:16.458 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+11:02:16.504 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+11:02:16.520 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+11:02:16.522 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 8.118 seconds (JVM running for 8.768) 
+11:02:16.538 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+11:02:16.539 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+11:02:16.987 [RMI TCP Connection(2)-192.168.254.139] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+11:02:16.988 [RMI TCP Connection(2)-192.168.254.139] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+11:02:16.995 [RMI TCP Connection(2)-192.168.254.139] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 7 ms 
+11:02:52.464 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on DESKTOP-41KACUO with PID 18004 (started by cotuoma in E:\projects\crdb_tsync) 
+11:02:52.466 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: remote 
+11:02:54.094 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:02:54.264 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 153ms. Found 23 repository interfaces. 
+11:02:55.079 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$6c023875] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+11:02:55.533 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+11:02:56.466 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+11:02:56.608 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+11:02:56.609 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+11:02:56.733 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+11:02:56.979 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+11:03:01.057 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+11:03:01.377 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+11:03:02.877 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+11:03:03.936 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+11:03:05.578 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 9ddc88a6-61d0-42b2-9c48-e969d87c1bb3
+ 
+11:03:05.810 [main] INFO  o.s.s.w.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@51e92ae3, org.springframework.security.web.context.SecurityContextPersistenceFilter@27342c75, org.springframework.security.web.header.HeaderWriterFilter@2de6241c, org.springframework.security.web.csrf.CsrfFilter@2391117e, org.springframework.security.web.authentication.logout.LogoutFilter@52483ae4, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@700f5dc8, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@3216feae, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@486e000a, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@63fe4487, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@20d6746b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4d07c08d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1d2bbf7d, org.springframework.security.web.session.SessionManagementFilter@56f53d8d, org.springframework.security.web.access.ExceptionTranslationFilter@3d5650de, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@bdc973a] 
+11:03:06.067 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator' 
+11:03:06.126 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+11:03:06.262 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Started TsyncApplicationTests in 14.521 seconds (JVM running for 15.216) 
+11:03:06.329 [Thread-3] INFO  o.s.s.c.ThreadPoolTaskScheduler - Shutting down ExecutorService 'taskScheduler' 
+11:03:06.332 [Thread-3] INFO  o.s.s.c.ThreadPoolTaskExecutor - Shutting down ExecutorService 'applicationTaskExecutor' 
+11:03:06.343 [Thread-3] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+11:03:06.345 [Thread-3] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated... 
+11:03:06.545 [Thread-3] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed. 
+11:16:46.951 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 1152 (E:\projects\crdb_tsync\target\classes started by cotuoma in E:\projects\crdb_tsync) 
+11:16:46.953 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: remote 
+11:16:48.010 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:16:48.111 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 94ms. Found 23 repository interfaces. 
+11:16:48.355 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$b31f3df5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+11:16:48.504 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+11:16:48.518 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+11:16:48.628 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+11:16:48.628 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+11:16:48.754 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+11:16:48.754 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1709 ms 
+11:16:49.089 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+11:16:49.706 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+11:16:49.794 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+11:16:49.795 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+11:16:49.861 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+11:16:50.006 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+11:16:52.677 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+11:16:52.830 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+11:16:53.555 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+11:16:53.705 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+11:16:53.929 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 3fe3f58b-cb88-43fe-b63c-6cf966164c86
+ 
+11:16:53.983 [main] INFO  o.s.s.w.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1f38b41a, org.springframework.security.web.context.SecurityContextPersistenceFilter@52076d1d, org.springframework.security.web.header.HeaderWriterFilter@424f6fc9, org.springframework.security.web.csrf.CsrfFilter@4964d305, org.springframework.security.web.authentication.logout.LogoutFilter@2840d256, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@18d2b233, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@61a5d76e, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@7bf89ed, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@430b8d1a, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2ec41c29, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7e326bf2, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@36eec55d, org.springframework.security.web.session.SessionManagementFilter@5c66a6ea, org.springframework.security.web.access.ExceptionTranslationFilter@12503bcb, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@4a4c0946] 
+11:16:54.028 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator' 
+11:16:54.049 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+11:16:54.094 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+11:16:54.110 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+11:16:54.112 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 7.531 seconds (JVM running for 8.22) 
+11:16:54.127 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+11:16:54.128 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 
+11:16:54.201 [RMI TCP Connection(1)-192.168.254.139] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet' 
+11:16:54.204 [RMI TCP Connection(1)-192.168.254.139] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet' 
+11:16:54.215 [RMI TCP Connection(1)-192.168.254.139] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 11 ms 

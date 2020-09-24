@@ -6,7 +6,6 @@
 package ke.tra.com.tsync.services;
 
 
-import ke.tra.com.tsync.entities.wrappers.UserDetailsWrapper;
 import ke.tra.com.tsync.services.template.UserManagementTmpl;
 import ke.tra.com.tsync.wrappers.ChangePin;
 import ke.tra.com.tsync.wrappers.PosUserWrapper;
@@ -378,7 +377,7 @@ public class UserManagementService implements UserManagementTmpl {
 
         try{
             responseWrapper = userService.firstTimeLogin(wrapper);
-            System.out.println("+==================="+ responseWrapper);
+
             Integer code = Integer.valueOf(responseWrapper.getCode());
             if(code == 200){
                 isoMsg.set(39, "00");
@@ -406,10 +405,60 @@ public class UserManagementService implements UserManagementTmpl {
         return isoMsg;
     }
     public  ISOMsg logout (ISOMsg isoMsg, PosUserWrapper wrapper){
+        usemanagelog.info("---------000----------");
 
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try{
             responseWrapper = userService.logout(wrapper);
+            usemanagelog.info("---------111----------");
+            int code = responseWrapper.getCode();
+            if(code == 200){
+                isoMsg.set(39, "00");
+                isoMsg.set(47, responseWrapper.getMessage());
+            }
+            else{
+                setResponse(isoMsg, responseWrapper);
+            }
+            System.out.println(responseWrapper.getMessage());
+        }catch (Exception e){
+            isoMsg.set(39, "06"); // system error
+            usemanagelog.error("System error while on logout", e.getMessage());
+            e.printStackTrace();
+        }
+        return isoMsg;
+
+    }
+
+    public ISOMsg processTerminalReset(ISOMsg isoMsg, PosUserWrapper wrapper){
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+        try{
+            // another approach
+            // would be divide the usersstrlLen with chinkLen to ge t count of complete chunks
+            // the for loop and substring
+            responseWrapper = userService.terminalWasReset(wrapper);
+            Integer code = Integer.valueOf(responseWrapper.getCode());
+
+            if(code == 200){
+                chunkUses(responseWrapper, isoMsg);
+
+                isoMsg.set(39, "00");
+
+            }
+            else{
+                setResponse(isoMsg, responseWrapper);
+            }
+        }catch (Exception e){
+            isoMsg.set(39, "06"); // system error
+            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
+            e.printStackTrace();
+        }
+        return isoMsg;
+    }
+
+    public ISOMsg disableUsers(ISOMsg isoMsg, PosUserWrapper wrapper){
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+        try{
+            responseWrapper = userService.lockUser(wrapper);
             Integer code = Integer.valueOf(responseWrapper.getCode());
             if(code == 200){
                 isoMsg.set(39, "00");
@@ -425,28 +474,34 @@ public class UserManagementService implements UserManagementTmpl {
             e.printStackTrace();
         }
         return isoMsg;
-
     }
 
-    public ISOMsg processTerminalReset(ISOMsg isoMsg, PosUserWrapper wrapper){
-        ResponseWrapper responseWrapper = new ResponseWrapper();
-        try{
-            responseWrapper = userService.terminalWasReset(wrapper);
-            Integer code = Integer.valueOf(responseWrapper.getCode());
-            if(code == 200){
-                isoMsg.set(39, "00");
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
-            else{
-                setResponse(isoMsg, responseWrapper);
-            }
-        }catch (Exception e){
-            isoMsg.set(39, "06"); // system error
-            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
-            e.printStackTrace();
+    private void chunkUses(ResponseWrapper responseWrapper, ISOMsg isoMsg){
+        String usersStr = responseWrapper.getMessage();
+
+        Integer [] fields = {47,116,117,118,119,120,121,122, 123,124,125};
+        String t = "";
+        int chunkLen = 990;
+        int end = 990;
+        int countField = 0;
+        int start = 0;
+        int usersStrLen = usersStr.length();
+        while(usersStrLen > chunkLen && end < usersStrLen){
+
+            isoMsg.set(fields[countField], usersStr.substring(start, end));
+
+            usemanagelog.info(usersStr.substring(start, end));
+
+            start = end;
+            end  = end + chunkLen;
+            countField += 1;
+
+
         }
-        return isoMsg;
-    }
+
+        isoMsg.set(fields[countField], usersStr.substring(start)); //use start coz it will still in bound of the string
+
+    } // chunk users
 
     private void setResponse(ISOMsg isoMsg, ResponseWrapper responseWrapper){
         // set field 47 and 39

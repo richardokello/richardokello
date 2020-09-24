@@ -62,8 +62,8 @@ public class TsyncApplication {
 
     @PostConstruct
     private void initAppCfgs(){
-        //initDb();
-        //getSessionKeyIni();
+        initDb();
+//        getSessionKeyIni();
     }
 
     private void initDb() {
@@ -76,24 +76,32 @@ public class TsyncApplication {
                 "insert into GENERALSETTINGSCACHE(id, crdb_session_str,updated) values(1,'NA',false)",
         };
 
-        Arrays.asList(sqlStatements).stream().forEach(sql -> {
-            System.out.println(sql);
-            jdbcTemplate.execute(sql);
-        });
+        String insert = "insert into GENERAL_SETTINGS_CONFIG_CACHE(id, crdb_session_str,updated) values(1,'NA',false)";
+        try {
+            jdbcTemplate.execute("drop table GENERAL_SETTINGS_CONFIG_CACHE(id int,crdb_session_str varchar(100),updated boolean)");
+        }catch (Exception ex){
+            logger.info("table does not exist, just create a new one  "+ex.getMessage());
+        }
+        try {
+            jdbcTemplate.execute("create table GENERAL_SETTINGS_CONFIG_CACHE(id integer, name varchar(100))");
+        }catch(Exception e){
+            logger.info("error creating table  "+e.getMessage());
+        }
 
-        System.out.println(String.format("****** Fetching from table: %s ******", "GENERALSETTINGSCACHE"));
-        jdbcTemplate.query("select id,crdb_session_str,updated from GENERALSETTINGSCACHE",
-            (rs, i) -> {
-                System.out.printf(
-                        String.format("\nid:%s, crdb_session_str:%s, updated:%s  ",
-                        rs.getString("id"),
-                        rs.getString("crdb_session_str"),
-                        rs.getBoolean("updated")
-                        )
-                );
-                return null;
-            }
-        );
+
+//        System.out.println(String.format("****** Fetching from table: %s ******", "GENERALSETTINGSCACHE"));
+//        jdbcTemplate.query("select id,crdb_session_str,updated from GENERAL_SETTINGS_CONFIG_CACHE",
+//            (rs, i) -> {
+//                System.out.printf(
+//                        String.format("\nid:%s, crdb_session_str:%s, updated:%s  ",
+//                        rs.getString("id"),
+//                        rs.getString("crdb_session_str"),
+//                        rs.getBoolean("updated")
+//                        )
+//                );
+//                return null;
+//            }
+//        );
     }
 
     private void getSessionKeyIni(){

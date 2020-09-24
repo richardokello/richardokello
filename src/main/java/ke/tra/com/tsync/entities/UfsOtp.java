@@ -6,20 +6,12 @@
 
 package ke.tra.com.tsync.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  *
@@ -33,6 +25,17 @@ public class UfsOtp implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
+    @GenericGenerator(
+            name = "UFS_OTP_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_OTP_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+    @GeneratedValue(generator = "UFS_OTP_SEQ")
+
     @Basic(optional = false)
     @Column(name = "OTP_ID")
     private BigDecimal otpId;
@@ -40,7 +43,7 @@ public class UfsOtp implements Serializable {
     @Column(name = "OTP")
     private String otp;
     @Basic(optional = false)
-    @Column(name = "CREATION_DATE")
+    @Column(name = "CREATION_DATE", insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
     @Basic(optional = false)

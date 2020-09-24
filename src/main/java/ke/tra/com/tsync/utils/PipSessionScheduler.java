@@ -21,6 +21,7 @@ public class PipSessionScheduler {
     @Autowired private CRDBPipService crdbPipService;
 
     @Scheduled(cron = "0 15 6 * * *" ,zone="GMT+3:00")
+    //@Scheduled(fixedRate = 5000)test
     private void fetchSessionNumber() {
         try {
             logger.info("Attempting fetchSessionNumber from PIP:: Execution Time - {}", dateTimeFormatter.format(LocalDateTime.now()));

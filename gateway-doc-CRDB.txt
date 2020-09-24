@@ -40,6 +40,11 @@ case "011113" processing codes( field 3)
 case "011115":
       terminalWasReset
 
+case 000120:  processing codes( field 3)
+    disable user
+case 000121:  processing codes( field 3)
+     enable user
+
 
 
  TAGS:

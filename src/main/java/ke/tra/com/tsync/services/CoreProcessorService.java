@@ -118,6 +118,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                             System.out.println("+++++++++++++ setSerialNumber "+TagValue);
                             break;
 
+
                         case 29:
                             wrapper.setGender(Integer.valueOf(TagValue));
                             System.out.println("+++++++++++++ Genderr " +TagValue);
@@ -158,7 +159,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                             break;
 
                         case 37:
-                            wrapper.setUfsWorkgroup(TagValue);
+                            wrapper.setWorkgroup(TagValue);
                             System.out.println("+++++++++++++ setUfsWorkgroup "+TagValue);
                             break;
                         case 39:

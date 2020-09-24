@@ -1,59 +1,58 @@
 package ke.tra.com.tsync.services;
 
+import ke.tra.com.tsync.config.SpringContextBridge;
 import ke.tra.com.tsync.entities.*;
-import ke.tra.com.tsync.entities.wrappers.ActionWrapper;
 import ke.tra.com.tsync.repository.*;
 import ke.tra.com.tsync.services.template.UserServiceTempl;
 import ke.tra.com.tsync.utils.annotations.AppConstants;
-import ke.tra.com.tsync.wrappers.ChangePin;
-import ke.tra.com.tsync.wrappers.PosUserWrapper;
+import ke.tra.com.tsync.wrappers.*;
 
-import ke.tra.com.tsync.wrappers.ResponseWrapper;
-import ke.tra.com.tsync.wrappers.UserExistWrapper;
 import lombok.extern.apachecommons.CommonsLog;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
 @CommonsLog
 public class UserService implements UserServiceTempl {
-
-    private final UfsPosUserRepository ufsPosUserRepository;
     private final UfsSysConfigRepository ufsSysConfigRepository;
-    private final TmsDeviceRepository tmsDeviceRepository;
-    private final UfsAuditLogRepository auditLogRepository;
     private final UfsContactPersonRepository contactPersonRepository;
-    private final UfsCustomerOwnersRepository customerOwnersRepository;
+    private final OtpCategoryRepository otpCategoryRepository;
+    private final OtpService otpService;
 
 
 
-
-    public UserService(UfsPosUserRepository ufsPosUserRepository, UfsSysConfigRepository ufsSysConfigRepository, TmsDeviceRepository tmsDeviceRepository, UfsAuditLogRepository auditLogRepository, UfsContactPersonRepository contactPersonRepository, UfsCustomerOwnersRepository customerOwnersRepository) {
-        this.ufsPosUserRepository = ufsPosUserRepository;
+    public UserService(UfsSysConfigRepository ufsSysConfigRepository, UfsContactPersonRepository contactPersonRepository, OtpCategoryRepository otpCategoryRepository, OtpService otpService) {
         this.ufsSysConfigRepository = ufsSysConfigRepository;
-        this.tmsDeviceRepository = tmsDeviceRepository;
         this.contactPersonRepository = contactPersonRepository;
-        this.auditLogRepository = auditLogRepository;
-
-        this.customerOwnersRepository = customerOwnersRepository;
+        this.otpCategoryRepository = otpCategoryRepository;
+        this.otpService = otpService;
     }
+
+    @Value("${communicationBaseUrl}")
+    private String communicationBaseUrl;
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     @Override
     @Transactional
@@ -73,7 +72,8 @@ public class UserService implements UserServiceTempl {
         UfsPosAuditLog auditLog = new UfsPosAuditLog();
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_PIN_CHANGE);
-
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
 
         ResponseWrapper validate = validatePosRequest(posUserWrapper, false, auditLog);
         Optional<UfsPosUser> ufsPosUser = validate.getPosUser();
@@ -130,9 +130,16 @@ public class UserService implements UserServiceTempl {
 
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.FIRST_TIME_LOGIN);
+
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
+
         setLogIpAddress(auditLog);
         try {
             Optional<UfsPosUser> ufsPosUser = validate.getPosUser();
+            log.info(wrapper);
+            log.info(ufsPosUser.get().getPin());
+//            log.info("00000000000w0000000 "+ wrapper.getPin());
             if(validate.getError()){
                 responseWrapper = validate;
             }
@@ -170,42 +177,118 @@ public class UserService implements UserServiceTempl {
 
     @Override
     @Transactional
-    public ResponseWrapper lockUser(ActionWrapper<BigDecimal> accounts) {
+    public ResponseWrapper lockUser(PosUserWrapper wrapper) { // disable user
         ResponseWrapper responseWrapper = new ResponseWrapper();
-        for (BigDecimal id: accounts.getIds()) {
-            UfsPosUser user = ufsPosUserRepository.findById(id).get();
-            user.setActiveStatus(AppConstants.PASS_LOCKED_STATUS);
-            ufsPosUserRepository.save(user);
-        }
-        responseWrapper.setMessage("User account(s) locked successfully");
+        UfsPosAuditLog auditLog = new UfsPosAuditLog();
+        auditLog.setOccurenceTime(new Date());
+        auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
+        // validate Device details
+
+        List <String> doesNotExist = new ArrayList<>();
+        List <UfsPosUser> disable = new ArrayList<>();
+
+        //split the username string at ,
+        String[] usernames = wrapper.getUsername().split(",");
+        Arrays.stream(usernames)
+                .forEach(username->{
+                    ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(username, "NO")
+                            .ifPresentOrElse(user->{
+                                user.setActiveStatus(AppConstants.STATUS_INACTIVE);
+                                user.setPinStatus(AppConstants.PIN_STATUS_INACTIVE);
+                                disable.add(user);
+                            },()->{
+
+                                doesNotExist.add(username);
+                            });
+
+        });
+        return getResponseWrapper(responseWrapper, ufsPosUserRepository, doesNotExist, disable);
+    }
+
+    private ResponseWrapper getResponseWrapper(ResponseWrapper responseWrapper, UfsPosUserRepository ufsPosUserRepository, List<String> doesNotExist, List<UfsPosUser> disable) {
+        try{
+            responseWrapper.setMessage(doesNotExist.isEmpty()?"User(s)  successfully disabled":"Some users were not found "+doesNotExist);
+            responseWrapper.setCode(200);
+            ufsPosUserRepository.saveAll(disable);
+        }catch(Exception ex){
+            responseWrapper.setMessage("An error occurred while persisting disabled uses");
+            responseWrapper.setCode(06);
+                ex.printStackTrace();
+            }
 
         return responseWrapper;
     }
 
+
     @Override
     @Transactional
-    public ResponseWrapper unLockUser(ActionWrapper<BigDecimal> accounts) {
+    public ResponseWrapper unLockUser(PosUserWrapper wrapper) {
         ResponseWrapper responseWrapper = new ResponseWrapper();
-        for (BigDecimal id: accounts.getIds()) {
-            UfsPosUser user = ufsPosUserRepository.findById(id).get();
-            user.setActiveStatus(AppConstants.ACTIVITY_UNLOCK);
-            ufsPosUserRepository.save(user);
+        UfsPosAuditLog auditLog = new UfsPosAuditLog();
+        auditLog.setOccurenceTime(new Date());
+        auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
+        // validate Device details
 
-        }
+        List <String> doesNotExist = new ArrayList<>();
+        List <UfsPosUser> disable = new ArrayList<>();
 
-        responseWrapper.setMessage("User account(s) unlocked successfully");
+        //split the username string at ,
+        String[] usernames = wrapper.getUsername().split(",");
+        Arrays.stream(usernames)
+                .forEach(username->{
+                    ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(username, "NO")
+                            .ifPresentOrElse(user->{
+                                user.setActiveStatus(AppConstants.STATUS_ACTIVE);
+                                user.setPinStatus(AppConstants.PIN_STATUS_ACTIVE);
+                                disable.add(user);
+                            },()->{
 
-        return responseWrapper;
+                                doesNotExist.add(username);
+                            });
+
+                });
+        return getResponseWrapper(responseWrapper, ufsPosUserRepository, doesNotExist, disable);
     }
 
     @Override
     @Transactional
     @Async
-    public ResponseWrapper sendSmsMessage(String phoneNumber, String message) {
-        ResponseWrapper responseWrapper = new ResponseWrapper();
+    public ResponseWrapper sendMessage(EmailAndMessageWrapper request) {
+        UfsSysConfig enableNotification = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration", "Enable Notification");
+        String notification = enableNotification==null ?"No":enableNotification.getValue();
+        ResponseWrapper response = new ResponseWrapper();
+        log.info(">>>>>>>>>>>>>>>>>>ex nn>>>>+++++ "+notification.toUpperCase());
+        switch(notification.toUpperCase()){
+            case "NO":
+                try{
+                    String url = communicationBaseUrl + "/send-email";
+                    response = restTemplate.postForObject(url, request, ResponseWrapper.class);
+                    log.info(">>>>>>>>>>>>>>>>>>>>>>+++++");
 
-        return responseWrapper;
+                    log.info(response.getMessage() + " "+response.getCode());
+                    log.info(url);
+                }catch (RestClientException ex){
+                    log.info(">>>>>>>>>>>>>>>>>>ex>>>>+++++");
+                    log.info(ex.getMessage());
+                    ex.printStackTrace();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            case "YES":
+                log.info("Notification is disabled...");
+                break;
+
+        }
+
+        return response;
     }
+
+
     private void setLogIpAddress(UfsPosAuditLog auditLog){
         try {
             auditLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
@@ -223,7 +306,11 @@ public class UserService implements UserServiceTempl {
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
 
-        // validate Device details
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
+        EmailAndMessageWrapper request = new EmailAndMessageWrapper();
+
+
 
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
 
@@ -243,32 +330,46 @@ public class UserService implements UserServiceTempl {
                     }
                     else if(ufsPosUser.getPinStatus().equalsIgnoreCase(AppConstants.STATUS_INACTIVE)){
 
-                        // lets use Pin status to chack for first time login so that we can use active status if need be to deactivate
+                        // lets use Pin status to check for first time login so that we can use active status if need be to deactivate
                         // user account
                         responseWrapper.setMessage("Login for the first time to activate account");
 
                         responseWrapper.setCode(403);
                     }
                     else if (!encoder.matches(wrapper.getPin(),ufsPosUser.getPin())) {
-                        BigInteger attempts = ufsPosUser.getPinLoginAttemtps();
-
-                        ufsPosUser.setPinLoginAttemtps((attempts != null) ? attempts.add(new BigInteger("1")) : new BigInteger("1"));
-
-
-                        if (ufsPosUser.getPinLoginAttemtps().intValue() == 3) {
+                        UfsSysConfig posPinAttempts = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration","posPinAttempts");
+                        Integer allowedAttempts = Integer.valueOf(posPinAttempts == null ? "30": posPinAttempts.getValue());
+                        BigInteger pinLoginAttempts = ufsPosUser.getPinLoginAttemtps() == null?new BigInteger("0"):ufsPosUser.getPinLoginAttemtps();
+                        if (pinLoginAttempts.intValue() == allowedAttempts.intValue()) {
                             ufsPosUser.setActiveStatus(AppConstants.PASS_LOCKED_STATUS);
+                        }else{
+                            BigInteger attempts = ufsPosUser.getPinLoginAttemtps();
+                            ufsPosUser.setPinLoginAttemtps((attempts != null) ? attempts.add(new BigInteger("1")) : new BigInteger("1"));
                         }
+
 
                         ufsPosUserRepository.save(ufsPosUser);
                         auditLog.setNotes("Wrong Password for " + wrapper.getUsername() );
 
-                        responseWrapper.setMessage("Wrong Password"+ ufsPosUser.getPinStatus());
+                        responseWrapper.setMessage("Wrong Password");
 
                         responseWrapper.setCode(403);
+
 
                     } else {
                         responseWrapper.setMessage(ufsPosUser.getPosRole());
                         responseWrapper.setCode(HttpStatus.OK.value());
+//                        Optional<UfsOtpCategory> otpCategory = otpCategoryRepository.findDistinctByCategoryAndIntrash("Authentication", "NO");
+//                        if(otpCategory.isPresent()){
+//                            String otp = otpService.generateOTP(ufsPosUser, otpCategory.get());
+//                            request.setMessage("Hello, "+ ufsPosUser.getUsername() + ", here is your verification code to complete the login process "+otp);
+//                            request.setMessageType("SMS");
+//                            request.setSendTo("254723135671");
+//                            request.setSubject("Otp");
+//                            sendMessage(request);
+//
+//                            // validate Device details
+//                        }
                         auditLog.setNotes("Login Successfully by "+wrapper.getUsername());
 
                         auditLog.setUserId(ufsPosUser.getPosUserId().longValue());
@@ -305,6 +406,9 @@ public class UserService implements UserServiceTempl {
         auditLog.setEntityName("UfsPosUser");
         auditLog.setClientId(AppConstants.CLIENT_ID);
 
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
+
         try {
             auditLog.setIpAddress(InetAddress.getLocalHost().getHostAddress());
         } catch (UnknownHostException e) {
@@ -329,7 +433,7 @@ public class UserService implements UserServiceTempl {
                         responseWrapper.setMessage("Pos user already exist for " + wrapper.getIdNumber());
                         auditLog.setNotes("Pos user already exist for " + wrapper.getIdNumber());
                         auditLog.setDescription("Pos user already exist for " + wrapper.getIdNumber());
-                    // validate by username
+                        // validate by username
                     } else if (userExist.getUserExistByUsername()){
                         responseWrapper.setCode(409);
                         responseWrapper.setMessage("Pos user already exist for " + wrapper.getUsername());
@@ -339,13 +443,15 @@ public class UserService implements UserServiceTempl {
                     }
                     // passed then proceed to validating tms device
                     else{
+                        TmsDeviceRepository tmsDeviceRepository = SpringContextBridge.services().getTmsDeviceRepo();
+
                         TmsDevice tmsDevice = tmsDeviceRepository.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", AppConstants.STATUS_APPROVED);
 
                         if(Objects.nonNull(tmsDevice)){
                             try{
                                 //if the ufsUserId exists not then create
                                 UfsPosUser user = new UfsPosUser();
-                                String workgroupStr = wrapper.getUfsWorkgroup(); // role
+                                String workgroupStr = wrapper.getWorkgroup(); // role
 
                                 if (workgroupStr != null) {
 
@@ -373,7 +479,6 @@ public class UserService implements UserServiceTempl {
                                     auditLog.setDescription("Pos user " + wrapper.getPhoneNumber() + " created successfully");
                                     responseWrapper.setMessage("Pos user created successfully");
                                     responseWrapper.setCode(200);
-
                                     ufsPosUserRepository.save(user);
                                 }else{
                                     auditLog.setEntityId(String.valueOf(user.getPosUserId()));
@@ -433,6 +538,10 @@ public class UserService implements UserServiceTempl {
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
 
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
+
+
         // validate Device details
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
 
@@ -466,6 +575,9 @@ public class UserService implements UserServiceTempl {
     private UserExistWrapper checkUserExist(PosUserWrapper wrapper) {
         UserExistWrapper userExistWrapper = new UserExistWrapper();
         // lets check if a user exist by the unique username provide during creation
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
+
         ufsPosUserRepository.findByIdNumberAndIntrash(wrapper.getIdNumber(), "NO")
                 .ifPresent((posUser)->{
                     userExistWrapper.setUserExistByIdNumber(true);
@@ -553,7 +665,7 @@ public class UserService implements UserServiceTempl {
     private ResponseWrapper validatePosRequest(PosUserWrapper wrapper, boolean b, UfsPosAuditLog auditLog) {
         // common validator method for members that need its
         // TODO: 03/07/2020 : if possible extend to validate for rogue terminal details.
-
+        log.info("******************---0"+ wrapper.getUsername());
         ResponseWrapper responseWrapper = new ResponseWrapper();
 
         auditLog.setOccurenceTime(new Date());
@@ -561,6 +673,8 @@ public class UserService implements UserServiceTempl {
         auditLog.setEntityName("UfsPosUser");
         auditLog.setClientId(AppConstants.CLIENT_ID);
 
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
+        TmsDeviceRepository tmsRepo = SpringContextBridge.services().getTmsDeviceRepo();
         Optional<UfsPosUser> ufsPosUser = ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(wrapper.getUsername(), "NO");
         ufsPosUser.ifPresent(posUser -> {
             // common to all methods so lets set them at a common place
@@ -609,14 +723,17 @@ public class UserService implements UserServiceTempl {
             responseWrapper.setError(true);
             return responseWrapper;
         }
-        TmsDevice tmsDevice = tmsDeviceRepository.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", "Approved");
+        TmsDevice tmsDevice = tmsRepo.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", "Approved");
+        log.info("****");
 
+        log.info(wrapper.getSerialNumber());
         if (Objects.nonNull(tmsDevice)) {
             try{
                 if (tmsDevice.getOutletId() != null && ufsPosUser.get().getDeviceId() != null) {
+                    log.info("****1");
                     //validate if user belongs to this outlet which the pos terminal belongs
                     if (ufsPosUser.get().getDeviceId().getOutletId() ==  null) {
-
+                        log.info("****2");
                         responseWrapper.setMessage(wrapper.getSerialNumber() + " not attached to any outlet");
                         responseWrapper.setCode(409);
                         auditLog.setNotes("access by " + wrapper.getUsername() + " denied");
@@ -624,6 +741,7 @@ public class UserService implements UserServiceTempl {
                         responseWrapper.setError(true);
                         return responseWrapper;
                     } else if (ufsPosUser.get().getDeviceId().getOutletId() ==  null){
+                        log.info("****3 ");
                         responseWrapper.setMessage("User device not attached to an outlet");
                         responseWrapper.setError(true);
 
@@ -634,7 +752,7 @@ public class UserService implements UserServiceTempl {
 
                     }
                     else if (!ufsPosUser.get().getDeviceId().getOutletId().getId().equals(tmsDevice.getOutletId().getId())) {
-
+                        log.info("**** 4 ");
                         responseWrapper.setMessage(wrapper.getUsername() + " not authorised to access this terminal..");
                         responseWrapper.setCode(403);
                         auditLog.setNotes("access by " + wrapper.getUsername() + "denied");
@@ -643,6 +761,7 @@ public class UserService implements UserServiceTempl {
                         return responseWrapper;
                     }
                 }
+                log.info("**** 5");
 
             }catch (NoSuchElementException ex){
 
@@ -662,7 +781,7 @@ public class UserService implements UserServiceTempl {
 
         } else {
 
-            responseWrapper.setMessage("No Tms device found with the serial number");
+            responseWrapper.setMessage("No Tms device found with the serial number ..*");
             // common to all methods so lets set them at a common place
             auditLog.setNotes("Serial number Not existing");
             auditLog.setDescription("No Tms device found with the serial number " + wrapper.getSerialNumber());
@@ -680,6 +799,9 @@ public class UserService implements UserServiceTempl {
         UfsPosAuditLog auditLog = new UfsPosAuditLog();
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
         ResponseWrapper responseWrapper = new ResponseWrapper();
+
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
+
 
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType("Deletion");
@@ -719,21 +841,25 @@ public class UserService implements UserServiceTempl {
     }
 
     public ResponseWrapper logout(PosUserWrapper wrapper){
+        log.info("---------111----------");
         UfsPosAuditLog auditLog = new UfsPosAuditLog();
         ResponseWrapper validate = validatePosRequest(wrapper, true, auditLog);
         ResponseWrapper responseWrapper = new ResponseWrapper();
+        UfsPosAuditLogRepository auditLogRepository = SpringContextBridge.services().getPosAuditLogRepo();
 
+        log.info("^^^^^^^^^^^^ "+ validate);
         setLogIpAddress(auditLog); // log ip address
 
         auditLog.setOccurenceTime(new Date());
         auditLog.setActivityType("Logout");
 
         if (validate.getError()){
-            return responseWrapper;
+            return validate;
         }else{
             auditLog.setStatus(AppConstants.STATUS_COMPLETED);
             responseWrapper.setCode(200);
             responseWrapper.setMessage("log out was successful");
+
             auditLog.setNotes(wrapper.getUsername() +" log out was successful");
         }
 
@@ -742,18 +868,21 @@ public class UserService implements UserServiceTempl {
     }
 
     private String userDetails(UfsPosUser user){
-        String singleRecord = "" + user.getUsername() +","+ user.getFirstName() + ","+user.getOtherName() +
-                ","+user.getIdNumber() + "," + user.getPhoneNumber() + ","+ user.getPosRole();
+        String singleRecord = "" + user.getUsername() + ","+ user.getPosRole();
         return singleRecord;
     }
 
     @Override
     public ResponseWrapper terminalWasReset(PosUserWrapper wrapper) {
         ResponseWrapper responseWrapper = new ResponseWrapper();
+
+        UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
+
         String users = ufsPosUserRepository.findAll().stream()
                 .map(user->userDetails(user))
                 .collect(Collectors.joining("|"));
         responseWrapper.setMessage(users);
+
         responseWrapper.setCode(200);
 
         return responseWrapper;

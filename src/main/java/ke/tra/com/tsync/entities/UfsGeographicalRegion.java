@@ -87,8 +87,8 @@ public class UfsGeographicalRegion implements Serializable {
     @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID")
     @ManyToOne
     private UfsGeographicalRegion parentId;
-    @OneToMany(mappedBy = "geographRegId")
-    private Collection<TmsDevice> tmsDeviceCollection;
+//    @OneToMany(mappedBy = "geographRegId")
+//    private Collection<TmsDevice> tmsDeviceCollection;
 
     public UfsGeographicalRegion() {
     }
@@ -212,15 +212,15 @@ public class UfsGeographicalRegion implements Serializable {
         this.parentId = parentId;
     }
 
-    @XmlTransient
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public Collection<TmsDevice> getTmsDeviceCollection() {
-        return tmsDeviceCollection;
-    }
-
-    public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
-        this.tmsDeviceCollection = tmsDeviceCollection;
-    }
+//    @XmlTransient
+//    @com.fasterxml.jackson.annotation.JsonIgnore
+//    public Collection<TmsDevice> getTmsDeviceCollection() {
+//        return tmsDeviceCollection;
+//    }
+//
+//    public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
+//        this.tmsDeviceCollection = tmsDeviceCollection;
+//    }
 
     @Override
     public int hashCode() {

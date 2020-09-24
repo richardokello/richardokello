@@ -1,0 +1,16 @@
+43682 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers - 
+~^~^~^^~^~^~^ Server receive request time 24/09/20 09:24:22 912 +0300    MTI  :  1100    procode 000021 ref 242420092422  
+43909 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+43910 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 000021 
+43932 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ++++++++++++ HERE 
+43932 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : PosUserWrapper(firstName=null, otherName=null, idNumber=null, phoneNumber=null, password=null, serialNumber=161277313221017301065310, username=KeSeal, MID=null, TID=null, pin=null, confirmPin=null, terminationReason=null, currentPin=null, tidMids=null, appVersion=null, gender=null, email=null, userAccessCode=null, Workgroup=null) 
+43935 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  STEP INQUIRY  : 1100 F37242420092422 
+45285 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.com.tsync.services.UserService - **** 
+45286 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.com.tsync.services.UserService - 161277313221017301065310 
+45331 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+45370 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+45574 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers - 
+
+ ~^~^~^^~^~^~^ Server Response time 24/09/20 09:24:24 805 +0300    MTI  :  1100    procode 000021  Ref 242420092422  RESPONSE CODE 24 
+
+ 

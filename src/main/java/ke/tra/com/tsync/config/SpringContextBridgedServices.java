@@ -6,6 +6,10 @@
 package ke.tra.com.tsync.config;
 
 
+import ke.tra.com.tsync.repository.PosIrisRepo;
+import ke.tra.com.tsync.repository.TmsDeviceRepository;
+import ke.tra.com.tsync.repository.UfsPosAuditLogRepository;
+import ke.tra.com.tsync.repository.UfsPosUserRepository;
 import ke.tra.com.tsync.services.template.CoreProcessorTemplate;
 
 /**
@@ -13,6 +17,13 @@ import ke.tra.com.tsync.services.template.CoreProcessorTemplate;
  */
 public interface SpringContextBridgedServices {
 
-    public CoreProcessorTemplate getcoreProcessor();
+    CoreProcessorTemplate getcoreProcessor();
+
+    UfsPosUserRepository getPOSUserRepo();
+
+    TmsDeviceRepository getTmsDeviceRepo();
+    PosIrisRepo getPosIrisRepo();
+    UfsPosAuditLogRepository getPosAuditLogRepo();
+
 
 }

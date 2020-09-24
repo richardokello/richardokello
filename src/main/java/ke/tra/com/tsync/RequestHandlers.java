@@ -105,12 +105,13 @@ public class RequestHandlers implements ISORequestListener {
             m = coreProcessor.setResponseDescription(m);
 
             //save to database
-        } catch (Exception e) {
+        } catch (Exception e ) {
+            e.printStackTrace();
             try {
                 logger.error(new String(m.pack()), e);
             } catch (ISOException ex) {
                 logger.error(String.valueOf(ex));
-                //ex.printStackTrace();
+                ex.printStackTrace();
             }
             m.set(72, "REMOTE SYSTEM ERROR DURING PROCESSING");
             e.printStackTrace();

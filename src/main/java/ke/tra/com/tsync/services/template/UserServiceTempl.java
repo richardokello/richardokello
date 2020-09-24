@@ -1,12 +1,10 @@
 package ke.tra.com.tsync.services.template;
 
-
-import ke.tra.com.tsync.entities.wrappers.ActionWrapper;
 import ke.tra.com.tsync.wrappers.ChangePin;
+import ke.tra.com.tsync.wrappers.EmailAndMessageWrapper;
 import ke.tra.com.tsync.wrappers.PosUserWrapper;
 import ke.tra.com.tsync.wrappers.ResponseWrapper;
 
-import java.math.BigDecimal;
 
 public interface UserServiceTempl {
 
@@ -24,26 +22,24 @@ public interface UserServiceTempl {
     ResponseWrapper firstTimeLogin(PosUserWrapper wrapper);
 
     /**
-     * lock pos user
-     * @param accounts
+     * Disable pos user
+     * @param wrapper
      * @return
      */
-    ResponseWrapper lockUser(ActionWrapper<BigDecimal> accounts);
+    ResponseWrapper lockUser(PosUserWrapper wrapper);
 
     /**
      * unlock pos user
-     * @param accounts
+     * @param wrapper
      * @return
      */
-    ResponseWrapper unLockUser(ActionWrapper<BigDecimal> accounts);
+    ResponseWrapper unLockUser(PosUserWrapper wrapper);
 
     /**
      * send sms
-     * @param phoneNumber
-     * @param message
-     * @return
+     * @param request
      */
-    ResponseWrapper sendSmsMessage(String phoneNumber,String message);
+    ResponseWrapper sendMessage(EmailAndMessageWrapper request);
 
     /**
      * login

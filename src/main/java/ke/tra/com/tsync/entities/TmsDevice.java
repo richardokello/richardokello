@@ -111,9 +111,9 @@ public class TmsDevice implements Serializable {
     @JoinColumn(name = "DEVICE_TYPE", referencedColumnName = "DEVICE_TYPE_ID")
     @ManyToOne
     private UfsDeviceType deviceType;
-    @JoinColumn(name = "GEOGRAPH_REG_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsGeographicalRegion geographRegId;
+//    @JoinColumn(name = "GEOGRAPH_REG_ID", referencedColumnName = "ID")
+//    @ManyToOne
+//    private UfsGeographicalRegion geographRegId;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
     @ManyToOne
     private UfsOrganizationUnits tenantId;
@@ -260,13 +260,13 @@ public class TmsDevice implements Serializable {
         this.deviceType = deviceType;
     }
 
-    public UfsGeographicalRegion getGeographRegId() {
-        return geographRegId;
-    }
-
-    public void setGeographRegId(UfsGeographicalRegion geographRegId) {
-        this.geographRegId = geographRegId;
-    }
+//    public UfsGeographicalRegion getGeographRegId() {
+//        return geographRegId;
+//    }
+//
+//    public void setGeographRegId(UfsGeographicalRegion geographRegId) {
+//        this.geographRegId = geographRegId;
+//    }
 
     public UfsOrganizationUnits getTenantId() {
         return tenantId;

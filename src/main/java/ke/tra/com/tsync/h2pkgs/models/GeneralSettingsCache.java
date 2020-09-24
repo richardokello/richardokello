@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Table(name = "GENERAL_SETTINGS_CONFIG_CACHE")
 @Entity
 @Data
 @AllArgsConstructor

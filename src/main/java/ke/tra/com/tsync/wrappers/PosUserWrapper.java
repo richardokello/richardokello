@@ -31,7 +31,7 @@ public class PosUserWrapper {
     private Integer gender;
     private String email;
     private String userAccessCode;
-    private String ufsWorkgroup; // refered as pos user role on the db
+    private String Workgroup;; // refered as pos user role on the db
 
 
 }
