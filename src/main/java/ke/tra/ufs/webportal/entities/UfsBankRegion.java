@@ -6,6 +6,8 @@
 package ke.tra.ufs.webportal.entities;
 
 import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Searchable;
 import ke.axle.chassis.annotations.TreeRoot;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
@@ -40,13 +42,21 @@ import java.util.Set;
         , @NamedQuery(name = "UfsBankRegion.findByIntrash", query = "SELECT u FROM UfsBankRegion u WHERE u.intrash = :intrash")})
 public class UfsBankRegion implements Serializable {
 
+
+    @Searchable
+    @Filter
+    @ModifiableField
     @Size(max = 100)
     @Column(name = "REGION_NAME")
     private String regionName;
     @Size(max = 20)
+    @Searchable
+    @Filter
+    @ModifiableField
     @Column(name = "CODE")
     private String code;
     @Size(max = 15)
+    @Filter
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
@@ -54,17 +64,9 @@ public class UfsBankRegion implements Serializable {
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 3)
+    @Filter
     @Column(name = "INTRASH")
     private String intrash;
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
-//    @com.fasterxml.jackson.annotation.JsonIgnore
-//    private Set<UfsBankBranches> ufsBankBranchesSet;
-//    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID",insertable = false,updatable = false)
-//    @ManyToOne(optional = true)
-//    @com.fasterxml.jackson.annotation.JsonIgnore
-//    private UfsBanks bankId;
-//    @Column(name = "BANK_ID")
-//    private BigDecimal bankIds;
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -84,6 +86,7 @@ public class UfsBankRegion implements Serializable {
     @Column(name = "ID")
     private BigDecimal id;
     @Column(name = "IS_PARENT")
+    @ModifiableField
     private Short isParent;
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -103,6 +106,7 @@ public class UfsBankRegion implements Serializable {
     @TreeRoot
     private Long parentIds;
     @Filter
+    @ModifiableField
     @Column(name = "TENANT_ID")
     private String tenantIds;
     @Transient
@@ -218,13 +222,6 @@ public class UfsBankRegion implements Serializable {
         this.text = text;
     }
 
-//    public BigDecimal getBankIds() {
-//        return bankIds;
-//    }
-//
-//    public void setBankIds(BigDecimal bankIds) {
-//        this.bankIds = bankIds;
-//    }
 
     @Override
     public int hashCode() {
@@ -252,23 +249,6 @@ public class UfsBankRegion implements Serializable {
     }
 
 
-//    @XmlTransient
-//    @JsonIgnore
-//    public Set<UfsBankBranches> getUfsBankBranchesSet() {
-//        return ufsBankBranchesSet;
-//    }
-//
-//    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
-//        this.ufsBankBranchesSet = ufsBankBranchesSet;
-//    }
-
-//    public UfsBanks getBankId() {
-//        return bankId;
-//    }
-//
-//    public void setBankId(UfsBanks bankId) {
-//        this.bankId = bankId;
-//    }
 
 
     public String getCode() {
