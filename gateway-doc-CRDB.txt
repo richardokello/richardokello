@@ -67,17 +67,37 @@ case 000121:  processing codes( field 3)
 
 Response Code from Gateway(field 39) on field 39 and response message
 00 => Success
-03 => Forbidden/Unauthorised/ Incorrect PiN
+01 => invalid login credentials/Incorrect PiN/password
+02 => user with ID number exist
+03 => Forbidden
 04 => Not found eg user not found on login(username non existing)
-05 => X!=Y when X should be equal to Y eg When Confirm Pin Not equal to Pin(IF validation can happen on POS then Fine)
+05 => Pin And Confirm pin does not match
 06 System error eg internal server error
-07 => Null values
-08 => BAD Request
-09 => Conflicting state eg Trying to create two users with same phone contact.
+07 => field 47 missing
+08 =>
+09 => user with user name already exist
+11 = > pos role missing.
+12 => Duplicate records while performing database query(Bad data in db)
+13 => username is null
+14 => first name missing
+15 => Other name(s) missing
+16 => confirm pin missing
+17 => Id Number Missing
+18 => Account is deactivated
 23 => Account locked(When pin is entered more than the allowable times)
+26 => serial number missing
+27 => A user does not exist with this username
+28 => user not attached to an outlet
+29 => Terminal not attached to any outlet
+30 => No terminal was found/the terminal not approved/terminal deleted
+31 => Account is inactive
+32 => Some users accounts were not deactivated/ activated(partial success when locking or unlocking the accounts)
+33 => Login for the first time
+34 => user does not belong to the same outlet as the terminal
 51 => Wrong processing code was sent(that which does not exist)
 41 => TID missing
 42 => MID missing
+53 => REMOTE SYSTEM UNAVAILABLE
 
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

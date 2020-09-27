@@ -5,11 +5,9 @@ import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 import ke.tra.com.tsync.packager.TracomPackager;
 import org.jpos.iso.ISOPackager;
@@ -26,8 +24,8 @@ public class TestClass {
         try {
             ISOPackager packager = new TracomPackager();
             ISOMsg isoMsg;
-            //isoMsg = posUserCreation();
-            isoMsg = logout();
+            isoMsg = posUserCreation();
+            //isoMsg = logout();
             //isoMsg = deletePosUser();
            //isoMsg = posUserLogin();
             //isoMsg = firstTimePosUserLogin();
@@ -55,8 +53,8 @@ public class TestClass {
             byte[] data = isoMsg.pack();
             System.out.println(ISOUtil.hexdump(data));
             String server;
-            server = "127.0.0.1";
-            //server = "41.215.130.247";
+            //server = "127.0.0.1";
+            server = "41.215.130.247";
             //BaseChannel channel = new NCCChannel(ip, port, packager, TPDU);
             NACChannel channel = new NACChannel(server, 4123, packager, TPDU);
             //ISOChannel channel = new NCCChannel(ip, port, packager, TPDU);
@@ -102,8 +100,8 @@ public class TestClass {
         msg.set(11, "000010"); // System trace audit number (STAN)
         msg.set(41, "PO400001"); // Card acceptor terminal identification
         msg.set(42, "100000RW0010408"); // 	Card acceptor identification code
-        //msg.set(47, "02500811111111026024161277313221017301065310030008CuulKid2031007collins032016colo12@gmail.com03301007122781910340082901000103500411230360040000037008Merchant0400049991039005troon");; // additional data
-        msg.set(47, "02602416169731322101730110414230003Dee031001m033010071483328403401012345678900360041111037010Supervisor039001e0400041111026024161697313221017301104142030003Dee031001m03301007148332840340101234567890036003000037010Supervisor039001e0400041111");
+        msg.set(47, "02500811111111026024161277313221017301065310030008CuulKid2031007collins032016colo12@gmail.com03301007122781910340082901000103500411230360040000037008Merchant0400049991039005troon");; // additional data
+        //msg.set(47, "02602416169731322101730110414230003Dee031001m033010071483328403401012345678900360041111037010Supervisor039001e0400041111026024161697313221017301104142030003Dee031001m03301007148332840340101234567890036003000037010Supervisor039001e0400041111");
         System.out.println(msg);
         return msg;
     }
@@ -154,7 +152,7 @@ public class TestClass {
         msg.set(11, "01000"); // system trace audit number (STAN)
         msg.set(41, "PO400001"); // TID
         msg.set(42, "100000RW0010408"); //MID
-        msg.set(47, "026024161277313221017301065310030012KeSeal,troon"); // data
+        msg.set(47, "026024161277313221017301065310030018KeSeal,troon,nyule"); // data
 
         return msg;
     }

@@ -26,14 +26,14 @@ public interface UserServiceTempl {
      * @param wrapper
      * @return
      */
-    ResponseWrapper lockUser(PosUserWrapper wrapper);
+    ResponseWrapper enableUser(PosUserWrapper wrapper);
 
     /**
      * unlock pos user
      * @param wrapper
      * @return
      */
-    ResponseWrapper unLockUser(PosUserWrapper wrapper);
+    ResponseWrapper disableUsers(PosUserWrapper wrapper);
 
     /**
      * send sms

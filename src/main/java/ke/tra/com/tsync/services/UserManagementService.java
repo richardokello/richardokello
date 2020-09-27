@@ -41,7 +41,7 @@ public class UserManagementService implements UserManagementTmpl {
           //  ulr = myRestTemplate.postForObject(usermanagementloginurl, logReq, LoginesponseWrapper.class);
         } catch (RestClientException e) {
             if (e instanceof ResourceAccessException) {
-                ulr.setCode(503);
+                ulr.setCode(53);
                 ulr.setMessage("REMOTE SYSTEM UNAVAILABLE");
             }
             e.printStackTrace();
@@ -166,18 +166,12 @@ public class UserManagementService implements UserManagementTmpl {
                 isoMsg.set(39, "00");
                 isoMsg.set(47, responseWrapper.getMessage());
             }
-            else if(code == 409){
-                isoMsg.set(39, "09"); // user exist
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
+
             else if(code == 400){
                 isoMsg.set(39, "08"); // bad request
                 isoMsg.set(47, responseWrapper.getMessage());
             }
-            else if(code == 403){
-                isoMsg.set(47, responseWrapper.getMessage());
-                isoMsg.set(39, "03"); // forbidden
-            }
+
             else{
 
                 if(Integer.toString(responseWrapper.getCode()).strip().length()>2){
@@ -217,22 +211,12 @@ public class UserManagementService implements UserManagementTmpl {
 
         try {
 
-            //don not honor response code=>05
-
             responseWrapper = userService.login(wrapper);
 
             Integer code = Integer.valueOf(responseWrapper.getCode());
-            System.out.println("-------------------------+ "+responseWrapper.getCode());
-            System.out.println(responseWrapper.getData());
-            System.out.println(responseWrapper.getMessage());
 
 
-            if(code == 400){
-                isomsg.set(39, "08");
-                isomsg.set(47, responseWrapper.getMessage());
-            }
-
-            else if(code == 200){
+            if(code == 200){
                 isomsg.set(39, "00"); // login success
                 isomsg.set(47, responseWrapper.getMessage());
             } else{
@@ -247,10 +231,7 @@ public class UserManagementService implements UserManagementTmpl {
 
         } catch (Exception e) {
 
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            isomsg.set(39,"06");
-            isomsg.set(47, "System error");
+            handleException(isomsg, e);
 
         }
 
@@ -330,43 +311,33 @@ public class UserManagementService implements UserManagementTmpl {
 //        if (posmessage[0] != null)
 //            isomsg.set(72, posmessage[0]);
 //        return isomsg;
+
     }
 
     @Override
     public ISOMsg deleteUser(ISOMsg isoMsg, PosUserWrapper wrapper){
 
         ResponseWrapper responseWrapper = new ResponseWrapper();
+        try {
+            responseWrapper = userService.deletePosUser(wrapper);
+            Integer code = Integer.valueOf(responseWrapper.getCode());
 
-        responseWrapper = userService.deletePosUser(wrapper);
-        Integer code = Integer.valueOf(responseWrapper.getCode());
+            if (code == 00) {
+                isoMsg.set(39, "00");
+                isoMsg.set(47, responseWrapper.getMessage());
+            } else {
+                if (Integer.toString(responseWrapper.getCode()).trim().length() > 2) {
+                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1, 3));
+                } else {
+                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
+                }
 
-        if(code == 00){
-            isoMsg.set(39, "00");
-            isoMsg.set(47, responseWrapper.getMessage());
-        }
-        if(code == 409){
-            isoMsg.set(39, "09"); // user exist
-            isoMsg.set(47, responseWrapper.getMessage());
-        }
-        if(code == 400){
-            isoMsg.set(39, "08"); // bad request
-            isoMsg.set(47, responseWrapper.getMessage());
-        }
-        if(code == 403){
-            isoMsg.set(39, "03"); // forbidden
-            isoMsg.set(47, responseWrapper.getMessage());
-        }
-        else{
-            System.out.println(responseWrapper.getCode());
-            if(Integer.toString(responseWrapper.getCode()).trim().length()>2){
-                isoMsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1,3));
-            }else{
-                isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
+                isoMsg.set(47, responseWrapper.getMessage());
             }
-
-            isoMsg.set(47, responseWrapper.getMessage());
+        }catch(Exception ex){
+            handleException(isoMsg, ex);
         }
-        System.out.println(responseWrapper.getMessage());
+
         return isoMsg;
 
     }
@@ -383,10 +354,6 @@ public class UserManagementService implements UserManagementTmpl {
                 isoMsg.set(39, "00");
                 isoMsg.set(47, responseWrapper.getMessage());
             }
-            if(code == 400){
-                isoMsg.set(39, "08"); // bad request
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
             else{
                 isoMsg.set(47,responseWrapper.getMessage());
                 if(Integer.toString(responseWrapper.getCode()).trim().length()>2){
@@ -395,18 +362,16 @@ public class UserManagementService implements UserManagementTmpl {
                     isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
                 }
             }
-            System.out.println(responseWrapper.getMessage());
+
         }catch (Exception e){
-            isoMsg.set(39, "06"); // system error
-            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
-            e.printStackTrace();
+            handleException(isoMsg, e);
+
         }
 
         return isoMsg;
     }
     public  ISOMsg logout (ISOMsg isoMsg, PosUserWrapper wrapper){
         usemanagelog.info("---------000----------");
-
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try{
             responseWrapper = userService.logout(wrapper);
@@ -421,9 +386,7 @@ public class UserManagementService implements UserManagementTmpl {
             }
             System.out.println(responseWrapper.getMessage());
         }catch (Exception e){
-            isoMsg.set(39, "06"); // system error
-            usemanagelog.error("System error while on logout", e.getMessage());
-            e.printStackTrace();
+            handleException(isoMsg, e);
         }
         return isoMsg;
 
@@ -448,9 +411,7 @@ public class UserManagementService implements UserManagementTmpl {
                 setResponse(isoMsg, responseWrapper);
             }
         }catch (Exception e){
-            isoMsg.set(39, "06"); // system error
-            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
-            e.printStackTrace();
+            handleException(isoMsg, e);
         }
         return isoMsg;
     }
@@ -458,7 +419,7 @@ public class UserManagementService implements UserManagementTmpl {
     public ISOMsg disableUsers(ISOMsg isoMsg, PosUserWrapper wrapper){
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try{
-            responseWrapper = userService.lockUser(wrapper);
+            responseWrapper = userService.disableUsers(wrapper);
             Integer code = Integer.valueOf(responseWrapper.getCode());
             if(code == 200){
                 isoMsg.set(39, "00");
@@ -467,11 +428,28 @@ public class UserManagementService implements UserManagementTmpl {
             else{
                 setResponse(isoMsg, responseWrapper);
             }
-            System.out.println(responseWrapper.getMessage());
         }catch (Exception e){
             isoMsg.set(39, "06"); // system error
-            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
-            e.printStackTrace();
+            handleException(isoMsg, e);
+
+        }
+        return isoMsg;
+    }
+
+    public ISOMsg enableUser(ISOMsg isoMsg, PosUserWrapper wrapper){
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+        try{
+            responseWrapper = userService.enableUser(wrapper);
+            Integer code = Integer.valueOf(responseWrapper.getCode());
+            if(code == 200){
+                isoMsg.set(39, "00");
+                isoMsg.set(47, responseWrapper.getMessage());
+            }
+            else{
+                setResponse(isoMsg, responseWrapper);
+            }
+        }catch (Exception e){
+            handleException(isoMsg, e);
         }
         return isoMsg;
     }
@@ -512,5 +490,12 @@ public class UserManagementService implements UserManagementTmpl {
             isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
             isoMsg.set(47, responseWrapper.getMessage());
         }
+    }
+
+    private void handleException(ISOMsg msg, Exception e){
+        msg.set(39, "06"); // system error
+        usemanagelog.error("System error ", e.getMessage());
+        msg.set(47, "System Error Occurred");
+        e.printStackTrace();
     }
 }

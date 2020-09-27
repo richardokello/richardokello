@@ -80,20 +80,19 @@ public class UserService implements UserServiceTempl {
 
         try {
             if(validate.getError()){
-                responseWrapper = validate;
                 auditLogRepository.save(auditLog);
-                return responseWrapper;
+                return validate;
             }
 
             if (ufsPosUser.get().getPinStatus().equalsIgnoreCase(AppConstants.PIN_STATUS_INACTIVE) || ufsPosUser.get().getActiveStatus().equalsIgnoreCase(AppConstants.STATUS_INACTIVE)) {
-                responseWrapper.setMessage("Please Login For The First Time");
+                responseWrapper.setMessage("Account is inactive");
                 auditLog.setNotes("Pin status "+AppConstants.PIN_STATUS_INACTIVE + "+ User status "+AppConstants.STATUS_INACTIVE);
-                responseWrapper.setCode(HttpStatus.BAD_REQUEST.value());
+                responseWrapper.setCode(31);
 
             }
 
             else if (!encoder.matches(wrapper.getPin(), ufsPosUser.get().getPin())) {
-                responseWrapper.setCode(HttpStatus.FORBIDDEN.value());
+                responseWrapper.setCode(01);
                 responseWrapper.setMessage("Invalid Old Password");
                 auditLog.setNotes("Invalid Old Password");
 
@@ -145,7 +144,7 @@ public class UserService implements UserServiceTempl {
             }
 
             else if (!encoder.matches(wrapper.getPin(), ufsPosUser.get().getPin())) {
-                responseWrapper.setCode(403);
+                responseWrapper.setCode(01);
                 responseWrapper.setMessage("Wrong Password");
                 auditLog.setNotes("Wrong Password");
 
@@ -177,7 +176,7 @@ public class UserService implements UserServiceTempl {
 
     @Override
     @Transactional
-    public ResponseWrapper lockUser(PosUserWrapper wrapper) { // disable user
+    public ResponseWrapper enableUser(PosUserWrapper wrapper) { // deactivate user
         ResponseWrapper responseWrapper = new ResponseWrapper();
         UfsPosAuditLog auditLog = new UfsPosAuditLog();
         auditLog.setOccurenceTime(new Date());
@@ -187,31 +186,43 @@ public class UserService implements UserServiceTempl {
         // validate Device details
 
         List <String> doesNotExist = new ArrayList<>();
-        List <UfsPosUser> disable = new ArrayList<>();
+        List <UfsPosUser> enable = new ArrayList<>();
 
         //split the username string at ,
-        String[] usernames = wrapper.getUsername().split(",");
-        Arrays.stream(usernames)
-                .forEach(username->{
-                    ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(username, "NO")
-                            .ifPresentOrElse(user->{
-                                user.setActiveStatus(AppConstants.STATUS_INACTIVE);
-                                user.setPinStatus(AppConstants.PIN_STATUS_INACTIVE);
-                                disable.add(user);
-                            },()->{
+        try {
+            String[] usernames = wrapper.getUsername().split(",");
+            Arrays.stream(usernames)
+                    .forEach(username -> {
+                        ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(username, "NO")
+                                .ifPresentOrElse(user -> {
+                                    user.setActiveStatus(AppConstants.STATUS_ACTIVE);
+                                    user.setPinStatus(AppConstants.STATUS_ACTIVE);
+                                    enable.add(user);
+                                }, () -> {
 
-                                doesNotExist.add(username);
-                            });
+                                    doesNotExist.add(username);
+                                });
 
-        });
-        return getResponseWrapper(responseWrapper, ufsPosUserRepository, doesNotExist, disable);
+                    });
+            return getResponseWrapper(responseWrapper, ufsPosUserRepository, doesNotExist, enable);
+        }catch(Exception e){
+            responseWrapper.setCode(06);
+            responseWrapper.setMessage("System error occurred");
+//            auditLog.setActivityType();
+            return responseWrapper;
+
+        }
+
     }
 
     private ResponseWrapper getResponseWrapper(ResponseWrapper responseWrapper, UfsPosUserRepository ufsPosUserRepository, List<String> doesNotExist, List<UfsPosUser> disable) {
         try{
-            responseWrapper.setMessage(doesNotExist.isEmpty()?"User(s)  successfully disabled":"Some users were not found "+doesNotExist);
+            responseWrapper.setMessage(doesNotExist.isEmpty()?"Action was successful":"Some users were not found: "+doesNotExist.stream()
+                    .collect(Collectors.joining(","))
+            );
             responseWrapper.setCode(200);
-            ufsPosUserRepository.saveAll(disable);
+            if(!disable.isEmpty()) ufsPosUserRepository.saveAll(disable);
+            if(!doesNotExist.isEmpty()) responseWrapper.setCode(32);
         }catch(Exception ex){
             responseWrapper.setMessage("An error occurred while persisting disabled uses");
             responseWrapper.setCode(06);
@@ -224,7 +235,7 @@ public class UserService implements UserServiceTempl {
 
     @Override
     @Transactional
-    public ResponseWrapper unLockUser(PosUserWrapper wrapper) {
+    public ResponseWrapper disableUsers(PosUserWrapper wrapper) {
         ResponseWrapper responseWrapper = new ResponseWrapper();
         UfsPosAuditLog auditLog = new UfsPosAuditLog();
         auditLog.setOccurenceTime(new Date());
@@ -242,7 +253,7 @@ public class UserService implements UserServiceTempl {
                 .forEach(username->{
                     ufsPosUserRepository.findByUsernameIgnoreCaseAndIntrash(username, "NO")
                             .ifPresentOrElse(user->{
-                                user.setActiveStatus(AppConstants.STATUS_ACTIVE);
+                                user.setActiveStatus(AppConstants.STATUS_DEACTIVATED);
                                 user.setPinStatus(AppConstants.PIN_STATUS_ACTIVE);
                                 disable.add(user);
                             },()->{
@@ -328,13 +339,14 @@ public class UserService implements UserServiceTempl {
                         auditLog.setNotes("Account Locked for "+wrapper.getUsername());
 
                     }
+
                     else if(ufsPosUser.getPinStatus().equalsIgnoreCase(AppConstants.STATUS_INACTIVE)){
 
                         // lets use Pin status to check for first time login so that we can use active status if need be to deactivate
                         // user account
                         responseWrapper.setMessage("Login for the first time to activate account");
 
-                        responseWrapper.setCode(403);
+                        responseWrapper.setCode(33); // login for the first time code
                     }
                     else if (!encoder.matches(wrapper.getPin(),ufsPosUser.getPin())) {
                         UfsSysConfig posPinAttempts = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration","posPinAttempts");
@@ -353,7 +365,7 @@ public class UserService implements UserServiceTempl {
 
                         responseWrapper.setMessage("Wrong Password");
 
-                        responseWrapper.setCode(403);
+                        responseWrapper.setCode(01);
 
 
                     } else {
@@ -385,7 +397,7 @@ public class UserService implements UserServiceTempl {
                 ()->{
                     auditLog.setNotes("No user found by " + wrapper.getUsername());
                     responseWrapper.setMessage("No user found by.. " + wrapper.getUsername());
-                    responseWrapper.setCode(404);
+                    responseWrapper.setCode(27);
                 }
 
         );
@@ -429,7 +441,7 @@ public class UserService implements UserServiceTempl {
                     UserExistWrapper userExist = checkUserExist(wrapper);
                     // Validate user by ID
                     if(userExist.getUserExistByIdNumber()){
-                        responseWrapper.setCode(409);
+                        responseWrapper.setCode(402);
                         responseWrapper.setMessage("Pos user already exist for " + wrapper.getIdNumber());
                         auditLog.setNotes("Pos user already exist for " + wrapper.getIdNumber());
                         auditLog.setDescription("Pos user already exist for " + wrapper.getIdNumber());
@@ -485,7 +497,7 @@ public class UserService implements UserServiceTempl {
                                     auditLog.setNotes("Provide role");
 
                                     responseWrapper.setMessage("Provide user role");
-                                    responseWrapper.setCode(400);
+                                    responseWrapper.setCode(11);
                                 }
                             }catch (NullPointerException ex){
                                 ex.printStackTrace();
@@ -501,14 +513,14 @@ public class UserService implements UserServiceTempl {
                             // dont create user since this terminal does not belong
                             responseWrapper.setMessage("No Tms device found with the serial number");
                             auditLog.setNotes("No Tms device found with the serial number"+ wrapper.getSerialNumber());
-                            responseWrapper.setCode(404);
+                            responseWrapper.setCode(30);
                         }
 
                     }
 
                 } catch (IncorrectResultSizeDataAccessException e) {
                     e.printStackTrace();
-                    responseWrapper.setCode(409);
+                    responseWrapper.setCode(12);
                     auditLog.setDescription("Either more that two devices have the same serial number or user creation failed due to duplicate username or Id number ");
                     auditLog.setNotes("Duplicate records");
                     responseWrapper.setMessage(e.getMessage());
@@ -516,13 +528,12 @@ public class UserService implements UserServiceTempl {
             }
 
 
-
         } catch (DataIntegrityViolationException ex){
             ex.printStackTrace();
             log.error(ex.getMessage());
             responseWrapper.setCode(06);
             auditLog.setDescription("System error when trying to create User from terminal with serial No "+wrapper.getSerialNumber());
-            responseWrapper.setMessage("Request could not be processed");
+            responseWrapper.setMessage("Request could not be processed due to" + ex.getMessage());
         }
 
         auditLogRepository.save(auditLog);
@@ -548,7 +559,7 @@ public class UserService implements UserServiceTempl {
         if(validate.getError()){
             responseWrapper = validate;
 
-        }else {
+        } else {
             UfsSysConfig ufsSysConfig = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration","posPin");
             Optional<UfsPosUser> user = validate.getPosUser();
 
@@ -597,27 +608,27 @@ public class UserService implements UserServiceTempl {
         // validation for first name
 
         if (wrapper.getFirstName() == null){
-            responseWrapper.setCode(400);
+            responseWrapper.setCode(14);
             responseWrapper.setMessage("first name missing");
             auditLog.setNotes("first name missing");
             responseWrapper.setError(true);
 
         }
         else if (wrapper.getOtherName() == null){
-            responseWrapper.setCode(400);
+            responseWrapper.setCode(15);
             auditLog.setNotes("other name(s) missing");
             responseWrapper.setMessage("other name(s) missing");
             responseWrapper.setError(true);
 
         }
         else if  (wrapper.getConfirmPin() == null){
-            responseWrapper.setCode(400);
+            responseWrapper.setCode(16);
             responseWrapper.setMessage("pin/password missing");
             responseWrapper.setError(true);
 
         }
         else if  (wrapper.getIdNumber() == null){
-            responseWrapper.setCode(400);
+            responseWrapper.setCode(17);
             responseWrapper.setMessage("Id number missing");
             responseWrapper.setError(true);
 
@@ -698,7 +709,7 @@ public class UserService implements UserServiceTempl {
                 responseWrapper.setError(true);
                 responseWrapper.setMessage("username cannot be null.");
                 auditLog.setDescription("Username is null");
-                responseWrapper.setCode(07);
+                responseWrapper.setCode(13);
                 return responseWrapper;
             }
         }
@@ -719,13 +730,25 @@ public class UserService implements UserServiceTempl {
             // common to all methods so lets set them at a common place
             responseWrapper.setMessage("User with username " + wrapper.getUsername() + " Not found");
             auditLog.setNotes("User with username " + wrapper.getUsername() + " Not found");
-            responseWrapper.setCode(404);
+            responseWrapper.setCode(27);
             responseWrapper.setError(true);
             return responseWrapper;
         }
-        TmsDevice tmsDevice = tmsRepo.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", "Approved");
-        log.info("****");
 
+
+        TmsDevice tmsDevice;
+        try{
+            tmsDevice = tmsRepo.findBySerialNoAndIntrashAndActionStatus(wrapper.getSerialNumber(), "NO", "Approved");
+//            tmsDevice1 = tmsRepo.findBySer
+        }catch (NoSuchElementException e){
+            responseWrapper.setError(true);
+            responseWrapper.setCode(27);
+            auditLog.setNotes("User with username "+wrapper.getUsername() + "Not found");
+            responseWrapper.setMessage("User with username "+wrapper.getUsername() + " Not found");
+            return responseWrapper;
+        }
+
+        log.info("****");
         log.info(wrapper.getSerialNumber());
         if (Objects.nonNull(tmsDevice)) {
             try{
@@ -735,41 +758,34 @@ public class UserService implements UserServiceTempl {
                     if (ufsPosUser.get().getDeviceId().getOutletId() ==  null) {
                         log.info("****2");
                         responseWrapper.setMessage(wrapper.getSerialNumber() + " not attached to any outlet");
-                        responseWrapper.setCode(409);
-                        auditLog.setNotes("access by " + wrapper.getUsername() + " denied");
-                        auditLog.setDescription(wrapper.getUsername() + " User not authorised to access terminal with serial number:" + wrapper.getSerialNumber()+ " Device not attached to any outlet");
+                        responseWrapper.setCode(28);
+                        auditLog.setNotes(wrapper.getSerialNumber() + " not attached to any outlet");
+                        auditLog.setDescription(wrapper.getUsername() + " not authorised to access terminal with serial number:" + wrapper.getSerialNumber()+ " Device not attached to any outlet");
                         responseWrapper.setError(true);
                         return responseWrapper;
                     } else if (ufsPosUser.get().getDeviceId().getOutletId() ==  null){
                         log.info("****3 ");
-                        responseWrapper.setMessage("User device not attached to an outlet");
+                        responseWrapper.setMessage("terminal device not attached to an outlet");
                         responseWrapper.setError(true);
 
-                        responseWrapper.setCode(409);
-                        auditLog.setNotes( "User device not attached to an outlet " );
-                        auditLog.setDescription("");
+                        responseWrapper.setCode(29);
+                        auditLog.setNotes( "Orphan terminal " );
+                        auditLog.setDescription("Terminal device not attached to an outlet");
                         return responseWrapper;
 
                     }
                     else if (!ufsPosUser.get().getDeviceId().getOutletId().getId().equals(tmsDevice.getOutletId().getId())) {
                         log.info("**** 4 ");
-                        responseWrapper.setMessage(wrapper.getUsername() + " not authorised to access this terminal..");
-                        responseWrapper.setCode(403);
-                        auditLog.setNotes("access by " + wrapper.getUsername() + "denied");
-                        auditLog.setDescription(wrapper.getUsername() + " User not authorised to access terminal with serial number:" + wrapper.getSerialNumber());
+                        responseWrapper.setMessage(wrapper.getUsername() + " does not belong to "+tmsDevice.getOutletId().getOutletName() + " outlet");
+                        responseWrapper.setCode(34);
+                        auditLog.setNotes("access by " + wrapper.getUsername() + " denied");
+                        auditLog.setDescription(wrapper.getUsername() + " does not belong to "+tmsDevice.getOutletId().getOutletName() + " outlet");
                         responseWrapper.setError(true);
                         return responseWrapper;
                     }
                 }
                 log.info("**** 5");
 
-            }catch (NoSuchElementException ex){
-
-                responseWrapper.setError(true);
-                responseWrapper.setCode(404);
-                auditLog.setNotes("User with username "+wrapper.getUsername() + "Not found");
-                responseWrapper.setMessage("User with username "+wrapper.getUsername() + " Not found");
-                return responseWrapper;
             }catch (NullPointerException ex){
                 ex.printStackTrace();
                 responseWrapper.setError(true);
@@ -781,11 +797,11 @@ public class UserService implements UserServiceTempl {
 
         } else {
 
-            responseWrapper.setMessage("No Tms device found with the serial number ..*");
+            responseWrapper.setMessage("This Terminal device is not authorised to transact, its either deleted or not approved yet.");
             // common to all methods so lets set them at a common place
-            auditLog.setNotes("Serial number Not existing");
-            auditLog.setDescription("No Tms device found with the serial number " + wrapper.getSerialNumber());
-            responseWrapper.setCode(404);
+            auditLog.setNotes("Unauthorised to transact");
+            auditLog.setDescription("This Terminal device is not authorised to transact, its either deleted or not approved yet. Device SNO " + wrapper.getSerialNumber());
+            responseWrapper.setCode(30);
             responseWrapper.setError(true);
             return responseWrapper;
 

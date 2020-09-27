@@ -209,6 +209,9 @@ public class AppConstants {
     public static final String PIN_STATUS_ACTIVE = "Active";
     public static final String PIN_STATUS_INACTIVE = "Inactive";
 
+    //Account disabled
+    public static final String ACCOUNT_DISABLED = "Disabled";
+
     //pos User constants
     public static final String POS_USER_TYPE = "Pos Agent";
     public static final String POS_USER_GENDER = "OTHER";

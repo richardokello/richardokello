@@ -59,6 +59,9 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
             case "000120":
                 userManagementService.disableUsers(isoMsg, wrapper);
                 break;
+            case  "000121":
+                isoMsg = userManagementService.enableUser(isoMsg, wrapper);
+                break;
 
             case "011113":
 

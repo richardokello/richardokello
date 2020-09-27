@@ -6,23 +6,18 @@ import ke.tra.com.tsync.services.crdb.CRDBPipService;
 import org.jpos.q2.Q2;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 import java.util.Date;
 
 @EnableAsync
@@ -63,45 +58,16 @@ public class TsyncApplication {
     @PostConstruct
     private void initAppCfgs(){
         initDb();
-//        getSessionKeyIni();
+        getSessionKeyIni();
     }
 
     private void initDb() {
 
         //insert sample values
-        System.out.println(String.format("****** Creating table: {} s, and Inserting switch crdb_session_str   updated settings ******", "GENERALSETTINGSCACHE"));
-        String sqlStatements[] = {
-                "drop table GENERALSETTINGSCACHE if exists",
-                "create table GENERALSETTINGSCACHE(id int,crdb_session_str varchar(100),updated boolean)",
-                "insert into GENERALSETTINGSCACHE(id, crdb_session_str,updated) values(1,'NA',false)",
-        };
+        gatewaySettingsCacheRepo.deleteAll();
+        GeneralSettingsCache gs = new GeneralSettingsCache(1,"NA",false);
+        gatewaySettingsCacheRepo.save(gs);
 
-        String insert = "insert into GENERAL_SETTINGS_CONFIG_CACHE(id, crdb_session_str,updated) values(1,'NA',false)";
-        try {
-            jdbcTemplate.execute("drop table GENERAL_SETTINGS_CONFIG_CACHE(id int,crdb_session_str varchar(100),updated boolean)");
-        }catch (Exception ex){
-            logger.info("table does not exist, just create a new one  "+ex.getMessage());
-        }
-        try {
-            jdbcTemplate.execute("create table GENERAL_SETTINGS_CONFIG_CACHE(id integer, name varchar(100))");
-        }catch(Exception e){
-            logger.info("error creating table  "+e.getMessage());
-        }
-
-
-//        System.out.println(String.format("****** Fetching from table: %s ******", "GENERALSETTINGSCACHE"));
-//        jdbcTemplate.query("select id,crdb_session_str,updated from GENERAL_SETTINGS_CONFIG_CACHE",
-//            (rs, i) -> {
-//                System.out.printf(
-//                        String.format("\nid:%s, crdb_session_str:%s, updated:%s  ",
-//                        rs.getString("id"),
-//                        rs.getString("crdb_session_str"),
-//                        rs.getBoolean("updated")
-//                        )
-//                );
-//                return null;
-//            }
-//        );
     }
 
     private void getSessionKeyIni(){
