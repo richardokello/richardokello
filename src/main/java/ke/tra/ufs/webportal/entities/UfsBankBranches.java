@@ -99,17 +99,20 @@ public class UfsBankBranches implements Serializable {
     @ManyToOne(optional = true)
     private UfsBanks bankId;
     @Column(name = "BANK_ID")
+    @ModifiableField
     private Long bankIds;
     //    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
 //    @ManyToOne(optional = false)
 //    @JsonIgnore
 //    private UfsBankRegion bankRegionId;
     @Column(name = "BANK_REGION_ID")
+    @ModifiableField
     private BigDecimal bankRegionIds;
     @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = true)
     private UfsGeographicalRegion geographicalRegionId;
     @Column(name = "GEOGRAPHICAL_REGION_ID")
+    @ModifiableField
     private BigDecimal geographicalRegionIds;
 
     public UfsBankBranches() {

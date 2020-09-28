@@ -51,7 +51,7 @@ public class TmsApp implements Serializable {
     @Id
     @SequenceGenerator(name = "TMS_APP_SEQ", sequenceName = "TMS_APP_SEQ")
     @GeneratedValue(generator = "TMS_APP_SEQ")
-    @Basic(optional = false)//
+    @Basic(optional = false)
     @Column(name = "APP_ID")
     private BigDecimal appId;
     @Basic(optional = false)
@@ -74,7 +74,7 @@ public class TmsApp implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date releaseDate;
     @Size(max = 10)
-    @Column(name = "\"ACTION\"")
+    @Column(name = "ACTION")
     private String action;
     @Size(max = 10)
     @Column(name = "ACTION_STATUS")
