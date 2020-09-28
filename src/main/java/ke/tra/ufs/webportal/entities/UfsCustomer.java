@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Searchable;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -65,10 +66,14 @@ public class UfsCustomer implements Serializable {
     private Long id;
     @Size(max = 20)
     @ModifiableField
+    @Filter
+    @Searchable
     @Column(name = "PIN")
     private String pinNumber;
     @Size(max = 30)
     @ModifiableField
+    @Filter
+    @Searchable
     @Column(name = "LOCAL_REG_NUMBER")
     private String localRegistrationNumber;
     @ModifiableField
@@ -84,6 +89,8 @@ public class UfsCustomer implements Serializable {
     private String address;
     @Size(max = 15)
     @ModifiableField
+    @Filter
+    @Searchable
     @Column(name = "PHONENUMBER")
     private String businessPrimaryContactNo;
     @Column(name = "CREATED_AT", insertable = false, updatable = false)
@@ -118,11 +125,17 @@ public class UfsCustomer implements Serializable {
     private UfsOrganizationUnits tenantId;
     @Column(name = "TENANT_ID")
     @ModifiableField
+    @Filter
+    @Searchable
     private String tenantIds;
     @ModifiableField
+    @Filter
+    @Searchable
     @Column(name = "CUSTOMER_NAME")
     private String businessName;
     @Column(name = "TERMINATION_REASON")
+    @Filter
+    @Searchable
     private String terminationReason;
 
     @Column(name = "TERMINATION_DATE")
@@ -138,6 +151,8 @@ public class UfsCustomer implements Serializable {
     private Long businessTypeIds;
     @Size(max = 15)
     @ModifiableField
+    @Filter
+    @Searchable
     @Column(name = "SECONDARY_PHONENUMBER")
     private String businessSecondaryContactNo;
     @Size(max = 50)
