@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @Transactional
@@ -32,6 +33,11 @@ public class CustomerOwnerServiceTemplate implements CustomerOwnersService {
     @Override
     public UfsCustomerOwners findByCustomerIds(BigDecimal customerIds) {
         return ownerRepository.findByCustomerIdsAndIntrash(customerIds,AppConstants.INTRASH_NO);
+    }
+
+    @Override
+    public List<UfsCustomerOwners> findOwnersByCustomerIds(BigDecimal customerIds) {
+        return ownerRepository.findByIntrashAndCustomerIds(AppConstants.INTRASH_NO,customerIds);
     }
 
     @Override
