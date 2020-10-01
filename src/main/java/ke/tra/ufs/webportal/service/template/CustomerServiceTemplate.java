@@ -60,6 +60,11 @@ public class CustomerServiceTemplate implements CustomerService {
     }
 
     @Override
+    public List<UfsCustomerOutlet> findOutletsByCustomerIds(BigDecimal customerIds) {
+        return customerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerIds, AppConstants.INTRASH_NO);
+    }
+
+    @Override
     public void saveOutlet(UfsCustomerOutlet customerOutlet) {
         customerOutletRepository.save(customerOutlet);
     }

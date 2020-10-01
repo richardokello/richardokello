@@ -95,12 +95,6 @@ public class UfsBankBranches implements Serializable {
     @Column(name = "CREATED_AT", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = true)
-    private UfsBanks bankId;
-    @Column(name = "BANK_ID")
-    @ModifiableField
-    private Long bankIds;
     //    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
 //    @ManyToOne(optional = false)
 //    @JsonIgnore
@@ -154,13 +148,6 @@ public class UfsBankBranches implements Serializable {
     }
 
 
-    public UfsBanks getBankId() {
-        return bankId;
-    }
-
-    public void setBankId(UfsBanks bankId) {
-        this.bankId = bankId;
-    }
 
 //    public UfsBankRegion getBankRegionId() {
 //        return bankRegionId;
@@ -176,14 +163,6 @@ public class UfsBankBranches implements Serializable {
 
     public void setGeographicalRegionId(UfsGeographicalRegion geographicalRegionId) {
         this.geographicalRegionId = geographicalRegionId;
-    }
-
-    public Long getBankIds() {
-        return bankIds;
-    }
-
-    public void setBankIds(Long bankIds) {
-        this.bankIds = bankIds;
     }
 
     public UfsOrganizationUnits getTenantId() {

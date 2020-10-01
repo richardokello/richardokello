@@ -118,9 +118,6 @@ public class UfsBanks implements Serializable {
     @Column(name = "CREATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private Set<UfsBankBranches> ufsBankBranchesSet;
 //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
 //    @com.fasterxml.jackson.annotation.JsonIgnore
 //    private Set<UfsBankRegion> ufsBankRegionSet;
@@ -191,15 +188,7 @@ public class UfsBanks implements Serializable {
         this.createdAt = createdAt;
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public Set<UfsBankBranches> getUfsBankBranchesSet() {
-        return ufsBankBranchesSet;
-    }
 
-    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
-        this.ufsBankBranchesSet = ufsBankBranchesSet;
-    }
 
 //    @XmlTransient
 //    @JsonIgnore

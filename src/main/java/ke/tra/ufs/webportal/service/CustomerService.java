@@ -21,6 +21,8 @@ public interface CustomerService {
 
     UfsCustomerOutlet findByCustomerIds(BigDecimal customerIds);
 
+    List<UfsCustomerOutlet> findOutletsByCustomerIds(BigDecimal customerIds);
+
 
     void saveOutlet(UfsCustomerOutlet customerOutlet);
 
