@@ -221,5 +221,6 @@ public class AppConstants {
     public static final String CLIENT_ID = "gateway_client_id";
     public static final String ACTIVITY_PIN_CHANGE = "Pin change";
     public static final String FIRST_TIME_LOGIN = "First login";
+    public static final String DEFAULT_RESET_PWD = "2580";;
 
 }

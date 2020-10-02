@@ -1,0 +1,90 @@
+850  [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 40496 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
+853  [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: remote 
+1863 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+2059 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 186ms. Found 31 repository interfaces. 
+2340 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$6d67dba2] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+2516 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+2532 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+2648 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+2648 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+2818 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+2818 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1894 ms 
+3274 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+3840 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+3933 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+3934 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+4010 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+4192 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+6729 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+6955 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+7553 [main] INFO  ke.tra.com.tsync.TsyncApplication - Attempting fetchSessionNumber from PIP:: Execution Time - Fri Oct 02 10:22:09 EAT 2020 
+7571 [main] INFO  k.t.c.t.s.crdb.CRDBPipService - crdbSessionWrp Req GetCRDBSessionWrp(password=930738240272, partnerID=PIP6372158461, code=SESSION)  
+28696 [main] INFO  k.t.c.t.s.crdb.CRDBPipService - getSessionDetails {} 
+org.springframework.web.client.ResourceAccessException: I/O error on POST request for "http://41.215.130.247:9069/partneruat/api/service/session": Connection timed out: connect; nested exception is java.net.ConnectException: Connection timed out: connect
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:744)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:670)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:608)
+	at ke.tra.com.tsync.services.crdb.CRDBPipService.getSessionDetailsOnline(CRDBPipService.java:98)
+	at ke.tra.com.tsync.TsyncApplication.getSessionKeyIni(TsyncApplication.java:75)
+	at ke.tra.com.tsync.TsyncApplication.initAppCfgs(TsyncApplication.java:61)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:363)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:307)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:136)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:414)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1770)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:593)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:515)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:320)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:222)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:318)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:843)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:877)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:549)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:142)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:775)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:397)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:316)
+	at ke.tra.com.tsync.TsyncApplication.main(TsyncApplication.java:52)
+Caused by: java.net.ConnectException: Connection timed out: connect
+	at java.base/java.net.PlainSocketImpl.connect0(Native Method)
+	at java.base/java.net.PlainSocketImpl.socketConnect(PlainSocketImpl.java:101)
+	at java.base/java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:399)
+	at java.base/java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:242)
+	at java.base/java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:224)
+	at java.base/java.net.Socket.connect(Socket.java:591)
+	at java.base/java.net.Socket.connect(Socket.java:540)
+	at java.base/sun.net.NetworkClient.doConnect(NetworkClient.java:182)
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:474)
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:569)
+	at java.base/sun.net.www.http.HttpClient.<init>(HttpClient.java:242)
+	at java.base/sun.net.www.http.HttpClient.New(HttpClient.java:341)
+	at java.base/sun.net.www.http.HttpClient.New(HttpClient.java:362)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1248)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1187)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1081)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:1015)
+	at org.springframework.http.client.SimpleBufferingClientHttpRequest.executeInternal(SimpleBufferingClientHttpRequest.java:76)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:53)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:735)
+	... 28 common frames omitted
+28697 [main] INFO  ke.tra.com.tsync.TsyncApplication - sessionStr   
+29364 [main] INFO  k.tra.com.tsync.config.ProjectSetUp - Start Iso server 
+29599 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor' 
+29843 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 975d741a-6bbc-427f-bbfe-76c3b2b1dffe
+ 
+29907 [main] INFO  o.s.s.w.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@786560e9, org.springframework.security.web.context.SecurityContextPersistenceFilter@7dcd2603, org.springframework.security.web.header.HeaderWriterFilter@6e297f29, org.springframework.security.web.csrf.CsrfFilter@6c3bfd66, org.springframework.security.web.authentication.logout.LogoutFilter@3842317, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@692cfa72, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@4e24b174, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@38d84330, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@1d49cb96, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@21d856ee, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@b002c02, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@34f8564d, org.springframework.security.web.session.SessionManagementFilter@152f6cb1, org.springframework.security.web.access.ExceptionTranslationFilter@46b6ce71, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@690b300] 
+29956 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator' 
+29979 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler' 
+30031 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8094"] 
+30049 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8094 (http) with context path '' 
+30052 [main] INFO  ke.tra.com.tsync.TsyncApplication - Started TsyncApplication in 29.85 seconds (JVM running for 30.839) 
+30071 [main] INFO  ke.tra.com.tsync.TsyncApplication -  ~~~~ ISO8583 Server started ~~~~  
+30072 [main] INFO  ke.tra.com.tsync.TsyncApplication - Application started successfully 

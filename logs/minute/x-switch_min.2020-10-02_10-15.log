@@ -1,0 +1,19 @@
+450  [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 40704 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
+452  [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: test 
+1314 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+1696 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 363ms. Found 31 repository interfaces. 
+2384 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$2e2a97a5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+2726 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+2756 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+2888 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+2888 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+3027 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+3027 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2537 ms 
+3408 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+25564 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+25565 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+25639 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+25810 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+47834 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+47846 [main] INFO  o.h.e.j.e.i.LobCreatorBuilderImpl - HHH000422: Disabling contextual LOB creation as connection was null 
+50295 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 

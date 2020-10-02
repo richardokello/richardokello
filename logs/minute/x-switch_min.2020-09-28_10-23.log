@@ -1,0 +1,5 @@
+1387 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 31328 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
+1392 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: remote 
+3531 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+3768 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 222ms. Found 31 repository interfaces. 
+4168 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$87744d2] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 

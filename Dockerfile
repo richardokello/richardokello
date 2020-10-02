@@ -1,5 +1,16 @@
 FROM adoptopenjdk/openjdk11:ubi
-RUN mkdir /opt/crdgway
-COPY target/crdb_gateway_billers-003.jar /opt/crdgway
-COPY config /opt/crdgway
-CMD ["java", "-jar", "/opt/crdgway/crdb_gateway_billers-003.jar"]
+
+# Maintainer
+LABEL maintainer="Collins Otuoma <collins.otuoma@tracom.co.ke>"
+WORKDIR /UFS-TYSNC
+
+RUN mkdir logs
+RUN mkdir logs/poslogs
+RUN sh -c 'touch logs/poslogs/poslog.log'
+
+COPY target/crdb_gateway_billers-003.jar crdb.jar
+COPY config config
+COPY truststore.jks truststore.jks
+CMD ["java", "-jar", "crdb.jar"]
+
+

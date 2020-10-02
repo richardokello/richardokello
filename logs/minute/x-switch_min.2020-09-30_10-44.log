@@ -1,0 +1,19 @@
+757870 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers - 
+~^~^~^^~^~^~^ Server receive request time 30/09/20 10:44:42 580 +0300    MTI  :  1100    procode 001110 ref 304420104442  
+758016 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers -  HERE WE ARE00 
+758016 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  processTransactionsbyMTI : 001110 
+758016 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ++++++++++++ HERE 
+758017 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  fieldDataMap  : PosUserWrapper(firstName=null, otherName=null, idNumber=null, phoneNumber=null, password=null, serialNumber=161277313221017301065279, username=CoolKid2, MID=null, TID=null, pin=null, confirmPin=null, terminationReason=null, currentPin=null, tidMids=null, appVersion=null, gender=null, email=null, userAccessCode=null, Workgroup=null) 
+758020 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService -  STEP INQUIRY  : 1100 F37304420104442 
+758021 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.com.tsync.services.UserService - ******************---0CoolKid2 
+759750 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.com.tsync.services.UserService - **** 
+759750 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.com.tsync.services.UserService - 161277313221017301065279 
+759750 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.com.tsync.services.UserService - ****1 
+759750 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.com.tsync.services.UserService - **** 5 
+760273 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.s.CoreProcessorService - ~~~~~~~~~ saveOnlineActivity  
+760281 [ISOServer-ThreadPool.PooledThread-0-running] INFO  k.t.c.t.services.ISOMsgTOEntityImp - convertIsoToPojo 
+760559 [ISOServer-ThreadPool.PooledThread-0-running] INFO  ke.tra.com.tsync.RequestHandlers - 
+
+ ~^~^~^^~^~^~^ Server Response time 30/09/20 10:44:45 269 +0300    MTI  :  1100    procode 001110  Ref 304420104442  RESPONSE CODE 00 
+
+ 

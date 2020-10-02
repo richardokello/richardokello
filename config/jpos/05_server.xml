@@ -1,5 +1,5 @@
 <server class="org.jpos.q2.iso.QServer" logger="Q2" name="ISOServer">
-    <attr name="port" type="java.lang.Integer">4123</attr>
+    <attr name="port" type="java.lang.Integer">3401</attr>
      <attr name="maxSessions" type="java.lang.Integer">1000</attr>
 <!--    <attr name="socketFactory">org.jpos.iso.SunJSSESocketFactory</attr>-->
 <!--    <property name="keystore" value="crdb_keystore.jks"/>-->

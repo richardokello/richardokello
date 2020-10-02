@@ -48,7 +48,23 @@ public class UserManagementService implements UserManagementTmpl {
         }
         return ulr;
     }
+    public ISOMsg loadUserNames(ISOMsg isoMsg, PosUserWrapper wrapper){
 
+        try{
+
+            ResponseWrapper response  =  new ResponseWrapper();
+
+            response = userService.loadUserNames(wrapper);
+
+            setResponse(isoMsg, response);
+
+        }catch(Exception ex){
+            handleException(isoMsg, ex);
+        }
+
+
+        return isoMsg;
+    }
     @Override
     public ISOMsg changeUserPassword(ISOMsg isomsg, PosUserWrapper wrapper) {
         String fieldData = isomsg.getString(47);
@@ -60,8 +76,6 @@ public class UserManagementService implements UserManagementTmpl {
             return isomsg;
         }
 
-        System.out.println(wrapper);
-        String username = wrapper.getUsername();
         String currentPin = wrapper.getCurrentPin();
         String newPin = wrapper.getPin();
         String confirmPin = wrapper.getConfirmPin();

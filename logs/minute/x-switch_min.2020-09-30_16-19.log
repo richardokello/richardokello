@@ -1,0 +1,6 @@
+846  [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on DESKTOP-41KACUO with PID 37532 (started by cotuoma in E:\projects\gateways\crdb_tsync) 
+848  [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: test 
+3095 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+3509 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 388ms. Found 31 repository interfaces. 
+4699 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$53dbd9d3] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+5281 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 

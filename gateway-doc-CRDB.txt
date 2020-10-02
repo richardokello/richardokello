@@ -128,3 +128,4 @@ POS Role            ->            5
 
 example of how field 47 shall represent this:
 "KeSeal,Collins,Otuoma,30000011,0723457676,Supervisor|CeaserC, Julius Ceaser, 12000010,0772782782,Administrator"
+

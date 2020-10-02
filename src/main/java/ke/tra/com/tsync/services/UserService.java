@@ -28,6 +28,8 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
+
 
 @Service
 @CommonsLog
@@ -309,6 +311,72 @@ public class UserService implements UserServiceTempl {
         }
     }
 
+    public ResponseWrapper loadUserNames(PosUserWrapper wrapper){
+        ResponseWrapper responseWrapper = new ResponseWrapper<>();
+        try{
+            // list of all users from pos users whose names begin with the first two characters from Pos
+
+            log.info("parmaaa,,,<<<<"+ wrapper.getUsername()+"%");
+            // by default we want users created on this terminal only unless otherwise
+            String tid = wrapper.getTID()==null?"-1":wrapper.getTID();
+            String prefix = wrapper.getUsername()==null?"-1%":wrapper.getUsername().strip();
+
+            List<UfsPosUser> matchingUsers = SpringContextBridge.services().getPOSUserRepo().findByUsernameStartsWithIgnoreCaseAndIntrash(
+                    wrapper.getUsername(), "NO"
+            );
+            //List<UfsPosUser> matchingUsers = SpringContextBridge.services().getPOSUserRepo().findByUsernameStartsWithIgnoreCaseAndTidAndIntrash(prefix,tid,"NO");
+
+            String roleIProvided = wrapper.getWorkgroup()==null?"":wrapper.getWorkgroup(); // pos role
+
+            switch(roleIProvided.strip().toUpperCase()){
+                // FIRST CATEGORY WHICH BELONG TO THE BANK
+                case "ADMIN":
+                case "ADMINISTRATOR":
+                case "FIELD SUPERVISOR":
+                    // if BANK Agent we want to give access to the entire bank pos users
+                    matchingUsers = SpringContextBridge.services().getPOSUserRepo().findByUsernameStartsWithIgnoreCaseAndIntrash(
+                            wrapper.getUsername(), "NO"
+                    );
+                    // do nothing hence allow a the bank admin to log to any device of the bank
+                    break;
+                case "SUPERVISOR":
+                case "MERCHANT OWNER":
+                case "MERCHANT":
+
+                    String prefixLike = prefix+"%";
+
+                    // if outlet/Agent owner/Supervisor we want to load users of the outlet
+                    matchingUsers = SpringContextBridge.services().getPOSUserRepo().findByUsernamePrefix(prefixLike.toUpperCase(),wrapper.getSerialNumber());
+                    break;
+                default:
+                    // teller/operators/cashier/customer load  by tid(THIRD CATEGORY)
+                    break;
+
+            }
+
+            if(matchingUsers.isEmpty()){
+                responseWrapper.setCode(404);
+                responseWrapper.setMessage("No users with "+wrapper.getUsername()+" prefix");
+            }
+            else{
+                String users = matchingUsers
+                        .stream()
+                        .map(user1-> user1.getUsername())
+                        .collect(joining("|"));
+
+                responseWrapper.setCode(200);
+                responseWrapper.setMessage(users);
+            }
+
+        }
+        catch (Exception ex){
+            responseWrapper.setMessage("SYSTEM ERROR");
+            responseWrapper.setCode(06);
+            log.error("An error occurred while loading user {} "+ ex.getMessage());
+        }
+        return responseWrapper;
+    }
+
     @Override
     public ResponseWrapper login(PosUserWrapper wrapper) {
         ResponseWrapper responseWrapper = new ResponseWrapper();
@@ -511,9 +579,11 @@ public class UserService implements UserServiceTempl {
 
                         } else {
                             // dont create user since this terminal does not belong
-                            responseWrapper.setMessage("No Tms device found with the serial number");
-                            auditLog.setNotes("No Tms device found with the serial number"+ wrapper.getSerialNumber());
+                            responseWrapper.setMessage("This Terminal device is not authorised to transact, its either deleted or not approved yet.");
+                            auditLog.setNotes("Unauthorised to transact");
+                            auditLog.setDescription("This Terminal device is not authorised to transact, its either deleted or not approved yet. Device SNO " + wrapper.getSerialNumber());
                             responseWrapper.setCode(30);
+                            responseWrapper.setError(true);
                         }
 
                     }
@@ -563,7 +633,9 @@ public class UserService implements UserServiceTempl {
             UfsSysConfig ufsSysConfig = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration","posPin");
             Optional<UfsPosUser> user = validate.getPosUser();
 
-            String randomPin = RandomStringUtils.random(Integer.parseInt(ufsSysConfig.getValue()),false,true);
+            String randomPin;
+            randomPin = AppConstants.DEFAULT_RESET_PWD;
+            //randomPin = RandomStringUtils.random(Integer.parseInt(ufsSysConfig.getValue()),false,true);
             user.get().setPin(encoder.encode(randomPin));
             user.get().setActiveStatus(AppConstants.STATUS_INACTIVE);
             user.get().setPinStatus(AppConstants.PIN_STATUS_INACTIVE);
@@ -894,7 +966,8 @@ public class UserService implements UserServiceTempl {
 
         UfsPosUserRepository ufsPosUserRepository = SpringContextBridge.services().getPOSUserRepo();
 
-        String users = ufsPosUserRepository.findAll().stream()
+        String users = ufsPosUserRepository.findAll()
+                .stream()
                 .map(user->userDetails(user))
                 .collect(Collectors.joining("|"));
         responseWrapper.setMessage(users);

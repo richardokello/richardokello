@@ -24,10 +24,11 @@ public class TestClass {
         try {
             ISOPackager packager = new TracomPackager();
             ISOMsg isoMsg;
-            isoMsg = posUserCreation();
+            //isoMsg = posUserCreation();
             //isoMsg = logout();
             //isoMsg = deletePosUser();
-           //isoMsg = posUserLogin();
+             //isoMsg = posUserLogin();
+            isoMsg = UsernamePrefix();
             //isoMsg = firstTimePosUserLogin();
             //isoMsg = resetUserPin();
             //isoMsg = changeUserPin();
@@ -53,10 +54,13 @@ public class TestClass {
             byte[] data = isoMsg.pack();
             System.out.println(ISOUtil.hexdump(data));
             String server;
-            //server = "127.0.0.1";
-            server = "41.215.130.247";
+            int port ;
+            server = "127.0.0.1"; port = 3401;
+            //port = 8621;
+            //server = "41.215.130.247";
+            //port = 4123;
             //BaseChannel channel = new NCCChannel(ip, port, packager, TPDU);
-            NACChannel channel = new NACChannel(server, 4123, packager, TPDU);
+            NACChannel channel = new NACChannel(server, port, packager, TPDU);
             //ISOChannel channel = new NCCChannel(ip, port, packager, TPDU);
 
             channel.connect();
@@ -92,6 +96,26 @@ public class TestClass {
         msg.set(47,"026024161697313221017301104142030005Tindi031004Muia0330100723143866034008324747740360040000037010Supervisor039003Joy0400040000");
         return msg;
     }
+
+    private static ISOMsg UsernamePrefix() throws  ISOException {
+        ISOMsg m = new ISOMsg();
+        m.setMTI("1100"); // Mti
+        m.set(3, "001120"); // processing code S
+        m.set(11, "000000"); // system trace audit number (STAN)
+        m.set(41, "PO400001");//Card acceptor terminal identification (TID) 	\
+        m.set(42, "100000RW0010408"); // 	Card acceptor identification code(MID)
+//        posIris.setCharging(terminalData[0]);
+//        posIris.setBatteryLevel(terminalData[1]);
+//        posIris.setSignal(terminalData[2]);
+//        posIris.setOsVersion(terminalData[3]);
+//        posIris.setTemperature(terminalData[4]);
+//        posIris.setAppVersion(terminalData[5]);
+//        posIris.setSerialNumber(terminalData[6]);
+        //m.set(9,"charging status(1 or 0)|battery level(0 to 100)|signal strength|Os version|terminal temperature|app version|device serial no");
+        m.set(47, "026024161697313221017301104099030002ma027005admin"); // additional data
+        return m;
+    }
+
     private static ISOMsg posUserCreation() throws ISOException {
         ISOMsg msg = new ISOMsg();
 
@@ -100,7 +124,8 @@ public class TestClass {
         msg.set(11, "000010"); // System trace audit number (STAN)
         msg.set(41, "PO400001"); // Card acceptor terminal identification
         msg.set(42, "100000RW0010408"); // 	Card acceptor identification code
-        msg.set(47, "02500811111111026024161277313221017301065310030008CuulKid2031007collins032016colo12@gmail.com03301007122781910340082901000103500411230360040000037008Merchant0400049991039005troon");; // additional data
+        msg.set(47, "026024180222233221053607111323030005trust031005trust0330100758469277034008584692770360041234037010Supervisor039005trust0400041234");
+        //msg.set(47, "02500811111111026024161277313221017301065310030008CuulKid2031007collins032016colo12@gmail.com03301007122781910340082901000103500411230360040000037008Merchant0400049991039005troon");; // additional data
         //msg.set(47, "02602416169731322101730110414230003Dee031001m033010071483328403401012345678900360041111037010Supervisor039001e0400041111026024161697313221017301104142030003Dee031001m03301007148332840340101234567890036003000037010Supervisor039001e0400041111");
         System.out.println(msg);
         return msg;
@@ -141,7 +166,7 @@ public class TestClass {
         msg.set(11, "01000"); // system trace audit number (STAN)
         msg.set(41, "PO400001"); // TID
         msg.set(42, "100000RW0010408"); //MID
-        msg.set(47, "026024161277313221017301065310030006KeSeal"); // data
+        msg.set(47, "026024161277313221017301065279030008CoolKid2"); // data
 
         return msg;
     }

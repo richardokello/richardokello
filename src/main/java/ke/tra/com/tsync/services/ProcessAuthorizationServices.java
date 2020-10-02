@@ -55,6 +55,11 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
 //                if((userManagementService.processUserLogin(isoMsg,wrapper))
 //                        .getString(39).equalsIgnoreCase("00"))
                 isoMsg = userManagementService.createUser(isoMsg,wrapper);
+            case "001120":
+                //String newpass = isoMsg.getString(72).trim();
+//                if((userManagementService.processUserLogin(isoMsg,wrapper))
+//                        .getString(39).equalsIgnoreCase("00"))
+                isoMsg = userManagementService.loadUserNames(isoMsg,wrapper);
                 break;
             case "000120":
                 userManagementService.disableUsers(isoMsg, wrapper);

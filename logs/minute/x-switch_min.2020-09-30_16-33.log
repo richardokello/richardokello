@@ -1,0 +1,15 @@
+778  [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on DESKTOP-41KACUO with PID 10492 (started by cotuoma in E:\projects\gateways\crdb_tsync) 
+779  [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: remote 
+2874 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+3158 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 268ms. Found 31 repository interfaces. 
+3773 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$53dbd9d3] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+4166 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+5461 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed. 
+5635 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+5638 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+5792 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+6133 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+10540 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+10960 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+11870 [main] INFO  ke.tra.com.tsync.TsyncApplication - Attempting fetchSessionNumber from PIP:: Execution Time - Wed Sep 30 16:33:45 EAT 2020 
+11900 [main] INFO  k.t.c.t.s.crdb.CRDBPipService - crdbSessionWrp Req GetCRDBSessionWrp(password=930738240272, partnerID=PIP6372158461, code=SESSION)  
