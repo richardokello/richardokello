@@ -8,22 +8,12 @@ package ke.tra.ufs.webportal.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.ModifiableField;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -96,6 +86,10 @@ public class UfsCustomerTransfer implements Serializable {
     
     @Column(name = "CUSTOMER_ID")
     private BigDecimal customerIds;
+
+    @Transient
+    @ModifiableField
+    private BigDecimal outletIds;
 
     public UfsCustomerTransfer() {
     }
@@ -208,8 +202,14 @@ public class UfsCustomerTransfer implements Serializable {
     public void setCustomerIds(BigDecimal customerIds) {
         this.customerIds = customerIds;
     }
-    
-    
+
+    public BigDecimal getOutletIds() {
+        return outletIds;
+    }
+
+    public void setOutletIds(BigDecimal outletIds) {
+        this.outletIds = outletIds;
+    }
 
     @Override
     public int hashCode() {
