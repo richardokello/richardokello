@@ -8,4 +8,7 @@ import java.math.BigDecimal;
 
 @Repository
 public interface UfsMccRepository extends JpaRepository<UfsMcc, BigDecimal> {
+
+    UfsMcc findByName(String name);
+
 }

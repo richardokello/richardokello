@@ -41,13 +41,11 @@ public class UfsGls implements Serializable {
     @Basic(optional = false)
     @NotNull
     @ModifiableField
-    @Size(min = 1, max = 20)
     @Column(name = "GL_NAME")
     private String glName;
     @Basic(optional = false)
     @NotNull()
     @ModifiableField
-    @Size(min = 1,max = 20)
     @Column(name = "GL_CODE")
     private String glCode;
     @Basic(optional = false)
@@ -103,12 +101,12 @@ public class UfsGls implements Serializable {
     @Column(name = "CREATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID",insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private UfsBanks bankId;
-    @Column(name = "BANK_ID")
-    @ModifiableField
-    private BigDecimal bankIds;
+//    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID",insertable = false, updatable = false)
+//    @ManyToOne(optional = false)
+//    private UfsBanks bankId;
+//    @Column(name = "BANK_ID")
+//    @ModifiableField
+//    private BigDecimal bankIds;
     @JoinColumn(name = "BANK_BRANCH_ID", referencedColumnName = "ID",insertable = false, updatable = false)
     @ManyToOne
     private UfsBankBranches bankBranchId;
@@ -130,7 +128,7 @@ public class UfsGls implements Serializable {
         this.id = id;
     }
 
-    public UfsGls(@NotNull @Size(min = 1, max = 20) String glName, @NotNull() @Size(min = 1, max = 20) String glCode, @NotNull @Size(min = 1, max = 30) String glAccountNumber, @NotNull @Size(min = 1, max = 20) String glLocation, @Size(min = 1, max = 15) String action, @Size(min = 1, max = 15) String actionStatus, @Size(min = 1, max = 3) String intrash, UfsOrganizationUnits tenantId, BigDecimal tenantIds, Date createdAt, UfsBanks bankId, BigDecimal bankIds, UfsBankBranches bankBranchId, BigDecimal bankBranchIds, UfsGlsBatch batch, Long batchs) {
+    public UfsGls(@NotNull @Size(min = 1, max = 20) String glName, @NotNull() @Size(min = 1, max = 20) String glCode, @NotNull @Size(min = 1, max = 30) String glAccountNumber, @NotNull @Size(min = 1, max = 20) String glLocation, @Size(min = 1, max = 15) String action, @Size(min = 1, max = 15) String actionStatus, @Size(min = 1, max = 3) String intrash, UfsOrganizationUnits tenantId, BigDecimal tenantIds, Date createdAt,UfsBankBranches bankBranchId, BigDecimal bankBranchIds, UfsGlsBatch batch, Long batchs) {
         this.glName = glName;
         this.glCode = glCode;
         this.glAccountNumber = glAccountNumber;
@@ -141,8 +139,6 @@ public class UfsGls implements Serializable {
         this.tenantId = tenantId;
         this.tenantIds = tenantIds;
         this.createdAt = createdAt;
-        this.bankId = bankId;
-        this.bankIds = bankIds;
         this.bankBranchId = bankBranchId;
         this.bankBranchIds = bankBranchIds;
         this.batch = batch;
@@ -222,13 +218,13 @@ public class UfsGls implements Serializable {
     }
 
 
-    public UfsBanks getBankId() {
-        return bankId;
-    }
-
-    public void setBankId(UfsBanks bankId) {
-        this.bankId = bankId;
-    }
+//    public UfsBanks getBankId() {
+//        return bankId;
+//    }
+//
+//    public void setBankId(UfsBanks bankId) {
+//        this.bankId = bankId;
+//    }
 
     public UfsBankBranches getBankBranchId() {
         return bankBranchId;
@@ -238,13 +234,13 @@ public class UfsGls implements Serializable {
         this.bankBranchId = bankBranchId;
     }
 
-    public BigDecimal getBankIds() {
-        return bankIds;
-    }
-
-    public void setBankIds(BigDecimal bankIds) {
-        this.bankIds = bankIds;
-    }
+//    public BigDecimal getBankIds() {
+//        return bankIds;
+//    }
+//
+//    public void setBankIds(BigDecimal bankIds) {
+//        this.bankIds = bankIds;
+//    }
 
     public BigDecimal getBankBranchIds() {
         return bankBranchIds;
