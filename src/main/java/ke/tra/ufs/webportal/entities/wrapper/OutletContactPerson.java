@@ -17,4 +17,6 @@ public class OutletContactPerson {
     @NotNull
     private String contactPersonEmail;
     private String posRole;
+    @NotNull
+    private String userName;
 }

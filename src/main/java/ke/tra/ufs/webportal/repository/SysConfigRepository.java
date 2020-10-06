@@ -89,4 +89,12 @@ public interface SysConfigRepository extends CrudRepository<UfsSysConfig, BigDec
             + "lower(c.actionStatus) LIKE %?1%")
     Page<UfsSysConfig> searchConfigs(String needle, Pageable pg);
 
+    /**
+     * find Pos Configurations
+     * @param entity
+     * @param parameter
+     * @return
+     */
+    UfsSysConfig findByEntityAndParameter(String  entity,String parameter);
+
 }

@@ -10,9 +10,7 @@ import ke.axle.chassis.utils.SharedMethods;
 import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.*;
-import ke.tra.ufs.webportal.entities.wrapper.AgentTerminationResponseWrapper;
-import ke.tra.ufs.webportal.entities.wrapper.CustomerOnboardingWrapper;
-import ke.tra.ufs.webportal.entities.wrapper.OwnerDetailsWrapper;
+import ke.tra.ufs.webportal.entities.wrapper.*;
 import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.utils.exceptions.AgentAssignedException;
@@ -82,7 +80,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
         //Errors Occurred While Onboarding Customer
-        ArrayList<BigDecimal> errors = new ArrayList<>();
+        ArrayList<String> errors = new ArrayList<>();
 
         //saving customer Info
         UfsCustomer customer = new UfsCustomer();
@@ -105,17 +103,25 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
         //saving directors
         if(!customerOnboarding.getDirectors().isEmpty()){
-            customerOnboarding.getDirectors().stream().forEach(director->{
-              UfsCustomerOwners dir = new UfsCustomerOwners();
-              dir.setDirectorName(director.getDirectorName());
-              dir.setCustomerIds(BigDecimal.valueOf(customer.getId()));
-              dir.setDirectorEmailAddress(director.getDirectorEmailAddress());
-              dir.setDirectorDesignationId(director.getDirectorDesignationId());
-              dir.setDirectorPrimaryContactNumber(director.getDirectorPrimaryContactNumber());
-              dir.setDirectorSecondaryContactNumber(director.getDirectorSecondaryContactNumber());
-              dir.setDirectorIdNumber(director.getDirectorIdNumber());
-              ownersService.saveOwner(dir);
-            });
+            for(BusinessDirectorsWrapper director : customerOnboarding.getDirectors()){
+                UfsCustomerOwners customerOwners = ownersService.findByUsername(director.getUserName());
+                if(Objects.nonNull(customerOwners)) {
+                    errors.add(director.getUserName());
+                    continue;
+                }
+                  UfsCustomerOwners dir = new UfsCustomerOwners();
+                  dir.setDirectorName(director.getDirectorName());
+                  dir.setCustomerIds(BigDecimal.valueOf(customer.getId()));
+                  dir.setDirectorEmailAddress(director.getDirectorEmailAddress());
+                  dir.setDirectorDesignationId(director.getDirectorDesignationId());
+                  dir.setDirectorPrimaryContactNumber(director.getDirectorPrimaryContactNumber());
+                  dir.setDirectorSecondaryContactNumber(director.getDirectorSecondaryContactNumber());
+                  dir.setDirectorIdNumber(director.getDirectorIdNumber());
+                  dir.setUserName(director.getUserName());
+                  ownersService.saveOwner(dir);
+
+
+            };
         }
 
         //saving outlets
@@ -133,24 +139,38 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
               outletService.saveOutlet(custOutlet);
                //save contact person
               if(!outlet.getContactPerson().isEmpty()){
-                  outlet.getContactPerson().stream().forEach(contactPerson->{
+                  for(OutletContactPerson outletContactPerson : outlet.getContactPerson()){
+
+                      UfsContactPerson contactPersonCheck = contactPersonService.findByUsername(outletContactPerson.getUserName());
+                      if(Objects.nonNull(contactPersonCheck)){
+                          errors.add(outletContactPerson.getUserName());
+                          continue;
+                      }
                     UfsContactPerson person = new UfsContactPerson();
-                    person.setName(contactPerson.getContactPersonName());
-                    person.setIdNumber(contactPerson.getContactPersonIdNumber());
-                    person.setPosRole(contactPerson.getPosRole());
-                    person.setEmail(contactPerson.getContactPersonEmail());
-                    person.setPhoneNumber(contactPerson.getContactPersonTelephone());
+                    person.setName(outletContactPerson.getContactPersonName());
+                    person.setIdNumber(outletContactPerson.getContactPersonIdNumber());
+                    person.setPosRole(outletContactPerson.getPosRole());
+                    person.setEmail(outletContactPerson.getContactPersonEmail());
+                    person.setPhoneNumber(outletContactPerson.getContactPersonTelephone());
                     person.setCustomerOutletId(custOutlet.getId());
+                    person.setUserName(outletContactPerson.getUserName());
                     contactPersonService.saveContactPerson(person);
-                  });
+                  };
               }
             });
 
         }
+        if (errors.size() > 0) {
+            response.setCode(HttpStatus.MULTI_STATUS.value());
+            response.setMessage("Agent Owner/Contact Person Username Already Exists:" + errors);
+            response.setData(errors);
+            return new ResponseEntity(response, HttpStatus.MULTI_STATUS);
+        } else {
+            response.setCode(201);
+            response.setMessage("Customer Onboarded successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
 
-        response.setCode(201);
-        response.setMessage("Customer Onboarded successfully");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

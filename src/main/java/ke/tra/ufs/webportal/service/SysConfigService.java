@@ -124,4 +124,12 @@ public interface SysConfigService {
      * @return
      */
     //public PasswordConfig passwordConfigs();
+
+    /**
+     * find Pos Configurations
+     * @param entity
+     * @param parameter
+     * @return
+     */
+    public UfsSysConfig findByEntityAndParameter(String entity,String parameter);
 }

@@ -5,16 +5,19 @@
  */
 package ke.tra.ufs.webportal.utils;
 
+import ke.tra.ufs.webportal.utils.enums.MessageType;
+
 /**
  *
  * @author emuraya
  */
 public class EmailBody {
-    
+
     private String sendTo;
     private String subject;
     private String message;
     private String type;
+    private MessageType messageType;
 
     public EmailBody(){}
     public EmailBody(String sendTo, String subject, String message, String type) {
@@ -55,8 +58,13 @@ public class EmailBody {
     public void setType(String type) {
         this.type = type;
     }
-    
-    
-    
-    
+
+    public MessageType getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
+    }
 }
+

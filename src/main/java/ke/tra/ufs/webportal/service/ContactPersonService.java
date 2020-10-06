@@ -9,5 +9,7 @@ public interface ContactPersonService {
 
     UfsContactPerson saveContactPerson(UfsContactPerson contactPerson);
 
+    UfsContactPerson findByUsername(String  username);
+
     List<UfsContactPerson> getAllContactPersonByCustomerId(BigDecimal customerId);
 }

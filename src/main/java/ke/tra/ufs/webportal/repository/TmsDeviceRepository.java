@@ -18,4 +18,7 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
 
     public TmsDevice findByDeviceId(BigDecimal deviceId);
 
+    public TmsDevice findByDeviceIdAndIntrash(BigDecimal deviceId,String intrash);
+
+
 }

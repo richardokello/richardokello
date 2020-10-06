@@ -12,6 +12,8 @@ public interface CustomerOwnersService {
 
     UfsCustomerOwners findByCustomerIds(BigDecimal customerIds);
 
+    UfsCustomerOwners findByUsername(String username);
+
     List<UfsCustomerOwners> findOwnersByCustomerIds(BigDecimal customerIds);
 
     void saveOwner(UfsCustomerOwners customerOwners);
