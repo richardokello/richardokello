@@ -10,4 +10,7 @@ public interface TmsDeviceService {
 
     //TmsDevice findByCustomerIds(BigDecimal customerIds);
 
+    public TmsDevice findByDeviceIdAndIntrash(BigDecimal id);
+
+
 }

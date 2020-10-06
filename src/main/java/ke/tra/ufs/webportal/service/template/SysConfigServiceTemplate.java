@@ -270,4 +270,9 @@ public class SysConfigServiceTemplate implements SysConfigService {
         return null;
     }
 
+    @Override
+    public UfsSysConfig findByEntityAndParameter(String entity, String parameter) {
+        return sysConfRepo.findByEntityAndParameter(entity, parameter);
+    }
+
 }

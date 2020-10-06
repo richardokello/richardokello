@@ -12,5 +12,7 @@ public interface UfsCustomerOwnerRepository extends CrudRepository<UfsCustomerOw
 
     public UfsCustomerOwners findByCustomerIdsAndIntrash(BigDecimal customerIds,String intrash);
 
+    public UfsCustomerOwners findByUserNameAndIntrash(String username,String intrash);
+
     List<UfsCustomerOwners> findByIntrashAndCustomerIds(String intrash,BigDecimal customerIds);
 }

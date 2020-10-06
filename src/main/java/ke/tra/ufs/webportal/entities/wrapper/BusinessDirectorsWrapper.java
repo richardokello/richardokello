@@ -12,4 +12,5 @@ public class BusinessDirectorsWrapper {
     private String directorSecondaryContactNumber;
     private String directorEmailAddress;
     private Long directorDesignationId;
+    private String userName;
 }

@@ -124,6 +124,11 @@ public class UfsCustomerOwners implements Serializable {
     @Transient
     private CustomerOwnersCrime ownersCrime;
 
+    @Column(name = "USER_NAME")
+    @Filter
+    @ModifiableField
+    private String userName;
+
     public UfsCustomerOwners() {
     }
 
@@ -263,6 +268,14 @@ public class UfsCustomerOwners implements Serializable {
 
     public void setDirectorEmailAddress(String directorEmailAddress) {
         this.directorEmailAddress = directorEmailAddress;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override

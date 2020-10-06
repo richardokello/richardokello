@@ -36,6 +36,11 @@ public class CustomerOwnerServiceTemplate implements CustomerOwnersService {
     }
 
     @Override
+    public UfsCustomerOwners findByUsername(String username) {
+        return ownerRepository.findByUserNameAndIntrash(username,AppConstants.INTRASH_NO);
+    }
+
+    @Override
     public List<UfsCustomerOwners> findOwnersByCustomerIds(BigDecimal customerIds) {
         return ownerRepository.findByIntrashAndCustomerIds(AppConstants.INTRASH_NO,customerIds);
     }

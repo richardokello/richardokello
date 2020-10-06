@@ -37,6 +37,7 @@ public class AppConstants {
 
 
     //status
+    public static final String STATUS_FAILED_STRING = "Failed";
     public static final String STATUS_INACTIVE = "Inactive";
     public static final String STATUS_DISABLED = "Disabled";
     public static final String STATUS_COMPLETED = "Completed";
@@ -55,6 +56,10 @@ public class AppConstants {
     public static final String INTRASH_YES = "YES";
 
     public static final String STATUS_STRING_PENDING = "Pending";
+
+    //pin status
+    public static final String PIN_STATUS_ACTIVE = "Active";
+    public static final String PIN_STATUS_INACTIVE = "Inactive";
 
 
 
@@ -101,6 +106,7 @@ public class AppConstants {
     public static final String PARAMETER_EMAIL_TEMPLATE_URL = "emailTemplateUrl";
     public static final String PARAMETER_BANK_GROUP_EMAIL = "bankGroupEmail";
     public static final String PARAMETER_BANK_GROUP_MSISDN = "bankGroupMsisdn";
+    public static final String PARAMETER_POS_PIN_LENGTH = "posPin";
 
     public static final String PARAM_TYPE_PASSWORD = "PASSWORD";
     //entities
@@ -108,6 +114,7 @@ public class AppConstants {
     public static final String ENTITY_SYSTEM_INTEGRATION = "System Integration";
     public static final String ENTITY_GLOBAL_INTEGRATION = "Global Configuration";
     public static final String ENTITY_MESSAGE_TEMPLATES = "Message Templates";
+    public static final String ENTITY_POS_CONFIGURATION = "Pos Configuration";
 
     //transaction type
     public static final String TRANSACTION_TYPE_WITHDRAWAL = "Withdrawal";
