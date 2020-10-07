@@ -79,15 +79,15 @@ public class RequestHandlers implements ISORequestListener {
                         field39[0] = "00";
 
                     }, () -> {
-                        field39[0] = "12";
-                        field47[0] = "Invalid processing code";
+                        field39[0] = "51";
+                        field47[0] = "Invalid processing code and MTI combination";
                         logger.error("txn with mti {} and procode {} txnref {}  has not been configured or is not enabled on system yet", errStr[0], errStr[1], errStr[2]);
                     }
             );
 
             m.set(39, field39[0]);
-            if (field39[0] == "12") {
-                m.set(47,  "Invalid processing code");
+            if (field39[0] == "51") {
+                m.set(47,  "Invalid processing code and MTI combination");
 
             }
 
@@ -95,10 +95,15 @@ public class RequestHandlers implements ISORequestListener {
             logger.info(" HERE WE ARE" + m.getString(39));
 
             // change depending on field used for this data
-            if (m.getString(39).equalsIgnoreCase("00"))
-                m = coreProcessor.processTransactionsbyMTI(m);
-            else
-                m.unset(72);
+            // Avoid here if this is an advice
+            String IS_ADVICE_MTI = m.getMTI();
+
+            if(!IS_ADVICE_MTI.equals("0020")) {
+                if (m.getString(39).equalsIgnoreCase("00"))
+                    m = coreProcessor.processTransactionsbyMTI(m);
+                else
+                    m.unset(72);
+            }
             //set response desc if null
             // all txns start with system error by default ..success to be set on success
             //
@@ -114,6 +119,7 @@ public class RequestHandlers implements ISORequestListener {
                 ex.printStackTrace();
             }
             m.set(72, "REMOTE SYSTEM ERROR DURING PROCESSING");
+            m.set(47, "REMOTE SYSTEM ERROR DURING PROCESSING");
             e.printStackTrace();
             logger.error("GE EXCEPTION rrn {} exception {}", m.getString(37), e);
         }

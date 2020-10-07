@@ -7,11 +7,15 @@
 package ke.tra.com.tsync.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ke.axle.chassis.annotations.TreeRoot;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,7 +29,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -38,39 +42,23 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "UFS_BANK_REGION")
 @XmlRootElement
 @NamedQueries({
-        @NamedQuery(name = "UfsBankRegion.findAll", query = "SELECT u FROM UfsBankRegion u"),
-        @NamedQuery(name = "UfsBankRegion.findById", query = "SELECT u FROM UfsBankRegion u WHERE u.id = :id"),
-        @NamedQuery(name = "UfsBankRegion.findByTenantId", query = "SELECT u FROM UfsBankRegion u WHERE u.tenantId = :tenantId"),
-        @NamedQuery(name = "UfsBankRegion.findByRegionName", query = "SELECT u FROM UfsBankRegion u WHERE u.regionName = :regionName"),
-        @NamedQuery(name = "UfsBankRegion.findByCode", query = "SELECT u FROM UfsBankRegion u WHERE u.code = :code"),
-        @NamedQuery(name = "UfsBankRegion.findByIsParent", query = "SELECT u FROM UfsBankRegion u WHERE u.isParent = :isParent"),
-        @NamedQuery(name = "UfsBankRegion.findByCreationDate", query = "SELECT u FROM UfsBankRegion u WHERE u.creationDate = :creationDate"),
-        @NamedQuery(name = "UfsBankRegion.findByAction", query = "SELECT u FROM UfsBankRegion u WHERE u.action = :action"),
-        @NamedQuery(name = "UfsBankRegion.findByActionStatus", query = "SELECT u FROM UfsBankRegion u WHERE u.actionStatus = :actionStatus"),
-        @NamedQuery(name = "UfsBankRegion.findByIntrash", query = "SELECT u FROM UfsBankRegion u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsBankRegion.findAll", query = "SELECT u FROM UfsBankRegion u")
+        , @NamedQuery(name = "UfsBankRegion.findById", query = "SELECT u FROM UfsBankRegion u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsBankRegion.findByRegionName", query = "SELECT u FROM UfsBankRegion u WHERE u.regionName = :regionName")
+        , @NamedQuery(name = "UfsBankRegion.findByCode", query = "SELECT u FROM UfsBankRegion u WHERE u.code = :code")
+        , @NamedQuery(name = "UfsBankRegion.findByIsParent", query = "SELECT u FROM UfsBankRegion u WHERE u.isParent = :isParent")
+        , @NamedQuery(name = "UfsBankRegion.findByCreationDate", query = "SELECT u FROM UfsBankRegion u WHERE u.creationDate = :creationDate")
+        , @NamedQuery(name = "UfsBankRegion.findByAction", query = "SELECT u FROM UfsBankRegion u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsBankRegion.findByActionStatus", query = "SELECT u FROM UfsBankRegion u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsBankRegion.findByIntrash", query = "SELECT u FROM UfsBankRegion u WHERE u.intrash = :intrash")})
 public class UfsBankRegion implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private BigDecimal id;
-    @Size(max = 64)
-    @Column(name = "TENANT_ID")
-    private String tenantId;
     @Size(max = 100)
     @Column(name = "REGION_NAME")
     private String regionName;
     @Size(max = 20)
     @Column(name = "CODE")
     private String code;
-    @Column(name = "IS_PARENT")
-    private Short isParent;
-    @Column(name = "CREATION_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
     @Size(max = 15)
     @Column(name = "ACTION")
     private String action;
@@ -81,15 +69,51 @@ public class UfsBankRegion implements Serializable {
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankRegionId")
-    private Collection<UfsBankBranches> ufsBankBranchesCollection;
-    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsBanks bankId;
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Set<UfsBankBranches> ufsBankBranchesSet;
+
+    private static final long serialVersionUID = 1L;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "UFS_BANK_REGION_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_BANK_REGION_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_BANK_REGION_SEQ")
+    @Column(name = "ID")
+    private BigDecimal id;
+    @Column(name = "IS_PARENT")
+    private Short isParent;
+    @Column(name = "CREATION_DATE", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
     @OneToMany(mappedBy = "parentId")
-    private Collection<UfsBankRegion> ufsBankRegionCollection;
-    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<UfsBankRegion> ufsBankRegionList;
+    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private UfsBankRegion parentId;
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
+    @ManyToOne(optional = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private UfsOrganizationUnits tenantId;
+    @Column(name = "PARENT_ID")
+    @TreeRoot
+    private Long parentIds;
+    @Column(name = "TENANT_ID")
+    private String tenantIds;
+    @Transient
+    private List<UfsBankRegion> children;
+    @Transient
+    private String text;
 
     public UfsBankRegion() {
     }
@@ -106,28 +130,12 @@ public class UfsBankRegion implements Serializable {
         this.id = id;
     }
 
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
     public String getRegionName() {
         return regionName;
     }
 
     public void setRegionName(String regionName) {
         this.regionName = regionName;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public Short getIsParent() {
@@ -146,13 +154,6 @@ public class UfsBankRegion implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -162,40 +163,15 @@ public class UfsBankRegion implements Serializable {
         this.actionStatus = actionStatus;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
 
     @XmlTransient
     @JsonIgnore
-    public Collection<UfsBankBranches> getUfsBankBranchesCollection() {
-        return ufsBankBranchesCollection;
+    public List<UfsBankRegion> getUfsBankRegionList() {
+        return ufsBankRegionList;
     }
 
-    public void setUfsBankBranchesCollection(Collection<UfsBankBranches> ufsBankBranchesCollection) {
-        this.ufsBankBranchesCollection = ufsBankBranchesCollection;
-    }
-
-    public UfsBanks getBankId() {
-        return bankId;
-    }
-
-    public void setBankId(UfsBanks bankId) {
-        this.bankId = bankId;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsBankRegion> getUfsBankRegionCollection() {
-        return ufsBankRegionCollection;
-    }
-
-    public void setUfsBankRegionCollection(Collection<UfsBankRegion> ufsBankRegionCollection) {
-        this.ufsBankRegionCollection = ufsBankRegionCollection;
+    public void setUfsBankRegionList(List<UfsBankRegion> ufsBankRegionList) {
+        this.ufsBankRegionList = ufsBankRegionList;
     }
 
     public UfsBankRegion getParentId() {
@@ -205,6 +181,47 @@ public class UfsBankRegion implements Serializable {
     public void setParentId(UfsBankRegion parentId) {
         this.parentId = parentId;
     }
+
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public Long getParentIds() {
+        return parentIds;
+    }
+
+    public void setParentIds(Long parentIds) {
+        this.parentIds = parentIds;
+    }
+
+    public String getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(String tenantIds) {
+        this.tenantIds = tenantIds;
+    }
+
+    public List<UfsBankRegion> getChildren() {
+        return this.getUfsBankRegionList();
+    }
+
+    public void setChildren(List<UfsBankRegion> children) {
+        this.children = children;
+    }
+
+    public String getText() {
+        return this.getRegionName();
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
 
     @Override
     public int hashCode() {
@@ -228,7 +245,43 @@ public class UfsBankRegion implements Serializable {
 
     @Override
     public String toString() {
-        return "UfsBankRegion[ id=" + id + " ]";
+        return "ke.tracom.ufs.entities.UfsBankRegion[ id=" + id + " ]";
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsBankBranches> getUfsBankBranchesSet() {
+        return ufsBankBranchesSet;
+    }
+
+    public void setUfsBankBranchesSet(Set<UfsBankBranches> ufsBankBranchesSet) {
+        this.ufsBankBranchesSet = ufsBankBranchesSet;
+    }
+
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
 }

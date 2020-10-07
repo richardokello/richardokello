@@ -123,6 +123,12 @@ public class UfsPosUser implements Serializable {
     @Column(name = "OTHERNAME")
     private String otherName;
 
+    @Column(name="TID")
+    private String tid;
+
+    @Column(name="SERIAL_NUMBER")
+    private String serialNumber;
+
 
     public UfsPosUser() {
     }
@@ -311,6 +317,22 @@ public class UfsPosUser implements Serializable {
 
     public void setDeviceIds(BigDecimal deviceIds) {
         this.deviceIds = deviceIds;
+    }
+
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
 
     @Override

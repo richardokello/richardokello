@@ -1,7 +1,0 @@
-72317 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
-72548 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
-72761 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
-94775 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
-94777 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
-505  [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 39828 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
-507  [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: remote 

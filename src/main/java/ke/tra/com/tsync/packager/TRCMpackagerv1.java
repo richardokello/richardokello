@@ -63,7 +63,7 @@ public class TRCMpackagerv1 extends ISOBasePackager {
             /*009*/ new IFB_NUMERIC ( 8, "Conversion rate, Reconciliation",pad),
             /*010*/ new IFB_NUMERIC ( 8, "Conversion rate, Cardholder billing",pad),
             /*011*/ new IFB_NUMERIC ( 6, "Systems trace audit number",pad),
-            /*012*/ new IFB_NUMERIC ( 6, "Date and time, Local transaction",pad),
+            /*012*/ new IFB_NUMERIC ( 12, "Date and time, Local transaction",pad),
             /*013*/ new IFB_NUMERIC ( 4, "Date, Effective",pad),
             /*014*/ new IFB_NUMERIC ( 4, "Date, Expiration",pad),
             /*015*/ new IFB_NUMERIC ( 6, "Date, Settlement",pad),

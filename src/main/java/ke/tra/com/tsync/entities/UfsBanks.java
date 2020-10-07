@@ -8,80 +8,117 @@ package ke.tra.com.tsync.entities;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import ke.axle.chassis.annotations.Filter;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
- *
- * @author Mwagiru Kamoni
+ * @author ojuma
  */
 @Entity
 @Table(name = "UFS_BANKS")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsBanks.findAll", query = "SELECT u FROM UfsBanks u")})
+        @NamedQuery(name = "UfsBanks.findAll", query = "SELECT u FROM UfsBanks u")
+        , @NamedQuery(name = "UfsBanks.findById", query = "SELECT u FROM UfsBanks u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsBanks.findByBankName", query = "SELECT u FROM UfsBanks u WHERE u.bankName = :bankName")
+        , @NamedQuery(name = "UfsBanks.findByBankIdentifier", query = "SELECT u FROM UfsBanks u WHERE u.bankIdentifier = :bankIdentifier")
+        , @NamedQuery(name = "UfsBanks.findBySettlementAccount", query = "SELECT u FROM UfsBanks u WHERE u.settlementAccount = :settlementAccount")
+        , @NamedQuery(name = "UfsBanks.findByBankType", query = "SELECT u FROM UfsBanks u WHERE u.bankType = :bankType")
+        , @NamedQuery(name = "UfsBanks.findByCommisionDefinition", query = "SELECT u FROM UfsBanks u WHERE u.commisionDefinition = :commisionDefinition")
+        , @NamedQuery(name = "UfsBanks.findByBankGuarantee", query = "SELECT u FROM UfsBanks u WHERE u.bankGuarantee = :bankGuarantee")
+        , @NamedQuery(name = "UfsBanks.findByInterchangeFee", query = "SELECT u FROM UfsBanks u WHERE u.interchangeFee = :interchangeFee")
+        , @NamedQuery(name = "UfsBanks.findBySetupFee", query = "SELECT u FROM UfsBanks u WHERE u.setupFee = :setupFee")
+        , @NamedQuery(name = "UfsBanks.findBySettlementCurrency", query = "SELECT u FROM UfsBanks u WHERE u.settlementCurrency = :settlementCurrency")
+        , @NamedQuery(name = "UfsBanks.findByCountry", query = "SELECT u FROM UfsBanks u WHERE u.country = :country")
+        , @NamedQuery(name = "UfsBanks.findByCreatedAt", query = "SELECT u FROM UfsBanks u WHERE u.createdAt = :createdAt")
+        , @NamedQuery(name = "UfsBanks.findByAction", query = "SELECT u FROM UfsBanks u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsBanks.findByActionStatus", query = "SELECT u FROM UfsBanks u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsBanks.findByIntrash", query = "SELECT u FROM UfsBanks u WHERE u.intrash = :intrash")})
 public class UfsBanks implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
+
     @Basic(optional = false)
-    @Column(name = "ID")
-    private Long id;
-    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
     @Column(name = "BANK_NAME")
     private String bankName;
+    @Size(max = 50)
     @Column(name = "BANK_IDENTIFIER")
     private String bankIdentifier;
+    @Size(max = 30)
     @Column(name = "SETTLEMENT_ACCOUNT")
     private String settlementAccount;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
     @Column(name = "BANK_TYPE")
     private String bankType;
+    @Size(max = 20)
     @Column(name = "COMMISION_DEFINITION")
     private String commisionDefinition;
+    @Size(max = 15)
+    @Column(name = "ACTION")
+    private String action;
+    @Size(max = 15)
+    @Filter
+    @Column(name = "ACTION_STATUS")
+    private String actionStatus;
+    @Size(max = 3)
+    @Column(name = "INTRASH")
+    private String intrash;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Set<UfsGls> ufsGlsSet;
+
+    @JoinColumn(name = "COUNTRY", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    private UfsCountries country;
+    @JoinColumn(name = "SETTLEMENT_CURRENCY", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    private UfsCurrency settlementCurrency;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "UFS_BANKS_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_BANKS_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_BANKS_SEQ")
+    @Column(name = "ID")
+    private Long id;
     @Column(name = "BANK_GUARANTEE")
     private BigInteger bankGuarantee;
     @Column(name = "INTERCHANGE_FEE")
     private BigInteger interchangeFee;
     @Column(name = "SETUP_FEE")
     private BigInteger setupFee;
-    @Column(name = "CREATED_AT")
+    @Column(name = "SETTLEMENT_CURRENCY")
+    private BigInteger settlementCurrencys;
+    @Column(name = "COUNTRY")
+    private Long countrys;
+    @Column(name = "CREATED_AT", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Column(name = "ACTION")
-    private String action;
-    @Column(name = "ACTION_STATUS")
-    private String actionStatus;
-    @Column(name = "INTRASH")
-    private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
-    private Collection<UfsBankBranches> ufsBankBranchesCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
-    private Collection<UfsBankRegion> ufsBankRegionCollection;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsOrganizationUnits tenantId;
-    @JoinColumn(name = "SETTLEMENT_CURRENCY", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne
-    private UfsCurrency settlementCurrency;
-    @JoinColumn(name = "COUNTRY", referencedColumnName = "ID")
-    @ManyToOne
-    private UfsCountries country;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
-    private Collection<UfsBankBins> ufsBankBinsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
-    private Collection<UfsGls> ufsGlsCollection;
+    @Column(name = "TENANT_ID")
+    private String tenantIds;
 
     public UfsBanks() {
     }
@@ -102,6 +139,117 @@ public class UfsBanks implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public BigInteger getBankGuarantee() {
+        return bankGuarantee;
+    }
+
+    public void setBankGuarantee(BigInteger bankGuarantee) {
+        this.bankGuarantee = bankGuarantee;
+    }
+
+    public BigInteger getInterchangeFee() {
+        return interchangeFee;
+    }
+
+    public void setInterchangeFee(BigInteger interchangeFee) {
+        this.interchangeFee = interchangeFee;
+    }
+
+    public BigInteger getSetupFee() {
+        return setupFee;
+    }
+
+    public void setSetupFee(BigInteger setupFee) {
+        this.setupFee = setupFee;
+    }
+
+    public UfsCountries getCountry() {
+        return country;
+    }
+
+    public UfsCurrency getSettlementCurrency() {
+        return settlementCurrency;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public UfsOrganizationUnits getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(UfsOrganizationUnits tenantId) {
+        this.tenantId = tenantId;
+    }
+
+
+    public void setCountry(UfsCountries country) {
+        this.country = country;
+    }
+
+    public void setSettlementCurrency(UfsCurrency settlementCurrency) {
+        this.settlementCurrency = settlementCurrency;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public BigInteger getSettlementCurrencys() {
+        return settlementCurrencys;
+    }
+
+    public void setSettlementCurrencys(BigInteger settlementCurrencys) {
+        this.settlementCurrencys = settlementCurrencys;
+    }
+
+    public Long getCountrys() {
+        return countrys;
+    }
+
+    public void setCountrys(Long countrys) {
+        this.countrys = countrys;
+    }
+
+    public String getTenantIds() {
+        return tenantIds;
+    }
+
+    public void setTenantIds(String tenantIds) {
+        this.tenantIds = tenantIds;
+    }
+
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof UfsBanks)) {
+            return false;
+        }
+        UfsBanks other = (UfsBanks) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ke.co.tra.ufs.tms.entities.UfsBanks[ id=" + id + " ]";
     }
 
     public String getBankName() {
@@ -144,45 +292,6 @@ public class UfsBanks implements Serializable {
         this.commisionDefinition = commisionDefinition;
     }
 
-    public BigInteger getBankGuarantee() {
-        return bankGuarantee;
-    }
-
-    public void setBankGuarantee(BigInteger bankGuarantee) {
-        this.bankGuarantee = bankGuarantee;
-    }
-
-    public BigInteger getInterchangeFee() {
-        return interchangeFee;
-    }
-
-    public void setInterchangeFee(BigInteger interchangeFee) {
-        this.interchangeFee = interchangeFee;
-    }
-
-    public BigInteger getSetupFee() {
-        return setupFee;
-    }
-
-    public void setSetupFee(BigInteger setupFee) {
-        this.setupFee = setupFee;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -192,6 +301,27 @@ public class UfsBanks implements Serializable {
         this.actionStatus = actionStatus;
     }
 
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsGls> getUfsGlsSet() {
+        return ufsGlsSet;
+    }
+
+    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
+        this.ufsGlsSet = ufsGlsSet;
+    }
+
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+
     public String getIntrash() {
         return intrash;
     }
@@ -200,85 +330,5 @@ public class UfsBanks implements Serializable {
         this.intrash = intrash;
     }
 
-    public Collection<UfsBankBranches> getUfsBankBranchesCollection() {
-        return ufsBankBranchesCollection;
-    }
 
-    public void setUfsBankBranchesCollection(Collection<UfsBankBranches> ufsBankBranchesCollection) {
-        this.ufsBankBranchesCollection = ufsBankBranchesCollection;
-    }
-
-    public Collection<UfsBankRegion> getUfsBankRegionCollection() {
-        return ufsBankRegionCollection;
-    }
-
-    public void setUfsBankRegionCollection(Collection<UfsBankRegion> ufsBankRegionCollection) {
-        this.ufsBankRegionCollection = ufsBankRegionCollection;
-    }
-
-    public UfsOrganizationUnits getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UfsOrganizationUnits tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public UfsCurrency getSettlementCurrency() {
-        return settlementCurrency;
-    }
-
-    public void setSettlementCurrency(UfsCurrency settlementCurrency) {
-        this.settlementCurrency = settlementCurrency;
-    }
-
-    public UfsCountries getCountry() {
-        return country;
-    }
-
-    public void setCountry(UfsCountries country) {
-        this.country = country;
-    }
-
-    public Collection<UfsBankBins> getUfsBankBinsCollection() {
-        return ufsBankBinsCollection;
-    }
-
-    public void setUfsBankBinsCollection(Collection<UfsBankBins> ufsBankBinsCollection) {
-        this.ufsBankBinsCollection = ufsBankBinsCollection;
-    }
-
-    public Collection<UfsGls> getUfsGlsCollection() {
-        return ufsGlsCollection;
-    }
-
-    public void setUfsGlsCollection(Collection<UfsGls> ufsGlsCollection) {
-        this.ufsGlsCollection = ufsGlsCollection;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UfsBanks)) {
-            return false;
-        }
-        UfsBanks other = (UfsBanks) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.mycompany.oracleufs.UfsBanks[ id=" + id + " ]";
-    }
-    
 }

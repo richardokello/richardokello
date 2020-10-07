@@ -119,7 +119,7 @@ public class UserManagementService implements UserManagementTmpl {
                 }
 
             }else{
-                isomsg.set(39, "05");
+                isomsg.set(39, "32");
                 isomsg.set(47, "Pin and confirm pin does not match");
             }
 

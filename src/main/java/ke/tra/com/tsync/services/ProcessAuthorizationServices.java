@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 
 @Service
 public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
@@ -26,6 +25,7 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
     @Override
     public ISOMsg processAuthbyProcode(ISOMsg isoMsg, PosUserWrapper wrapper){
         isoMsg.set(39, "06");
+        isoMsg.set(47, "An error occurred within the processAuthbyProcode method");
 
         switch (isoMsg.getString(3)){
             case "001000":
@@ -67,7 +67,6 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
             case  "000121":
                 isoMsg = userManagementService.enableUser(isoMsg, wrapper);
                 break;
-
             case "011113":
 
                 //String newpass = isoMsg.getString(72).trim();
@@ -119,7 +118,8 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                 return supportCategoriesModule.getAllSupportCategories(isoMsg);
 
             default:
-                isoMsg.set(39,"05");
+                isoMsg.set(39,"51");
+                isoMsg.set(47, "Invalid Processing code..");
                 break;
         }
 

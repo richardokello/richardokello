@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ke.tra.com.tsync.packager.TracomPackager;
+import ke.tra.com.tsync.packager.Transport_Packager;
 import org.jpos.iso.ISOPackager;
 import org.jpos.iso.ISOUtil;
 import org.jpos.iso.channel.NACChannel;
@@ -22,13 +22,14 @@ public class TestClass {
 //        String s = "abbcdde";
 //        Stream<Character> characters = s.chars();
         try {
-            ISOPackager packager = new TracomPackager();
+            ISOPackager packager = new Transport_Packager();
             ISOMsg isoMsg;
             //isoMsg = posUserCreation();
             //isoMsg = logout();
             //isoMsg = deletePosUser();
-             //isoMsg = posUserLogin();
-            isoMsg = UsernamePrefix();
+            //isoMsg = posUserLogin();
+            //isoMsg = UsernamePrefix();
+            isoMsg = processPosAdvice();
             //isoMsg = firstTimePosUserLogin();
             //isoMsg = resetUserPin();
             //isoMsg = changeUserPin();
@@ -55,11 +56,13 @@ public class TestClass {
             System.out.println(ISOUtil.hexdump(data));
             String server;
             int port ;
-            server = "127.0.0.1"; port = 3401;
-            //port = 8621;
-            //server = "41.215.130.247";
-            //port = 4123;
-            //BaseChannel channel = new NCCChannel(ip, port, packager, TPDU);
+            server = "127.0.0.1"; port = 8621;
+            // QA server
+            //server = "41.215.130.247"; port = 8621;
+            //dev server
+//            server = "41.215.130.247";
+//            port = 4123;
+            //BaseChannel channel = new NCCChannel(ip, 4123, packager, TPDU);
             NACChannel channel = new NACChannel(server, port, packager, TPDU);
             //ISOChannel channel = new NCCChannel(ip, port, packager, TPDU);
 
@@ -220,6 +223,23 @@ public class TestClass {
         msg.set(47, "026024161277313221017301065310"); // additional data where we
         System.out.println(msg);
         return msg;
+    }
+
+    private static ISOMsg processPosAdvice() throws ISOException{
+        ISOMsg isoMsg = new ISOMsg();
+        isoMsg.setMTI("0020"); // Mti for an advice
+        isoMsg.set(2, "0100**0099"); // primary account number
+        isoMsg.set(3, "001121"); // processing code
+        isoMsg.set(4,"000000000800"); // transaction amount
+        isoMsg.set(7, "1218164640"); // date local transmission
+        isoMsg.set(11, "000338");//STAN
+        isoMsg.set(12,"181212101924"); //Date local
+        isoMsg.set(39,"00");
+        isoMsg.set(41, "PO400001"); // 8
+        isoMsg.set(42, "100000RW0010408"); // 15
+        isoMsg.set(49, "345"); // 3 currency code
+        isoMsg.set(60, "345"); // 3 currency code
+        return isoMsg;
     }
 
     private static ISOMsg GEPGInquiry() throws ISOException {

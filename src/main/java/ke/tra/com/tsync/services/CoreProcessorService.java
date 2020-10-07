@@ -6,13 +6,12 @@
 package ke.tra.com.tsync.services;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
-import ke.tra.com.tsync.entities.CashCollectionRecon;
-import ke.tra.com.tsync.entities.FailedTransactions;
-import ke.tra.com.tsync.entities.OnlineActivity;
-import ke.tra.com.tsync.entities.TransactionTypes;
+import ke.tra.com.tsync.config.SpringContextBridge;
+import ke.tra.com.tsync.entities.*;
 import ke.tra.com.tsync.repository.*;
 import ke.tra.com.tsync.services.template.CoreProcessorTemplate;
 import ke.tra.com.tsync.wrappers.PosUserWrapper;
@@ -20,6 +19,7 @@ import org.hibernate.exception.JDBCConnectionException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,15 +195,32 @@ public class CoreProcessorService implements CoreProcessorTemplate {
     }
 
     @Override
+
     public void saveOnlineActivity(ISOMsg isoMsg) {
-        LOGGER.info("~~~~~~~~~ saveOnlineActivity ", "saving " + isoMsg.getString(37));
+        LOGGER.info("~~~~~~~~~ saveOnlineActivity " + isoMsg.getString(37));
+        LOGGER.info("~~~~~~~~~ saveOnlineActivity saving " + isoMsg.getString(39));
+        LOGGER.error(">" +isoMsg.getString(39).equalsIgnoreCase("00"));
+        PosIrisRepo posIrisRepo = SpringContextBridge.services().getPosIrisRepo();
+        String posIrisData = isoMsg.getString(9) == null?"":"";
+
+        insertPosIrisData(posIrisRepo, posIrisData);
         try {
+            Date date = new Date();
+            OnlineActivity onlineActivity = (OnlineActivity) isoMsgTOEntity.convertIsoToPojo(isoMsg);
+            onlineActivity.setInserttime(date);
             if (!isoMsg.getString(39).equalsIgnoreCase("00")) {
-                FailedTransactions failedTransactions = isoMsgTOEntity.convertFailedIsoToPojo(isoMsg);
-                failedTransactionRepository.save(failedTransactions);
-            } else {
-                OnlineActivity onlineActivity = (OnlineActivity) isoMsgTOEntity.convertIsoToPojo(isoMsg);
+                LOGGER.error(">>" +isoMsg.getString(39).equalsIgnoreCase("00"));
+//                FailedTransactions failedTransactions = isoMsgTOEntity.convertFailedIsoToPojo(isoMsg);
+                onlineActivity.setStatus("FAILED");
+
                 onlineActivityRepository.save(onlineActivity);
+//                failedTransactionRepository.save(failedTransactions);
+            } else {
+                LOGGER.error(">>>" +isoMsg.getString(39).equalsIgnoreCase("00"));
+                onlineActivity.setStatus("SUCCESS");
+                onlineActivityRepository.save(onlineActivity);
+
+
             }
         } catch (Exception e) {
             LOGGER.error("saveOnlineActivity for isomsg %s ", isoMsg.toString(), e);
@@ -217,7 +234,6 @@ public class CoreProcessorService implements CoreProcessorTemplate {
         LOGGER.info(" processTransactionsbyMTI : " + isoMsg.getString(3));
         PosUserWrapper fieldData = new PosUserWrapper();
 
-        System.out.println(fieldData);
        if (isoMsg.hasField(47)) {
             fieldData = terminalDataTLVMap(isoMsg.getString(47));
             //process the transaction
@@ -226,7 +242,6 @@ public class CoreProcessorService implements CoreProcessorTemplate {
         fieldData.setMID(isoMsg.getString(42)==null?"":isoMsg.getString(42));
         fieldData.setTID(isoMsg.getString(41)==null?"":isoMsg.getString(41));
         isoMsg.set(39, "06");
-
         switch (isoMsg.getString(0)) {
             case "0100":
             case "1100":
@@ -234,7 +249,10 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                 //Authorization Request	Request from a point-of-sale terminal for authorization for a cardholder purchase
                 isoMsg = processAuthorizationServices.processAuthbyProcode(isoMsg,fieldData);
                 break;
+
             default:
+                isoMsg.set(47, "Invalid MTI");
+                isoMsg.set(39, "10");
                 break;
         }
         return isoMsg;
@@ -244,6 +262,52 @@ public class CoreProcessorService implements CoreProcessorTemplate {
     public Optional<TransactionTypes> getTxnTypebyMTIAndProcodeAndActionstatusAndIntrash(String mti, String procode, String actionstatus, String intrash)
             throws JDBCConnectionException {
         return Optional.ofNullable(transTypesRepository.findByTxnMtiAndTxnProcodeAndActionStatusAndIntrash(mti, procode, actionstatus, intrash));
+    }
+
+    public void insertPosIrisData(PosIrisRepo posIrisRepo, String tmsData){
+        String[] terminalData = tmsData.split("\\|");
+        if (terminalData.length != 7)
+            LOGGER.info("Some data about  PosIris are Missing");
+        else  {
+            PosIris posIris = new PosIris();
+            try {
+                posIris.setCharging(terminalData[0]);
+                posIris.setBatteryLevel(terminalData[1]);
+                posIris.setSignal(terminalData[2]);
+                posIris.setOsVersion(terminalData[3]);
+                posIris.setTemperature(terminalData[4]);
+                posIris.setAppVersion(terminalData[5]);
+                posIris.setSerialNumber(terminalData[6]);
+
+                posIrisRepo.save(posIris);
+            } catch (Exception e){
+                LOGGER.error("Exception Logging PosIris data {}", e.getMessage());
+
+            }
+        }
+    }
+    public ISOMsg processTransactionAdvice(ISOMsg isoMsg) {
+        LOGGER.info("Processing financial advice");
+        PosIrisRepo posIrisRepo = SpringContextBridge.services().getPosIrisRepo();
+        try {
+
+            // insert the transaction into the db for persistence
+            //onlineActivityService.InsertOnlineActivity(isoMsg);
+            if (isoMsg.getString(9) != null) {
+                // posIris data is available
+                insertPosIrisData(posIrisRepo, isoMsg.getString(9));
+            }
+
+            isoMsg.set(39, "00");
+            isoMsg.set(47, "PosIris data saved");
+
+        }catch (Exception e){
+            isoMsg.set(39, "96"); // System mulfunction
+            LOGGER.error("An error occurred when processing advice", e);
+        }
+
+        return isoMsg;
+
     }
 
 }

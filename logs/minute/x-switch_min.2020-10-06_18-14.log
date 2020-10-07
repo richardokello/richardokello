@@ -1,0 +1,10 @@
+25997 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+26000 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+26084 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+26266 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+48294 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+48306 [main] INFO  o.h.e.j.e.i.LobCreatorBuilderImpl - HHH000422: Disabling contextual LOB creation as connection was null 
+50344 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+72369 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+72646 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+72863 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 

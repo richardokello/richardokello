@@ -287,9 +287,11 @@ public class OnlineActivity implements Serializable {
     private String field127;
     @Column(name = "FIELD128")
     private String field128;
-    //@Column(name = "INSERTTIME")
-   // @Temporal(TemporalType.TIMESTAMP)
-  //  private Date inserttime;
+    @Column(name = "INSERTTIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date inserttime;
+    @Column(name = "STATUS")
+    private String status;
 
     public OnlineActivity() {
     }
@@ -1337,7 +1339,7 @@ public class OnlineActivity implements Serializable {
     public void setField128(String field128) {
         this.field128 = field128;
     }
-/*
+
     public Date getInserttime() {
         return inserttime;
     }
@@ -1345,7 +1347,15 @@ public class OnlineActivity implements Serializable {
     public void setInserttime(Date inserttime) {
         this.inserttime = inserttime;
     }
- */
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;

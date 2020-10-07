@@ -7,22 +7,14 @@
 package ke.tra.com.tsync.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.Set;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,27 +24,21 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Mwagiru Kamoni
  */
+
 @Entity
 @Table(name = "UFS_BANK_BRANCHES")
 @XmlRootElement
 @NamedQueries({
-        @NamedQuery(name = "UfsBankBranches.findAll", query = "SELECT u FROM UfsBankBranches u"),
-        @NamedQuery(name = "UfsBankBranches.findById", query = "SELECT u FROM UfsBankBranches u WHERE u.id = :id"),
-        @NamedQuery(name = "UfsBankBranches.findByName", query = "SELECT u FROM UfsBankBranches u WHERE u.name = :name"),
-        @NamedQuery(name = "UfsBankBranches.findByCode", query = "SELECT u FROM UfsBankBranches u WHERE u.code = :code"),
-        @NamedQuery(name = "UfsBankBranches.findByBankId", query = "SELECT u FROM UfsBankBranches u WHERE u.bankId = :bankId"),
-        @NamedQuery(name = "UfsBankBranches.findByAction", query = "SELECT u FROM UfsBankBranches u WHERE u.action = :action"),
-        @NamedQuery(name = "UfsBankBranches.findByActionStatus", query = "SELECT u FROM UfsBankBranches u WHERE u.actionStatus = :actionStatus"),
-        @NamedQuery(name = "UfsBankBranches.findByCreatedAt", query = "SELECT u FROM UfsBankBranches u WHERE u.createdAt = :createdAt"),
-        @NamedQuery(name = "UfsBankBranches.findByIntrash", query = "SELECT u FROM UfsBankBranches u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsBankBranches.findAll", query = "SELECT u FROM UfsBankBranches u")
+        , @NamedQuery(name = "UfsBankBranches.findById", query = "SELECT u FROM UfsBankBranches u WHERE u.id = :id")
+        , @NamedQuery(name = "UfsBankBranches.findByName", query = "SELECT u FROM UfsBankBranches u WHERE u.name = :name")
+        , @NamedQuery(name = "UfsBankBranches.findByCode", query = "SELECT u FROM UfsBankBranches u WHERE u.code = :code")
+        , @NamedQuery(name = "UfsBankBranches.findByAction", query = "SELECT u FROM UfsBankBranches u WHERE u.action = :action")
+        , @NamedQuery(name = "UfsBankBranches.findByActionStatus", query = "SELECT u FROM UfsBankBranches u WHERE u.actionStatus = :actionStatus")
+        , @NamedQuery(name = "UfsBankBranches.findByCreatedAt", query = "SELECT u FROM UfsBankBranches u WHERE u.createdAt = :createdAt")
+        , @NamedQuery(name = "UfsBankBranches.findByIntrash", query = "SELECT u FROM UfsBankBranches u WHERE u.intrash = :intrash")})
 public class UfsBankBranches implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "ID")
-    private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
@@ -63,33 +49,58 @@ public class UfsBankBranches implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "CODE")
     private String code;
-    @Column(name = "BANK_ID")
-    private Long bankId;
     @Size(max = 15)
     @Column(name = "ACTION")
     private String action;
     @Size(max = 15)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
-    @Column(name = "CREATED_AT")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
     @OneToMany(mappedBy = "bankBranchId")
-    private Collection<UfsCustomerOutlet> ufsCustomerOutletCollection;
-    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Set<UfsGls> ufsGlsSet;
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @OneToMany(mappedBy = "bankBranchId")
+    private Set<TmsDevice> tmsDeviceList;
+
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @GenericGenerator(
+            name = "UFS_BANK_BRANCHES_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_BANK_BRANCHES_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_BANK_BRANCHES_SEQ")
+    @Column(name = "ID")
+    private Long id;
+    @Column(name = "CREATED_AT", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    //    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+//    @ManyToOne(optional = true)
+//    private UfsBanks bankId;
+//    @Column(name = "BANK_ID")
+//    private Long bankIds;
+    @JoinColumn(name = "BANK_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private UfsBankRegion bankRegionId;
-    @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID")
+    @Column(name = "BANK_REGION_ID")
+    private BigDecimal bankRegionIds;
+    @JoinColumn(name = "GEOGRAPHICAL_REGION_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
+    @JsonIgnore
     private UfsGeographicalRegion geographicalRegionId;
-    @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID")
-    @ManyToOne(optional = false)
-    private UfsOrganizationUnits tenantId;
-    @OneToMany(mappedBy = "bankBranchId")
-    private Collection<TmsDevice> tmsDeviceCollection;
+    @Column(name = "GEOGRAPHICAL_REGION_ID")
+    private BigDecimal geographicalRegionIds;
 
     public UfsBankBranches() {
     }
@@ -112,37 +123,6 @@ public class UfsBankBranches implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Long getBankId() {
-        return bankId;
-    }
-
-    public void setBankId(Long bankId) {
-        this.bankId = bankId;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 
     public String getActionStatus() {
         return actionStatus;
@@ -160,23 +140,7 @@ public class UfsBankBranches implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public String getIntrash() {
-        return intrash;
-    }
 
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UfsCustomerOutlet> getUfsCustomerOutletCollection() {
-        return ufsCustomerOutletCollection;
-    }
-
-    public void setUfsCustomerOutletCollection(Collection<UfsCustomerOutlet> ufsCustomerOutletCollection) {
-        this.ufsCustomerOutletCollection = ufsCustomerOutletCollection;
-    }
 
     public UfsBankRegion getBankRegionId() {
         return bankRegionId;
@@ -194,22 +158,12 @@ public class UfsBankBranches implements Serializable {
         this.geographicalRegionId = geographicalRegionId;
     }
 
-    public UfsOrganizationUnits getTenantId() {
-        return tenantId;
+    public Set<TmsDevice> getTmsDeviceList() {
+        return tmsDeviceList;
     }
 
-    public void setTenantId(UfsOrganizationUnits tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public Collection<TmsDevice> getTmsDeviceCollection() {
-        return tmsDeviceCollection;
-    }
-
-    public void setTmsDeviceCollection(Collection<TmsDevice> tmsDeviceCollection) {
-        this.tmsDeviceCollection = tmsDeviceCollection;
+    public void setTmsDeviceList(Set<TmsDevice> tmsDeviceList) {
+        this.tmsDeviceList = tmsDeviceList;
     }
 
     @Override
@@ -234,7 +188,68 @@ public class UfsBankBranches implements Serializable {
 
     @Override
     public String toString() {
-        return "UfsBankBranches[ id=" + id + " ]";
+        return "ke.co.tra.ufs.tms.entities.UfsBankBranches[ id=" + id + " ]";
     }
+
+
+    public BigDecimal getBankRegionIds() {
+        return bankRegionIds;
+    }
+
+    public void setBankRegionIds(BigDecimal bankRegionIds) {
+        this.bankRegionIds = bankRegionIds;
+    }
+
+    public BigDecimal getGeographicalRegionIds() {
+        return geographicalRegionIds;
+    }
+
+    public void setGeographicalRegionIds(BigDecimal geographicalRegionIds) {
+        this.geographicalRegionIds = geographicalRegionIds;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Set<UfsGls> getUfsGlsSet() {
+        return ufsGlsSet;
+    }
+
+    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
+        this.ufsGlsSet = ufsGlsSet;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
 
 }

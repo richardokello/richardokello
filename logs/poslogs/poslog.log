@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <logger class="org.jpos.util.DailyLogListener">
-<log realm="Q2.system" at="2020-10-02T10:17:31.307550200">
+<log realm="Q2.system" at="2020-10-06T18:21:04.410450800">
   <info>
     Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
   </info>
 </log>
-<log realm="Q2.system" at="2020-10-02T10:17:31.656806700" lifespan="329ms">
+<log realm="Q2.system" at="2020-10-06T18:21:04.735450100" lifespan="318ms">
   <version>
     jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
 
@@ -30,467 +30,170 @@ q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
 
   </version>
 </log>
-<log realm="Q2.system" at="2020-10-02T10:17:31.662781700" lifespan="3ms">
+<log realm="Q2.system" at="2020-10-06T18:21:04.745450700" lifespan="6ms">
   <info>
     deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
   </info>
 </log>
-<log realm="Q2.system" at="2020-10-02T10:17:32.718472600" lifespan="1055ms">
+<log realm="Q2.system" at="2020-10-06T18:21:05.499458" lifespan="753ms">
   <info>
     deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
   </info>
 </log>
-<log realm="Q2.system" at="2020-10-02T10:17:32.721472200" lifespan="1ms">
+<log realm="Q2.system" at="2020-10-06T18:21:05.505455300" lifespan="5ms">
   <info>
     deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
   </info>
 </log>
-<log realm="ISOServer.server" at="2020-10-02T10:17:32.733472900">
+<log realm="ISOServer.server" at="2020-10-06T18:21:05.530453">
   <iso-server>
-    listening on port 3401
+    listening on port 8621
   </iso-server>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.858053500">
-  <info>
-    start Thread[Thread-15,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.860010100">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.628478900">
   <info>
     start Thread[Thread-16,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.860010100">
-  <info>
-    start Thread[Thread-17,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.860010100">
-  <info>
-    start Thread[Thread-23,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.860010100">
-  <info>
-    start Thread[Thread-24,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.860010100">
-  <info>
-    start Thread[Thread-21,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.860010100">
-  <info>
-    start Thread[Thread-22,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.861022800">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.629455600">
   <info>
     start Thread[Thread-18,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.861022800">
-  <info>
-    start Thread[Thread-30,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.862010700">
-  <info>
-    start Thread[Thread-26,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.863011600">
-  <info>
-    start Thread[Thread-37,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.861022800">
-  <info>
-    start Thread[Thread-28,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.861022800" lifespan="1ms">
-  <info>
-    start Thread[Thread-20,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.860010100">
-  <info>
-    start Thread[Thread-25,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.865011100" lifespan="3ms">
-  <info>
-    start Thread[Thread-29,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.865011100" lifespan="3ms">
-  <info>
-    start Thread[Thread-31,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.864011300" lifespan="2ms">
-  <info>
-    start Thread[Thread-32,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.864011300" lifespan="2ms">
-  <info>
-    start Thread[Thread-27,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.862010700">
-  <info>
-    start Thread[Thread-33,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.861022800" lifespan="1ms">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.631454300">
   <info>
     start Thread[Thread-19,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.866010100" lifespan="2ms">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.630454400">
   <info>
-    start Thread[Thread-34,5,main]
+    start Thread[Thread-20,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.865011100" lifespan="1ms">
-  <info>
-    start Thread[Thread-36,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.865011100">
-  <info>
-    start Thread[Thread-38,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:17:32.865011100">
-  <info>
-    start Thread[Thread-35,5,main]
-  </info>
-</log>
-<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-02T10:17:32.867010600">
-  <info>
-    Starting SystemMonitor
-  </info>
-</log>
-<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-02T10:17:32.868010300">
-  <info>
-               OS: Windows 10 (10.0)
-             Java: 11.0.4 (JetBrains s.r.o) AES-secure
-     process name: 39828@DESKTOP-41KACUO
-        user name: cotuoma
-             host: DESKTOP-41KACUO/192.168.254.77
-              cwd: E:\projects\gateways\crdb_tsync
-       free space: 451.9 GiB
-          version: 2.1.2 (6f9379a)
-         instance: 5accabbc-bc34-481a-92f6-d46fd8422a7b
-           uptime: 00:00:01.736 (-1.000000)
-       processors: 8
-           drift : 0
-    memory(t/u/f): 446/107/338
-         encoding: UTF-8
-         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
-    watch service: sun.nio.fs.WindowsWatchService
-            clock: 1601623052 2020-10-02T07:17:32.868010300Z
-     thread count: 73
-     peak threads: 73
-     user threads: 67
-            Thread[Reference Handler,10,system]
-            Thread[Finalizer,8,system]
-            Thread[Signal Dispatcher,9,system]
-            Thread[Attach Listener,5,system]
-            Thread[RMI TCP Accept-0,5,system]
-            Thread[Monitor Ctrl-Break,5,main]
-            Thread[logback-1,5,main]
-            Thread[Catalina-utility-1,1,main]
-            Thread[Catalina-utility-2,1,main]
-            Thread[container-0,5,main]
-            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
-            Thread[HikariPool-1 housekeeper,5,main]
-            Thread[OracleTimeoutPollingThread,10,main]
-            Thread[scheduling-1,5,main]
-            Thread[NioBlockingSelector.BlockPoller-1,5,main]
-            Thread[http-nio-8094-exec-1,5,main]
-            Thread[http-nio-8094-exec-2,5,main]
-            Thread[http-nio-8094-exec-3,5,main]
-            Thread[http-nio-8094-exec-4,5,main]
-            Thread[http-nio-8094-exec-5,5,main]
-            Thread[http-nio-8094-exec-6,5,main]
-            Thread[http-nio-8094-exec-7,5,main]
-            Thread[http-nio-8094-exec-8,5,main]
-            Thread[http-nio-8094-exec-9,5,main]
-            Thread[http-nio-8094-exec-10,5,main]
-            Thread[http-nio-8094-ClientPoller-0,5,main]
-            Thread[http-nio-8094-ClientPoller-1,5,main]
-            Thread[http-nio-8094-Acceptor-0,5,main]
-            Thread[pool-2-thread-1,5,main]
-            Thread[Q2-5accabbc-bc34-481a-92f6-d46fd8422a7b,5,main]
-            Thread[DestroyJavaVM,5,main]
-            Thread[FileSystemWatchService,5,main]
-            Thread[Timer-0,5,main]
-            Thread[Timer-1,5,main]
-            Thread[FileSystemWatchService,5,main]
-            Thread[FileDeletionDetector,5,main]
-            Thread[LogFlusher,5,main]
-            Thread[DataCorruptionVerifier,5,main]
-            Thread[INCompressor,5,main]
-            Thread[Cleaner-1,5,main]
-            Thread[Checkpointer,5,main]
-            Thread[StatCapture,5,main]
-            Thread[Thread-13,5,main]
-            Thread[Timer-2,5,main]
-            Thread[SimpleTransactionManager-0:idle,5,main]
-            Thread[SimpleTransactionManager-1:idle,5,main]
-            Thread[SimpleTransactionManager-2:idle,5,main]
-            Thread[SimpleTransactionManager-10:idle,5,main]
-            Thread[SimpleTransactionManager-9:idle,5,main]
-            Thread[SimpleTransactionManager-7:idle,5,main]
-            Thread[SimpleTransactionManager-5:idle,5,main]
-            Thread[SimpleTransactionManager-6:idle,5,main]
-            Thread[SimpleTransactionManager-3:idle,5,main]
-            Thread[SimpleTransactionManager-4:idle,5,main]
-            Thread[SimpleTransactionManager-8:idle,5,main]
-            Thread[SimpleTransactionManager-18:idle,5,main]
-            Thread[SimpleTransactionManager-16:idle,5,main]
-            Thread[SimpleTransactionManager-11:idle,5,main]
-            Thread[SimpleTransactionManager-12:idle,5,main]
-            Thread[SimpleTransactionManager-13:idle,5,main]
-            Thread[SimpleTransactionManager-14:idle,5,main]
-            Thread[SimpleTransactionManager-15:idle,5,main]
-            Thread[SimpleTransactionManager-17:idle,5,main]
-            Thread[SimpleTransactionManager-19:idle,5,main]
-            Thread[SimpleTransactionManager-22:idle,5,main]
-            Thread[SimpleTransactionManager-21:idle,5,main]
-            Thread[SimpleTransactionManager-20:idle,5,main]
-            Thread[SimpleTransactionManager-23:idle,5,main]
-            Thread[pool-3-thread-1,5,main]
-            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
-            Thread[SystemMonitor,5,main]
-            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
-            Thread[Common-Cleaner,8,InnocuousThreadGroup]
-    name-registrar:
-      tspace:default: org.jpos.space.TSpace
-         key-count: 0
-            gcinfo: 0,0
-      tspace:txnmgr: org.jpos.space.TSpace
-         key-count: 0
-            gcinfo: 0,0
-      ISOServer: org.jpos.q2.iso.QServer
-      Q2: org.jpos.q2.Q2
-      server.ISOServer: org.jpos.iso.ISOServer
-        connected=0, rx=0, tx=0, last=0
-      logger.Q2: org.jpos.util.Logger
-      transient:default: org.jpos.space.TSpace
-        <key count='1'>$TAILLOCK.1753757931</key>
-         key-count: 1
-            gcinfo: 0,0
-      logger.Q2.buffered: org.jpos.util.BufferedLogListener
-      je:txnmgr: org.jpos.space.JESpace
-        <key size='1'>$HEAD</key>
-        <key size='1'>$TAIL</key>
-        <keycount>2</keycount>
-      SimpleTransactionManager: org.jpos.transaction.TransactionManager
-        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
-  </info>
-</log>
-<?xml version="1.0" encoding="UTF-8"?>
-<logger class="org.jpos.util.DailyLogListener">
-<log realm="Q2.system" at="2020-10-02T10:22:32.204293400">
-  <info>
-    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
-  </info>
-</log>
-<log realm="Q2.system" at="2020-10-02T10:22:32.374274400" lifespan="164ms">
-  <version>
-    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
-
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-jPOS Community Edition, licensed under GNU AGPL v3.0.
-This software is probably not suitable for commercial use.
-Please see http://jpos.org/license for details.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (Darwin)
-
-iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
-HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
-ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
-St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
-1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
-q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
-=oP+v
------END PGP SIGNATURE-----
-
-  </version>
-</log>
-<log realm="Q2.system" at="2020-10-02T10:22:32.382293500" lifespan="6ms">
-  <info>
-    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
-  </info>
-</log>
-<log realm="Q2.system" at="2020-10-02T10:22:32.816116" lifespan="433ms">
-  <info>
-    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
-  </info>
-</log>
-<log realm="Q2.system" at="2020-10-02T10:22:32.820147" lifespan="3ms">
-  <info>
-    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
-  </info>
-</log>
-<log realm="ISOServer.server" at="2020-10-02T10:22:32.831136400" lifespan="1ms">
-  <iso-server>
-    listening on port 3401
-  </iso-server>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.895225700">
-  <info>
-    start Thread[Thread-15,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.897223800">
-  <info>
-    start Thread[Thread-16,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.898216100">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.630454400">
   <info>
     start Thread[Thread-17,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.898216100">
-  <info>
-    start Thread[Thread-19,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.900221700" lifespan="2ms">
-  <info>
-    start Thread[Thread-20,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.900221700" lifespan="2ms">
-  <info>
-    start Thread[Thread-18,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.905222700" lifespan="5ms">
-  <info>
-    start Thread[Thread-23,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.902224800" lifespan="2ms">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.632504900" lifespan="1ms">
   <info>
     start Thread[Thread-22,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.906214200">
-  <info>
-    start Thread[Thread-26,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.905222700" lifespan="7ms">
-  <info>
-    start Thread[Thread-21,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.908211300" lifespan="3ms">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.631454300">
   <info>
     start Thread[Thread-24,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.910209600" lifespan="5ms">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.632504900" lifespan="1ms">
   <info>
-    start Thread[Thread-25,5,main]
+    start Thread[Thread-21,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.911208500">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.634458200" lifespan="1ms">
   <info>
-    start Thread[Thread-35,5,main]
+    start Thread[Thread-26,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.911208500">
-  <info>
-    start Thread[Thread-36,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.913209800" lifespan="3ms">
-  <info>
-    start Thread[Thread-33,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.913209800">
-  <info>
-    start Thread[Thread-38,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.913209800" lifespan="3ms">
-  <info>
-    start Thread[Thread-32,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.913209800" lifespan="3ms">
-  <info>
-    start Thread[Thread-34,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.914211600" lifespan="6ms">
-  <info>
-    start Thread[Thread-30,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.914211600" lifespan="6ms">
-  <info>
-    start Thread[Thread-29,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.914211600" lifespan="7ms">
-  <info>
-    start Thread[Thread-28,5,main]
-  </info>
-</log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.914211600" lifespan="6ms">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.634458200" lifespan="1ms">
   <info>
     start Thread[Thread-27,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.914211600" lifespan="6ms">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.633452900">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.636457200" lifespan="1ms">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.636457200" lifespan="1ms">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.636457200" lifespan="1ms">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.635453500" lifespan="3ms">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.635453500">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.639462300" lifespan="1ms">
+  <info>
+    start Thread[Thread-39,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.639462300" lifespan="3ms">
   <info>
     start Thread[Thread-31,5,main]
   </info>
 </log>
-<log realm="org.jpos.transaction.TransactionManager" at="2020-10-02T10:22:32.914211600" lifespan="3ms">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.638457700" lifespan="2ms">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.638457700" lifespan="2ms">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.638457700" lifespan="2ms">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.637460200" lifespan="1ms">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.639462300" lifespan="2ms">
   <info>
     start Thread[Thread-37,5,main]
   </info>
 </log>
-<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-02T10:22:32.916218300">
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:21:05.639462300" lifespan="2ms">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T18:21:05.641454">
   <info>
     Starting SystemMonitor
   </info>
 </log>
-<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-02T10:22:32.917216">
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T18:21:05.642454800">
   <info>
                OS: Windows 10 (10.0)
              Java: 11.0.4 (JetBrains s.r.o) AES-secure
-     process name: 40496@DESKTOP-41KACUO
+     process name: 35628@DESKTOP-41KACUO
         user name: cotuoma
-             host: DESKTOP-41KACUO/192.168.254.77
+             host: DESKTOP-41KACUO/192.168.254.151
               cwd: E:\projects\gateways\crdb_tsync
-       free space: 451.9 GiB
+       free space: 452 GiB
           version: 2.1.2 (6f9379a)
-         instance: 76774842-b811-4c93-a45e-3e3e1b63791f
-           uptime: 00:00:00.760 (-1.000000)
+         instance: 749ffaa6-98cf-4d5b-8604-bf26c03a7b1c
+           uptime: 00:00:01.315 (-1.000000)
        processors: 8
            drift : 0
-    memory(t/u/f): 397/253/143
+    memory(t/u/f): 444/187/256
          encoding: UTF-8
          timezone: Africa/Nairobi (Eastern Africa Time) +03:00
     watch service: sun.nio.fs.WindowsWatchService
-            clock: 1601623352 2020-10-02T07:22:32.917216Z
+            clock: 1601997665 2020-10-06T15:21:05.642454800Z
      thread count: 72
      peak threads: 72
      user threads: 66
@@ -522,7 +225,676 @@ q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
             Thread[http-nio-8094-ClientPoller-1,5,main]
             Thread[http-nio-8094-Acceptor-0,5,main]
             Thread[pool-1-thread-1,5,main]
-            Thread[Q2-76774842-b811-4c93-a45e-3e3e1b63791f,5,main]
+            Thread[Q2-749ffaa6-98cf-4d5b-8604-bf26c03a7b1c,5,main]
+            Thread[DestroyJavaVM,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[Timer-0,5,main]
+            Thread[Timer-1,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[FileDeletionDetector,5,main]
+            Thread[LogFlusher,5,main]
+            Thread[DataCorruptionVerifier,5,main]
+            Thread[INCompressor,5,main]
+            Thread[Cleaner-1,5,main]
+            Thread[Checkpointer,5,main]
+            Thread[StatCapture,5,main]
+            Thread[Thread-14,5,main]
+            Thread[Timer-2,5,main]
+            Thread[SimpleTransactionManager-0:idle,5,main]
+            Thread[SimpleTransactionManager-1:idle,5,main]
+            Thread[SimpleTransactionManager-2:idle,5,main]
+            Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
+            Thread[SimpleTransactionManager-6:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
+            Thread[SimpleTransactionManager-11:idle,5,main]
+            Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-10:idle,5,main]
+            Thread[SimpleTransactionManager-13:idle,5,main]
+            Thread[SimpleTransactionManager-12:idle,5,main]
+            Thread[SimpleTransactionManager-14:idle,5,main]
+            Thread[SimpleTransactionManager-17:idle,5,main]
+            Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-16:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
+            Thread[SimpleTransactionManager-19:idle,5,main]
+            Thread[SimpleTransactionManager-20:idle,5,main]
+            Thread[SimpleTransactionManager-22:idle,5,main]
+            Thread[SimpleTransactionManager-21:idle,5,main]
+            Thread[SimpleTransactionManager-23:idle,5,main]
+            Thread[pool-2-thread-1,5,main]
+            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
+            Thread[SystemMonitor,5,main]
+            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
+            Thread[Common-Cleaner,8,InnocuousThreadGroup]
+    name-registrar:
+      tspace:default: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      tspace:txnmgr: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      ISOServer: org.jpos.q2.iso.QServer
+      Q2: org.jpos.q2.Q2
+      server.ISOServer: org.jpos.iso.ISOServer
+        connected=0, rx=0, tx=0, last=0
+      logger.Q2: org.jpos.util.Logger
+      transient:default: org.jpos.space.TSpace
+        <key count='1'>$TAILLOCK.1413240104</key>
+         key-count: 1
+            gcinfo: 0,0
+      logger.Q2.buffered: org.jpos.util.BufferedLogListener
+      je:txnmgr: org.jpos.space.JESpace
+        <key size='1'>$HEAD</key>
+        <key size='1'>$TAIL</key>
+        <keycount>2</keycount>
+      SimpleTransactionManager: org.jpos.transaction.TransactionManager
+        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
+  </info>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51742" at="2020-10-06T18:28:33.692488400">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:51742" at="2020-10-06T18:28:33.694487800" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0220"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="010000"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:51742" at="2020-10-06T18:28:33.944487600">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0230"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="010000"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="062820062833"/>
+      <field id="39" value="51"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="47" value="Invalid processing code and MTI combination"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Insufficient funds"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:51742" at="2020-10-06T18:28:33.946488600" lifespan="1ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51742" at="2020-10-06T18:28:33.947488300">
+  <session-end/>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51772" at="2020-10-06T18:31:06.483223300">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:51772" at="2020-10-06T18:31:06.485224400">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="010000"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:51772" at="2020-10-06T18:31:06.637225">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="010000"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="063120063106"/>
+      <field id="39" value="51"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="47" value="Invalid processing code and MTI combination"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Insufficient funds"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:51772" at="2020-10-06T18:31:06.640223800">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51772" at="2020-10-06T18:31:06.641225200">
+  <session-end/>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51806" at="2020-10-06T18:34:33.377162400">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:51806" at="2020-10-06T18:34:33.379162400">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="010000"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:51806" at="2020-10-06T18:34:33.513160700">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="010000"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="063420063433"/>
+      <field id="39" value="51"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="47" value="Invalid processing code and MTI combination"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Insufficient funds"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:51806" at="2020-10-06T18:34:33.514160900">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51806" at="2020-10-06T18:34:33.515161900">
+  <session-end/>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51838" at="2020-10-06T18:38:13.625024600">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:51838" at="2020-10-06T18:38:13.625024600">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:51838" at="2020-10-06T18:38:16.417496600">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="063820063813"/>
+      <field id="39" value="51"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="47" value="Invalid processing code and MTI combination"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Insufficient funds"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:51838" at="2020-10-06T18:38:16.422438500" lifespan="2ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51838" at="2020-10-06T18:38:16.423439700">
+  <session-end/>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51870" at="2020-10-06T18:41:55.213486200">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:51870" at="2020-10-06T18:41:55.214487100" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:51870" at="2020-10-06T18:41:55.353485600" lifespan="1ms">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="064120064155"/>
+      <field id="39" value="06"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="General error"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:51870" at="2020-10-06T18:41:55.355485200" lifespan="1ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51870" at="2020-10-06T18:41:55.355485200">
+  <session-end/>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51887" at="2020-10-06T18:43:25.069136800">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:51887" at="2020-10-06T18:43:25.070136900" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:51887" at="2020-10-06T18:43:25.206136300">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="064320064325"/>
+      <field id="39" value="06"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="General error"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:51887" at="2020-10-06T18:43:25.207139300" lifespan="1ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51887" at="2020-10-06T18:43:25.207139300">
+  <session-end/>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51895" at="2020-10-06T18:43:34.555804100">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:51895" at="2020-10-06T18:43:34.557801800">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:51895" at="2020-10-06T18:43:34.702799400">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="064320064334"/>
+      <field id="39" value="06"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="General error"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:51895" at="2020-10-06T18:43:34.704800500">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51895" at="2020-10-06T18:43:34.704800500">
+  <session-end/>
+</log>
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2020-10-06T18:48:51.317018700">
+  <info>
+    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T18:48:51.728030700" lifespan="405ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T18:48:51.739030600" lifespan="6ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T18:48:52.386054" lifespan="647ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T18:48:52.389052800" lifespan="2ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
+  </info>
+</log>
+<log realm="ISOServer.server" at="2020-10-06T18:48:52.402054" lifespan="1ms">
+  <iso-server>
+    listening on port 8621
+  </iso-server>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.537062">
+  <info>
+    start Thread[Thread-15,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.538058600">
+  <info>
+    start Thread[Thread-18,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.538058600">
+  <info>
+    start Thread[Thread-19,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.539059100">
+  <info>
+    start Thread[Thread-21,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.538058600">
+  <info>
+    start Thread[Thread-17,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.539059100" lifespan="1ms">
+  <info>
+    start Thread[Thread-16,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.540059600" lifespan="1ms">
+  <info>
+    start Thread[Thread-22,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.540059600">
+  <info>
+    start Thread[Thread-26,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.542059200" lifespan="3ms">
+  <info>
+    start Thread[Thread-24,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.543074600" lifespan="4ms">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.543074600" lifespan="5ms">
+  <info>
+    start Thread[Thread-20,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.544063400">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.544063400">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.544063400">
+  <info>
+    start Thread[Thread-37,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200" lifespan="1ms">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200" lifespan="1ms">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200" lifespan="3ms">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200" lifespan="3ms">
+  <info>
+    start Thread[Thread-31,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200" lifespan="3ms">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200" lifespan="3ms">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200" lifespan="3ms">
+  <info>
+    start Thread[Thread-27,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200" lifespan="3ms">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200" lifespan="5ms">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T18:48:52.545061200">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T18:48:52.546062500">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T18:48:52.547061900">
+  <info>
+               OS: Windows 10 (10.0)
+             Java: 11.0.4 (JetBrains s.r.o) AES-secure
+     process name: 38228@DESKTOP-41KACUO
+        user name: cotuoma
+             host: DESKTOP-41KACUO/192.168.254.151
+              cwd: E:\projects\gateways\crdb_tsync
+       free space: 452 GiB
+          version: 2.1.2 (6f9379a)
+         instance: 231b49d7-5291-4461-8d07-bca035ce08e6
+           uptime: 00:00:01.316 (-1.000000)
+       processors: 8
+           drift : 0
+    memory(t/u/f): 370/163/206
+         encoding: UTF-8
+         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
+    watch service: sun.nio.fs.WindowsWatchService
+            clock: 1601999332 2020-10-06T15:48:52.547061900Z
+     thread count: 72
+     peak threads: 72
+     user threads: 66
+            Thread[Reference Handler,10,system]
+            Thread[Finalizer,8,system]
+            Thread[Signal Dispatcher,9,system]
+            Thread[Attach Listener,5,system]
+            Thread[RMI TCP Accept-0,5,system]
+            Thread[Monitor Ctrl-Break,5,main]
+            Thread[Catalina-utility-1,1,main]
+            Thread[Catalina-utility-2,1,main]
+            Thread[container-0,5,main]
+            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
+            Thread[HikariPool-1 housekeeper,5,main]
+            Thread[OracleTimeoutPollingThread,10,main]
+            Thread[scheduling-1,5,main]
+            Thread[NioBlockingSelector.BlockPoller-1,5,main]
+            Thread[http-nio-8094-exec-1,5,main]
+            Thread[http-nio-8094-exec-2,5,main]
+            Thread[http-nio-8094-exec-3,5,main]
+            Thread[http-nio-8094-exec-4,5,main]
+            Thread[http-nio-8094-exec-5,5,main]
+            Thread[http-nio-8094-exec-6,5,main]
+            Thread[http-nio-8094-exec-7,5,main]
+            Thread[http-nio-8094-exec-8,5,main]
+            Thread[http-nio-8094-exec-9,5,main]
+            Thread[http-nio-8094-exec-10,5,main]
+            Thread[http-nio-8094-ClientPoller-0,5,main]
+            Thread[http-nio-8094-ClientPoller-1,5,main]
+            Thread[http-nio-8094-Acceptor-0,5,main]
+            Thread[pool-1-thread-1,5,main]
+            Thread[Q2-231b49d7-5291-4461-8d07-bca035ce08e6,5,main]
             Thread[DestroyJavaVM,5,main]
             Thread[FileSystemWatchService,5,main]
             Thread[Timer-0,5,main]
@@ -539,14 +911,14 @@ q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
             Thread[Timer-2,5,main]
             Thread[SimpleTransactionManager-0:idle,5,main]
             Thread[SimpleTransactionManager-1:idle,5,main]
-            Thread[SimpleTransactionManager-5:idle,5,main]
-            Thread[SimpleTransactionManager-3:idle,5,main]
             Thread[SimpleTransactionManager-2:idle,5,main]
             Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
             Thread[SimpleTransactionManager-6:idle,5,main]
-            Thread[SimpleTransactionManager-8:idle,5,main]
-            Thread[SimpleTransactionManager-7:idle,5,main]
             Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
             Thread[SimpleTransactionManager-10:idle,5,main]
             Thread[SimpleTransactionManager-11:idle,5,main]
             Thread[SimpleTransactionManager-13:idle,5,main]
@@ -554,9 +926,2156 @@ q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
             Thread[SimpleTransactionManager-16:idle,5,main]
             Thread[SimpleTransactionManager-14:idle,5,main]
             Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
+            Thread[SimpleTransactionManager-17:idle,5,main]
+            Thread[SimpleTransactionManager-19:idle,5,main]
+            Thread[SimpleTransactionManager-20:idle,5,main]
+            Thread[SimpleTransactionManager-22:idle,5,main]
+            Thread[SimpleTransactionManager-21:idle,5,main]
+            Thread[SimpleTransactionManager-23:idle,5,main]
+            Thread[pool-2-thread-1,5,main]
+            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
+            Thread[SystemMonitor,5,main]
+            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
+            Thread[Common-Cleaner,8,InnocuousThreadGroup]
+    name-registrar:
+      tspace:default: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      tspace:txnmgr: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      ISOServer: org.jpos.q2.iso.QServer
+      Q2: org.jpos.q2.Q2
+      server.ISOServer: org.jpos.iso.ISOServer
+        connected=0, rx=0, tx=0, last=0
+      logger.Q2: org.jpos.util.Logger
+      transient:default: org.jpos.space.TSpace
+        <key count='1'>$TAILLOCK.649199680</key>
+         key-count: 1
+            gcinfo: 0,0
+      logger.Q2.buffered: org.jpos.util.BufferedLogListener
+      je:txnmgr: org.jpos.space.JESpace
+        <key size='1'>$HEAD</key>
+        <key size='1'>$TAIL</key>
+        <keycount>2</keycount>
+      SimpleTransactionManager: org.jpos.transaction.TransactionManager
+        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
+  </info>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51973" at="2020-10-06T18:49:58.990845100">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:51973" at="2020-10-06T18:49:58.993842700" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:51973" at="2020-10-06T18:49:59.213865100" lifespan="1ms">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="064920064958"/>
+      <field id="39" value="06"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="General error"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:51973" at="2020-10-06T18:49:59.215853300">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:51973" at="2020-10-06T18:49:59.216853500">
+  <session-end/>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52000" at="2020-10-06T18:51:40.943771400">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:52000" at="2020-10-06T18:51:40.946772400" lifespan="3ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:52000" at="2020-10-06T18:51:41.112778900">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="065120065140"/>
+      <field id="39" value="06"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="General error"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:52000" at="2020-10-06T18:51:41.115776700" lifespan="1ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52000" at="2020-10-06T18:51:41.115776700">
+  <session-end/>
+</log>
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2020-10-06T19:01:22.759287">
+  <info>
+    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:01:22.939291400" lifespan="177ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:01:22.945287200" lifespan="4ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:01:23.662310800" lifespan="717ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:01:23.668313100" lifespan="4ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
+  </info>
+</log>
+<log realm="ISOServer.server" at="2020-10-06T19:01:23.693309">
+  <iso-server>
+    listening on port 8621
+  </iso-server>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.818307500">
+  <info>
+    start Thread[Thread-16,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.819314400" lifespan="1ms">
+  <info>
+    start Thread[Thread-17,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.819314400">
+  <info>
+    start Thread[Thread-19,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.819314400">
+  <info>
+    start Thread[Thread-20,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.821312400">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.821312400" lifespan="1ms">
+  <info>
+    start Thread[Thread-18,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.822307100">
+  <info>
+    start Thread[Thread-24,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.822307100">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.821312400" lifespan="1ms">
+  <info>
+    start Thread[Thread-22,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.821312400" lifespan="1ms">
+  <info>
+    start Thread[Thread-21,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.826314900" lifespan="3ms">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.826314900" lifespan="1ms">
+  <info>
+    start Thread[Thread-31,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.824307" lifespan="1ms">
+  <info>
+    start Thread[Thread-27,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.823306700">
+  <info>
+    start Thread[Thread-26,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.828312700">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.828312700">
+  <info>
+    start Thread[Thread-37,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.829317600" lifespan="3ms">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.828312700" lifespan="5ms">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.828312700">
+  <info>
+    start Thread[Thread-39,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.826314900">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.826314900" lifespan="3ms">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.829317600" lifespan="3ms">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.828312700" lifespan="1ms">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:01:23.828312700">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:01:23.830308100">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:01:23.831311400">
+  <info>
+               OS: Windows 10 (10.0)
+             Java: 11.0.4 (JetBrains s.r.o) AES-secure
+     process name: 36416@DESKTOP-41KACUO
+        user name: cotuoma
+             host: DESKTOP-41KACUO/192.168.254.151
+              cwd: E:\projects\gateways\crdb_tsync
+       free space: 452 GiB
+          version: 2.1.2 (6f9379a)
+         instance: a1ff3896-bc2e-49a1-8eab-832c06c9b458
+           uptime: 00:00:01.117 (-1.000000)
+       processors: 8
+           drift : 0
+    memory(t/u/f): 483/205/277
+         encoding: UTF-8
+         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
+    watch service: sun.nio.fs.WindowsWatchService
+            clock: 1602000083 2020-10-06T16:01:23.832314500Z
+     thread count: 72
+     peak threads: 72
+     user threads: 66
+            Thread[Reference Handler,10,system]
+            Thread[Finalizer,8,system]
+            Thread[Signal Dispatcher,9,system]
+            Thread[Attach Listener,5,system]
+            Thread[RMI TCP Accept-0,5,system]
+            Thread[Monitor Ctrl-Break,5,main]
+            Thread[Catalina-utility-1,1,main]
+            Thread[Catalina-utility-2,1,main]
+            Thread[container-0,5,main]
+            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
+            Thread[HikariPool-1 housekeeper,5,main]
+            Thread[OracleTimeoutPollingThread,10,main]
+            Thread[scheduling-1,5,main]
+            Thread[NioBlockingSelector.BlockPoller-1,5,main]
+            Thread[http-nio-8094-exec-1,5,main]
+            Thread[http-nio-8094-exec-2,5,main]
+            Thread[http-nio-8094-exec-3,5,main]
+            Thread[http-nio-8094-exec-4,5,main]
+            Thread[http-nio-8094-exec-5,5,main]
+            Thread[http-nio-8094-exec-6,5,main]
+            Thread[http-nio-8094-exec-7,5,main]
+            Thread[http-nio-8094-exec-8,5,main]
+            Thread[http-nio-8094-exec-9,5,main]
+            Thread[http-nio-8094-exec-10,5,main]
+            Thread[http-nio-8094-ClientPoller-0,5,main]
+            Thread[http-nio-8094-ClientPoller-1,5,main]
+            Thread[http-nio-8094-Acceptor-0,5,main]
+            Thread[pool-1-thread-1,5,main]
+            Thread[Q2-a1ff3896-bc2e-49a1-8eab-832c06c9b458,5,main]
+            Thread[DestroyJavaVM,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[Timer-0,5,main]
+            Thread[Timer-1,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[FileDeletionDetector,5,main]
+            Thread[LogFlusher,5,main]
+            Thread[DataCorruptionVerifier,5,main]
+            Thread[INCompressor,5,main]
+            Thread[Cleaner-1,5,main]
+            Thread[Checkpointer,5,main]
+            Thread[StatCapture,5,main]
+            Thread[Thread-14,5,main]
+            Thread[Timer-2,5,main]
+            Thread[SimpleTransactionManager-0:idle,5,main]
+            Thread[SimpleTransactionManager-1:idle,5,main]
+            Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-2:idle,5,main]
+            Thread[SimpleTransactionManager-6:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
+            Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-11:idle,5,main]
+            Thread[SimpleTransactionManager-10:idle,5,main]
+            Thread[SimpleTransactionManager-12:idle,5,main]
+            Thread[SimpleTransactionManager-14:idle,5,main]
+            Thread[SimpleTransactionManager-13:idle,5,main]
+            Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
+            Thread[SimpleTransactionManager-16:idle,5,main]
+            Thread[SimpleTransactionManager-17:idle,5,main]
+            Thread[SimpleTransactionManager-19:idle,5,main]
+            Thread[SimpleTransactionManager-20:idle,5,main]
+            Thread[SimpleTransactionManager-23:idle,5,main]
+            Thread[SimpleTransactionManager-22:idle,5,main]
+            Thread[SimpleTransactionManager-21:idle,5,main]
+            Thread[pool-2-thread-1,5,main]
+            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
+            Thread[SystemMonitor,5,main]
+            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
+            Thread[Common-Cleaner,8,InnocuousThreadGroup]
+    name-registrar:
+      tspace:default: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      tspace:txnmgr: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      ISOServer: org.jpos.q2.iso.QServer
+      Q2: org.jpos.q2.Q2
+      server.ISOServer: org.jpos.iso.ISOServer
+        connected=0, rx=0, tx=0, last=0
+      logger.Q2: org.jpos.util.Logger
+      transient:default: org.jpos.space.TSpace
+        <key count='1'>$TAILLOCK.1169064</key>
+         key-count: 1
+            gcinfo: 0,0
+      logger.Q2.buffered: org.jpos.util.BufferedLogListener
+      je:txnmgr: org.jpos.space.JESpace
+        <key size='1'>$HEAD</key>
+        <key size='1'>$TAIL</key>
+        <keycount>2</keycount>
+      SimpleTransactionManager: org.jpos.transaction.TransactionManager
+        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
+  </info>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52094" at="2020-10-06T19:01:38.500012700">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:52094" at="2020-10-06T19:01:38.501998800" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:52094" at="2020-10-06T19:01:38.745007300" lifespan="1ms">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="060120070138"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Successful approval/completion or that VIP PIN verification is valid"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:52094" at="2020-10-06T19:01:38.747008300" lifespan="2ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52094" at="2020-10-06T19:01:38.748006700">
+  <session-end/>
+</log>
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2020-10-06T19:06:46.158131900">
+  <info>
+    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:06:46.535135500" lifespan="370ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:06:46.546135400" lifespan="7ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:06:47.377145400" lifespan="830ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:06:47.379181200" lifespan="2ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
+  </info>
+</log>
+<log realm="ISOServer.server" at="2020-10-06T19:06:47.392147900">
+  <iso-server>
+    listening on port 8621
+  </iso-server>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.458153700">
+  <info>
+    start Thread[Thread-15,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.458153700">
+  <info>
+    start Thread[Thread-17,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.458153700">
+  <info>
+    start Thread[Thread-18,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.458153700">
+  <info>
+    start Thread[Thread-16,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.460143600">
+  <info>
+    start Thread[Thread-26,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.461143100" lifespan="1ms">
+  <info>
+    start Thread[Thread-24,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.461143100" lifespan="1ms">
+  <info>
+    start Thread[Thread-22,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.462145600">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.462145600" lifespan="3ms">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.463144500" lifespan="4ms">
+  <info>
+    start Thread[Thread-21,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.463144500" lifespan="4ms">
+  <info>
+    start Thread[Thread-20,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.464153200" lifespan="5ms">
+  <info>
+    start Thread[Thread-19,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.464153200" lifespan="1ms">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="2ms">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="3ms">
+  <info>
+    start Thread[Thread-37,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="3ms">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="3ms">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="4ms">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="4ms">
+  <info>
+    start Thread[Thread-31,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="4ms">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="5ms">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="5ms">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="5ms">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:06:47.465166600" lifespan="5ms">
+  <info>
+    start Thread[Thread-27,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:06:47.466161700">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:06:47.467146300">
+  <info>
+               OS: Windows 10 (10.0)
+             Java: 11.0.4 (JetBrains s.r.o) AES-secure
+     process name: 14504@DESKTOP-41KACUO
+        user name: cotuoma
+             host: DESKTOP-41KACUO/192.168.254.151
+              cwd: E:\projects\gateways\crdb_tsync
+       free space: 452 GiB
+          version: 2.1.2 (6f9379a)
+         instance: 39433bfc-0cf3-4509-9a9b-d897795c7c83
+           uptime: 00:00:01.407 (-1.000000)
+       processors: 8
+           drift : 0
+    memory(t/u/f): 558/118/439
+         encoding: UTF-8
+         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
+    watch service: sun.nio.fs.WindowsWatchService
+            clock: 1602000407 2020-10-06T16:06:47.467146300Z
+     thread count: 72
+     peak threads: 72
+     user threads: 66
+            Thread[Reference Handler,10,system]
+            Thread[Finalizer,8,system]
+            Thread[Signal Dispatcher,9,system]
+            Thread[Attach Listener,5,system]
+            Thread[RMI TCP Accept-0,5,system]
+            Thread[Monitor Ctrl-Break,5,main]
+            Thread[Catalina-utility-1,1,main]
+            Thread[Catalina-utility-2,1,main]
+            Thread[container-0,5,main]
+            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
+            Thread[HikariPool-1 housekeeper,5,main]
+            Thread[OracleTimeoutPollingThread,10,main]
+            Thread[scheduling-1,5,main]
+            Thread[NioBlockingSelector.BlockPoller-1,5,main]
+            Thread[http-nio-8094-exec-1,5,main]
+            Thread[http-nio-8094-exec-2,5,main]
+            Thread[http-nio-8094-exec-3,5,main]
+            Thread[http-nio-8094-exec-4,5,main]
+            Thread[http-nio-8094-exec-5,5,main]
+            Thread[http-nio-8094-exec-6,5,main]
+            Thread[http-nio-8094-exec-7,5,main]
+            Thread[http-nio-8094-exec-8,5,main]
+            Thread[http-nio-8094-exec-9,5,main]
+            Thread[http-nio-8094-exec-10,5,main]
+            Thread[http-nio-8094-ClientPoller-0,5,main]
+            Thread[http-nio-8094-ClientPoller-1,5,main]
+            Thread[http-nio-8094-Acceptor-0,5,main]
+            Thread[pool-1-thread-1,5,main]
+            Thread[Q2-39433bfc-0cf3-4509-9a9b-d897795c7c83,5,main]
+            Thread[DestroyJavaVM,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[Timer-0,5,main]
+            Thread[Timer-1,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[FileDeletionDetector,5,main]
+            Thread[LogFlusher,5,main]
+            Thread[DataCorruptionVerifier,5,main]
+            Thread[INCompressor,5,main]
+            Thread[Cleaner-1,5,main]
+            Thread[Checkpointer,5,main]
+            Thread[StatCapture,5,main]
+            Thread[Thread-13,5,main]
+            Thread[Timer-2,5,main]
+            Thread[SimpleTransactionManager-0:idle,5,main]
+            Thread[SimpleTransactionManager-1:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-2:idle,5,main]
+            Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
+            Thread[SimpleTransactionManager-6:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-11:idle,5,main]
+            Thread[SimpleTransactionManager-10:idle,5,main]
+            Thread[SimpleTransactionManager-12:idle,5,main]
+            Thread[SimpleTransactionManager-14:idle,5,main]
+            Thread[SimpleTransactionManager-13:idle,5,main]
+            Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-16:idle,5,main]
+            Thread[SimpleTransactionManager-17:idle,5,main]
+            Thread[SimpleTransactionManager-19:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
+            Thread[SimpleTransactionManager-20:idle,5,main]
+            Thread[SimpleTransactionManager-22:idle,5,main]
+            Thread[SimpleTransactionManager-21:idle,5,main]
+            Thread[SimpleTransactionManager-23:idle,5,main]
+            Thread[pool-2-thread-1,5,main]
+            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
+            Thread[SystemMonitor,5,main]
+            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
+            Thread[Common-Cleaner,8,InnocuousThreadGroup]
+    name-registrar:
+      tspace:default: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      tspace:txnmgr: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      ISOServer: org.jpos.q2.iso.QServer
+      Q2: org.jpos.q2.Q2
+      server.ISOServer: org.jpos.iso.ISOServer
+        connected=0, rx=0, tx=0, last=0
+      logger.Q2: org.jpos.util.Logger
+      transient:default: org.jpos.space.TSpace
+        <key count='1'>$TAILLOCK.1123064116</key>
+         key-count: 1
+            gcinfo: 0,0
+      logger.Q2.buffered: org.jpos.util.BufferedLogListener
+      je:txnmgr: org.jpos.space.JESpace
+        <key size='1'>$HEAD</key>
+        <key size='1'>$TAIL</key>
+        <keycount>2</keycount>
+      SimpleTransactionManager: org.jpos.transaction.TransactionManager
+        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
+  </info>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52162" at="2020-10-06T19:07:10.631587">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:52162" at="2020-10-06T19:07:10.633585800" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:52162" at="2020-10-06T19:07:10.829588600">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="060720070710"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Successful approval/completion or that VIP PIN verification is valid"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:52162" at="2020-10-06T19:07:10.831591100" lifespan="1ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52162" at="2020-10-06T19:07:10.832588300">
+  <session-end/>
+</log>
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2020-10-06T19:09:43.970903100">
+  <info>
+    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:09:44.134905900" lifespan="161ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:09:44.140906100" lifespan="4ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:09:44.631915400" lifespan="491ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:09:44.635913200" lifespan="3ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
+  </info>
+</log>
+<log realm="ISOServer.server" at="2020-10-06T19:09:44.659914900">
+  <iso-server>
+    listening on port 8621
+  </iso-server>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.836917100">
+  <info>
+    start Thread[Thread-15,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.837926400" lifespan="1ms">
+  <info>
+    start Thread[Thread-16,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.837926400">
+  <info>
+    start Thread[Thread-18,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.838917200">
+  <info>
+    start Thread[Thread-17,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.839919400" lifespan="1ms">
+  <info>
+    start Thread[Thread-22,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.838917200">
+  <info>
+    start Thread[Thread-21,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.841918500">
+  <info>
+    start Thread[Thread-24,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.838917200">
+  <info>
+    start Thread[Thread-20,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.840911900">
+  <info>
+    start Thread[Thread-26,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.837926400">
+  <info>
+    start Thread[Thread-19,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.842917600">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.841918500" lifespan="1ms">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.845912700">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.841918500" lifespan="1ms">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.841918500">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.846919300" lifespan="4ms">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.847919300" lifespan="6ms">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.846919300" lifespan="3ms">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.845912700">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.847919300" lifespan="2ms">
+  <info>
+    start Thread[Thread-37,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.844919200" lifespan="3ms">
+  <info>
+    start Thread[Thread-27,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.847919300" lifespan="2ms">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.847919300" lifespan="2ms">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:09:44.847919300" lifespan="5ms">
+  <info>
+    start Thread[Thread-31,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:09:44.848919800">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:09:44.849920400">
+  <info>
+               OS: Windows 10 (10.0)
+             Java: 11.0.4 (JetBrains s.r.o) AES-secure
+     process name: 36964@DESKTOP-41KACUO
+        user name: cotuoma
+             host: DESKTOP-41KACUO/192.168.254.151
+              cwd: E:\projects\gateways\crdb_tsync
+       free space: 452 GiB
+          version: 2.1.2 (6f9379a)
+         instance: 8069505d-1844-40f4-8524-94f4bfc7cc9d
+           uptime: 00:00:00.926 (-1.000000)
+       processors: 8
+           drift : 0
+    memory(t/u/f): 444/183/260
+         encoding: UTF-8
+         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
+    watch service: sun.nio.fs.WindowsWatchService
+            clock: 1602000584 2020-10-06T16:09:44.850921200Z
+     thread count: 72
+     peak threads: 72
+     user threads: 66
+            Thread[Reference Handler,10,system]
+            Thread[Finalizer,8,system]
+            Thread[Signal Dispatcher,9,system]
+            Thread[Attach Listener,5,system]
+            Thread[RMI TCP Accept-0,5,system]
+            Thread[Monitor Ctrl-Break,5,main]
+            Thread[Catalina-utility-1,1,main]
+            Thread[Catalina-utility-2,1,main]
+            Thread[container-0,5,main]
+            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
+            Thread[HikariPool-1 housekeeper,5,main]
+            Thread[OracleTimeoutPollingThread,10,main]
+            Thread[scheduling-1,5,main]
+            Thread[NioBlockingSelector.BlockPoller-1,5,main]
+            Thread[http-nio-8094-exec-1,5,main]
+            Thread[http-nio-8094-exec-2,5,main]
+            Thread[http-nio-8094-exec-3,5,main]
+            Thread[http-nio-8094-exec-4,5,main]
+            Thread[http-nio-8094-exec-5,5,main]
+            Thread[http-nio-8094-exec-6,5,main]
+            Thread[http-nio-8094-exec-7,5,main]
+            Thread[http-nio-8094-exec-8,5,main]
+            Thread[http-nio-8094-exec-9,5,main]
+            Thread[http-nio-8094-exec-10,5,main]
+            Thread[http-nio-8094-ClientPoller-0,5,main]
+            Thread[http-nio-8094-ClientPoller-1,5,main]
+            Thread[http-nio-8094-Acceptor-0,5,main]
+            Thread[pool-1-thread-1,5,main]
+            Thread[Q2-8069505d-1844-40f4-8524-94f4bfc7cc9d,5,main]
+            Thread[DestroyJavaVM,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[Timer-0,5,main]
+            Thread[Timer-1,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[FileDeletionDetector,5,main]
+            Thread[LogFlusher,5,main]
+            Thread[DataCorruptionVerifier,5,main]
+            Thread[INCompressor,5,main]
+            Thread[Cleaner-1,5,main]
+            Thread[Checkpointer,5,main]
+            Thread[StatCapture,5,main]
+            Thread[Thread-13,5,main]
+            Thread[Timer-2,5,main]
+            Thread[SimpleTransactionManager-0:idle,5,main]
+            Thread[SimpleTransactionManager-1:idle,5,main]
+            Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-2:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-6:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
+            Thread[SimpleTransactionManager-11:idle,5,main]
+            Thread[SimpleTransactionManager-10:idle,5,main]
+            Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-14:idle,5,main]
+            Thread[SimpleTransactionManager-13:idle,5,main]
+            Thread[SimpleTransactionManager-12:idle,5,main]
+            Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-16:idle,5,main]
+            Thread[SimpleTransactionManager-17:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
+            Thread[SimpleTransactionManager-19:idle,5,main]
+            Thread[SimpleTransactionManager-20:idle,5,main]
+            Thread[SimpleTransactionManager-22:idle,5,main]
+            Thread[SimpleTransactionManager-21:idle,5,main]
+            Thread[SimpleTransactionManager-23:idle,5,main]
+            Thread[pool-2-thread-1,5,main]
+            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
+            Thread[SystemMonitor,5,main]
+            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
+            Thread[Common-Cleaner,8,InnocuousThreadGroup]
+    name-registrar:
+      tspace:default: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      tspace:txnmgr: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      ISOServer: org.jpos.q2.iso.QServer
+      Q2: org.jpos.q2.Q2
+      server.ISOServer: org.jpos.iso.ISOServer
+        connected=0, rx=0, tx=0, last=0
+      logger.Q2: org.jpos.util.Logger
+      transient:default: org.jpos.space.TSpace
+        <key count='1'>$TAILLOCK.1076194747</key>
+         key-count: 1
+            gcinfo: 0,0
+      logger.Q2.buffered: org.jpos.util.BufferedLogListener
+      je:txnmgr: org.jpos.space.JESpace
+        <key size='1'>$HEAD</key>
+        <key size='1'>$TAIL</key>
+        <keycount>2</keycount>
+      SimpleTransactionManager: org.jpos.transaction.TransactionManager
+        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
+  </info>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52210" at="2020-10-06T19:10:29.911111800">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:52210" at="2020-10-06T19:10:29.913108800" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:52210" at="2020-10-06T19:10:30.129107600">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="061020071029"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Successful approval/completion or that VIP PIN verification is valid"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:52210" at="2020-10-06T19:10:30.131111100" lifespan="1ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52210" at="2020-10-06T19:10:30.132109400">
+  <session-end/>
+</log>
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2020-10-06T19:14:50.220058">
+  <info>
+    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:14:50.470059900" lifespan="246ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:14:50.476059400" lifespan="3ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:14:50.979065500" lifespan="502ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:14:50.984066" lifespan="4ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
+  </info>
+</log>
+<log realm="ISOServer.server" at="2020-10-06T19:14:51.007066500" lifespan="1ms">
+  <iso-server>
+    listening on port 8621
+  </iso-server>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.078063900">
+  <info>
+    start Thread[Thread-15,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.079068600">
+  <info>
+    start Thread[Thread-16,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.079068600">
+  <info>
+    start Thread[Thread-19,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.079068600">
+  <info>
+    start Thread[Thread-18,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.080071" lifespan="1ms">
+  <info>
+    start Thread[Thread-17,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.081073100">
+  <info>
+    start Thread[Thread-27,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.080071">
+  <info>
+    start Thread[Thread-24,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.082065100" lifespan="1ms">
+  <info>
+    start Thread[Thread-22,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.082065100" lifespan="1ms">
+  <info>
+    start Thread[Thread-21,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.083065500" lifespan="2ms">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.083065500">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.086069400" lifespan="1ms">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.084065300" lifespan="4ms">
+  <info>
+    start Thread[Thread-20,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.087068900" lifespan="3ms">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.088100900" lifespan="5ms">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.087068900" lifespan="3ms">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.088100900" lifespan="5ms">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.088100900" lifespan="5ms">
+  <info>
+    start Thread[Thread-31,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.088100900" lifespan="6ms">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.089066400" lifespan="8ms">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.088100900" lifespan="6ms">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.089066400" lifespan="2ms">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.089066400" lifespan="7ms">
+  <info>
+    start Thread[Thread-26,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:14:51.089066400" lifespan="2ms">
+  <info>
+    start Thread[Thread-37,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:14:51.090074300">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:14:51.091072200">
+  <info>
+               OS: Windows 10 (10.0)
+             Java: 11.0.4 (JetBrains s.r.o) AES-secure
+     process name: 31708@DESKTOP-41KACUO
+        user name: cotuoma
+             host: DESKTOP-41KACUO/192.168.254.151
+              cwd: E:\projects\gateways\crdb_tsync
+       free space: 452 GiB
+          version: 2.1.2 (6f9379a)
+         instance: b87bc096-73d9-4880-baa9-9a3e7a22816c
+           uptime: 00:00:00.930 (-1.000000)
+       processors: 8
+           drift : 0
+    memory(t/u/f): 498/158/339
+         encoding: UTF-8
+         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
+    watch service: sun.nio.fs.WindowsWatchService
+            clock: 1602000891 2020-10-06T16:14:51.091072200Z
+     thread count: 72
+     peak threads: 72
+     user threads: 66
+            Thread[Reference Handler,10,system]
+            Thread[Finalizer,8,system]
+            Thread[Signal Dispatcher,9,system]
+            Thread[Attach Listener,5,system]
+            Thread[RMI TCP Accept-0,5,system]
+            Thread[Monitor Ctrl-Break,5,main]
+            Thread[Catalina-utility-1,1,main]
+            Thread[Catalina-utility-2,1,main]
+            Thread[container-0,5,main]
+            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
+            Thread[HikariPool-1 housekeeper,5,main]
+            Thread[OracleTimeoutPollingThread,10,main]
+            Thread[scheduling-1,5,main]
+            Thread[NioBlockingSelector.BlockPoller-1,5,main]
+            Thread[http-nio-8094-exec-1,5,main]
+            Thread[http-nio-8094-exec-2,5,main]
+            Thread[http-nio-8094-exec-3,5,main]
+            Thread[http-nio-8094-exec-4,5,main]
+            Thread[http-nio-8094-exec-5,5,main]
+            Thread[http-nio-8094-exec-6,5,main]
+            Thread[http-nio-8094-exec-7,5,main]
+            Thread[http-nio-8094-exec-8,5,main]
+            Thread[http-nio-8094-exec-9,5,main]
+            Thread[http-nio-8094-exec-10,5,main]
+            Thread[http-nio-8094-ClientPoller-0,5,main]
+            Thread[http-nio-8094-ClientPoller-1,5,main]
+            Thread[http-nio-8094-Acceptor-0,5,main]
+            Thread[pool-1-thread-1,5,main]
+            Thread[Q2-b87bc096-73d9-4880-baa9-9a3e7a22816c,5,main]
+            Thread[DestroyJavaVM,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[Timer-0,5,main]
+            Thread[Timer-1,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[FileDeletionDetector,5,main]
+            Thread[LogFlusher,5,main]
+            Thread[DataCorruptionVerifier,5,main]
+            Thread[INCompressor,5,main]
+            Thread[Cleaner-1,5,main]
+            Thread[Checkpointer,5,main]
+            Thread[StatCapture,5,main]
+            Thread[Thread-13,5,main]
+            Thread[Timer-2,5,main]
+            Thread[SimpleTransactionManager-0:idle,5,main]
+            Thread[SimpleTransactionManager-1:idle,5,main]
+            Thread[SimpleTransactionManager-2:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-6:idle,5,main]
+            Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-10:idle,5,main]
+            Thread[SimpleTransactionManager-12:idle,5,main]
+            Thread[SimpleTransactionManager-11:idle,5,main]
+            Thread[SimpleTransactionManager-13:idle,5,main]
+            Thread[SimpleTransactionManager-14:idle,5,main]
+            Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-17:idle,5,main]
+            Thread[SimpleTransactionManager-16:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
+            Thread[SimpleTransactionManager-20:idle,5,main]
+            Thread[SimpleTransactionManager-19:idle,5,main]
+            Thread[SimpleTransactionManager-21:idle,5,main]
+            Thread[SimpleTransactionManager-23:idle,5,main]
+            Thread[SimpleTransactionManager-22:idle,5,main]
+            Thread[pool-2-thread-1,5,main]
+            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
+            Thread[SystemMonitor,5,main]
+            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
+            Thread[Common-Cleaner,8,InnocuousThreadGroup]
+    name-registrar:
+      tspace:default: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      tspace:txnmgr: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      ISOServer: org.jpos.q2.iso.QServer
+      Q2: org.jpos.q2.Q2
+      server.ISOServer: org.jpos.iso.ISOServer
+        connected=0, rx=0, tx=0, last=0
+      logger.Q2: org.jpos.util.Logger
+      transient:default: org.jpos.space.TSpace
+        <key count='1'>$TAILLOCK.1040250264</key>
+         key-count: 1
+            gcinfo: 0,0
+      logger.Q2.buffered: org.jpos.util.BufferedLogListener
+      je:txnmgr: org.jpos.space.JESpace
+        <key size='1'>$HEAD</key>
+        <key size='1'>$TAIL</key>
+        <keycount>2</keycount>
+      SimpleTransactionManager: org.jpos.transaction.TransactionManager
+        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
+  </info>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52266" at="2020-10-06T19:15:14.367057300">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:52266" at="2020-10-06T19:15:14.369056200" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:52266" at="2020-10-06T19:15:14.569061300">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="061520071514"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Successful approval/completion or that VIP PIN verification is valid"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:52266" at="2020-10-06T19:15:14.571060700">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52266" at="2020-10-06T19:15:14.572061200">
+  <session-end/>
+</log>
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2020-10-06T19:16:32.482615100">
+  <info>
+    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:16:32.664616700" lifespan="179ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:16:32.669615800" lifespan="2ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:16:33.320623600" lifespan="651ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:16:33.324625100" lifespan="4ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
+  </info>
+</log>
+<log realm="ISOServer.server" at="2020-10-06T19:16:33.347623600" lifespan="1ms">
+  <iso-server>
+    listening on port 8621
+  </iso-server>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.523625800">
+  <info>
+    start Thread[Thread-16,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.524624900">
+  <info>
+    start Thread[Thread-19,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.525624700">
+  <info>
+    start Thread[Thread-20,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.524624900">
+  <info>
+    start Thread[Thread-17,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.524624900">
+  <info>
+    start Thread[Thread-18,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.526631100">
+  <info>
+    start Thread[Thread-24,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.525624700">
+  <info>
+    start Thread[Thread-21,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.527624600">
+  <info>
+    start Thread[Thread-27,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.525624700">
+  <info>
+    start Thread[Thread-22,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.530626200">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.529625600">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.530626200" lifespan="2ms">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.528625300" lifespan="1ms">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.526631100">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.531623800">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.531623800" lifespan="4ms">
+  <info>
+    start Thread[Thread-26,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.533632">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.530626200" lifespan="2ms">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.533632">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.533632">
+  <info>
+    start Thread[Thread-37,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.533632" lifespan="3ms">
+  <info>
+    start Thread[Thread-31,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.534638" lifespan="1ms">
+  <info>
+    start Thread[Thread-39,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.534638" lifespan="3ms">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:16:33.533632" lifespan="1ms">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:16:33.536627300">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:16:33.537626400">
+  <info>
+               OS: Windows 10 (10.0)
+             Java: 11.0.4 (JetBrains s.r.o) AES-secure
+     process name: 2760@DESKTOP-41KACUO
+        user name: cotuoma
+             host: DESKTOP-41KACUO/192.168.254.151
+              cwd: E:\projects\gateways\crdb_tsync
+       free space: 452 GiB
+          version: 2.1.2 (6f9379a)
+         instance: 180c3cd6-bb7a-4e19-aecc-afa402989e0a
+           uptime: 00:00:01.100 (-1.000000)
+       processors: 8
+           drift : 0
+    memory(t/u/f): 378/153/224
+         encoding: UTF-8
+         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
+    watch service: sun.nio.fs.WindowsWatchService
+            clock: 1602000993 2020-10-06T16:16:33.537626400Z
+     thread count: 72
+     peak threads: 72
+     user threads: 66
+            Thread[Reference Handler,10,system]
+            Thread[Finalizer,8,system]
+            Thread[Signal Dispatcher,9,system]
+            Thread[Attach Listener,5,system]
+            Thread[RMI TCP Accept-0,5,system]
+            Thread[Monitor Ctrl-Break,5,main]
+            Thread[Catalina-utility-1,1,main]
+            Thread[Catalina-utility-2,1,main]
+            Thread[container-0,5,main]
+            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
+            Thread[HikariPool-1 housekeeper,5,main]
+            Thread[OracleTimeoutPollingThread,10,main]
+            Thread[scheduling-1,5,main]
+            Thread[NioBlockingSelector.BlockPoller-1,5,main]
+            Thread[http-nio-8094-exec-1,5,main]
+            Thread[http-nio-8094-exec-2,5,main]
+            Thread[http-nio-8094-exec-3,5,main]
+            Thread[http-nio-8094-exec-4,5,main]
+            Thread[http-nio-8094-exec-5,5,main]
+            Thread[http-nio-8094-exec-6,5,main]
+            Thread[http-nio-8094-exec-7,5,main]
+            Thread[http-nio-8094-exec-8,5,main]
+            Thread[http-nio-8094-exec-9,5,main]
+            Thread[http-nio-8094-exec-10,5,main]
+            Thread[http-nio-8094-ClientPoller-0,5,main]
+            Thread[http-nio-8094-ClientPoller-1,5,main]
+            Thread[http-nio-8094-Acceptor-0,5,main]
+            Thread[pool-1-thread-1,5,main]
+            Thread[Q2-180c3cd6-bb7a-4e19-aecc-afa402989e0a,5,main]
+            Thread[DestroyJavaVM,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[Timer-0,5,main]
+            Thread[Timer-1,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[FileDeletionDetector,5,main]
+            Thread[LogFlusher,5,main]
+            Thread[DataCorruptionVerifier,5,main]
+            Thread[INCompressor,5,main]
+            Thread[Cleaner-1,5,main]
+            Thread[Checkpointer,5,main]
+            Thread[StatCapture,5,main]
+            Thread[Thread-14,5,main]
+            Thread[Timer-2,5,main]
+            Thread[SimpleTransactionManager-0:idle,5,main]
+            Thread[SimpleTransactionManager-1:idle,5,main]
+            Thread[SimpleTransactionManager-2:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
+            Thread[SimpleTransactionManager-6:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
+            Thread[SimpleTransactionManager-10:idle,5,main]
+            Thread[SimpleTransactionManager-11:idle,5,main]
+            Thread[SimpleTransactionManager-12:idle,5,main]
+            Thread[SimpleTransactionManager-13:idle,5,main]
+            Thread[SimpleTransactionManager-14:idle,5,main]
+            Thread[SimpleTransactionManager-16:idle,5,main]
+            Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
+            Thread[SimpleTransactionManager-19:idle,5,main]
+            Thread[SimpleTransactionManager-17:idle,5,main]
+            Thread[SimpleTransactionManager-21:idle,5,main]
+            Thread[SimpleTransactionManager-22:idle,5,main]
+            Thread[SimpleTransactionManager-20:idle,5,main]
+            Thread[SimpleTransactionManager-23:idle,5,main]
+            Thread[pool-2-thread-1,5,main]
+            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
+            Thread[SystemMonitor,5,main]
+            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
+            Thread[Common-Cleaner,8,InnocuousThreadGroup]
+    name-registrar:
+      tspace:default: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      tspace:txnmgr: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      ISOServer: org.jpos.q2.iso.QServer
+      Q2: org.jpos.q2.Q2
+      server.ISOServer: org.jpos.iso.ISOServer
+        connected=0, rx=0, tx=0, last=0
+      logger.Q2: org.jpos.util.Logger
+      transient:default: org.jpos.space.TSpace
+        <key count='1'>$TAILLOCK.11523682</key>
+         key-count: 1
+            gcinfo: 0,0
+      logger.Q2.buffered: org.jpos.util.BufferedLogListener
+      je:txnmgr: org.jpos.space.JESpace
+        <key size='1'>$HEAD</key>
+        <key size='1'>$TAIL</key>
+        <keycount>2</keycount>
+      SimpleTransactionManager: org.jpos.transaction.TransactionManager
+        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
+  </info>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52305" at="2020-10-06T19:16:40.225025900">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:52305" at="2020-10-06T19:16:40.226998800" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:52305" at="2020-10-06T19:16:40.421997100">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="061620071640"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Successful approval/completion or that VIP PIN verification is valid"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:52305" at="2020-10-06T19:16:40.424000600" lifespan="1ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52305" at="2020-10-06T19:16:40.424995500">
+  <session-end/>
+</log>
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2020-10-06T19:19:30.714822900">
+  <info>
+    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:19:30.875825400" lifespan="157ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:19:30.881822500" lifespan="4ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:19:31.388824100" lifespan="507ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:19:31.392826300" lifespan="4ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
+  </info>
+</log>
+<log realm="ISOServer.server" at="2020-10-06T19:19:31.406830900">
+  <iso-server>
+    listening on port 8621
+  </iso-server>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.462829">
+  <info>
+    start Thread[Thread-16,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.463823400">
+  <info>
+    start Thread[Thread-18,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.463823400">
+  <info>
+    start Thread[Thread-19,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.463823400">
+  <info>
+    start Thread[Thread-21,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.464823700">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.464823700" lifespan="1ms">
+  <info>
+    start Thread[Thread-17,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.465823200">
+  <info>
+    start Thread[Thread-20,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.464823700">
+  <info>
+    start Thread[Thread-22,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.467833800" lifespan="1ms">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.466825600">
+  <info>
+    start Thread[Thread-27,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.466825600">
+  <info>
+    start Thread[Thread-26,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.467833800" lifespan="2ms">
+  <info>
+    start Thread[Thread-24,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.467833800" lifespan="2ms">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.469827" lifespan="1ms">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.469827">
+  <info>
+    start Thread[Thread-31,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.469827">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.469827">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.468829700">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.469827">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.469827">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.470825300">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.469827">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.470825300">
+  <info>
+    start Thread[Thread-39,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:19:31.470825300">
+  <info>
+    start Thread[Thread-37,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:19:31.473827700">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:19:31.474827600">
+  <info>
+               OS: Windows 10 (10.0)
+             Java: 11.0.4 (JetBrains s.r.o) AES-secure
+     process name: 18056@DESKTOP-41KACUO
+        user name: cotuoma
+             host: DESKTOP-41KACUO/192.168.254.151
+              cwd: E:\projects\gateways\crdb_tsync
+       free space: 452 GiB
+          version: 2.1.2 (6f9379a)
+         instance: 4c82fd7c-a133-4bd6-85d9-a4fb55e6a500
+           uptime: 00:00:00.800 (-1.000000)
+       processors: 8
+           drift : 0
+    memory(t/u/f): 370/224/145
+         encoding: UTF-8
+         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
+    watch service: sun.nio.fs.WindowsWatchService
+            clock: 1602001171 2020-10-06T16:19:31.474827600Z
+     thread count: 72
+     peak threads: 72
+     user threads: 66
+            Thread[Reference Handler,10,system]
+            Thread[Finalizer,8,system]
+            Thread[Signal Dispatcher,9,system]
+            Thread[Attach Listener,5,system]
+            Thread[RMI TCP Accept-0,5,system]
+            Thread[Monitor Ctrl-Break,5,main]
+            Thread[Catalina-utility-1,1,main]
+            Thread[Catalina-utility-2,1,main]
+            Thread[container-0,5,main]
+            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
+            Thread[HikariPool-1 housekeeper,5,main]
+            Thread[OracleTimeoutPollingThread,10,main]
+            Thread[scheduling-1,5,main]
+            Thread[NioBlockingSelector.BlockPoller-1,5,main]
+            Thread[http-nio-8094-exec-1,5,main]
+            Thread[http-nio-8094-exec-2,5,main]
+            Thread[http-nio-8094-exec-3,5,main]
+            Thread[http-nio-8094-exec-4,5,main]
+            Thread[http-nio-8094-exec-5,5,main]
+            Thread[http-nio-8094-exec-6,5,main]
+            Thread[http-nio-8094-exec-7,5,main]
+            Thread[http-nio-8094-exec-8,5,main]
+            Thread[http-nio-8094-exec-9,5,main]
+            Thread[http-nio-8094-exec-10,5,main]
+            Thread[http-nio-8094-ClientPoller-0,5,main]
+            Thread[http-nio-8094-ClientPoller-1,5,main]
+            Thread[http-nio-8094-Acceptor-0,5,main]
+            Thread[pool-1-thread-1,5,main]
+            Thread[Q2-4c82fd7c-a133-4bd6-85d9-a4fb55e6a500,5,main]
+            Thread[DestroyJavaVM,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[Timer-0,5,main]
+            Thread[Timer-1,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[FileDeletionDetector,5,main]
+            Thread[LogFlusher,5,main]
+            Thread[DataCorruptionVerifier,5,main]
+            Thread[INCompressor,5,main]
+            Thread[Cleaner-1,5,main]
+            Thread[Checkpointer,5,main]
+            Thread[StatCapture,5,main]
+            Thread[Thread-14,5,main]
+            Thread[Timer-2,5,main]
+            Thread[SimpleTransactionManager-0:idle,5,main]
+            Thread[SimpleTransactionManager-1:idle,5,main]
+            Thread[SimpleTransactionManager-2:idle,5,main]
+            Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-6:idle,5,main]
+            Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
+            Thread[SimpleTransactionManager-10:idle,5,main]
+            Thread[SimpleTransactionManager-12:idle,5,main]
+            Thread[SimpleTransactionManager-11:idle,5,main]
+            Thread[SimpleTransactionManager-14:idle,5,main]
+            Thread[SimpleTransactionManager-13:idle,5,main]
+            Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-16:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
             Thread[SimpleTransactionManager-17:idle,5,main]
             Thread[SimpleTransactionManager-20:idle,5,main]
-            Thread[SimpleTransactionManager-18:idle,5,main]
             Thread[SimpleTransactionManager-19:idle,5,main]
             Thread[SimpleTransactionManager-21:idle,5,main]
             Thread[SimpleTransactionManager-22:idle,5,main]
@@ -579,7 +3098,7 @@ q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
         connected=0, rx=0, tx=0, last=0
       logger.Q2: org.jpos.util.Logger
       transient:default: org.jpos.space.TSpace
-        <key count='1'>$TAILLOCK.298323744</key>
+        <key count='1'>$TAILLOCK.1179074535</key>
          key-count: 1
             gcinfo: 0,0
       logger.Q2.buffered: org.jpos.util.BufferedLogListener
@@ -591,45 +3110,932 @@ q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
         in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
   </info>
 </log>
-<log realm="ISOServer.server.session/127.0.0.1:55315" at="2020-10-02T10:23:38.345463700">
+<log realm="ISOServer.server.session/127.0.0.1:52359" at="2020-10-06T19:19:40.194936">
   <session-start/>
 </log>
-<log realm="channel/127.0.0.1:55315" at="2020-10-02T10:23:38.347463200" lifespan="1ms">
+<log realm="channel/127.0.0.1:52359" at="2020-10-06T19:19:40.196936600" lifespan="2ms">
   <receive>
     <isomsg direction="incoming">
       <!-- ke.tra.com.tsync.packager.Transport_Packager -->
       <header>3C00010000</header>
-      <field id="0" value="1100"/>
-      <field id="3" value="001120"/>
-      <field id="11" value="000000"/>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
       <field id="41" value="PO400001"/>
       <field id="42" value="100000RW0010408"/>
-      <field id="47" value="026024161697313221017301104099030002ma027005admin"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
     </isomsg>
   </receive>
 </log>
-<log realm="channel/127.0.0.1:55315" at="2020-10-02T10:23:39.887285300" lifespan="1ms">
+<log realm="channel/127.0.0.1:52359" at="2020-10-06T19:19:40.416181100" lifespan="2ms">
   <send>
     <isomsg direction="outgoing">
       <!-- ke.tra.com.tsync.packager.Transport_Packager -->
       <header>3C00010000</header>
-      <field id="0" value="1110"/>
-      <field id="3" value="001120"/>
-      <field id="11" value="000000"/>
-      <field id="37" value="022320102338"/>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="061920071940"/>
       <field id="39" value="00"/>
       <field id="41" value="PO400001"/>
       <field id="42" value="100000RW0010408"/>
-      <field id="47" value="mandy|mawia|majiko|mag|mapput|maina|maitalucky|manlike|mankey|mantol|mandem|mawiaalex|master shifu"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
       <field id="72" value="Successful approval/completion or that VIP PIN verification is valid"/>
     </isomsg>
   </send>
 </log>
-<log realm="channel/127.0.0.1:55315" at="2020-10-02T10:23:39.890281500" lifespan="1ms">
+<log realm="channel/127.0.0.1:52359" at="2020-10-06T19:19:40.418936600" lifespan="2ms">
   <receive>
     <peer-disconnect/>
   </receive>
 </log>
-<log realm="ISOServer.server.session/127.0.0.1:55315" at="2020-10-02T10:23:39.892286200">
+<log realm="ISOServer.server.session/127.0.0.1:52359" at="2020-10-06T19:19:40.421937200">
   <session-end/>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52394" at="2020-10-06T19:23:24.529384400">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:52394" at="2020-10-06T19:23:24.530383900">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:52394" at="2020-10-06T19:23:24.719392900">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="062320072324"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Successful approval/completion or that VIP PIN verification is valid"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:52394" at="2020-10-06T19:23:24.720387500">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52394" at="2020-10-06T19:23:24.721387">
+  <session-end/>
+</log>
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2020-10-06T19:27:12.709993800">
+  <info>
+    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:27:12.879990900" lifespan="165ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:27:12.885995300" lifespan="4ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:27:13.465001800" lifespan="579ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:27:13.472001400" lifespan="5ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
+  </info>
+</log>
+<log realm="ISOServer.server" at="2020-10-06T19:27:13.498000600">
+  <iso-server>
+    listening on port 8621
+  </iso-server>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.558992400">
+  <info>
+    start Thread[Thread-16,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.559999400">
+  <info>
+    start Thread[Thread-17,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.559999400">
+  <info>
+    start Thread[Thread-19,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.559999400">
+  <info>
+    start Thread[Thread-20,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.560992100">
+  <info>
+    start Thread[Thread-22,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.562992200">
+  <info>
+    start Thread[Thread-27,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.561994400">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.564996800">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.564001800" lifespan="3ms">
+  <info>
+    start Thread[Thread-21,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.564001800" lifespan="3ms">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.564996800" lifespan="4ms">
+  <info>
+    start Thread[Thread-18,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.566991700" lifespan="2ms">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.565993400">
+  <info>
+    start Thread[Thread-31,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.568997600" lifespan="8ms">
+  <info>
+    start Thread[Thread-24,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.568997600" lifespan="2ms">
+  <info>
+    start Thread[Thread-37,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.567995800" lifespan="6ms">
+  <info>
+    start Thread[Thread-26,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.565993400">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.568997600" lifespan="1ms">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.569993300" lifespan="1ms">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.566991700" lifespan="2ms">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.567995800">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.568997600" lifespan="1ms">
+  <info>
+    start Thread[Thread-39,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.569993300" lifespan="3ms">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:27:13.571022" lifespan="5ms">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:27:13.571022">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:27:13.571994700">
+  <info>
+               OS: Windows 10 (10.0)
+             Java: 11.0.4 (JetBrains s.r.o) AES-secure
+     process name: 25832@DESKTOP-41KACUO
+        user name: cotuoma
+             host: DESKTOP-41KACUO/192.168.254.151
+              cwd: E:\projects\gateways\crdb_tsync
+       free space: 452 GiB
+          version: 2.1.2 (6f9379a)
+         instance: 756ca996-28c7-42ab-95ac-27b46bab656e
+           uptime: 00:00:00.916 (-1.000000)
+       processors: 8
+           drift : 0
+    memory(t/u/f): 370/189/180
+         encoding: UTF-8
+         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
+    watch service: sun.nio.fs.WindowsWatchService
+            clock: 1602001633 2020-10-06T16:27:13.572995400Z
+     thread count: 72
+     peak threads: 72
+     user threads: 66
+            Thread[Reference Handler,10,system]
+            Thread[Finalizer,8,system]
+            Thread[Signal Dispatcher,9,system]
+            Thread[Attach Listener,5,system]
+            Thread[RMI TCP Accept-0,5,system]
+            Thread[Monitor Ctrl-Break,5,main]
+            Thread[Catalina-utility-1,1,main]
+            Thread[Catalina-utility-2,1,main]
+            Thread[container-0,5,main]
+            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
+            Thread[HikariPool-1 housekeeper,5,main]
+            Thread[OracleTimeoutPollingThread,10,main]
+            Thread[scheduling-1,5,main]
+            Thread[NioBlockingSelector.BlockPoller-1,5,main]
+            Thread[http-nio-8094-exec-1,5,main]
+            Thread[http-nio-8094-exec-2,5,main]
+            Thread[http-nio-8094-exec-3,5,main]
+            Thread[http-nio-8094-exec-4,5,main]
+            Thread[http-nio-8094-exec-5,5,main]
+            Thread[http-nio-8094-exec-6,5,main]
+            Thread[http-nio-8094-exec-7,5,main]
+            Thread[http-nio-8094-exec-8,5,main]
+            Thread[http-nio-8094-exec-9,5,main]
+            Thread[http-nio-8094-exec-10,5,main]
+            Thread[http-nio-8094-ClientPoller-0,5,main]
+            Thread[http-nio-8094-ClientPoller-1,5,main]
+            Thread[http-nio-8094-Acceptor-0,5,main]
+            Thread[pool-1-thread-1,5,main]
+            Thread[Q2-756ca996-28c7-42ab-95ac-27b46bab656e,5,main]
+            Thread[DestroyJavaVM,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[Timer-0,5,main]
+            Thread[Timer-1,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[FileDeletionDetector,5,main]
+            Thread[LogFlusher,5,main]
+            Thread[DataCorruptionVerifier,5,main]
+            Thread[INCompressor,5,main]
+            Thread[Cleaner-1,5,main]
+            Thread[Checkpointer,5,main]
+            Thread[StatCapture,5,main]
+            Thread[Thread-14,5,main]
+            Thread[Timer-2,5,main]
+            Thread[SimpleTransactionManager-0:idle,5,main]
+            Thread[SimpleTransactionManager-1:idle,5,main]
+            Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-2:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-6:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
+            Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-10:idle,5,main]
+            Thread[SimpleTransactionManager-11:idle,5,main]
+            Thread[SimpleTransactionManager-12:idle,5,main]
+            Thread[SimpleTransactionManager-13:idle,5,main]
+            Thread[SimpleTransactionManager-14:idle,5,main]
+            Thread[SimpleTransactionManager-16:idle,5,main]
+            Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-17:idle,5,main]
+            Thread[SimpleTransactionManager-21:idle,5,main]
+            Thread[SimpleTransactionManager-20:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
+            Thread[SimpleTransactionManager-19:idle,5,main]
+            Thread[SimpleTransactionManager-22:idle,5,main]
+            Thread[SimpleTransactionManager-23:idle,5,main]
+            Thread[pool-2-thread-1,5,main]
+            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
+            Thread[SystemMonitor,5,main]
+            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
+            Thread[Common-Cleaner,8,InnocuousThreadGroup]
+    name-registrar:
+      tspace:default: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      tspace:txnmgr: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      ISOServer: org.jpos.q2.iso.QServer
+      Q2: org.jpos.q2.Q2
+      server.ISOServer: org.jpos.iso.ISOServer
+        connected=0, rx=0, tx=0, last=0
+      logger.Q2: org.jpos.util.Logger
+      transient:default: org.jpos.space.TSpace
+        <key count='1'>$TAILLOCK.269662145</key>
+         key-count: 1
+            gcinfo: 0,0
+      logger.Q2.buffered: org.jpos.util.BufferedLogListener
+      je:txnmgr: org.jpos.space.JESpace
+        <key size='1'>$HEAD</key>
+        <key size='1'>$TAIL</key>
+        <keycount>2</keycount>
+      SimpleTransactionManager: org.jpos.transaction.TransactionManager
+        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
+  </info>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52464" at="2020-10-06T19:27:39.028492">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:52464" at="2020-10-06T19:27:39.032491200" lifespan="3ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:52464" at="2020-10-06T19:27:39.246980">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="062720072739"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Successful approval/completion or that VIP PIN verification is valid"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:52464" at="2020-10-06T19:27:39.250986600" lifespan="3ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52464" at="2020-10-06T19:27:39.251981">
+  <session-end/>
+</log>
+<?xml version="1.0" encoding="UTF-8"?>
+<logger class="org.jpos.util.DailyLogListener">
+<log realm="Q2.system" at="2020-10-06T19:29:35.019186500">
+  <info>
+    Q2 started, deployDir=E:\projects\gateways\crdb_tsync\config\jpos
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:29:35.354180400" lifespan="328ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:29:35.365178800" lifespan="5ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\05_server.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:29:36.093185500" lifespan="727ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\30_txn_mgr.xml
+  </info>
+</log>
+<log realm="Q2.system" at="2020-10-06T19:29:36.097184900" lifespan="3ms">
+  <info>
+    deploy: E:\projects\gateways\crdb_tsync\config\jpos\99_sysmon.xml
+  </info>
+</log>
+<log realm="ISOServer.server" at="2020-10-06T19:29:36.111194800" lifespan="1ms">
+  <iso-server>
+    listening on port 8621
+  </iso-server>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.242193500">
+  <info>
+    start Thread[Thread-15,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.242193500">
+  <info>
+    start Thread[Thread-19,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.242193500">
+  <info>
+    start Thread[Thread-17,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.242193500">
+  <info>
+    start Thread[Thread-16,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.243180800">
+  <info>
+    start Thread[Thread-21,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.266178400" lifespan="23ms">
+  <info>
+    start Thread[Thread-18,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.244189100" lifespan="1ms">
+  <info>
+    start Thread[Thread-20,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.267191100">
+  <info>
+    start Thread[Thread-32,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.267191100" lifespan="1ms">
+  <info>
+    start Thread[Thread-25,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.267191100" lifespan="1ms">
+  <info>
+    start Thread[Thread-26,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.267191100" lifespan="1ms">
+  <info>
+    start Thread[Thread-29,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.267191100" lifespan="1ms">
+  <info>
+    start Thread[Thread-28,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.269181100" lifespan="3ms">
+  <info>
+    start Thread[Thread-27,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.269181100">
+  <info>
+    start Thread[Thread-30,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.269181100" lifespan="24ms">
+  <info>
+    start Thread[Thread-24,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.270181400" lifespan="27ms">
+  <info>
+    start Thread[Thread-22,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.270181400" lifespan="27ms">
+  <info>
+    start Thread[Thread-23,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.270181400" lifespan="1ms">
+  <info>
+    start Thread[Thread-38,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.270181400" lifespan="1ms">
+  <info>
+    start Thread[Thread-36,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.270181400" lifespan="1ms">
+  <info>
+    start Thread[Thread-37,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.270181400" lifespan="1ms">
+  <info>
+    start Thread[Thread-35,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.270181400" lifespan="1ms">
+  <info>
+    start Thread[Thread-34,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.271179900" lifespan="3ms">
+  <info>
+    start Thread[Thread-33,5,main]
+  </info>
+</log>
+<log realm="org.jpos.transaction.TransactionManager" at="2020-10-06T19:29:36.270181400" lifespan="1ms">
+  <info>
+    start Thread[Thread-31,5,main]
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:29:36.271179900">
+  <info>
+    Starting SystemMonitor
+  </info>
+</log>
+<log realm="org.jpos.q2.qbean.SystemMonitor" at="2020-10-06T19:29:36.272185100">
+  <info>
+               OS: Windows 10 (10.0)
+             Java: 11.0.4 (JetBrains s.r.o) AES-secure
+     process name: 31596@DESKTOP-41KACUO
+        user name: cotuoma
+             host: DESKTOP-41KACUO/192.168.254.151
+              cwd: E:\projects\gateways\crdb_tsync
+       free space: 452 GiB
+          version: 2.1.2 (6f9379a)
+         instance: 5e974f97-ec92-4ce9-8c71-3ba23a135f07
+           uptime: 00:00:01.329 (-1.000000)
+       processors: 8
+           drift : 0
+    memory(t/u/f): 455/95/359
+         encoding: UTF-8
+         timezone: Africa/Nairobi (Eastern Africa Time) +03:00
+    watch service: sun.nio.fs.WindowsWatchService
+            clock: 1602001776 2020-10-06T16:29:36.272185100Z
+     thread count: 72
+     peak threads: 72
+     user threads: 66
+            Thread[Reference Handler,10,system]
+            Thread[Finalizer,8,system]
+            Thread[Signal Dispatcher,9,system]
+            Thread[Attach Listener,5,system]
+            Thread[RMI TCP Accept-0,5,system]
+            Thread[Monitor Ctrl-Break,5,main]
+            Thread[Catalina-utility-1,1,main]
+            Thread[Catalina-utility-2,1,main]
+            Thread[container-0,5,main]
+            Thread[oracle.jdbc.driver.BlockSource.ThreadedCachingBlockSource.BlockReleaser,4,main]
+            Thread[HikariPool-1 housekeeper,5,main]
+            Thread[OracleTimeoutPollingThread,10,main]
+            Thread[scheduling-1,5,main]
+            Thread[NioBlockingSelector.BlockPoller-1,5,main]
+            Thread[http-nio-8094-exec-1,5,main]
+            Thread[http-nio-8094-exec-2,5,main]
+            Thread[http-nio-8094-exec-3,5,main]
+            Thread[http-nio-8094-exec-4,5,main]
+            Thread[http-nio-8094-exec-5,5,main]
+            Thread[http-nio-8094-exec-6,5,main]
+            Thread[http-nio-8094-exec-7,5,main]
+            Thread[http-nio-8094-exec-8,5,main]
+            Thread[http-nio-8094-exec-9,5,main]
+            Thread[http-nio-8094-exec-10,5,main]
+            Thread[http-nio-8094-ClientPoller-0,5,main]
+            Thread[http-nio-8094-ClientPoller-1,5,main]
+            Thread[http-nio-8094-Acceptor-0,5,main]
+            Thread[pool-1-thread-1,5,main]
+            Thread[Q2-5e974f97-ec92-4ce9-8c71-3ba23a135f07,5,main]
+            Thread[DestroyJavaVM,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[Timer-0,5,main]
+            Thread[Timer-1,5,main]
+            Thread[FileSystemWatchService,5,main]
+            Thread[FileDeletionDetector,5,main]
+            Thread[LogFlusher,5,main]
+            Thread[DataCorruptionVerifier,5,main]
+            Thread[INCompressor,5,main]
+            Thread[Cleaner-1,5,main]
+            Thread[Checkpointer,5,main]
+            Thread[StatCapture,5,main]
+            Thread[Thread-13,5,main]
+            Thread[Timer-2,5,main]
+            Thread[SimpleTransactionManager-0:idle,5,main]
+            Thread[SimpleTransactionManager-1:idle,5,main]
+            Thread[SimpleTransactionManager-2:idle,5,main]
+            Thread[SimpleTransactionManager-4:idle,5,main]
+            Thread[SimpleTransactionManager-3:idle,5,main]
+            Thread[SimpleTransactionManager-5:idle,5,main]
+            Thread[SimpleTransactionManager-6:idle,5,main]
+            Thread[SimpleTransactionManager-8:idle,5,main]
+            Thread[SimpleTransactionManager-7:idle,5,main]
+            Thread[SimpleTransactionManager-9:idle,5,main]
+            Thread[SimpleTransactionManager-12:idle,5,main]
+            Thread[SimpleTransactionManager-11:idle,5,main]
+            Thread[SimpleTransactionManager-10:idle,5,main]
+            Thread[SimpleTransactionManager-13:idle,5,main]
+            Thread[SimpleTransactionManager-14:idle,5,main]
+            Thread[SimpleTransactionManager-19:idle,5,main]
+            Thread[SimpleTransactionManager-18:idle,5,main]
+            Thread[SimpleTransactionManager-15:idle,5,main]
+            Thread[SimpleTransactionManager-16:idle,5,main]
+            Thread[SimpleTransactionManager-17:idle,5,main]
+            Thread[SimpleTransactionManager-21:idle,5,main]
+            Thread[SimpleTransactionManager-22:idle,5,main]
+            Thread[SimpleTransactionManager-20:idle,5,main]
+            Thread[SimpleTransactionManager-23:idle,5,main]
+            Thread[pool-2-thread-1,5,main]
+            Thread[SimpleTransactionManager-input-queue-monitor,5,main]
+            Thread[SystemMonitor,5,main]
+            Thread[ISOServer-ThreadPool.PooledThread-0,5,ISOServer-ThreadPool-0]
+            Thread[Common-Cleaner,8,InnocuousThreadGroup]
+    name-registrar:
+      tspace:default: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      tspace:txnmgr: org.jpos.space.TSpace
+         key-count: 0
+            gcinfo: 0,0
+      ISOServer: org.jpos.q2.iso.QServer
+      Q2: org.jpos.q2.Q2
+      server.ISOServer: org.jpos.iso.ISOServer
+        connected=0, rx=0, tx=0, last=0
+      logger.Q2: org.jpos.util.Logger
+      transient:default: org.jpos.space.TSpace
+        <key count='1'>$TAILLOCK.869864780</key>
+         key-count: 1
+            gcinfo: 0,0
+      logger.Q2.buffered: org.jpos.util.BufferedLogListener
+      je:txnmgr: org.jpos.space.JESpace
+        <key size='1'>$HEAD</key>
+        <key size='1'>$TAIL</key>
+        <keycount>2</keycount>
+      SimpleTransactionManager: org.jpos.transaction.TransactionManager
+        in-transit=0/0, head=1, tail=1, paused=0, outstanding=0, active-sessions=24/4096, tps=0, peak=0, avg=0.00
+  </info>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52512" at="2020-10-06T19:29:57.068248500">
+  <session-start/>
+</log>
+<log realm="channel/127.0.0.1:52512" at="2020-10-06T19:29:57.070240100" lifespan="1ms">
+  <receive>
+    <isomsg direction="incoming">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0020"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+    </isomsg>
+  </receive>
+</log>
+<log realm="channel/127.0.0.1:52512" at="2020-10-06T19:29:57.342766600">
+  <send>
+    <isomsg direction="outgoing">
+      <!-- ke.tra.com.tsync.packager.Transport_Packager -->
+      <header>3C00010000</header>
+      <field id="0" value="0030"/>
+      <field id="2" value="0100FA0099"/>
+      <field id="3" value="001121"/>
+      <field id="4" value="000000000800"/>
+      <field id="7" value="1218164640"/>
+      <field id="11" value="000338"/>
+      <field id="12" value="181212101924"/>
+      <field id="37" value="062920072957"/>
+      <field id="39" value="00"/>
+      <field id="41" value="PO400001"/>
+      <field id="42" value="100000RW0010408"/>
+      <field id="49" value="345"/>
+      <field id="60" value="345"/>
+      <field id="72" value="Successful approval/completion or that VIP PIN verification is valid"/>
+    </isomsg>
+  </send>
+</log>
+<log realm="channel/127.0.0.1:52512" at="2020-10-06T19:29:57.347278500" lifespan="3ms">
+  <receive>
+    <peer-disconnect/>
+  </receive>
+</log>
+<log realm="ISOServer.server.session/127.0.0.1:52512" at="2020-10-06T19:29:57.348238300">
+  <session-end/>
+</log>
+<log realm="Q2.system" at="2020-10-06T22:56:23.954208700" lifespan="9ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-06T23:56:25.634552100" lifespan="6ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-07T03:29:24.182751100" lifespan="6ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-07T06:33:02.975440400" lifespan="5ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
+</log>
+<log realm="Q2.system" at="2020-10-07T08:56:02.866585300" lifespan="2ms">
+  <version>
+    jPOS 2.1.2 master/6f9379a (2018-09-19 16:33:22 ART) 
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+jPOS Community Edition, licensed under GNU AGPL v3.0.
+This software is probably not suitable for commercial use.
+Please see http://jpos.org/license for details.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (Darwin)
+
+iQEcBAEBAgAGBQJMolHDAAoJEOQyeO71nYtFv74H/3OgehDGEy1VXp2U3/GcAobg
+HH2eZjPUz53r38ARPiU3pzm9LwDa3WZgJJaa/b9VrJwKvbPwe9+0kY3gScDE1skT
+ladHt+KHHmGQArEutkzHlpZa73RbroFEIa1qmN6MaDEHGoxZqDh0Sv2cpvOaVYGO
+St8ZaddLBPC17bSjAPWo9sWbvL7FgPFOHhnPmbeux8SLtnfWxXWsgo5hLBanKmO1
+1z+I/w/6DL6ZYZU6bAJUk+eyVVImJqw0x3IEElI07Nh9MC6BA4iJ77ejobj8HI2r
+q9ulRPEqH9NR79619lNKVUkE206dVlXo7xHmJS1QZy5v/GT66xBxyDVfTduPFXk=
+=oP+v
+-----END PGP SIGNATURE-----
+
+  </version>
 </log>

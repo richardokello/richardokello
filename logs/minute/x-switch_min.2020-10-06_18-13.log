@@ -1,0 +1,12 @@
+525  [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 9488 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
+527  [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: test 
+1953 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+2323 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 352ms. Found 31 repository interfaces. 
+2802 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$7bfd313f] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+3103 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+3118 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+3272 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+3272 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+3449 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+3449 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2874 ms 
+3845 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
