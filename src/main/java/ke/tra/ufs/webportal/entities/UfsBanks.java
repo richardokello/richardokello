@@ -75,9 +75,9 @@ public class UfsBanks implements Serializable {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private Set<UfsGls> ufsGlsSet;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bankId")
+//    @com.fasterxml.jackson.annotation.JsonIgnore
+//    private Set<UfsGls> ufsGlsSet;
 
     @Transient
     private List<UfsBankBins> ufsBankBins;
@@ -334,15 +334,15 @@ public class UfsBanks implements Serializable {
     }
 
 
-    @XmlTransient
-    @JsonIgnore
-    public Set<UfsGls> getUfsGlsSet() {
-        return ufsGlsSet;
-    }
-
-    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
-        this.ufsGlsSet = ufsGlsSet;
-    }
+//    @XmlTransient
+//    @JsonIgnore
+//    public Set<UfsGls> getUfsGlsSet() {
+//        return ufsGlsSet;
+//    }
+//
+//    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
+//        this.ufsGlsSet = ufsGlsSet;
+//    }
 
   
 

@@ -56,7 +56,6 @@ public class GlsBatchUploadServiceTemplate implements GlsBatchUploadService {
                 ufsGls.setGlCode(entity.getGlCode());
                 ufsGls.setGlAccountNumber(entity.getGlAccountNumber());
                 ufsGls.setGlLocation(entity.getGlLocation());
-                ufsGls.setBankIds(entity.getBankIds());
                 ufsGls.setBankBranchIds(entity.getBankBranchIds());
                 ufsGls.setTenantIds(entity.getTenantIds());
                 ufsGlsRepository.save(ufsGls);

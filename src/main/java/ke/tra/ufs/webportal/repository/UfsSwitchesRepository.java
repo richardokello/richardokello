@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UfsSwitchesRepository extends CrudRepository<UfsSwitches,Long> {
+
+    UfsSwitches findBySwitchName(String switchName);
 }
