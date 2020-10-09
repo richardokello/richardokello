@@ -49,7 +49,7 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
             responseWrapper.setCode(HttpStatus.CONFLICT.value());
             responseWrapper.setMessage(ufsBankBranches1.getName()+" Bank Branches Name already exist");
 
-            return ResponseEntity.ok(responseWrapper);
+            return new ResponseEntity(responseWrapper, HttpStatus.CONFLICT);
         }
         return super.create(ufsBankBranches);
     }

@@ -38,7 +38,7 @@ public class UfsSwitchesResources extends ChasisResource<UfsSwitches,Long, UfsEd
             responseWrapper.setCode(HttpStatus.CONFLICT.value());
             responseWrapper.setMessage(ufsSwitches.getSwitchName()+" Switch Name already exist");
 
-            return ResponseEntity.ok(responseWrapper);
+            return new ResponseEntity(responseWrapper, HttpStatus.CONFLICT);
         }
         return super.create(ufsSwitches);
     }
