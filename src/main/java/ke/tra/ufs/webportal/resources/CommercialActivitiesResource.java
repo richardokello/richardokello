@@ -38,7 +38,7 @@ public class CommercialActivitiesResource extends ChasisResource<UfsCommercialAc
             responseWrapper.setCode(HttpStatus.CONFLICT.value());
             responseWrapper.setMessage(ufsCommercialActivities1.getCommercialActivity()+" Commercial Activity already exist");
 
-            return ResponseEntity.ok(responseWrapper);
+            return new ResponseEntity(responseWrapper, HttpStatus.CONFLICT);
         }
         return super.create(ufsCommercialActivities);
     }

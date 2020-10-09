@@ -39,7 +39,7 @@ public class UfsBusinessTypeResource extends ChasisResource<UfsBusinessType,Long
             responseWrapper.setCode(HttpStatus.CONFLICT.value());
             responseWrapper.setMessage(ufsBusinessType.getBusinessType()+" Business Type already exist");
 
-            return ResponseEntity.ok(responseWrapper);
+            return new ResponseEntity(responseWrapper, HttpStatus.CONFLICT);
         }
         return super.create(ufsBusinessType);
     }

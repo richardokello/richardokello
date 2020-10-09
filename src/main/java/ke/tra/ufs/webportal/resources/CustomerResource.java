@@ -30,6 +30,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
@@ -44,6 +45,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     private final CustomerOwnersService ownersService;
     private final UfsCustomerOutletService outletService;
     private final ContactPersonService contactPersonService;
+
 
     public CustomerResource(LoggerService loggerService, EntityManager entityManager,CustomerService customerService,TmsDeviceService deviceService,
                             CustomerOwnersService ownersService,UfsCustomerOutletService outletService,ContactPersonService contactPersonService) {
@@ -174,6 +176,8 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     }
 
 
+
+
    /* @RequestMapping(value = "/terminate" , method = RequestMethod.PUT)
     @Transactional
     @ApiOperation(value = "Terminate Agent", notes = "Terminate multiple agents.")
@@ -216,15 +220,46 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         Arrays.stream(actions.getIds()).forEach(id->{
             UfsCustomer customer = this.customerService.findByCustomerId(id);
             if(Objects.nonNull(customer)){
-                if((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                        (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                        (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                        (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))){
+                    if((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
+                            (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
+                            (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
 
-                    customer.setActionStatus(AppConstants.STATUS_APPROVED);
-                    this.customerService.saveCustomer(customer);
-                    loggerService.log("Successfully Approved Customer",
-                            UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+                        customer.setActionStatus(AppConstants.STATUS_APPROVED);
+                        this.customerService.saveCustomer(customer);
+                        loggerService.log("Successfully Approved Customer",
+                                UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+
+                    }
+                    //updating customer
+                    if((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
+                    ){
+                        try {
+                            UfsCustomer entity = supportRepo.mergeChanges(id, customer);
+                            customer.setBusinessName(entity.getBusinessName());
+                            customer.setBusinessEmailAddress(entity.getBusinessEmailAddress());
+                            customer.setBusinessLicenceNumber(entity.getBusinessLicenceNumber());
+                            customer.setBusinessPrimaryContactNo(entity.getBusinessPrimaryContactNo());
+                            customer.setBusinessSecondaryContactNo(entity.getBusinessSecondaryContactNo());
+                            customer.setBusinessTypeIds(entity.getBusinessTypeIds());
+                            customer.setPinNumber(entity.getPinNumber());
+                            customer.setDateIssued(entity.getDateIssued());
+                            customer.setValidTo(entity.getValidTo());
+                            customer.setAddress(entity.getAddress());
+                            customer.setCommercialActivityId(entity.getCommercialActivityId());
+                            customer.setCustomerClassId(entity.getCustomerClassId());
+                            customer.setCustomerTypeId(entity.getCustomerTypeId());
+                            customer.setEstateId(entity.getEstateId());
+                            customer .setAction(AppConstants.STATUS_APPROVED);
+                            this.customerService.saveCustomer(customer);
+//                            edittedRecordService.deleteEdittedRecord();
+                            loggerService.log("Successfully Approved Customer Update",
+                                    UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
 
 
                     if(customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){

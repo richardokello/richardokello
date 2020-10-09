@@ -38,7 +38,7 @@ public class BankRegionResource extends ChasisResource<UfsBankRegion, Long, UfsE
             responseWrapper.setCode(HttpStatus.CONFLICT.value());
             responseWrapper.setMessage(ufsBankRegion.getRegionName()+" Region Name already exist");
 
-            return ResponseEntity.ok(responseWrapper);
+            return new ResponseEntity(responseWrapper, HttpStatus.CONFLICT);
         }
         return super.create(ufsBankRegion);
     }
