@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 public class CommunicationService {
 
     @Value("${baseUrl}")
-    public String communicationUrl;
+    public String baseUrl;
 
     public void sendEmail(EmailBody mail) {
 //           call send email code  here
@@ -31,7 +31,7 @@ public class CommunicationService {
                 "Sending email..." + mail.getMessage().toString());
         try {
 //        ResponseEntity<EmailBody> responses = template.postForObject(communicationUrl, mail, EmailBody.class);
-            template.exchange(communicationUrl + "miliki-communications-service/communication/send-email", HttpMethod.POST, request, EmailBody.class
+            template.exchange(baseUrl + "ufs-communication-service/communication/send-email", HttpMethod.POST, request, EmailBody.class
             );
         } catch (HttpClientErrorException e) {
             System.out.println("Communication service is unreachable ...");
