@@ -13,4 +13,6 @@ public interface UfsBankBranchesRepository extends CrudRepository<UfsBankBranche
 
     public UfsBankBranches findByBranchId(Long id);
 
+    UfsBankBranches findByNameAndIntrash(String name,String intrash);
+
 }

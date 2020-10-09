@@ -11,6 +11,7 @@ import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsBankBranches;
+import ke.tra.ufs.webportal.entities.UfsBankRegion;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.service.BankBranchesService;
 import ke.tra.ufs.webportal.utils.AppConstants;
@@ -37,6 +38,20 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
     public BankBranchesResources(LoggerService loggerService, EntityManager entityManager,BankBranchesService bankBranchesService) {
         super(loggerService, entityManager);
         this.bankBranchesService = bankBranchesService;
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseWrapper<UfsBankBranches>> create(@Valid @RequestBody UfsBankBranches ufsBankBranches) {
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+        UfsBankBranches ufsBankBranches1 = bankBranchesService.findByBankBranchesName(ufsBankBranches.getName());
+        if (ufsBankBranches1 != null ) {
+            responseWrapper.setCode(HttpStatus.CONFLICT.value());
+            responseWrapper.setMessage(ufsBankBranches1.getName()+" Bank Branches Name already exist");
+
+            return ResponseEntity.ok(responseWrapper);
+        }
+        return super.create(ufsBankBranches);
     }
 
     @RequestMapping(value = "/suspend" , method = RequestMethod.PUT)

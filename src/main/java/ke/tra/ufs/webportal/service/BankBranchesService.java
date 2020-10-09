@@ -10,4 +10,6 @@ public interface BankBranchesService {
     UfsBankBranches findByBranchId(Long id);
 
     void saveBranch(UfsBankBranches bankBranch);
+
+    UfsBankBranches findByBankBranchesName(String bankName);
 }
