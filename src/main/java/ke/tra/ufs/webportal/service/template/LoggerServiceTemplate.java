@@ -44,6 +44,7 @@ public class LoggerServiceTemplate implements LoggerService {
     private void sendLog(LogWrapper log) {
         executor.execute(() -> {
             temp.postForEntity(url + "ufs-logger-service/api/v1/logger/log", log, LogWrapper.class);
+//            temp.postForEntity("http://localhost:8004/api/v1/logger/log", log, LogWrapper.class);
         });
     }
 
@@ -63,6 +64,7 @@ public class LoggerServiceTemplate implements LoggerService {
         payload.add(ismaker);
 
         IsInitiatorResonseEntity res = temp.postForObject(url + "ufs-logger-service/api/v1/logger/log/is-initiator", payload, IsInitiatorResonseEntity.class);
+//        IsInitiatorResonseEntity res = temp.postForObject("http://localhost:8004/api/v1/logger/log/is-initiator", payload, IsInitiatorResonseEntity.class);
         return res.getData().getAllowewd().size() <= 0;
     }
 

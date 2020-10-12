@@ -16,10 +16,10 @@ public class CustomerComplaintsDetails {
     @NotNull
     private String geographicalRegion;
 
-    @JsonProperty("Customer")
-    @ExportField(name = "Customer")
+    @JsonProperty("Agent Name")
+    @ExportField(name = "Agent Name")
     @NotNull
-    private String customer;
+    private String agentName;
 
 
     @JsonProperty("Phone Number")
@@ -27,9 +27,8 @@ public class CustomerComplaintsDetails {
     @NotNull
     private String phoneNumber;
 
-    @JsonProperty("Occurence Date")
-    @ExportField(name = "Occurence Date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("Occurence Date(yyyy-MM-dd e.g 2020-10-11)")
+    @ExportField(name = "Occurence Date(yyyy-MM-dd e.g 2020-10-11)")
     @NotNull
     private Date dateOfOccurence;
 
@@ -53,10 +52,10 @@ public class CustomerComplaintsDetails {
     public CustomerComplaintsDetails() {
     }
 
-    public CustomerComplaintsDetails( String geographicalRegion,  String customer,  Date dateOfOccurence,  String complaintNature,  String complaints,  String remedialActions,
+    public CustomerComplaintsDetails( String geographicalRegion,  String agentName,  Date dateOfOccurence,  String complaintNature,  String complaints,  String remedialActions,
                                       String phoneNumber) {
         this.geographicalRegion = geographicalRegion;
-        this.customer = customer;
+        this.agentName = agentName;
         this.dateOfOccurence = dateOfOccurence;
         this.complaintNature = complaintNature;
         this.complaints = complaints;
@@ -72,12 +71,12 @@ public class CustomerComplaintsDetails {
         this.geographicalRegion = geographicalRegion;
     }
 
-    public String getCustomer() {
-        return customer;
+    public String getAgentName() {
+        return agentName;
     }
 
-    public void setCustomer(String customer) {
-        this.customer = customer;
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public Date getDateOfOccurence() {

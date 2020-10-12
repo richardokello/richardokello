@@ -11,12 +11,17 @@ import ke.tra.ufs.webportal.service.CustomerComplaintsService;
 import ke.tra.ufs.webportal.service.SysConfigService;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.utils.SharedMethods;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -59,7 +64,7 @@ public class CustomerComplaintsServiceTempl implements CustomerComplaintsService
                 UfsCustomerComplaints customerComplaints = new UfsCustomerComplaints();
                 customerComplaints.setComplaintNature(entity.getComplaintNature());
                 customerComplaints.setComplaints(entity.getComplaints());
-                customerComplaints.setAgentComplained(entity.getCustomer());
+                customerComplaints.setAgentComplained(entity.getAgentName());
                 customerComplaints.setAgentPhonenumber(entity.getPhoneNumber());
                 customerComplaints.setAgentLocation(entity.getGeographicalRegion());
                 customerComplaints.setDateOfOccurence(entity.getDateOfOccurence());
@@ -80,4 +85,5 @@ public class CustomerComplaintsServiceTempl implements CustomerComplaintsService
 
         customerComplaintsBatchRepository.save(batch);
     }
+
 }
