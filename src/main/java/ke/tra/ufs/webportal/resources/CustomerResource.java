@@ -249,9 +249,8 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                             customer.setCustomerClassId(entity.getCustomerClassId());
                             customer.setCustomerTypeId(entity.getCustomerTypeId());
                             customer.setEstateId(entity.getEstateId());
-                            customer .setAction(AppConstants.STATUS_APPROVED);
+                            customer .setActionStatus(AppConstants.STATUS_APPROVED);
                             this.customerService.saveCustomer(customer);
-//                            edittedRecordService.deleteEdittedRecord();
                             loggerService.log("Successfully Approved Customer Update",
                                     UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
 
