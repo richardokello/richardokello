@@ -42,6 +42,6 @@ public class UfsPosRoleController extends ChasisResource<UfsPosRole, UfsEdittedR
 
             return new ResponseEntity(responseWrapper, HttpStatus.CONFLICT);
         }
-        return super.create(posRole);
+        return super.create(ufsPosRole);
     }
 }

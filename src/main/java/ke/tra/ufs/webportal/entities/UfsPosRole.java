@@ -46,9 +46,9 @@ public class UfsPosRole implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "CREATED_AT",insertable = false, updatable = false)
+    @Column(name = "CREATION_DATE",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private Date creationDate;
     @Size(max = 20)
     @Filter
     @Searchable
