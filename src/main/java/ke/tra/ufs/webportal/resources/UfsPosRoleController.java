@@ -20,7 +20,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/pos-role")
-public class UfsPosRoleController extends ChasisResource<UfsPosRole, UfsEdittedRecord,Long> {
+public class UfsPosRoleController extends ChasisResource<UfsPosRole,Long, UfsEdittedRecord> {
 
     private final UfsPosRoleRepository posRoleRepository;
 

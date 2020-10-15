@@ -14,4 +14,6 @@ public interface UfsContactPersonRepository extends CrudRepository<UfsContactPer
 
     UfsContactPerson findByUserNameAndIntrash(String username,String intrash);
 
+    UfsContactPerson findByIdAndIntrash(Long id,String intrash);
+
 }
