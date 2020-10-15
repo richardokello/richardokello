@@ -125,4 +125,10 @@ public class AppConstants {
     public static final String COMMISSION_TYPE_FIXED_AMOUNT = "FixedAmount";
     public static final String COMMISSION_TYPE_TIERED = "Tiered";
 
+    public static final String ACTIVITY_RELEASE = "Release";
+    public static final String ACTIVITY_DECOMMISSION = "Decommission";
+
+    public static final String CHECKER_GENERAL_ERROR = "Some Actions could not be processed successfully check audit logs for more details";
+
+
 }

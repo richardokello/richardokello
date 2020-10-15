@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,5 +23,7 @@ public interface UfsPosUserRepository extends JpaRepository<UfsPosUser, BigDecim
     UfsPosUser findByCustomerOwnersIdAndTmsDeviceIdAndIntrash(Long customerOwnersId, BigDecimal tmsDeviceId, String intrash);
 
     Optional<UfsPosUser> findFirstByTmsDeviceIdAndCustomerOwnersNotNull(BigDecimal deviceId);
+
+    List<UfsPosUser> findByContactPersonIdAndIntrash(Long contactPersonId,String intrash);
 
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -69,6 +70,11 @@ public class PosUserServiceTemplate implements PosUserService {
     @Override
     public Optional<UfsPosUser> findByCustomerNotNullAndDeviceId(BigDecimal deviceId) {
         return ufsPosUserRepository.findFirstByTmsDeviceIdAndCustomerOwnersNotNull(deviceId);
+    }
+
+    @Override
+    public List<UfsPosUser> findByContactPersonId(Long contactPersonId) {
+        return ufsPosUserRepository.findByContactPersonIdAndIntrash(contactPersonId,AppConstants.NO);
     }
 
 }

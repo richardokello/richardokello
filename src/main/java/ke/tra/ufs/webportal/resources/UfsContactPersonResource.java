@@ -2,9 +2,12 @@ package ke.tra.ufs.webportal.resources;
 
 import io.swagger.annotations.ApiOperation;
 import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.utils.LoggerService;
+import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsContactPerson;
+import ke.tra.ufs.webportal.entities.UfsCustomer;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.entities.UfsPosUser;
 import ke.tra.ufs.webportal.service.*;
@@ -22,9 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 @RestController
@@ -139,5 +140,32 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
         response.setMessage("Request Was successful");
 
         return response;
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
+        ResponseEntity<ResponseWrapper> resp = super.approveActions(actions);
+        if (!resp.getStatusCode().equals(HttpStatus.OK)) {
+            return resp;
+        }
+
+        //approve also contact person in the  Pos User Table
+        Arrays.stream(actions.getIds()).forEach(id->{
+            UfsContactPerson ufsContactPerson = this.contactPersonService.findContactPersonById(id);
+            if(ufsContactPerson.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)){
+                List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
+                if(!posUsers.isEmpty()){
+                   posUsers.forEach(posUser->{
+                       posUser.setActionStatus(AppConstants.STATUS_APPROVED);
+                       posUserService.savePosUser(posUser);
+                   });
+                }
+            }
+        });
+
+        return resp;
+
     }
 }

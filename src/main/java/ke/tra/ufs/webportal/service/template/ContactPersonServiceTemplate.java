@@ -31,6 +31,11 @@ public class ContactPersonServiceTemplate implements ContactPersonService {
     }
 
     @Override
+    public UfsContactPerson findContactPersonById(Long id) {
+        return contactPersonRepository.findByIdAndIntrash(id,AppConstants.NO);
+    }
+
+    @Override
     public UfsContactPerson findByUsername(String username) {
         return contactPersonRepository.findByUserNameAndIntrash(username,AppConstants.NO);
     }

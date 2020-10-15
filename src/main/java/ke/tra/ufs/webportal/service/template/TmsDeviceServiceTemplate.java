@@ -7,6 +7,7 @@ import ke.tra.ufs.webportal.service.TmsDeviceService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class TmsDeviceServiceTemplate implements TmsDeviceService {
@@ -23,12 +24,14 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     }
 
     @Override
+    public List<TmsDevice> findByOutletIds(List<BigDecimal> outletIds) {
+        return tmsDeviceRepository.findByOutletIdsInAndIntrash(outletIds,AppConstants.NO);
+    }
+
+    @Override
     public TmsDevice findByDeviceIdAndIntrash(BigDecimal id) {
         return tmsDeviceRepository.findByDeviceIdAndIntrash(id, AppConstants.NO);
     }
 
-    /*@Override
-    public TmsDevice findByCustomerIds(BigDecimal customerIds) {
-        return tmsDeviceRepository.findByCustomerIds(customerIds);
-    }*/
+
 }
