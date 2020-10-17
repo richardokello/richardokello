@@ -15,5 +15,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UfsCustomerClassRepository extends CrudRepository<UfsCustomerClass, Long>{
+
+    UfsCustomerClass findByNameAndIntrash(String name, String intrash);
     
 }

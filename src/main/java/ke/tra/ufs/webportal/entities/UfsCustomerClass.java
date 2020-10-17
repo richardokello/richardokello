@@ -63,11 +63,13 @@ public class UfsCustomerClass implements Serializable {
     private String name;
 
     @Size(max = 100)
+    @ModifiableField
     @Column(name = "DESCRIPTION")
     private String description;
 
     @Basic(optional = false)
     @NotNull
+    @ModifiableField
     @Size(min = 1, max = 4000)
     @Column(name = "CLASS_VALUES")
     private String classValues;
@@ -102,6 +104,7 @@ public class UfsCustomerClass implements Serializable {
     @ManyToOne(optional = false)
     private UfsCustomerType typeId;
 
+    @ModifiableField
     @Column(name = "TYPE_ID")
     private BigDecimal typeIds;
 

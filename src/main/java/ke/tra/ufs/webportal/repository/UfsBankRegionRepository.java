@@ -11,6 +11,7 @@ import java.util.List;
 public interface UfsBankRegionRepository extends CrudRepository<UfsBankRegion, BigDecimal> {
 
     List<UfsBankRegion> findByIntrash(String intrash);
-    UfsBankRegion findByRegionName(String regionName);
+    UfsBankRegion findByRegionNameAndIntrash(String regionName,String intrash);
+    UfsBankRegion findByCodeAndIntrash(String code, String intrash);
 
 }

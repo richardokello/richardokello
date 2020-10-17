@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -178,39 +179,51 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
 
 
-   /* @RequestMapping(value = "/terminate" , method = RequestMethod.PUT)
+    @RequestMapping(value = "/terminate" , method = RequestMethod.PUT)
     @Transactional
     @ApiOperation(value = "Terminate Agent", notes = "Terminate multiple agents.")
     public ResponseEntity<ResponseWrapper<UfsCustomer>> terminateAgent(@Valid @RequestBody AgentTerminationWrapper<Long> actions) {
         ResponseWrapper response = new ResponseWrapper();
 
+        List<String> errors = new ArrayList<>();
+
         Arrays.stream(actions.getIds()).forEach(id->{
             UfsCustomer customer = this.customerService.findByCustomerId(id);
-            TmsDevice deviceCustomer = this.deviceService.findByCustomerIds(new BigDecimal(id));
+            List<UfsCustomerOutlet> customerOutlets = this.outletService.findByCustomerId(new BigDecimal(id),AppConstants.INTRASH_NO);
+            List<BigDecimal> outletIds = customerOutlets.stream().map(outletId->new BigDecimal(outletId.getId())).collect(Collectors.toList());
+            List<TmsDevice> deviceCustomer = this.deviceService.findByOutletIds(outletIds);
 
-            if(deviceCustomer != null){
-              throw new AgentAssignedException("Customer Already Assigned Device.Please UnAssign The Device First to Proceeed");
+            for(TmsDevice tmsDevice : deviceCustomer){
+
+                if(!tmsDevice.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DECOMMISSION)){
+                    errors.add("Device with "+tmsDevice.getSerialNo() +"Already Assigned To This Customer.Please UnAssign The Device First to Proceeed");
+                    loggerService.log("Customer Not Terminated",
+                            UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Device with "+tmsDevice.getSerialNo() +"Already Assigned To This Customer.Please UnAssign The Device First to Proceeed");
+                    continue;
+                }
+
+                customer.setAction(AppConstants.ACTIVITY_TERMINATION);
+                customer.setActionStatus(AppConstants.STATUS_UNAPPROVED);
+                customer.setTerminationReason(actions.getTerminationReason());
+                customer.setTerminationDate(new Date());
+                this.customerService.saveCustomer(customer);
+                loggerService.log("Successfully Terminated Customer",
+                        UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
 
             }
-
-            if(customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
-                throw new UnapprovedActionsException("Sorry resource contains unapproved actions");
-            }
-
-            customer.setAction(AppConstants.ACTIVITY_TERMINATION);
-            customer.setActionStatus(AppConstants.STATUS_UNAPPROVED);
-            customer.setTerminationReason(actions.getTerminationReason());
-            customer.setTerminationDate(new Date());
-            this.customerService.saveCustomer(customer);
-            loggerService.log("Successfully Terminated Customer",
-                    UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
 
 
          });
 
-        response.setMessage("Agent Terminated successfully");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }*/
+        if (errors.isEmpty()) {
+            return ResponseEntity.ok(response);
+        } else {
+            response.setCode(HttpStatus.MULTI_STATUS.value());
+            response.setData(errors);
+            response.setMessage(AppConstants.CHECKER_GENERAL_ERROR);
+            return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
+        }
+    }
 
     @Override
     @Transactional
@@ -249,9 +262,8 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                             customer.setCustomerClassId(entity.getCustomerClassId());
                             customer.setCustomerTypeId(entity.getCustomerTypeId());
                             customer.setEstateId(entity.getEstateId());
-                            customer .setAction(AppConstants.STATUS_APPROVED);
+                            customer .setActionStatus(AppConstants.STATUS_APPROVED);
                             this.customerService.saveCustomer(customer);
-//                            edittedRecordService.deleteEdittedRecord();
                             loggerService.log("Successfully Approved Customer Update",
                                     UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
 

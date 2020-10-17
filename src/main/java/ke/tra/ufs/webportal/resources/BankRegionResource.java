@@ -1,6 +1,7 @@
 package ke.tra.ufs.webportal.resources;
 
 import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.utils.AppConstants;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsBankRegion;
@@ -33,10 +34,18 @@ public class BankRegionResource extends ChasisResource<UfsBankRegion, Long, UfsE
     @Transactional
     public ResponseEntity<ResponseWrapper<UfsBankRegion>> create(@Valid @RequestBody UfsBankRegion ufsBankRegion) {
         ResponseWrapper responseWrapper = new ResponseWrapper();
-        UfsBankRegion ufsBankRegion1 = ufsBankRegionRepository.findByRegionName(ufsBankRegion.getRegionName());
+        UfsBankRegion ufsBankRegion1 = ufsBankRegionRepository.findByRegionNameAndIntrash(ufsBankRegion.getRegionName(), AppConstants.NO);
+        UfsBankRegion ufsBankRegion2 = ufsBankRegionRepository.findByCodeAndIntrash(ufsBankRegion.getCode(), AppConstants.NO);
         if (ufsBankRegion1 != null ) {
             responseWrapper.setCode(HttpStatus.CONFLICT.value());
             responseWrapper.setMessage(ufsBankRegion.getRegionName()+" Region Name already exist");
+
+            return new ResponseEntity(responseWrapper, HttpStatus.CONFLICT);
+        }
+
+        if (ufsBankRegion2 != null ) {
+            responseWrapper.setCode(HttpStatus.CONFLICT.value());
+            responseWrapper.setMessage(ufsBankRegion.getCode()+" Region Code already exist");
 
             return new ResponseEntity(responseWrapper, HttpStatus.CONFLICT);
         }
