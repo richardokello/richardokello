@@ -69,8 +69,6 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
         String serialNumber = tmsDeviceService.findByDeviceIdAndIntrash(ufsContactPerson.getDeviceId()).getSerialNo();
         UfsPosUser posUser = posUserService.findByContactPersonIdAndDeviceIdAndSerialNumber(ufsContactPerson.getId(), ufsContactPerson.getDeviceId(),serialNumber);
 
-        UfsPosUser savedUser = posUser;
-
         //generate random pin
         String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
         log.info("The generated pin is: " + randomPin);
@@ -94,34 +92,13 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
                     ufsPosUser.setOtherName(name[1]);
                 }
             }
-            savedUser = posUserService.savePosUser(ufsPosUser);
+            posUserService.savePosUser(ufsPosUser);
 
-            String message = "Your username is " + savedUser.getUsername() + ". Use password :" + randomPin + " to login to POS terminal";
-            if (!ufsContactPerson.getEmail().isEmpty()) {
-                notifyService.sendEmail(ufsContactPerson.getEmail(), "Login Credentials", message);
-                loggerService.log("Sent login credentials for " + ufsContactPerson.getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
-                        AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
 
-            } else {
-                if (!ufsContactPerson.getPhoneNumber().isEmpty()) {
-                    // send sms
-                    posUserService.sendSmsMessage(ufsContactPerson.getPhoneNumber(), message);
-                    loggerService.log("Sent login credentials for " + ufsContactPerson.getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
-                            AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
-
-                } else {
-
-                    loggerService.log("Failed to send login credentials for " + ufsContactPerson.getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
-                            AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_FAILED_STRING,"No valid email or phone number.");
-
-                }
-            }
         }
-
-
         response.setCode(201);
         response.setData(ufsContactPerson);
-        response.setMessage("Agent Owner Created Successfully.");
+        response.setMessage("Contact Person Created Successfully.");
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
@@ -158,8 +135,37 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
                 List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
                 if(!posUsers.isEmpty()){
                    posUsers.forEach(posUser->{
+
+                       UfsPosUser savedUser = posUser;
+
+                       //generate random pin
+                       String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
+                       log.info("The generated pin is: " + randomPin);
+
                        posUser.setActionStatus(AppConstants.STATUS_APPROVED);
-                       posUserService.savePosUser(posUser);
+                       posUser.setPin(encoder.encode(randomPin));
+                       savedUser = posUserService.savePosUser(posUser);
+
+                       String message = "Your username is " + savedUser.getUsername() + ". Use password :" + randomPin + " to login to POS terminal";
+                       if (!ufsContactPerson.getEmail().isEmpty()) {
+                           notifyService.sendEmail(ufsContactPerson.getEmail(), "Login Credentials", message);
+                           loggerService.log("Sent login credentials for " + ufsContactPerson.getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
+                                   AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
+
+                       } else {
+                           if (!ufsContactPerson.getPhoneNumber().isEmpty()) {
+                               // send sms
+                               posUserService.sendSmsMessage(ufsContactPerson.getPhoneNumber(), message);
+                               loggerService.log("Sent login credentials for " + ufsContactPerson.getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
+                                       AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
+
+                           } else {
+
+                               loggerService.log("Failed to send login credentials for " + ufsContactPerson.getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
+                                       AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_FAILED_STRING,"No valid email or phone number.");
+
+                           }
+                       }
                    });
                 }
             }
