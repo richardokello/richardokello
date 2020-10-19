@@ -11,11 +11,9 @@ import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.entities.wrapper.*;
+import ke.tra.ufs.webportal.repository.CustomerRepository;
 import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
-import ke.tra.ufs.webportal.utils.exceptions.AgentAssignedException;
-import ke.tra.ufs.webportal.utils.exceptions.ItemNotFoundException;
-import ke.tra.ufs.webportal.utils.exceptions.UnapprovedActionsException;
 import ke.tra.ufs.webportal.wrappers.AgentTerminationWrapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,12 +25,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -46,16 +41,18 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     private final CustomerOwnersService ownersService;
     private final UfsCustomerOutletService outletService;
     private final ContactPersonService contactPersonService;
+    private final CustomerRepository customerRepository;
 
 
-    public CustomerResource(LoggerService loggerService, EntityManager entityManager,CustomerService customerService,TmsDeviceService deviceService,
-                            CustomerOwnersService ownersService,UfsCustomerOutletService outletService,ContactPersonService contactPersonService) {
+    public CustomerResource(LoggerService loggerService, EntityManager entityManager, CustomerService customerService, TmsDeviceService deviceService,
+                            CustomerOwnersService ownersService, UfsCustomerOutletService outletService, ContactPersonService contactPersonService, CustomerRepository customerRepository) {
         super(loggerService, entityManager);
         this.customerService = customerService;
         this.deviceService = deviceService;
         this.ownersService = ownersService;
         this.outletService = outletService;
         this.contactPersonService = contactPersonService;
+        this.customerRepository = customerRepository;
     }
 
     /**
@@ -82,6 +79,23 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
+
+        if (customerRepository.findByBusinessLicenceNumberAndIntrash(customerOnboarding.getBusinessLicenseNumber(),AppConstants.INTRASH_NO).isPresent()) {
+            response.setMessage("Business Licence Already Exists");
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }
+
+        if (customerRepository.findByBusinessNameAndIntrash(customerOnboarding.getBusinessName(),AppConstants.INTRASH_NO).isPresent()) {
+            response.setMessage("Business Name Already Exists");
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }
+
+        if (customerRepository.findByLocalRegistrationNumberAndIntrash(customerOnboarding.getLocalRegistrationNumber(),AppConstants.INTRASH_NO).isPresent()) {
+            response.setMessage("Local Registration Already Exists");
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }
+
+
         //Errors Occurred While Onboarding Customer
         ArrayList<String> errors = new ArrayList<>();
 
