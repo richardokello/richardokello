@@ -11,6 +11,7 @@ import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import ke.axle.chassis.annotations.Searchable;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * @author Owori Juma
