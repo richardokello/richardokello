@@ -90,6 +90,7 @@ public class UfsCustomerClass implements Serializable {
 
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Filter(isDateRange = true)
     private Date creationDate;
 
 //    @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID", insertable = false, updatable = false)

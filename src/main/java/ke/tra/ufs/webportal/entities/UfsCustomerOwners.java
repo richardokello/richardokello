@@ -98,6 +98,7 @@ public class UfsCustomerOwners implements Serializable {
     private String directorEmailAddress;
     @Column(name = "CREATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Filter(isDateRange = true)
     private Date createdAt;
     @Size(max = 20)
     @Column(name = "ACTION", insertable = false)
