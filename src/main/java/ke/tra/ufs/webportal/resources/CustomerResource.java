@@ -215,26 +215,24 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 customer.setTerminationDate(new Date());
                 this.customerService.saveCustomer(customer);
                 loggerService.log("Successfully Terminated Customer",
-                        UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+                        UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_UPDATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
 
             }
 
             for(TmsDevice tmsDevice : deviceCustomer){
-                log.info(">>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<"+tmsDevice.getSerialNo());
                 if(!tmsDevice.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DECOMMISSION)){
                     errors.add("Device with "+tmsDevice.getSerialNo() +" Already Assigned To This Customer.Please UnAssign The Device First to Proceeed");
                     loggerService.log("Customer Not Terminated",
                             UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Device with "+tmsDevice.getSerialNo() +"Already Assigned To This Customer.Please UnAssign The Device First to Proceeed");
                     continue;
                 }
-                log.info(">>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<"+customer.getBusinessName());
                 customer.setAction(AppConstants.ACTIVITY_TERMINATION);
                 customer.setActionStatus(AppConstants.STATUS_UNAPPROVED);
                 customer.setTerminationReason(actions.getTerminationReason());
                 customer.setTerminationDate(new Date());
                 this.customerService.saveCustomer(customer);
                 loggerService.log("Successfully Terminated Customer",
-                        UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+                        UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_UPDATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
 
             }
 
@@ -255,8 +253,15 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
 
         ResponseWrapper response =  new ResponseWrapper<>();
+        List<Long> errors = new ArrayList<>();
         Arrays.stream(actions.getIds()).forEach(id->{
             UfsCustomer customer = this.customerService.findByCustomerId(id);
+
+            if (loggerService.isInitiator(UfsCustomer.class.getSimpleName(),id,AppConstants.ACTIVITY_UPDATE)) {
+                errors.add(id);
+                return;
+            }
+
             if(Objects.nonNull(customer)){
                     if((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
                             (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
@@ -372,6 +377,13 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             }
 
         });
+
+        if (!errors.isEmpty()) {
+            response.setCode(HttpStatus.MULTI_STATUS.value());
+            response.setData(errors);
+            response.setMessage("Sorry some record could not be approved check audit trails for details");
+            return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
+        }
 
         response.setCode(200);
         response.setMessage("Customer Approved Successfully");
