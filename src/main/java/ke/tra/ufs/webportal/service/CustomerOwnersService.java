@@ -16,6 +16,6 @@ public interface CustomerOwnersService {
 
     List<UfsCustomerOwners> findOwnersByCustomerIds(BigDecimal customerIds);
 
-    void saveOwner(UfsCustomerOwners customerOwners);
+    UfsCustomerOwners saveOwner(UfsCustomerOwners customerOwners);
 
 }
