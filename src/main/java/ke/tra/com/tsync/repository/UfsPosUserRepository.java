@@ -33,8 +33,9 @@ public interface UfsPosUserRepository extends JpaRepository<UfsPosUser, BigDecim
 
     List<UfsPosUser> findByUsernameStartsWithIgnoreCaseAndActionStatusAndIntrash(String username, String actionStatus, String inTrash);
 
-    Optional<UfsPosUser> findByUsernameIgnoreCaseAndSerialNumberAndIntrash(String username, String intrash, String serialNo);
-//    Optional<UfsPosUser> findByUsernameIgnoreCaseAndIntrash(String username, String intras);
+    Optional<UfsPosUser> findByUsernameIgnoreCaseAndIntrashAndSerialNumber(String username, String intrash, String serialNo);
+    Optional<UfsPosUser> findByUsernameIgnoreCaseAndIntrash(String username, String intras);
+
     Optional<UfsPosUser> findByIdNumberAndIntrash(String idNumber, String intrash);
 
 

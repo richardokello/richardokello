@@ -30,5 +30,6 @@ public interface CoreProcessorTemplate {
     void saveOnlineActivity(ISOMsg isoMsg);
 
     ISOMsg processTransactionsbyMTI(ISOMsg isoMsg) throws ISOException , JDBCConnectionException;
+    ISOMsg processTransactionAdvice(ISOMsg isoMsg);
 
 }

@@ -1,0 +1,48 @@
+11:59:16.124 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 27288 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
+11:59:16.126 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: test 
+11:59:19.408 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:59:19.603 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 183ms. Found 31 repository interfaces. 
+11:59:20.143 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$7b41d4c] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+11:59:20.324 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+11:59:20.340 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+11:59:20.456 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+11:59:20.457 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+11:59:20.611 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+11:59:20.612 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 4454 ms 
+11:59:20.985 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+11:59:43.287 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+11:59:43.288 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+11:59:43.354 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+11:59:43.639 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+12:00:05.651 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+12:00:05.662 [main] INFO  o.h.e.j.e.i.LobCreatorBuilderImpl - HHH000422: Disabling contextual LOB creation as connection was null 
+12:00:07.881 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+12:00:29.906 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+12:00:30.133 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+12:00:30.335 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+12:00:52.358 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+12:00:52.364 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+18:13:37.898 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 9488 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
+18:13:37.900 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: test 
+18:13:39.326 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+18:13:39.696 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 352ms. Found 31 repository interfaces. 
+18:13:40.175 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$7bfd313f] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+18:13:40.476 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+18:13:40.491 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+18:13:40.645 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+18:13:40.645 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+18:13:40.822 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+18:13:40.822 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2874 ms 
+18:13:41.218 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+18:14:03.370 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+18:14:03.373 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+18:14:03.457 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+18:14:03.639 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+18:14:25.667 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+18:14:25.679 [main] INFO  o.h.e.j.e.i.LobCreatorBuilderImpl - HHH000422: Disabling contextual LOB creation as connection was null 
+18:14:27.717 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+18:14:49.742 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+18:14:50.019 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+18:14:50.236 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+18:15:12.260 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+18:15:12.263 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UserExistWrapper {
-    Boolean userExistByUsername = false;
+    Boolean userExistByUsernameAndSerialNo = false;
     Boolean userExistByIdNumber = false;
     Long userId;
 }

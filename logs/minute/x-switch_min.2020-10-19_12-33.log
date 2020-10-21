@@ -1,0 +1,5 @@
+79026 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+79242 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+79491 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+101512 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 
+101515 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 

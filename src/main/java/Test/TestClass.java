@@ -27,10 +27,10 @@ public class TestClass {
             //isoMsg = posUserCreation();
             //isoMsg = logout();
             //isoMsg = deletePosUser();
-            //isoMsg = posUserLogin();
+            isoMsg = posUserLogin();
             //isoMsg = UsernamePrefix();
-            isoMsg = processPosAdvice();
-            //isoMsg = firstTimePosUserLogin();
+            //isoMsg = processPosAdvice();
+//            isoMsg = firstTimePosUserLogin();
             //isoMsg = resetUserPin();
             //isoMsg = changeUserPin();
             //isoMsg = loadUsersForTerminal();
@@ -57,9 +57,9 @@ public class TestClass {
             String server;
             int port ;
             server = "127.0.0.1"; port = 8621;
-            // QA server
+             //QA server
             //server = "41.215.130.247"; port = 8621;
-            //dev server
+           // dev server
 //            server = "41.215.130.247";
 //            port = 4123;
             //BaseChannel channel = new NCCChannel(ip, 4123, packager, TPDU);
@@ -95,8 +95,8 @@ public class TestClass {
         msg.set(11, "000010"); // System trace audit number (STAN) if any
         msg.set(41, "PO400001"); // Card acceptor terminal identification(TID)
         msg.set(42, "100000RW0010408"); // 	Card acceptor identification code(MID)
-        //msg.set(47, "02500811111111  026 024 180222233221053607111323 029 001 1 030 008 CuulKid2 035 004 9999 036 0040 000");
-        msg.set(47,"026024161697313221017301104142030005Tindi031004Muia0330100723143866034008324747740360040000037010Supervisor039003Joy0400040000");
+        //msg.set(47, "025008111111110260241612773132210173010653120290011030008CuulKid203500499990360040000");
+        msg.set(47,"026024161697313221017301104099030005user10360040000");
         return msg;
     }
 
@@ -107,15 +107,9 @@ public class TestClass {
         m.set(11, "000000"); // system trace audit number (STAN)
         m.set(41, "PO400001");//Card acceptor terminal identification (TID) 	\
         m.set(42, "100000RW0010408"); // 	Card acceptor identification code(MID)
-//        posIris.setCharging(terminalData[0]);
-//        posIris.setBatteryLevel(terminalData[1]);
-//        posIris.setSignal(terminalData[2]);
-//        posIris.setOsVersion(terminalData[3]);
-//        posIris.setTemperature(terminalData[4]);
-//        posIris.setAppVersion(terminalData[5]);
-//        posIris.setSerialNumber(terminalData[6]);
+        m.set(9,"1|100|3|11.16.08 02Â¶|45|Ver ECMP0007|180222233221053607111323");
         //m.set(9,"charging status(1 or 0)|battery level(0 to 100)|signal strength|Os version|terminal temperature|app version|device serial no");
-        m.set(47, "026024161697313221017301104099030002ma027005admin"); // additional data
+        m.set(47, "026024180222233221053607111312030002wa"); // additional data
         return m;
     }
 
@@ -127,6 +121,7 @@ public class TestClass {
         msg.set(11, "000010"); // System trace audit number (STAN)
         msg.set(41, "PO400001"); // Card acceptor terminal identification
         msg.set(42, "100000RW0010408"); // 	Card acceptor identification code
+        //msg.set(47,"02600807111312030005bruss031008wainaina0330100725372576034008327553330360041111037007Cashier039004paul0400041111");
         msg.set(47, "026024180222233221053607111323030005trust031005trust0330100758469277034008584692770360041234037010Supervisor039005trust0400041234");
         //msg.set(47, "02500811111111026024161277313221017301065310030008CuulKid2031007collins032016colo12@gmail.com03301007122781910340082901000103500411230360040000037008Merchant0400049991039005troon");; // additional data
         //msg.set(47, "02602416169731322101730110414230003Dee031001m033010071483328403401012345678900360041111037010Supervisor039001e0400041111026024161697313221017301104142030003Dee031001m03301007148332840340101234567890036003000037010Supervisor039001e0400041111");
@@ -136,13 +131,13 @@ public class TestClass {
 
     private static ISOMsg firstTimePosUserLogin() throws ISOException {
         ISOMsg msg = new ISOMsg();
-
         msg.setMTI("1100"); // mti
         msg.set(3, "011114"); // processing code
         msg.set(11, "000010"); // System trace audit number (STAN)
         msg.set(41, "PO400001"); // Card acceptor terminal identification
         msg.set(42, "100000RW0010408"); // 	Card acceptor identification code
-        msg.set(47, "025008111111110260241612773132210173010653100290011030006KeSeal03500499990360049843");
+        //msg.set(47, "025008111111110260241612773132210173010653100290011030006KeSeal03500499990360049843");
+        msg.set(47,"026024180222233221053607111323030005trust 036 004 1234 041 004 6515");
 
         System.out.println("++++++++++++++++sending  iso msg+++++++++++++++++++++++++");
         System.out.println(msg);
@@ -158,7 +153,8 @@ public class TestClass {
         msg.set(11, "01000"); // system trace audit number (STAN)
         msg.set(41, "PO400001"); // TID
         msg.set(42, "100000RW0010408"); //MID
-        msg.set(47, "02500811111111026024161277313221017301065310030006KeSeal036004999904000499990410043247"); // data
+        msg.set(47, "026 024 161697313221017301104099 030 007 manlike 035 004 0000 036 004 0000 041 004 1234");
+        //msg.set(47, "026024161277313221017301065310030006KeSeal 036 004 9999 040 004 9999 041 004 3247"); // data
         return msg;
     }
 
@@ -169,7 +165,7 @@ public class TestClass {
         msg.set(11, "01000"); // system trace audit number (STAN)
         msg.set(41, "PO400001"); // TID
         msg.set(42, "100000RW0010408"); //MID
-        msg.set(47, "026024161277313221017301065279030008CoolKid2"); // data
+        msg.set(47, "026024161277313221017301065312030006KeSeal"); // data
 
         return msg;
     }
@@ -180,7 +176,7 @@ public class TestClass {
         msg.set(11, "01000"); // system trace audit number (STAN)
         msg.set(41, "PO400001"); // TID
         msg.set(42, "100000RW0010408"); //MID
-        msg.set(47, "026024161277313221017301065310030018KeSeal,troon,nyule"); // data
+        msg.set(47, "026024180222233221053607111312030004paul"); // data
 
         return msg;
     }
@@ -227,14 +223,15 @@ public class TestClass {
 
     private static ISOMsg processPosAdvice() throws ISOException{
         ISOMsg isoMsg = new ISOMsg();
-        isoMsg.setMTI("0020"); // Mti for an advice
-        isoMsg.set(2, "0100**0099"); // primary account number
-        isoMsg.set(3, "001121"); // processing code
-        isoMsg.set(4,"000000000800"); // transaction amount
-        isoMsg.set(7, "1218164640"); // date local transmission
-        isoMsg.set(11, "000338");//STAN
+        isoMsg.setMTI("0220"); // Mti for an advice
+        isoMsg.set(2, "6210948000000029"); // primary account number
+        isoMsg.set(3, "380000"); // processing code
+        isoMsg.set(4,"000000000000"); // transaction amount
+        isoMsg.set(7, "2010090829"); // date local transmission
+        isoMsg.set(9,"1|100|3|11.16.08 02Â¶|45|Ver ECMP0007|180222233221053607111323");
+        isoMsg.set(11, "338");//STAN
         isoMsg.set(12,"181212101924"); //Date local
-        isoMsg.set(39,"00");
+        isoMsg.set(39,"001");
         isoMsg.set(41, "PO400001"); // 8
         isoMsg.set(42, "100000RW0010408"); // 15
         isoMsg.set(49, "345"); // 3 currency code

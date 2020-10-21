@@ -7,6 +7,7 @@ package ke.tra.com.tsync.services;
 
 
 import ke.tra.com.tsync.services.template.UserManagementTmpl;
+import ke.tra.com.tsync.utils.annotations.AppConstants;
 import ke.tra.com.tsync.wrappers.ChangePin;
 import ke.tra.com.tsync.wrappers.PosUserWrapper;
 import ke.tra.com.tsync.wrappers.ResponseWrapper;
@@ -21,7 +22,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 
 /**
- * @author Tracom
+ * @author Cotuoma
  */
 @Service
 public class UserManagementService implements UserManagementTmpl {
@@ -37,11 +38,11 @@ public class UserManagementService implements UserManagementTmpl {
     public LoginesponseWrapper userResponseWrp(UserLoginReq logReq) {
         LoginesponseWrapper ulr = new LoginesponseWrapper();
         try {
-          //  usemanagelog.info("usermanagementloginurl  : " + usermanagementloginurl);
-          //  ulr = myRestTemplate.postForObject(usermanagementloginurl, logReq, LoginesponseWrapper.class);
+            //  usemanagelog.info("usermanagementloginurl  : " + usermanagementloginurl);
+            //  ulr = myRestTemplate.postForObject(usermanagementloginurl, logReq, LoginesponseWrapper.class);
         } catch (RestClientException e) {
             if (e instanceof ResourceAccessException) {
-                ulr.setCode(53);
+                ulr.setCode(05);
                 ulr.setMessage("REMOTE SYSTEM UNAVAILABLE");
             }
             e.printStackTrace();
@@ -71,7 +72,7 @@ public class UserManagementService implements UserManagementTmpl {
 
         // if field 47 contains no data, then there is nothing to check
         if (fieldData == null || fieldData.isEmpty()){
-            isomsg.set(39, "07");
+            isomsg.set(39, AppConstants.POS_INVALID_PAYLOAD);
             isomsg.set(47, "field 47 is empty");
             return isomsg;
         }
@@ -83,8 +84,8 @@ public class UserManagementService implements UserManagementTmpl {
 
         // if any of the required data is null, then it's time to exit
         if (currentPin == null || newPin == null){
-            isomsg.set(39, "07");
-            isomsg.set(47,"current pin || new pin ||");
+            isomsg.set(39, AppConstants.POS_CURR_OR_NEW_PIN_NULL);
+            isomsg.set(47,"current pin || new pin  is null");
             return isomsg;
         }
 
@@ -104,29 +105,21 @@ public class UserManagementService implements UserManagementTmpl {
                 try {
                     //response = myRestTemplate.postForObject(posUserAuthUrl+"change-pin", changePinWrapper, ResponseWrapper.class);
                     response = userService.changePin(changePinWrapper);
-                    Integer code = Integer.valueOf(response.getCode());
-                    if(code == 200){
-                        isomsg.set(39, "00");
-                        isomsg.set(47, "Password change was a success");
-                    }else{
-                        setResponse(isomsg, response);
-                    }
+//                    Integer code = Integer.valueOf(response.getCode());
+                    setResponse(isomsg, response);
+
                 }catch(Exception e){
-                    usemanagelog.error("An error occurred UFS-TMS service could not process the request", e.getMessage());
-                    isomsg.set(39, "06");
-                    isomsg.set(47, "Error processing  the request");
+                    handleException(isomsg, e);
                     e.printStackTrace();
                 }
 
             }else{
-                isomsg.set(39, "32");
+                isomsg.set(39, AppConstants.POS_PIN_AND_CONFIRM_NOT_MATCH);
                 isomsg.set(47, "Pin and confirm pin does not match");
             }
 
         } catch (Exception e) {
-            usemanagelog.info("Exception changing user password: {}", e.getMessage());
-            usemanagelog.error("Exception changing user password: {}", e.getMessage());
-            isomsg.set(39, "06");
+            handleException(isomsg, e);
         }
 
         return isomsg;
@@ -137,32 +130,12 @@ public class UserManagementService implements UserManagementTmpl {
         try{
             ResponseWrapper response  =  new ResponseWrapper();
 
-            System.out.println(wrapper.getUsername());
-
             response = userService.resetPassword(wrapper);
-            Integer code = Integer.valueOf(response.getCode());
-            if (code == 200){
-                isomsg.set(39, "00");
-                isomsg.set(47,"User password reset was a success");
-            }
-            if (code == 404){
-                isomsg.set(39, "04");
-                isomsg.set(47,response.getMessage());
-            }
-            else{
-                isomsg.set(47,response.getMessage());
-                if(Integer.toString(response.getCode()).trim().length()>2){
-                    isomsg.set(39, Integer.toString(response.getCode()).substring(1,3));
-                }else{
-                    isomsg.set(39, Integer.toString(response.getCode()));
-                }
-            }
 
-            System.out.println(response.getCode());
+            setResponse(isomsg, response);
+
         }catch (Exception e){
-            isomsg.set(47,"System  error");
-            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
-            e.printStackTrace();
+            handleException(isomsg, e);
         }
         return  isomsg;
     }
@@ -172,35 +145,13 @@ public class UserManagementService implements UserManagementTmpl {
     @Override
     public ISOMsg createUser(ISOMsg isoMsg, PosUserWrapper wrapper) {
 
-        ResponseWrapper responseWrapper = new ResponseWrapper();
+        ResponseWrapper response = new ResponseWrapper();
         try{
-            responseWrapper = userService.createPosUser(wrapper);
-            Integer code = Integer.valueOf(responseWrapper.getCode());
-            if(code == 200){
-                isoMsg.set(39, "00");
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
+            response = userService.createPosUser(wrapper);
+            setResponse(isoMsg, response);
 
-            else if(code == 400){
-                isoMsg.set(39, "08"); // bad request
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
-
-            else{
-
-                if(Integer.toString(responseWrapper.getCode()).strip().length()>2){
-                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1,3));
-                    isoMsg.set(47, responseWrapper.getMessage());
-                }else{
-                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
-                    isoMsg.set(47, responseWrapper.getMessage());
-                }
-            }
-            System.out.println(responseWrapper.getMessage());
         }catch (Exception e){
-            isoMsg.set(39, "06"); // system error
-            usemanagelog.error("Error sending request to ufs-tms", e.getMessage());
-            e.printStackTrace();
+            handleException(isoMsg, e);
         }
         return isoMsg;
     }
@@ -212,7 +163,6 @@ public class UserManagementService implements UserManagementTmpl {
 
         PosUserWrapper req = new PosUserWrapper();
 
-        //req.setUfsWorkgroup((String) wrapper.get("userWorkGroup"));
         req.setTID(isomsg.getString(41));
         req.setMID(isomsg.getString(42));
 
@@ -227,20 +177,8 @@ public class UserManagementService implements UserManagementTmpl {
 
             responseWrapper = userService.login(wrapper);
 
-            Integer code = Integer.valueOf(responseWrapper.getCode());
+            setResponse(isomsg, responseWrapper);
 
-
-            if(code == 200){
-                isomsg.set(39, "00"); // login success
-                isomsg.set(47, responseWrapper.getMessage());
-            } else{
-                if(Integer.toString(responseWrapper.getCode()).strip().length()>2){
-                    isomsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1,3));
-                }else{
-                    isomsg.set(39, Integer.toString(responseWrapper.getCode()));
-                }
-                isomsg.set(47, responseWrapper.getMessage());
-            }
 
 
         } catch (Exception e) {
@@ -252,80 +190,6 @@ public class UserManagementService implements UserManagementTmpl {
         return isomsg;
 
 
-
-//        final String[] responsecode = new String[1];
-//        final String[] responseData = new String[6];
-//        final String[] posmessage = new String[1];
-
-
-//        urw.ifPresentOrElse(
-//                loginResponseWrpr -> {
-//                    usemanagelog.info("loginResponse \n {} ", loginResponseWrpr.toString());
-//                    // usemanagelog.info("loginResponseWrpr", loginResponseWrpr.getMessage());
-//                    switch ((int) loginResponseWrpr.getCode()) {
-//                        case 200:
-//
-//                            responsecode[0] = "00";
-//                            //For now leave both ... confirm once we agree with POS guys
-//                            responseData[0] = loginResponseWrpr.getMessage();
-//                            final String[] userRoles = {""};
-//                            loginResponseWrpr.getData().getATTENDANTROLE().stream().forEach(attendantrole -> {
-//                                userRoles[0] += attendantrole.getId().toString().concat("|")
-//                                        .concat(attendantrole.getName().concat("|*"));
-//                            });
-//
-//
-//                            /**
-//                             * ZoneID|ZONECODE|ZONENAME|ONECOIUNTYID|ZONECOUNTYCODE|ZONECOUNTYNAME|*
-//                             */
-//
-//                            posmessage[0] =
-//                                    loginResponseWrpr.getCode().toString()
-//                                            .concat("#")
-//                                            .concat(loginResponseWrpr.getMessage())
-//                                            .concat("#")
-//                                            .concat(loginResponseWrpr.getData().getAccountNumber())
-//                                            .concat("#")
-//                                            .concat(loginResponseWrpr.getData().getMDA())
-//                                            .concat("#")
-//                                            .concat(loginResponseWrpr.getData().getATTENDANT())
-//                                            .concat("#")
-//                                            .concat(loginResponseWrpr.getData().getAGENTID())
-//                                            .concat("#")
-//                                            .concat(loginResponseWrpr.getData().getPHONENUMBER())
-//                                            .concat("#")
-//                                            .concat(userRoles[0])
-//                                            .concat("#")
-//                                            .concat(zoneData[0]);
-//
-//                            /**
-//                             LOGINMESSAGE#ACNUMBER#MDA#ATTENDANT#AGENTID#PHONENUMBER#USERROLES#ZONEDATA
-//                             */
-//                            responsecode[0] = "00";
-//                            break;
-//                        case 503:
-//                            responsecode[0] = "92";
-//                            posmessage[0] = loginResponseWrpr.getMessage() + " - " + loginResponseWrpr.getCode();
-//                            break;
-//                        default:
-//                            responsecode[0] = "03";
-//                            posmessage[0] = loginResponseWrpr.getMessage() + " - " + loginResponseWrpr.getCode();
-//                            break;
-//                    }
-//                },
-//                () -> {
-//                    responsecode[0] = "03";
-//                }
-//        );
-
-
-//        usemanagelog.info("responsecode[0] \n {} ", responsecode[0]);
-//        isomsg.set(39, responsecode[0]);
-//
-//        if (posmessage[0] != null)
-//            isomsg.set(72, posmessage[0]);
-//        return isomsg;
-
     }
 
     @Override
@@ -334,20 +198,9 @@ public class UserManagementService implements UserManagementTmpl {
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try {
             responseWrapper = userService.deletePosUser(wrapper);
-            Integer code = Integer.valueOf(responseWrapper.getCode());
 
-            if (code == 00) {
-                isoMsg.set(39, "00");
-                isoMsg.set(47, responseWrapper.getMessage());
-            } else {
-                if (Integer.toString(responseWrapper.getCode()).trim().length() > 2) {
-                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1, 3));
-                } else {
-                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
-                }
+            setResponse(isoMsg, responseWrapper);
 
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
         }catch(Exception ex){
             handleException(isoMsg, ex);
         }
@@ -363,19 +216,8 @@ public class UserManagementService implements UserManagementTmpl {
         try{
             responseWrapper = userService.firstTimeLogin(wrapper);
 
-            Integer code = Integer.valueOf(responseWrapper.getCode());
-            if(code == 200){
-                isoMsg.set(39, "00");
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
-            else{
-                isoMsg.set(47,responseWrapper.getMessage());
-                if(Integer.toString(responseWrapper.getCode()).trim().length()>2){
-                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1,3));
-                }else{
-                    isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
-                }
-            }
+            setResponse(isoMsg, responseWrapper);
+
 
         }catch (Exception e){
             handleException(isoMsg, e);
@@ -385,20 +227,16 @@ public class UserManagementService implements UserManagementTmpl {
         return isoMsg;
     }
     public  ISOMsg logout (ISOMsg isoMsg, PosUserWrapper wrapper){
-        usemanagelog.info("---------000----------");
+
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try{
             responseWrapper = userService.logout(wrapper);
-            usemanagelog.info("---------111----------");
-            int code = responseWrapper.getCode();
-            if(code == 200){
-                isoMsg.set(39, "00");
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
-            else{
-                setResponse(isoMsg, responseWrapper);
-            }
-            System.out.println(responseWrapper.getMessage());
+
+            usemanagelog.info("---------000---------- "+responseWrapper.getCode());
+
+            setResponse(isoMsg, responseWrapper);
+
+
         }catch (Exception e){
             handleException(isoMsg, e);
         }
@@ -409,21 +247,11 @@ public class UserManagementService implements UserManagementTmpl {
     public ISOMsg processTerminalReset(ISOMsg isoMsg, PosUserWrapper wrapper){
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try{
-            // another approach
-            // would be divide the usersstrlLen with chinkLen to ge t count of complete chunks
-            // the for loop and substring
+
             responseWrapper = userService.terminalWasReset(wrapper);
-            Integer code = Integer.valueOf(responseWrapper.getCode());
 
-            if(code == 200){
-                chunkUses(responseWrapper, isoMsg);
+            setResponse(isoMsg, responseWrapper);
 
-                isoMsg.set(39, "00");
-
-            }
-            else{
-                setResponse(isoMsg, responseWrapper);
-            }
         }catch (Exception e){
             handleException(isoMsg, e);
         }
@@ -434,16 +262,10 @@ public class UserManagementService implements UserManagementTmpl {
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try{
             responseWrapper = userService.disableUsers(wrapper);
-            Integer code = Integer.valueOf(responseWrapper.getCode());
-            if(code == 200){
-                isoMsg.set(39, "00");
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
-            else{
-                setResponse(isoMsg, responseWrapper);
-            }
+
+            setResponse(isoMsg, responseWrapper);
+
         }catch (Exception e){
-            isoMsg.set(39, "06"); // system error
             handleException(isoMsg, e);
 
         }
@@ -454,14 +276,9 @@ public class UserManagementService implements UserManagementTmpl {
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try{
             responseWrapper = userService.enableUser(wrapper);
-            Integer code = Integer.valueOf(responseWrapper.getCode());
-            if(code == 200){
-                isoMsg.set(39, "00");
-                isoMsg.set(47, responseWrapper.getMessage());
-            }
-            else{
-                setResponse(isoMsg, responseWrapper);
-            }
+
+            setResponse(isoMsg, responseWrapper);
+
         }catch (Exception e){
             handleException(isoMsg, e);
         }
@@ -497,17 +314,14 @@ public class UserManagementService implements UserManagementTmpl {
 
     private void setResponse(ISOMsg isoMsg, ResponseWrapper responseWrapper){
         // set field 47 and 39
-        if(Integer.toString(responseWrapper.getCode()).trim().length()>2){
-            isoMsg.set(39, Integer.toString(responseWrapper.getCode()).substring(1,3));
-            isoMsg.set(47, responseWrapper.getMessage());
-        }else{
-            isoMsg.set(39, Integer.toString(responseWrapper.getCode()));
-            isoMsg.set(47, responseWrapper.getMessage());
-        }
+
+        isoMsg.set(39, responseWrapper.getCode());
+        isoMsg.set(47, responseWrapper.getMessage());
+
     }
 
     private void handleException(ISOMsg msg, Exception e){
-        msg.set(39, "06"); // system error
+        msg.set(39, AppConstants.POS_SERVER_ERROR); // system error
         usemanagelog.error("System error ", e.getMessage());
         msg.set(47, "System Error Occurred");
         e.printStackTrace();

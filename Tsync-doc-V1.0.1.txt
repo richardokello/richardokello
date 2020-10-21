@@ -64,7 +64,7 @@ case 001121:  processing codes( field 3)
  034 => IdNumber
  035 => UserAccessCode
  036 => Pin/Password
- 037 => workgroup
+ 037 => workgroup/Role
  039 => First Name
  040 => Confirm Pin/Password
  041 => CurrentPin
@@ -77,7 +77,6 @@ Old code     New Code      Description
 01        => 55            => invalid login credentials/Incorrect PiN/password
 02        => Removed       => No validation for duplicate IDs anymore
 04        => 42            => No user found with prefix
-
 05        => 33            => Pin And Confirm pin does not match
 06        No change        => System error eg internal server error
 07        =>  34            =>  current pin || new pin || is null
@@ -100,7 +99,7 @@ Old code     New Code      Description
 31        => 45        => Account is inactive/Login for the first time
 32        No Change    => Some users accounts were not deactivated/ activated(partial success when locking or unlocking the accounts)
 34        => 46        => user does not belong to the same outlet as the terminal
-55        => 05        => Wrong processing code was sent(that which does not exist)
+55        => 58        => Wrong processing code was sent(that which does not exist)
 41        => 05        => TID missing
 42        => 05        => MID missing
 53        => 05        => REMOTE SYSTEM UNAVAILABLE
@@ -121,6 +120,19 @@ Old code     New Code      Description
     Data                                  =>  field 47, size 999 max
     Currency code, Transaction            =>  field 49, size 3
     Data record                           =>  field 72, size 999 max
+
+    field000	MTI
+    field002	Account number
+    field003	Processing code
+    field004	Amount
+    field009	PosIris data
+    field012	Transaction date
+    field037	Reference number
+    field039	Response code
+    field041	Terminal ID
+    field042	Merchant ID
+    field049	Currency
+    field123	Transaction type
 
 
 TerminalWasReset(Not Useful for Now)

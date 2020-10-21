@@ -30,7 +30,7 @@ public interface TmsDeviceRepository extends JpaRepository<TmsDevice, BigDecimal
      * @param intrash
      * @return
      */
-    public TmsDevice findBySerialNoAndIntrashAndActionStatus(String serialNo, String intrash, String actionStatus);
+    public TmsDevice findBySerialNoAndIntrash(String serialNo, String intrash);
 
     /**
      * @param action

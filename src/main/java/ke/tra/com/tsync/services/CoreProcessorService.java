@@ -5,21 +5,21 @@
  */
 package ke.tra.com.tsync.services;
 
-import java.io.IOException;
+
 import java.util.Date;
-import java.util.HashMap;
+
 import java.util.Optional;
 
 import ke.tra.com.tsync.config.SpringContextBridge;
 import ke.tra.com.tsync.entities.*;
 import ke.tra.com.tsync.repository.*;
 import ke.tra.com.tsync.services.template.CoreProcessorTemplate;
+import ke.tra.com.tsync.utils.annotations.AppConstants;
 import ke.tra.com.tsync.wrappers.PosUserWrapper;
 import org.hibernate.exception.JDBCConnectionException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +40,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
 
     @Autowired
     private ISOMsgTOEntityImp isoMsgTOEntity;
-    @Autowired
-    private FailedTransactionRepository failedTransactionRepository;
+
     @Autowired
     private ProcessAuthorizationServices processAuthorizationServices;
     @Autowired
@@ -71,7 +70,7 @@ public class CoreProcessorService implements CoreProcessorTemplate {
             final String responseDesc[] = new String[1];
             transationResponseMaps.findFirstByCodeEquals(isoMsg.getString(39)).ifPresentOrElse(
                     response -> responseDesc[0] = response.getDescription(),
-                    () -> responseDesc[0] = "SYSTEM ERROR"
+                    () -> responseDesc[0] = "ERROR: INVALID POSIRIS TRANSACTION CODE"
             );
             isoMsg.set(72, responseDesc[0]);
         } else {
@@ -111,27 +110,27 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                     switch (Integer.valueOf(Tag)) {
                         case 25:
                             wrapper.setAppVersion(TagValue);
-                            System.out.println("++++++++++++ setAppVersion "+TagValue);
+//                            System.out.println("++++++++++++ setAppVersion "+TagValue);
                             break;
                         case 26:
                             wrapper.setSerialNumber(TagValue);
-                            System.out.println("+++++++++++++ setSerialNumber "+TagValue);
+//                            System.out.println("+++++++++++++ setSerialNumber "+TagValue);
                             break;
 
 
                         case 29:
                             wrapper.setGender(Integer.valueOf(TagValue));
-                            System.out.println("+++++++++++++ Genderr " +TagValue);
+//                            System.out.println("+++++++++++++ Genderr " +TagValue);
                             break;
 
                         case 30:
                             wrapper.setUsername(TagValue);
-                            System.out.println("+++++++++++++ setUsername " +TagValue);
+//                            System.out.println("+++++++++++++ setUsername " +TagValue);
                             break;
 
                         case 31:
                             wrapper.setOtherName(TagValue);
-                            System.out.println("+++++++++++++ set OtherName"+TagValue);
+//                            System.out.println("+++++++++++++ set OtherName"+TagValue);
                             break;
 
                         case 32:
@@ -140,38 +139,37 @@ public class CoreProcessorService implements CoreProcessorTemplate {
 
                         case 33:
                             wrapper.setPhoneNumber(TagValue);
-                            System.out.println("+++++++++++++ setPhoneNumber "+TagValue);
+//                            System.out.println("+++++++++++++ setPhoneNumber "+TagValue);
                             break;
 
                         case 34:
                             wrapper.setIdNumber(TagValue);
-                            System.out.println("+++++++++++++ setIdNumber "+TagValue);
+//                            System.out.println("+++++++++++++ setIdNumber "+TagValue);
                             break;
 
                         case 35:
                             wrapper.setUserAccessCode(TagValue);
-                            System.out.println("+++++++++++++ setUserAccessCode "+TagValue);
                             break;
 
                         case 36:
                             wrapper.setPin(TagValue); // New pin|user pin
-                            System.out.println("+++++++++++++ setPin "+TagValue);
+//                            System.out.println("+++++++++++++ setPin "+TagValue);
                             break;
 
                         case 37:
                             wrapper.setWorkgroup(TagValue);
-                            System.out.println("+++++++++++++ setUfsWorkgroup "+TagValue);
+//                            System.out.println("+++++++++++++ setUfsWorkgroup "+TagValue);
                             break;
                         case 39:
                             wrapper.setFirstName(TagValue);
-                            System.out.println("+++++++++++++ setFirstName "+TagValue);
+//                            System.out.println("+++++++++++++ setFirstName "+TagValue);
                             break;
                         case 40:
                             wrapper.setConfirmPin(TagValue); //  confirm
-                            System.out.println("-----confirm Pin "+ TagValue);
+//                            System.out.println("-----confirm Pin "+ TagValue);
                         case 41:
                             wrapper.setCurrentPin(TagValue); //  confirm
-                            System.out.println("++++++Current Pin "+ TagValue); // pin that is being changed
+//                            System.out.println("++++++Current Pin "+ TagValue); // pin that is being changed
                         default:
                             break;
                     }
@@ -195,29 +193,25 @@ public class CoreProcessorService implements CoreProcessorTemplate {
     }
 
     @Override
-
     public void saveOnlineActivity(ISOMsg isoMsg) {
-        LOGGER.info("~~~~~~~~~ saveOnlineActivity " + isoMsg.getString(37));
-        LOGGER.info("~~~~~~~~~ saveOnlineActivity saving " + isoMsg.getString(39));
-        LOGGER.error(">" +isoMsg.getString(39).equalsIgnoreCase("00"));
         PosIrisRepo posIrisRepo = SpringContextBridge.services().getPosIrisRepo();
-        String posIrisData = isoMsg.getString(9) == null?"":"";
-
+        String posIrisData = isoMsg.getString(9) == null?"":isoMsg.getString(9);
+        LOGGER.info("Some data-------------"+ posIrisData);
         insertPosIrisData(posIrisRepo, posIrisData);
         try {
             Date date = new Date();
             OnlineActivity onlineActivity = (OnlineActivity) isoMsgTOEntity.convertIsoToPojo(isoMsg);
             onlineActivity.setInserttime(date);
-            if (!isoMsg.getString(39).equalsIgnoreCase("00")) {
-                LOGGER.error(">>" +isoMsg.getString(39).equalsIgnoreCase("00"));
-//                FailedTransactions failedTransactions = isoMsgTOEntity.convertFailedIsoToPojo(isoMsg);
-                onlineActivity.setStatus("FAILED");
+            if (isoMsg.getString(39).strip().equalsIgnoreCase(AppConstants.POS_APPROVED) || isoMsg.getString(39).strip().equalsIgnoreCase(AppConstants.POS_APPROVED_00)) {
+
+
+                onlineActivity.setStatus("SUCCESS");
 
                 onlineActivityRepository.save(onlineActivity);
-//                failedTransactionRepository.save(failedTransactions);
+
             } else {
-                LOGGER.error(">>>" +isoMsg.getString(39).equalsIgnoreCase("00"));
-                onlineActivity.setStatus("SUCCESS");
+
+                onlineActivity.setStatus("FAILED");
                 onlineActivityRepository.save(onlineActivity);
 
 
@@ -248,11 +242,12 @@ public class CoreProcessorService implements CoreProcessorTemplate {
                 LOGGER.info(" STEP INQUIRY  : " + isoMsg.getString(0) + " F37" + isoMsg.getString(37));
                 //Authorization Request	Request from a point-of-sale terminal for authorization for a cardholder purchase
                 isoMsg = processAuthorizationServices.processAuthbyProcode(isoMsg,fieldData);
+
                 break;
 
             default:
                 isoMsg.set(47, "Invalid MTI");
-                isoMsg.set(39, "10");
+                isoMsg.set(39, "100");
                 break;
         }
         return isoMsg;
@@ -265,9 +260,10 @@ public class CoreProcessorService implements CoreProcessorTemplate {
     }
 
     public void insertPosIrisData(PosIrisRepo posIrisRepo, String tmsData){
+
         String[] terminalData = tmsData.split("\\|");
         if (terminalData.length != 7)
-            LOGGER.info("Some data about  PosIris are Missing");
+            LOGGER.info("Some data about  PosIris are Missing ");
         else  {
             PosIris posIris = new PosIris();
             try {
@@ -286,23 +282,25 @@ public class CoreProcessorService implements CoreProcessorTemplate {
             }
         }
     }
+
+
+    @Override
     public ISOMsg processTransactionAdvice(ISOMsg isoMsg) {
         LOGGER.info("Processing financial advice");
         PosIrisRepo posIrisRepo = SpringContextBridge.services().getPosIrisRepo();
         try {
 
-            // insert the transaction into the db for persistence
-            //onlineActivityService.InsertOnlineActivity(isoMsg);
             if (isoMsg.getString(9) != null) {
                 // posIris data is available
                 insertPosIrisData(posIrisRepo, isoMsg.getString(9));
             }
 
-            isoMsg.set(39, "00");
-            isoMsg.set(47, "PosIris data saved");
+            isoMsg.set(39, AppConstants.POS_APPROVED);
+            isoMsg.set(47, "Advice success");
 
         }catch (Exception e){
-            isoMsg.set(39, "96"); // System mulfunction
+            isoMsg.set(39, AppConstants.POS_SERVER_ERROR); // System mulfunction
+            isoMsg.set(47, "PosIris data not saved");
             LOGGER.error("An error occurred when processing advice", e);
         }
 

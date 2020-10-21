@@ -2,6 +2,7 @@ package ke.tra.com.tsync.services;
 
 import ke.tra.com.tsync.services.crdb.CRDBPipService;
 import ke.tra.com.tsync.services.template.AuthorizationTxnsTmpl;
+import ke.tra.com.tsync.utils.annotations.AppConstants;
 import ke.tra.com.tsync.wrappers.PosUserWrapper;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.LoggerFactory;
@@ -22,16 +23,22 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(POSIrisTxns.class);
 
+    private void UserManagementResponseCodesHelper(ISOMsg isoMsg){
+         isoMsg.set(120, "UMANAGE");
+    }
+
     @Override
     public ISOMsg processAuthbyProcode(ISOMsg isoMsg, PosUserWrapper wrapper){
-        isoMsg.set(39, "06");
+        isoMsg.set(39, "006");
         isoMsg.set(47, "An error occurred within the processAuthbyProcode method");
 
         switch (isoMsg.getString(3)){
             case "001000":
                 //pos agent login
                 logger.info("wrapper at process auth service--------- "+wrapper);
+
                 isoMsg = userManagementService.processUserLogin(isoMsg,wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
 
                 break;
             case "001110":
@@ -39,6 +46,7 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                 //ISOMsg isoMsg2 = userManagementService.processUserLogin(isoMsg,wrapper);
                 //if(isoMsg2.getString(39).equalsIgnoreCase("00"))
                      isoMsg = userManagementService.resetUserPin(isoMsg,wrapper);
+                     UserManagementResponseCodesHelper(isoMsg);
 //                else
 //                    return isoMsg2;
                 break;
@@ -49,23 +57,31 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
 //                if((userManagementService.processUserLogin(isoMsg,wrapper))
 //                        .getString(39).equalsIgnoreCase("00"))
                 isoMsg = userManagementService.changeUserPassword(isoMsg,wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
                 break;
             case "000020":
                 //String newpass = isoMsg.getString(72).trim();
 //                if((userManagementService.processUserLogin(isoMsg,wrapper))
 //                        .getString(39).equalsIgnoreCase("00"))
                 isoMsg = userManagementService.createUser(isoMsg,wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
+                break;
             case "001120":
                 //String newpass = isoMsg.getString(72).trim();
 //                if((userManagementService.processUserLogin(isoMsg,wrapper))
 //                        .getString(39).equalsIgnoreCase("00"))
+
                 isoMsg = userManagementService.loadUserNames(isoMsg,wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
+
                 break;
             case "000120":
                 userManagementService.disableUsers(isoMsg, wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
                 break;
             case  "000121":
                 isoMsg = userManagementService.enableUser(isoMsg, wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
                 break;
             case "011113":
 
@@ -73,11 +89,13 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
 //                if((userManagementService.processUserLogin(isoMsg,wrapper))
 //                        .getString(39).equalsIgnoreCase("00"))
                 isoMsg = userManagementService.deleteUser(isoMsg,wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
                 break;
 
             case "011115":
 
                 isoMsg = userManagementService.processTerminalReset(isoMsg,wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
                 break;
 
             case "011114":
@@ -87,6 +105,7 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
 //                        .getString(39).equalsIgnoreCase("00"))
 
                 isoMsg = userManagementService.firstTimeLogin(isoMsg,wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
                 break;
             case "000021":
                 //password change
@@ -95,6 +114,7 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
 //                        .getString(39).equalsIgnoreCase("00"))
 
                 isoMsg = userManagementService.logout(isoMsg, wrapper);
+                UserManagementResponseCodesHelper(isoMsg);
                 break;
 
             case "011111": //Inquire Control Number
@@ -118,7 +138,7 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
                 return supportCategoriesModule.getAllSupportCategories(isoMsg);
 
             default:
-                isoMsg.set(39,"51");
+                isoMsg.set(39, AppConstants.POS_INVALID_PROCODE_OR_MTI);
                 isoMsg.set(47, "Invalid Processing code..");
                 break;
         }

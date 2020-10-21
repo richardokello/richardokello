@@ -222,5 +222,38 @@ public class AppConstants {
     public static final String ACTIVITY_PIN_CHANGE = "Pin change";
     public static final String FIRST_TIME_LOGIN = "First login";
     public static final String DEFAULT_RESET_PWD = "2580";;
+    public static final String ADVICE_MTI = "0020";
 
+
+    // POS response code
+    public static final String POS_APPROVED = "000";
+    public static final String POS_APPROVED_00 = "00";
+    public static final String POS_ACCOUNT_INACTIVE = "045";
+    public static final String POS_INCORRECT_CREDENTIALS = "055";
+    public static final String POS_SERVER_ERROR = "006";
+    public static final String POS_NO_USER_WITH_PREFIX = "042";
+    public static final String POS_LOCKED_ACCOUNT = "023";
+    public static final String POS_FIRSTTIME_LOGIN_IN = "045";
+    public static final String POS_USER_ALREADY_ON_TERMINAL = "031";
+    public static final String POS_ROLE_MISSING = "035";
+    public static final String POS_TERMINAL_NOT_FOUND = "044" ;
+    public static final String POS_FIRSTNAME_MISSING = "037";
+    public static final String POS_OTHERNAME_MISSING = "038";
+    public static final String POS_CONFIRM_PIN_MISSING = "039";
+    public static final String ID_NO_MISSING = "040";
+    public static final String POS_SERIAL_NO_MISSING = "026";
+    public static final String MID_MISSING = "005";
+    public static final String POS_USERNAME_MISSING = "036";
+    public static final String POS_USER_NOT_FOUND = "027";
+    public static final String POS_USER_NOT_ATTACHED_TO_OUTLET = "024";
+    public static final String POS_TERMINAL_NOT_ATTACHED_TO_OUTLET = "029";
+    public static final String POS_USER_TERMINAL_NOT_SAME_OUTLET = "046";
+    public static final String PARTIAL_SUCCESS = "032";
+    public static final String POS_CURR_OR_NEW_PIN_NULL = "034";
+    public static final String POS_INVALID_PAYLOAD = "007";
+    public static final String POS_PIN_AND_CONFIRM_NOT_MATCH = "033";
+    public static final String POS_USER_DEACTIVATED = "018";
+
+
+    public static final String POS_INVALID_PROCODE_OR_MTI = "058";
 }

@@ -3,6 +3,7 @@ package ke.tra.com.tsync.services;
 import ke.tra.com.tsync.entities.TmsDeviceHeartbeat;
 import ke.tra.com.tsync.repository.TMSHeartBeatsRepo;
 import ke.tra.com.tsync.services.template.PosIrisInt;
+import ke.tra.com.tsync.utils.annotations.AppConstants;
 import org.jpos.iso.ISOMsg;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ public class POSIrisTxns implements PosIrisInt {
             e.printStackTrace();
         }
 
-        isoMsg.set(39,"00");
+        isoMsg.set(39, AppConstants.POS_APPROVED_00);
         return  isoMsg;
     }
 }

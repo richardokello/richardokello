@@ -1,0 +1,17 @@
+19:00:20.332 [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on DESKTOP-41KACUO with PID 26360 (started by cotuoma in E:\projects\gateways\crdb_tsync) 
+19:00:20.361 [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: test 
+19:00:22.881 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+19:00:23.226 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 321ms. Found 31 repository interfaces. 
+19:00:23.974 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$7a168388] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+19:00:24.529 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+19:00:46.912 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+19:00:46.915 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+19:00:47.087 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+19:00:47.414 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+19:01:09.442 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+19:01:09.459 [main] INFO  o.h.e.j.e.i.LobCreatorBuilderImpl - HHH000422: Disabling contextual LOB creation as connection was null 
+19:01:14.460 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+19:01:36.488 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+19:01:37.062 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+19:01:38.410 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+19:02:00.436 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default' 

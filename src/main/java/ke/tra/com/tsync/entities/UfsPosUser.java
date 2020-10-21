@@ -58,7 +58,7 @@ public class UfsPosUser implements Serializable {
     private BigDecimal posUserId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 10)
+    @Size(min = 1, max = 15)
     @Column(name = "ACTIVE_STATUS")
     private String activeStatus;
     @Size(max = 255)

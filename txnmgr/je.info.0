@@ -16,3 +16,9 @@
 2020-02-05 14:06:14.413 UTC WARNING [txnmgr] FSync time of 16550 ms exceeds limit (5000 ms)
 2020-07-24 10:53:32.273 UTC WARNING [txnmgr] FSync time of 8254 ms exceeds limit (5000 ms)
 2020-07-28 10:34:42.089 UTC WARNING [txnmgr] FSync time of 2858854 ms exceeds limit (5000 ms)
+2020-10-13 21:00:00.198 UTC INFO [txnmgr] Start verify of data files
+2020-10-13 21:00:35.697 UTC INFO [txnmgr] End verify of data files
+2020-10-13 21:00:35.698 UTC INFO [txnmgr] Start verify all databases
+2020-10-13 21:00:35.817 UTC INFO [txnmgr] End verify all databases
+2020-10-14 10:28:04.132 UTC WARNING [txnmgr] FSync time of 7648 ms exceeds limit (5000 ms)
+2020-10-15 08:01:56.299 UTC WARNING [txnmgr] FSync time of 5025 ms exceeds limit (5000 ms)

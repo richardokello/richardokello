@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class ResponseWrapper<T> implements Serializable {
 
-    private int code;
+    private String code;
     private String message;
     private T data;
     private Long timestamp;
@@ -16,7 +16,7 @@ public class ResponseWrapper<T> implements Serializable {
     private Optional<UfsPosUser> posUser;
 
     public ResponseWrapper() {
-        this.code = 424;
+        this.code = "424";
         this.message = "Request could not be completed";
         this.timestamp = new Date().getTime();
         this.error = false;
@@ -24,11 +24,11 @@ public class ResponseWrapper<T> implements Serializable {
 
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
