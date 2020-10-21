@@ -373,8 +373,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
                     }
 
-
-
                 }else {
 
                     loggerService.log("Failed To Approve Customer",
