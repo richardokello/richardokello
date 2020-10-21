@@ -264,9 +264,19 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
             if(Objects.nonNull(customer)){
                     if((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                            (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                            (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
+                            (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
+                            ) {
 
+                        customer.setActionStatus(AppConstants.STATUS_APPROVED);
+                        this.customerService.saveCustomer(customer);
+                        loggerService.log("Successfully Approved Customer",
+                                UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+
+                    }
+
+                    //terminating customer
+                    if((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))){
+                        customer.setStatus(AppConstants.STATUS_INACTIVE);
                         customer.setActionStatus(AppConstants.STATUS_APPROVED);
                         this.customerService.saveCustomer(customer);
                         loggerService.log("Successfully Approved Customer",
