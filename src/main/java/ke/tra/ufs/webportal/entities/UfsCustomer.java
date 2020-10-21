@@ -179,6 +179,11 @@ public class UfsCustomer implements Serializable {
     @Column(name = "ESTATE_ID")
     @ModifiableField
     private BigDecimal estateId;
+    @Size(max = 20)
+    @Filter
+    @Searchable
+    @Column(name = "STATUS", insertable = false)
+    private String status;
 
     public UfsCustomer() {
     }
@@ -423,6 +428,14 @@ public class UfsCustomer implements Serializable {
 
     public void setEstateId(BigDecimal estateId) {
         this.estateId = estateId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
