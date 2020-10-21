@@ -46,8 +46,8 @@ public class CustomerOwnerServiceTemplate implements CustomerOwnersService {
     }
 
     @Override
-    public void saveOwner(UfsCustomerOwners customerOwners) {
-        ownerRepository.save(customerOwners);
+    public UfsCustomerOwners saveOwner(UfsCustomerOwners customerOwners) {
+        return ownerRepository.save(customerOwners);
     }
 
 

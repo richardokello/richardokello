@@ -116,7 +116,9 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setCustomerTypeId(customerOnboarding.getCustomerTypeId());
         customer.setCommercialActivityId(customerOnboarding.getCommercialActivityId());
         customer.setEstateId(customerOnboarding.getEstateId());
-        customerService.saveCustomer(customer);
+        UfsCustomer ufsCustomer = customerService.saveCustomer(customer);
+
+        loggerService.log("Created Record successfully ",UfsCustomer.class.getSimpleName(),ufsCustomer.getId(),AppConstants.ACTIVITY_CREATE,AppConstants.STATUS_COMPLETED,null);
 
         //saving directors
         if(!customerOnboarding.getDirectors().isEmpty()){
@@ -135,8 +137,9 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                   dir.setDirectorSecondaryContactNumber(director.getDirectorSecondaryContactNumber());
                   dir.setDirectorIdNumber(director.getDirectorIdNumber());
                   dir.setUserName(director.getUserName());
-                  ownersService.saveOwner(dir);
+                  UfsCustomerOwners ufsCustomerOwners = ownersService.saveOwner(dir);
 
+                loggerService.log("Created Record successfully ",UfsCustomerOwners.class.getSimpleName(),ufsCustomerOwners.getId(),AppConstants.ACTIVITY_CREATE,AppConstants.STATUS_COMPLETED,null);
 
             };
         }
@@ -153,7 +156,9 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
               custOutlet.setOutletName(outlet.getOutletName());
               custOutlet.setOperatingHours(outlet.getOperatingHours());
               custOutlet.setGeographicalRegionIds(outlet.getGeographicalRegionIds());
-              outletService.saveOutlet(custOutlet);
+              UfsCustomerOutlet ufsCustomerOutlet = outletService.saveOutlet(custOutlet);
+
+              loggerService.log("Created Record successfully ",UfsCustomerOutlet.class.getSimpleName(),ufsCustomerOutlet.getId(),AppConstants.ACTIVITY_CREATE,AppConstants.STATUS_COMPLETED,null);
                //save contact person
               if(!outlet.getContactPerson().isEmpty()){
                   for(OutletContactPerson outletContactPerson : outlet.getContactPerson()){
@@ -171,7 +176,10 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                     person.setPhoneNumber(outletContactPerson.getContactPersonTelephone());
                     person.setCustomerOutletId(custOutlet.getId());
                     person.setUserName(outletContactPerson.getUserName());
-                    contactPersonService.saveContactPerson(person);
+                      UfsContactPerson ufsContactPerson = contactPersonService.saveContactPerson(person);
+
+                    loggerService.log("Created Record successfully ",UfsContactPerson.class.getSimpleName(),ufsContactPerson.getId(),AppConstants.ACTIVITY_CREATE,AppConstants.STATUS_COMPLETED,null);
+
                   };
               }
             });
