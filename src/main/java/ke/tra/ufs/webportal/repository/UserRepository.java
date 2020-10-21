@@ -13,4 +13,6 @@ public interface UserRepository extends CrudRepository<UfsUser, Long> {
     public List<UfsUser> findByUserTypeIdAndIntrash(BigDecimal userTypeId, String intrash);
 
     public UfsUser findByUserId(Long userId);
+
+    public List<UfsUser> findByIntrash(String intrash);
 }
