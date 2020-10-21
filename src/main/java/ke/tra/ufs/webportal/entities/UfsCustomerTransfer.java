@@ -65,6 +65,7 @@ public class UfsCustomerTransfer implements Serializable {
     @Basic(optional = false)
     @Column(name = "CREATED_AT",insertable = false,updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Filter(isDateRange = true)
     private Date createdAt;
     @Basic(optional = false)
     @Size(min = 1, max = 3)
