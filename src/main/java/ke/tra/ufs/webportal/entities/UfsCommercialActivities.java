@@ -53,6 +53,7 @@ public class UfsCommercialActivities implements Serializable {
     private String description;
     @Column(name = "CREATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Filter(isDateRange = true)
     private Date createdAt;
     @Size(max = 20)
     @Searchable

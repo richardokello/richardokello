@@ -5,8 +5,8 @@
  */
 package ke.tra.ufs.webportal.entities;
 
-import ke.tra.ufs.webportal.utils.annotations.Filter;
-import ke.tra.ufs.webportal.utils.annotations.Searchable;
+import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.Searchable;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
@@ -80,6 +80,7 @@ public class UfsCustomerComplaints implements Serializable {
     private String remedialActions;
     @Column(name = "CREATION_DATE", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Filter(isDateRange = true)
     private Date creationDate;
     @Filter
     @Column(name = "ACTION",insertable = false)

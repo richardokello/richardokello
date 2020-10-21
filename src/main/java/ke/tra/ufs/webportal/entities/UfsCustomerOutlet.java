@@ -78,6 +78,7 @@ public class UfsCustomerOutlet implements Serializable {
     private String operatingHours;
     @Column(name = "CREATED_AT",insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @ke.axle.chassis.annotations.Filter(isDateRange = true)
     private Date createdAt;
     @Size(max = 15)
     @Column(name = "ACTION", insertable = false)
