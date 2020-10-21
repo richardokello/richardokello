@@ -39,6 +39,7 @@ public class AppConstants {
     //status
     public static final String STATUS_FAILED_STRING = "Failed";
     public static final String STATUS_INACTIVE = "Inactive";
+    public static final String STATUS_ACTIVE_STRING = "Active";
     public static final String STATUS_DISABLED = "Disabled";
     public static final String STATUS_COMPLETED = "Completed";
     public static final String STATUS_UNAPPROVED = "Unapproved";

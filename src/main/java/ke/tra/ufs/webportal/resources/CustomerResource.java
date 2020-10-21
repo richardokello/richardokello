@@ -407,6 +407,33 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     }
 
 
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseWrapper> declineActions(@Valid @RequestBody ActionWrapper<Long> actions) {
+        ResponseEntity<ResponseWrapper> resp =  super.declineActions(actions);
+
+        if(!resp.getStatusCode().equals(HttpStatus.OK)){
+            return resp;
+        }
+        Arrays.stream(actions.getIds()).forEach(id-> {
+            UfsCustomer customer = this.customerService.findByCustomerId(id);
+
+            //terminating customer
+            if((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))){
+                customer.setStatus(AppConstants.STATUS_ACTIVE_STRING);
+                customer.setActionStatus(AppConstants.STATUS_REJECTED);
+                this.customerService.saveCustomer(customer);
+                loggerService.log("Successfully Declined Customer Termination",
+                        UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_APPROVE, AppConstants.STATUS_REJECTED, actions.getNotes());
+
+            }
+
+        });
+
+
+        return resp;
+    }
+
     @RequestMapping(value = "/terminated-agents" , method = RequestMethod.GET)
     @Transactional
     @ApiOperation(value = "Terminated Agents", notes = "Get All Terminated Agents.")

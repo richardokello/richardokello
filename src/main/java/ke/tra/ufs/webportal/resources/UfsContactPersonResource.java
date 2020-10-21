@@ -95,9 +95,12 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
             }
             posUserService.savePosUser(ufsPosUser);
 
+            loggerService.log("Contact Person Created  Successfully",
+                    UfsPosUser.class.getSimpleName(), ufsPosUser.getPosUserId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Contact Person Created Successfully" );
 
         }
-        response.setCode(201);
+
+          response.setCode(201);
         response.setData(ufsContactPerson);
         response.setMessage("Contact Person Created Successfully.");
         return new ResponseEntity(response, HttpStatus.CREATED);
@@ -178,7 +181,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
 
 
     @Transactional
-    @RequestMapping("/assign-device")
+    @RequestMapping(value = "/assign-device", method = RequestMethod.POST)
     @ApiOperation(value = "Contact Person", notes = "Assign contact person to a specific device")
     public ResponseEntity<ResponseWrapper> contactPersonDeviceAssign(@Valid @RequestBody contactPersonDeviceWrapper personDeviceWrapper){
         ResponseWrapper response =  new ResponseWrapper<>();
@@ -192,7 +195,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
         String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
         log.info("The generated pin is: " + randomPin);
 
-        UfsPosUser savedUser = null;
+
         if (Objects.isNull(posUser)) {
             UfsPosUser ufsPosUser = new UfsPosUser();
             ufsPosUser.setPosRole(contactPerson.getPosRole());
@@ -213,21 +216,20 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
                     ufsPosUser.setOtherName(name[1]);
                 }
             }
-            savedUser = posUserService.savePosUser(ufsPosUser);
+            posUserService.savePosUser(ufsPosUser);
+            loggerService.log("Contact Person Assigned Device Successfully",
+                    UfsPosUser.class.getSimpleName(), ufsPosUser.getPosUserId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Contact Person Assigned Device Successfully" );
+            response.setCode(200);
+            response.setMessage("Contact Person Assigned Device Successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
 
         }else{
             loggerService.log("Contact Person Already Assigned Device",
-                    UfsPosUser.class.getSimpleName(), savedUser.getPosUserId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED,"Contact Person Already Assigned Device" );
+                    UfsPosUser.class.getSimpleName(), null, ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED,"Contact Person Already Assigned Device" );
             response.setCode(HttpStatus.CONFLICT.value());
             response.setMessage("Contact Person Already Assigned Device");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
 
-
-        loggerService.log("Contact Person Assigned Device Successfully",
-                UfsPosUser.class.getSimpleName(), savedUser.getPosUserId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Contact Person Assigned Device Successfully" );
-        response.setCode(200);
-        response.setMessage("Contact Person Assigned Device Successfully");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
