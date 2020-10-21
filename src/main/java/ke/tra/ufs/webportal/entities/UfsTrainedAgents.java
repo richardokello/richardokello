@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import ke.axle.chassis.annotations.Filter;
 import ke.tra.ufs.webportal.utils.annotations.Searchable;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -72,7 +73,7 @@ public class UfsTrainedAgents implements Serializable {
     private Date trainingDate;
     @Column(name = "CREATION_DATE",insertable = false,updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @ke.axle.chassis.annotations.Filter(isDateRange = true)
+    @Filter(isDateRange = true)
     private Date creationDate;
     @Size(max = 20)
     @Column(name = "ACTION",insertable = false)
