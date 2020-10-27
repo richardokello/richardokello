@@ -116,5 +116,9 @@ public class UfsPosUser implements Serializable {
     @Column(name = "SERIAL_NUMBER")
     private String serialNumber;
 
+    @Filter
+    @Column(name = "FIRST_TIME_USER")
+    private Short firstTimeUser;
+
 
 }

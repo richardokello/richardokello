@@ -85,6 +85,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
             ufsPosUser.setPhoneNumber(ufsContactPerson.getPhoneNumber());
             ufsPosUser.setIdNumber(ufsContactPerson.getIdNumber());
             ufsPosUser.setSerialNumber(serialNumber);
+            ufsPosUser.setFirstTimeUser((short)0);
 
             String[] name = ufsContactPerson.getName().split("\\s+");
             if (name.length > 0) {
