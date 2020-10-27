@@ -12,6 +12,7 @@ import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsBankBranches;
 import ke.tra.ufs.webportal.entities.UfsBankRegion;
+import ke.tra.ufs.webportal.entities.UfsCustomer;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.service.BankBranchesService;
 import ke.tra.ufs.webportal.utils.AppConstants;
@@ -27,7 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/bank-branches")
@@ -113,27 +117,64 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
     public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
 
         ResponseWrapper response =  new ResponseWrapper<>();
+        List<Long> errors = new ArrayList<>();
         Arrays.stream(actions.getIds()).forEach(id->{
             UfsBankBranches bankBranch = this.bankBranchesService.findByBranchId(id);
+
+            if (loggerService.isInitiator(UfsBankBranches.class.getSimpleName(),id,AppConstants.ACTIVITY_UPDATE) ||
+                    loggerService.isInitiator(UfsBankBranches.class.getSimpleName(),id,AppConstants.ACTIVITY_CREATE) ||
+                    loggerService.isInitiator(UfsBankBranches.class.getSimpleName(),id,AppConstants.ACTIVITY_SUSPEND) ||
+                    loggerService.isInitiator(UfsBankBranches.class.getSimpleName(),id,AppConstants.ACTIVITY_ACTIVATION) ||
+                    loggerService.isInitiator(UfsBankBranches.class.getSimpleName(),id,AppConstants.ACTIVITY_DELETE)
+            ) {
+                errors.add(id);
+                return;
+            }
+                //Activity create,activate,suspend
             if((bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                    (bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
                     (bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                    (bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_SUSPEND) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))){
+                    (bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_SUSPEND) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
 
                 bankBranch.setActionStatus(AppConstants.STATUS_APPROVED);
                 this.bankBranchesService.saveBranch(bankBranch);
                 loggerService.log("Successfully Approved Bank Branch",
                         UfsBankBranches.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+            }
+            //Activity update
+            if(bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
 
+                try{
 
-                if(bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
+                    UfsBankBranches entity = supportRepo.mergeChanges(id, bankBranch);
+                    bankBranch.setName(entity.getName());
+                    bankBranch.setTenantIds(entity.getTenantIds());
                     bankBranch.setActionStatus(AppConstants.STATUS_APPROVED);
-                    bankBranch.setIntrash(AppConstants.INTRASH_YES);
+                    bankBranch.setBankRegionIds(entity.getBankRegionIds());
+                    bankBranch.setCode(entity.getCode());
+                    bankBranch.setGeographicalRegionIds(entity.getGeographicalRegionIds());
                     this.bankBranchesService.saveBranch(bankBranch);
-
                     loggerService.log("Successfully Approved Bank Branch",
                             UfsBankBranches.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+
+
+                } catch (IOException e) {
+                        e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                 }
+
+
+            }
+            //Activity delete
+            if(bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
+                bankBranch.setActionStatus(AppConstants.STATUS_APPROVED);
+                bankBranch.setIntrash(AppConstants.INTRASH_YES);
+                this.bankBranchesService.saveBranch(bankBranch);
+
+                loggerService.log("Successfully Approved Bank Branch",
+                        UfsBankBranches.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+
+
 
             }else {
 
@@ -142,6 +183,13 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
             }
 
         });
+
+        if (!errors.isEmpty()) {
+            response.setCode(HttpStatus.MULTI_STATUS.value());
+            response.setData(errors);
+            response.setMessage("Sorry some record could not be approved check audit trails for details");
+            return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
+        }
 
         response.setCode(200);
         response.setMessage("Bank Branch Approved Successfully");
