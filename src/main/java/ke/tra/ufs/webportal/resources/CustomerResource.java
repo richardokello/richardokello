@@ -265,7 +265,12 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         Arrays.stream(actions.getIds()).forEach(id->{
             UfsCustomer customer = this.customerService.findByCustomerId(id);
 
-            if (loggerService.isInitiator(UfsCustomer.class.getSimpleName(),id,AppConstants.ACTIVITY_UPDATE) || loggerService.isInitiator(UfsCustomer.class.getSimpleName(),id,AppConstants.ACTIVITY_CREATE) ) {
+            if (loggerService.isInitiator(UfsCustomer.class.getSimpleName(),id,AppConstants.ACTIVITY_UPDATE) ||
+                    loggerService.isInitiator(UfsCustomer.class.getSimpleName(),id,AppConstants.ACTIVITY_CREATE) ||
+                    loggerService.isInitiator(UfsCustomer.class.getSimpleName(),id,AppConstants.ACTIVITY_ACTIVATION) ||
+                    loggerService.isInitiator(UfsCustomer.class.getSimpleName(),id,AppConstants.ACTIVITY_DELETE)
+
+            ) {
                 errors.add(id);
                 return;
             }
