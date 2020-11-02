@@ -1,6 +1,8 @@
 package ke.tra.ufs.webportal.entities.views;
 
-import ke.tra.ufs.webportal.utils.annotations.Filter;
+
+import ke.axle.chassis.annotations.Filter;
+import ke.axle.chassis.annotations.Searchable;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,13 +21,15 @@ public class VwRevenueCollected implements Serializable {
 
     @Filter
     @Column(name = "MID")
+    @Searchable
     private String merchantId;
 
     @Filter
     @Column(name = "AMOUNT")
+    @Searchable
     private String amount;
 
-    @Filter
+    @Filter(isDateRange = true)
     @Column(name = "TRX_DATE")
 //    @Temporal(TemporalType.TIMESTAMP)
     private String transactionDate;
