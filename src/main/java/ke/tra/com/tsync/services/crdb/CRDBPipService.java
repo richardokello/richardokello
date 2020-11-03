@@ -2,6 +2,7 @@ package ke.tra.com.tsync.services.crdb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import ke.tra.com.tsync.entities.CRDBBILLERS_AUDIT;
 import ke.tra.com.tsync.h2pkgs.models.GeneralSettingsCache;
 import ke.tra.com.tsync.h2pkgs.repo.GatewaySettingsCacheRepo;
 import ke.tra.com.tsync.utils.GeneralFuncs;
@@ -23,6 +24,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -247,8 +249,6 @@ public class CRDBPipService {
                             crdbWrapperResponseEntity.getBody().getData(),
                             PostGepgControlNumberResponse.class);
 
-
-
             crdbBillersAuditService.logPostGePGControlNumberPaymentRequestAsync(
                     postGePGControlNumberPaymentRequest,
                     isoMsg.getString(41),
@@ -257,12 +257,10 @@ public class CRDBPipService {
                     switchAuthRef,retry,
                     crdbWrapperResponseEntity.getStatusCode().value(),
                     crdbWrapperResponseEntity.getStatusCode().getReasonPhrase()
+
             );
-
-
             return crdbWrapperResponseEntity;
         } catch (Exception ee) {
-
             String resaon = GeneralFuncs.exceptionToStr(ee);
             resaon = resaon.length()>=1024? resaon.substring(0,1024) : resaon;
             crdbBillersAuditService.logPostGePGControlNumberPaymentRequestAsync(
@@ -424,7 +422,6 @@ public class CRDBPipService {
                         amount,
                         isoMsg,
                         switchauthcode
-
                 );
 
 
@@ -467,5 +464,69 @@ public class CRDBPipService {
             }
         }
         return isoMsg;
+    }
+
+
+
+    public void postPEGPAdviceControlEnt(CRDBBILLERS_AUDIT crdbbillersAudit){
+        String checksum = DigestUtils.sha1Hex(
+                crdbbillersAudit.getAmount()
+                        + DigestUtils.md5Hex(crdbbillersAudit.getRequestID())
+                        + crdbbillersAudit.getPaymentReference()
+        );
+
+     //   String checksum =
+       //         DigestUtils.sha1Hex(amount + DigestUtils.md5Hex(requestID) + paymentReference);
+        PostGePGControlNumberPaymentRequest postGePGControlNumberPaymentRequest=
+            new PostGePGControlNumberPaymentRequest(
+                crdbbillersAudit,
+                getSessionStringFromLocalDB(),
+                checksum,
+                get_session_pip_partnername
+            );
+
+        //ResponseEntity<CRDBWrapper> crdbWrapperResponseEntity = null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Arrays.asList(MediaType.TEXT_HTML));
+        HttpEntity<PostGePGControlNumberPaymentRequest> postGePGControlNumberPaymentRequestHttpEntity =
+                new HttpEntity<>(postGePGControlNumberPaymentRequest, headers);
+        LOGGER.info("\nPostGePGControlNumberPaymentRequest  {} \n",postGePGControlNumberPaymentRequestHttpEntity);
+        RestTemplate restTemplate = restTemplate();
+        ResponseEntity<CRDBWrapper> crdbWrapperResponseEntity = restTemplate
+                .exchange(
+                        get_gepg_pip_url,
+                        HttpMethod.POST,
+                        postGePGControlNumberPaymentRequestHttpEntity,
+                        new ParameterizedTypeReference<CRDBWrapper>() {});
+
+        PostGepgControlNumberResponse postGepgControlNumberResponse = new ObjectMapper().convertValue(
+                        crdbWrapperResponseEntity.getBody().getData(),
+                        PostGepgControlNumberResponse.class
+        );
+
+        if(crdbWrapperResponseEntity.getStatusCode().is2xxSuccessful()) {
+            int retry = crdbbillersAudit.getRetriesCount() == null ? 1 : crdbbillersAudit.getRetriesCount() + 1;
+            crdbbillersAudit.setRetriesCount(retry);
+            crdbbillersAudit.setIsOrginalRequest(1);
+            crdbbillersAudit.setHttpcode(crdbWrapperResponseEntity.getStatusCodeValue());
+            crdbbillersAudit.setRequestSendDescription(crdbWrapperResponseEntity.getStatusCode().getReasonPhrase() +" : last update ~~ "+  new Date().toString());
+            // update the request
+            crdbBillersAuditService.logCRDBBillersLogEntity(crdbbillersAudit);
+            // Log Respose
+
+
+
+            LOGGER.info("\n\n PostGePGControlNumberPaymentResponse   {} \n\n\n", crdbWrapperResponseEntity);
+            crdbbillersAudit.setIsOrginalRequest(1);
+            crdbBillersAuditService.logPostGepgControlNumberResponseAsync(
+                    postGepgControlNumberResponse,
+                    crdbbillersAudit.getTid(),
+                    crdbbillersAudit.getMid(),
+                    crdbbillersAudit.getPosref(),
+                    String.valueOf(crdbWrapperResponseEntity.getBody().getStatus()),
+                    crdbWrapperResponseEntity.getBody().getStatusDesc()
+            );
+        }
     }
 }

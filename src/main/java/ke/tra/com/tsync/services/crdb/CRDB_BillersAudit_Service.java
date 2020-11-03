@@ -22,6 +22,39 @@ public class CRDB_BillersAudit_Service {
     @Autowired
     private CRDBBillersAuditRepo crdbBillersAuditRepo;
 
+
+    @Async
+    public void logPostGePGControlNumberPaymentRequestAsync(
+            PostGePGControlNumberPaymentRequest postGePGControlNumberPaymentRequest,
+            String tid,
+            String mid,
+            String posref,
+            String switchauthcode,
+            Integer retriesCount,
+            Integer httpcode,
+            String requestSendDesc,
+            Integer isOriginalRequest
+    ) {
+        try {
+            crdbBillersAuditRepo.save(new CRDBBILLERS_AUDIT(
+                    postGePGControlNumberPaymentRequest,
+                    tid,
+                    mid,
+                    posref,
+                    switchauthcode,
+                    retriesCount,
+                    httpcode,
+                    requestSendDesc,
+                    isOriginalRequest
+                    )
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("logPostGePGControlNumberPaymentRequestAsync {}", e);
+        }
+    }
+
+
     @Async
     public void logPostGePGControlNumberPaymentRequestAsync(
             PostGePGControlNumberPaymentRequest postGePGControlNumberPaymentRequest,
@@ -71,10 +104,10 @@ public class CRDB_BillersAudit_Service {
         try {
             crdbBillersAuditRepo.save(
                 new CRDBBILLERS_AUDIT(
-                        gepgControlNumberRequest,
-                        tid,
-                        mid,
-                        posref
+                        gepgControlNumberRequest
+                        ,tid
+                        ,mid
+                        ,posref
                         ,retriesCount
                         ,httpcode
                         ,requestSendDesc
@@ -82,6 +115,16 @@ public class CRDB_BillersAudit_Service {
             );
         } catch (Exception e) {
             LOGGER.error("logGepgControlNumberRequestAsync Error {}", e);
+        }
+
+    }
+
+    @Async
+    public void logCRDBBillersLogEntity(CRDBBILLERS_AUDIT crdbbillersAudit){
+        try {
+            crdbBillersAuditRepo.save(crdbbillersAudit);
+        }catch (Exception e){
+            LOGGER.error("logCRDBBillersLogEntity {} ", e);
         }
     }
 

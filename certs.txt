@@ -1,0 +1,24 @@
+openssl x509 -inform der -in certnewGTW.cer -out certnewGTW.pem
+openssl pkcs7 -in certnewGTW.p7b -inform DER -out gw_cert_chain.pem -print_certs
+
+--FIRST TWO COMMANDS CONVERT THE CDERTS TO ASCI (PEM)
+
+openssl pkcs12 -export -in certnewGTW.pem -inkey GTW.key -certfile gw_cert_chain.pem -out GATEWAY_NEW.P12 -name crdb
+Keytool -importcert -alias crdb -trustcacerts -file gw_cert_chain.pem -keystore GATEWAY.jks
+
+
+
+
+-- AIDE
+
+keytool -list -v -keystore keystore. jks -alias GATEWAY_NEW.JKS
+
+
+
+openssl pkcs12 -export -in <existing.cert.pem> -inkey <existing.key.pem>
+   -certfile <intermediate.cert.pem> -name "<your.domain.com>"
+   -out <your.domain.com>.p12
+
+keytool -importkeystore 
+   -srckeystore <your.domain.com>.p12 -srcstoretype PKCS12
+   -destkeystore <your.domain.com>.jks

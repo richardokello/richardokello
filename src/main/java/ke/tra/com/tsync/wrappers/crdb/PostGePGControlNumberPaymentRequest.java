@@ -3,6 +3,7 @@ package ke.tra.com.tsync.wrappers.crdb;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ke.tra.com.tsync.entities.CRDBBILLERS_AUDIT;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -16,6 +17,32 @@ import lombok.experimental.Accessors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostGePGControlNumberPaymentRequest {
+
+
+    public  PostGePGControlNumberPaymentRequest(CRDBBILLERS_AUDIT crdbbillersAudit,
+                                        String sessionToken,
+                                        String checksum,
+                                        String partnerID
+    ){
+        this.code= crdbbillersAudit.getCode();
+        this.sessionToken=sessionToken;
+        this.partnerID=partnerID;
+        this.checksum=checksum;
+        this.requestID=crdbbillersAudit.getRequestID();
+        this.paymentReference=crdbbillersAudit.getPaymentReference();
+        this.callbackurl="";
+        this.paymentType=crdbbillersAudit.getPaymentType();
+        this.owner=crdbbillersAudit.getOwner();
+        this.customerEmail=crdbbillersAudit.getCustomerEmail();
+        this.customerMobile=crdbbillersAudit.getCustomerMobile();
+        this.serviceName=crdbbillersAudit.getServiceName();
+        this.paymentGfsCode=crdbbillersAudit.getPaymentGfsCode();
+        this.currency=crdbbillersAudit.getCurrency();
+        this.paymentDesc=crdbbillersAudit.getPaymentDesc();
+        this.paymentExpiry=crdbbillersAudit.getPaymentExpiry();
+        this.paymentOption=crdbbillersAudit.getPaymentOption();
+        this.amount=crdbbillersAudit.getAmount();
+    }
 
     @JsonProperty("code")
     public String code;
@@ -70,4 +97,7 @@ public class PostGePGControlNumberPaymentRequest {
 
     @JsonProperty("amount")
     private String amount;
+
+
+
 }
