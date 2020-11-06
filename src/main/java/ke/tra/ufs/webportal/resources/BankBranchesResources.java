@@ -127,6 +127,9 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
                     loggerService.isInitiator(UfsBankBranches.class.getSimpleName(),id,AppConstants.ACTIVITY_ACTIVATION) ||
                     loggerService.isInitiator(UfsBankBranches.class.getSimpleName(),id,AppConstants.ACTIVITY_DELETE)
             ) {
+                loggerService.log("Failed to approve bank branch. Maker can't approve their own record",
+                        UfsBankBranches.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, actions.getNotes());
+
                 errors.add(id);
                 return;
             }
@@ -187,7 +190,7 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
         if (!errors.isEmpty()) {
             response.setCode(HttpStatus.MULTI_STATUS.value());
             response.setData(errors);
-            response.setMessage("Sorry some record could not be approved check audit trails for details");
+            response.setMessage("Failed to approve bank branches. Maker can't approve their own record");
             return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
         }
 

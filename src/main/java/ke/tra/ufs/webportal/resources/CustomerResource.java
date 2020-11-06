@@ -271,6 +271,8 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                     loggerService.isInitiator(UfsCustomer.class.getSimpleName(),id,AppConstants.ACTIVITY_DELETE)
 
             ) {
+                loggerService.log("Failed to approve customer. Maker can't approve their own record",
+                        UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, actions.getNotes());
                 errors.add(id);
                 return;
             }
@@ -283,7 +285,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                         customer.setActionStatus(AppConstants.STATUS_APPROVED);
                         this.customerService.saveCustomer(customer);
                         loggerService.log("Successfully Approved Customer",
-                                UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+                                UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
 
                     }
 
@@ -402,7 +404,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         if (!errors.isEmpty()) {
             response.setCode(HttpStatus.MULTI_STATUS.value());
             response.setData(errors);
-            response.setMessage("Sorry some record could not be approved check audit trails for details");
+            response.setMessage("Failed to approve customer. Maker can't approve their own record");
             return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
         }
 
