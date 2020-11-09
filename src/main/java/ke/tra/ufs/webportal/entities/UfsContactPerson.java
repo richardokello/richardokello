@@ -67,7 +67,7 @@ public class UfsContactPerson implements Serializable {
     @Filter
     @Searchable
     @ModifiableField
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 100)
     @Column(name = "EMAIL")
     private String email;
     @Column(name = "POS_ROLE")
