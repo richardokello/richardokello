@@ -56,7 +56,7 @@ public class TestClass {
             System.out.println(ISOUtil.hexdump(data));
             String server;
             int port ;
-            //server = "127.0.0.1"; port = 8621;
+            server = "127.0.0.1"; port = 8621;
              //QA server
            //server = "41.215.130.247"; port = 9066;
 //            server = "192.168.1.121"; port = 8621;
@@ -64,7 +64,7 @@ public class TestClass {
 //            server = "41.215.130.247";
 //            port = 4123;
             //BaseChannel channel = new NCCChannel(ip, 4123, packager, TPDU);
-            NACChannel channel = new NACChannel("127.0.0.1", 9065, packager, TPDU);
+            NACChannel channel = new NACChannel(server, port, packager, TPDU);
             //ISOChannel channel = new NCCChannel(ip, port, packager, TPDU);
 
             channel.connect();
