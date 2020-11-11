@@ -179,6 +179,15 @@ public class RequestHandlers implements ISORequestListener {
 
 
         try {
+            logger.info("++++++++++++++++++++++++@@@@@@@@@@@@++++++++++++");
+
+            String field39 = m.getString(39);
+            if (field39 == null){
+                m.set(39,AppConstants.POS_SERVER_ERROR);
+                m.set(47, "field 39 missing");
+            }
+            else if(field39.strip().length() < 3) m.set(39,"0"+field39);
+            logger.error(m.getString(39));
             source.send(coreProcessor.setResponseMTI(m));
         } catch (IOException | ISOException e) {
             logger.error("RESPONSE-send-failed rrn {} exception {}", m.getString(37), e);

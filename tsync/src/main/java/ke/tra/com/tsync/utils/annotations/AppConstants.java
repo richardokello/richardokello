@@ -255,5 +255,6 @@ public class AppConstants {
     public static final String POS_USER_DEACTIVATED = "018";
 
 
+
     public static final String POS_INVALID_PROCODE_OR_MTI = "058";
 }

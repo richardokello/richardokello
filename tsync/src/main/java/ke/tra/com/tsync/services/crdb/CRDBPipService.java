@@ -2,6 +2,7 @@ package ke.tra.com.tsync.services.crdb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import entities.UfsSysConfig;
 import ke.tra.com.tsync.entities.CRDBBILLERS_AUDIT;
 import ke.tra.com.tsync.h2pkgs.models.GeneralSettingsCache;
 import ke.tra.com.tsync.h2pkgs.repo.GatewaySettingsCacheRepo;
@@ -18,8 +19,11 @@ import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import repository.UfsSysConfigRepository;
 
+import java.net.ConnectException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,6 +54,8 @@ public class CRDBPipService {
 
     @Autowired
     GeneralFuncs generalFuncs;
+    @Autowired
+    private UfsSysConfigRepository ufsSysConfigRepository;
 
     @Autowired
     private PipSessionServiceAsync pipSessionServiceAsync;
@@ -227,36 +233,52 @@ public class CRDBPipService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAccept(Arrays.asList(MediaType.TEXT_HTML));
 
-            int retry=0;
+            UfsSysConfig billPaymentAdviceRetriesEntity = ufsSysConfigRepository.findByEntityAndParameter("Pos Configuration","billPaymentAdviceRetries");
 
+            int billPaymentAdviceRetries = billPaymentAdviceRetriesEntity == null? 6: Integer.valueOf(billPaymentAdviceRetriesEntity.getValue().strip());
+
+            int retry=0;
 
             HttpEntity<PostGePGControlNumberPaymentRequest> postGePGControlNumberPaymentRequestHttpEntity =
                     new HttpEntity<>(postGePGControlNumberPaymentRequest, headers);
             LOGGER.info(
                     "\n\nPostGePGControlNumberPaymentRequest \n   {} \n\n",
                     postGePGControlNumberPaymentRequestHttpEntity);
-
+            String reason = "";
+            int httpCode = -1;
             RestTemplate restTemplate = restTemplate();
-            crdbWrapperResponseEntity = restTemplate
-                    .exchange(
-                            get_gepg_pip_url,
-                            HttpMethod.POST,
-                            postGePGControlNumberPaymentRequestHttpEntity,
-                            new ParameterizedTypeReference<CRDBWrapper>() {} );
-            LOGGER.info("\n\n PostGePGControlNumberPaymentRequest   {} \n\n\n", crdbWrapperResponseEntity);
-            PostGepgControlNumberResponse postGepgControlNumberResponse =
-                    new ObjectMapper().convertValue(
-                            crdbWrapperResponseEntity.getBody().getData(),
-                            PostGepgControlNumberResponse.class);
+            boolean requestFailed = false;
+            do {
+            try {
+                crdbWrapperResponseEntity = restTemplate
+                        .exchange(
+                                get_gepg_pip_url,
+                                HttpMethod.POST,
+                                postGePGControlNumberPaymentRequestHttpEntity,
+                                new ParameterizedTypeReference<CRDBWrapper>() {
+                                });
+                LOGGER.info("--------------  success");
+                httpCode = crdbWrapperResponseEntity.getStatusCode().value();
+                LOGGER.info("\n\n PostGePGControlNumberPaymentRequest   {} \n\n\n", crdbWrapperResponseEntity);
+            }catch (RestClientException ex){
+                requestFailed = true;
+                reason = GeneralFuncs.exceptionToStr(ex);
+                reason = reason.length()>=1024? reason.substring(0,1024) : reason;
+                LOGGER.error("Rest Client Exception was thrown... " + ex.getMessage());
+
+                retry ++;
+                LOGGER.error("Trial :::::::::::::::::::::::::: "+retry);
+            }
+            }while(retry <= billPaymentAdviceRetries && requestFailed);
 
             crdbBillersAuditService.logPostGePGControlNumberPaymentRequestAsync(
                     postGePGControlNumberPaymentRequest,
                     isoMsg.getString(41),
                     isoMsg.getString(42),
                     isoMsg.getString(37),
-                    switchAuthRef,retry,
-                    crdbWrapperResponseEntity.getStatusCode().value(),
-                    crdbWrapperResponseEntity.getStatusCode().getReasonPhrase()
+                    switchAuthRef,retry-1, // since we dont count the first request as a retry
+                    httpCode,
+                    reason
 
             );
             return crdbWrapperResponseEntity;
@@ -469,6 +491,7 @@ public class CRDBPipService {
 
 
     public void postPEGPAdviceControlEnt(CRDBBILLERS_AUDIT crdbbillersAudit){
+        LOGGER.error("00000000000000000-----------------000000000000000");
         String checksum = DigestUtils.sha1Hex(
                 crdbbillersAudit.getAmount()
                         + DigestUtils.md5Hex(crdbbillersAudit.getRequestID())

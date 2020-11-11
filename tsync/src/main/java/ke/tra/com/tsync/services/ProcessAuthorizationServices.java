@@ -25,7 +25,7 @@ public class ProcessAuthorizationServices implements AuthorizationTxnsTmpl {
     @Override
     public ISOMsg processAuthbyProcode(ISOMsg isoMsg, PosUserWrapper wrapper){
         isoMsg.set(39, "006");
-        isoMsg.set(47, "An error occurred within the processAuthbyProcode method");
+        isoMsg.set(47, "This Field is used for user management.");
 
         switch (isoMsg.getString(3)){
             case "001000":
