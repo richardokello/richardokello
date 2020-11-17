@@ -69,15 +69,15 @@ public class UfsCustomerComplaintsResource extends ChasisResource<UfsCustomerCom
             ufsCustomerComplaints.setAgentComplained(this.customerService.findByCustomerId(customerComplaints.getCustomerId()).getBusinessName());
             ufsCustomerComplaints.setAgentPhonenumber(this.customerService.findByCustomerId(customerComplaints.getCustomerId()).getBusinessPrimaryContactNo());
         }else{
-            throw  new NotFoundException("Customer Does Not Exist in The System");
+            throw new NotFoundException("Customer Does Not Exist in The System");
         }
 
         if(Objects.nonNull(this.geographicalRegionService.findByGeographicalId(customerComplaints.getGeographicalRegionId()))){
             ufsCustomerComplaints.setAgentLocation(this.geographicalRegionService.findByGeographicalId(customerComplaints.getGeographicalRegionId()).getRegionName());
         }else{
-            throw  new NotFoundException("Region Does Not Exist in The System");
+            throw new NotFoundException("Region Does Not Exist in The System");
         }
-         ufsCustomerComplaints.setComplaintNature(customerComplaints.getComplaintNature());
+        ufsCustomerComplaints.setComplaintNature(customerComplaints.getComplaintNature());
         ufsCustomerComplaints.setComplaints(customerComplaints.getComplaints());
         ufsCustomerComplaints.setDateOfOccurence(customerComplaints.getDateOfOccurence());
         ufsCustomerComplaints.setRemedialActions(customerComplaints.getRemedialActions());
