@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="ke.tra.crdb_crdb_gateway_billers_jar_003PU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>ke.tra.com.tsync.entities.UfsPosAuditLog</class>
+    <class>Test.UfsContactPerson</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsProduct</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsBusinessDesignations</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsBusinessType</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsBanks</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsBankRegion</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsCustomerOutlet</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsCurrency</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsCustomerOwners</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsGeographicalRegion</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.TmsEstateHierachy</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.TmsEstateItem</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsOrganizationUnits</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsBankBranches</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsDeviceModel</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsCountries</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.TmsDevice</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsDeviceType</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsOrganizationHierarchy</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsCustomerType</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsCustomerClass</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsCustomer</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsContactPerson</class>
+    <class>ke.tra.com.tsync.wrappers.ufslogin.ent.UfsPosUser</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@41.215.130.247:5097:trcm"/>
+      <property name="javax.persistence.jdbc.user" value="UFS_SMART_SUITE"/>
+      <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+      <property name="javax.persistence.jdbc.password" value="pass123"/>
+    </properties>
+  </persistence-unit>
+</persistence>

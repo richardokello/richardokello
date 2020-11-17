@@ -1,0 +1,6 @@
+50015 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+50032 [main] INFO  o.h.e.j.e.i.LobCreatorBuilderImpl - HHH000422: Disabling contextual LOB creation as connection was null 
+55033 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+77061 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+77635 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+78983 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 

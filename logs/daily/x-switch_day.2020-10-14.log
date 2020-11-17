@@ -1,0 +1,38 @@
+11:18:37.699 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 20024 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
+11:18:37.728 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: test 
+11:18:43.093 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+11:18:43.343 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 239ms. Found 31 repository interfaces. 
+11:18:43.704 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$2e0e67bf] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+11:18:44.292 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+11:18:44.312 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+11:18:44.426 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+11:18:44.426 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+11:18:44.632 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+11:18:44.632 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 6737 ms 
+11:18:45.683 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+11:19:08.196 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+11:19:08.199 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+11:19:08.445 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+11:19:08.821 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+11:19:30.861 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+11:19:30.880 [main] INFO  o.h.e.j.e.i.LobCreatorBuilderImpl - HHH000422: Disabling contextual LOB creation as connection was null 
+11:19:33.331 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+12:51:29.955 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 11648 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
+12:51:29.958 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: test 
+12:51:31.481 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+12:51:31.666 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 176ms. Found 31 repository interfaces. 
+12:51:32.041 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$73acf7b8] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+12:51:32.235 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+12:51:32.251 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+12:51:32.415 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+12:51:32.416 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+12:51:32.600 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+12:51:32.601 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2567 ms 
+12:51:33.055 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+12:51:55.202 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+12:51:55.202 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+12:51:55.272 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+12:51:55.453 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+12:52:17.489 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+12:52:17.523 [main] INFO  o.h.e.j.e.i.LobCreatorBuilderImpl - HHH000422: Disabling contextual LOB creation as connection was null 
+12:52:20.300 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 

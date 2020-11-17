@@ -1,19 +1,34 @@
-14:05:17.082 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on VINCENT-ROG with PID 5016 (C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway\target\classes started by Vincent in C:\Users\Vincent\Desktop\PROJECTS\CRDB\crdb_gateway) 
-14:05:17.087 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: prod 
-14:05:17.749 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
-14:05:17.818 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 59ms. Found 10 repository interfaces. 
-14:05:17.819 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
-14:05:17.823 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 4ms. Found 1 repository interfaces. 
-14:05:18.324 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$ed68492a] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
-14:05:18.530 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
-14:05:18.549 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
-14:05:18.678 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
-14:05:18.678 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
-14:05:18.807 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
-14:05:18.807 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1681 ms 
-14:05:19.221 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
-14:05:20.503 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
-14:05:20.504 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
-14:05:20.651 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
-14:05:20.829 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
-14:05:21.842 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat] 
+17:36:00.269 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 16248 (E:\projects\gateways\testing\crdb_tsync\tsync\target\classes started by cotuoma in E:\projects\gateways\testing\crdb_tsync) 
+17:36:00.272 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: test 
+17:36:02.340 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+17:36:02.532 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 186ms. Found 31 repository interfaces. 
+17:36:03.177 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$a34ecd30] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+17:36:03.432 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+17:36:03.448 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+17:36:03.581 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+17:36:03.582 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+17:36:03.778 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+17:36:03.778 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 3361 ms 
+17:36:04.324 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+17:36:26.723 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+17:36:26.724 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+17:36:26.927 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+17:36:27.239 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+17:36:49.309 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect 
+17:36:49.324 [main] INFO  o.h.e.j.e.i.LobCreatorBuilderImpl - HHH000422: Disabling contextual LOB creation as connection was null 
+17:36:51.538 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+17:37:13.587 [main] INFO  o.h.h.i.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory 
+17:37:14.029 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default' 
+17:37:14.252 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+17:39:10.274 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 2968 (E:\projects\gateways\testing\crdb_tsync\tsync\target\classes started by cotuoma in E:\projects\gateways\testing\crdb_tsync) 
+17:39:10.276 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: remote 
+17:39:11.088 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+17:39:11.278 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 185ms. Found 31 repository interfaces. 
+17:39:11.730 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$6883f267] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+17:39:12.045 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+17:39:12.075 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+17:39:12.340 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+17:39:12.340 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+17:39:12.678 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+17:39:12.679 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2339 ms 
+17:39:13.441 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 

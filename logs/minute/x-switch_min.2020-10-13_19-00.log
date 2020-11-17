@@ -1,0 +1,10 @@
+905  [main] INFO  k.t.com.tsync.TsyncApplicationTests - Starting TsyncApplicationTests on DESKTOP-41KACUO with PID 26360 (started by cotuoma in E:\projects\gateways\crdb_tsync) 
+934  [main] INFO  k.t.com.tsync.TsyncApplicationTests - The following profiles are active: test 
+3454 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+3799 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 321ms. Found 31 repository interfaces. 
+4547 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$7a168388] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+5102 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+27485 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+27488 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+27660 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+27987 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 

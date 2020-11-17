@@ -1,0 +1,16 @@
+09:02:41.280 [main] INFO  ke.tra.com.tsync.TsyncApplication - Starting TsyncApplication on DESKTOP-41KACUO with PID 30864 (E:\projects\gateways\crdb_tsync\target\classes started by cotuoma in E:\projects\gateways\crdb_tsync) 
+09:02:41.287 [main] INFO  ke.tra.com.tsync.TsyncApplication - The following profiles are active: test 
+09:02:44.236 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode. 
+09:02:44.424 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 180ms. Found 31 repository interfaces. 
+09:02:44.733 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$2a09aa5a] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying) 
+09:02:45.014 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8094 (http) 
+09:02:45.040 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8094"] 
+09:02:45.215 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat] 
+09:02:45.215 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.19] 
+09:02:45.397 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext 
+09:02:45.398 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 4025 ms 
+09:02:46.002 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 
+09:03:08.205 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.10.Final} 
+09:03:08.206 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found 
+09:03:08.273 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.4.Final} 
+09:03:08.464 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting... 

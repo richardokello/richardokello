@@ -1,6 +1,12 @@
 <server class="org.jpos.q2.iso.QServer" logger="Q2" name="ISOServer">
-    <attr name="port" type="java.lang.Integer">9065</attr>
+    <attr name="port" type="java.lang.Integer">8621</attr>
+<!--    8621 uat-->
      <attr name="maxSessions" type="java.lang.Integer">1000</attr>
+<!--    <attr name="socketFactory">org.jpos.iso.SunJSSESocketFactory</attr>-->
+<!--    <property name="keystore" value="crdb_keystore.jks"/>-->
+<!--    <property name="clientauth" value="true"/>-->
+<!--    <property name="storepassword" value="crb_gateway"/>-->
+<!--    <property name="keypassword" value="crdb_gateway"/>-->
     <channel class="org.jpos.iso.channel.NACChannel" logger="Q2"
              packager="ke.tra.com.tsync.packager.Transport_Packager" header="6000018000">
         <property name="packager-logger" value="Q2"/>
