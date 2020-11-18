@@ -22,7 +22,7 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
- * @author eli.muraya
+ * @author Kenneth Mwangi
  */
 @Configuration
 @EnableResourceServer

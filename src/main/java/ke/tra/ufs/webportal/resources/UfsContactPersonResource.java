@@ -1,5 +1,7 @@
 package ke.tra.ufs.webportal.resources;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import ke.axle.chassis.ChasisResource;
 import ke.axle.chassis.exceptions.ExpectationFailed;
@@ -129,51 +131,71 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
     @Transactional
     public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
         ResponseEntity<ResponseWrapper> resp = super.approveActions(actions);
+
         if (!resp.getStatusCode().equals(HttpStatus.OK)) {
             return resp;
         }
 
-        //approve also contact person in the  Pos User Table
+        //approve/delete also contact person in the  Pos User Table
         Arrays.stream(actions.getIds()).forEach(id->{
-            UfsContactPerson ufsContactPerson = this.contactPersonService.findContactPersonById(id);
-            if(ufsContactPerson.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)){
-                List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
-                if(!posUsers.isEmpty()){
-                   posUsers.forEach(posUser->{
 
-                       UfsPosUser savedUser = posUser;
+                Optional<UfsContactPerson> ufsContactPerson = this.contactPersonService.findContactPersonById(id);
+                if(ufsContactPerson.isPresent()){
+                    if(ufsContactPerson.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)){
+                        List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
+                        if(!posUsers.isEmpty()){
+                            posUsers.forEach(posUser->{
 
-                       //generate random pin
-                       String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
-                       log.info("The generated pin is: " + randomPin);
+                                UfsPosUser savedUser = posUser;
 
-                       posUser.setActionStatus(AppConstants.STATUS_APPROVED);
-                       posUser.setPin(encoder.encode(randomPin));
-                       savedUser = posUserService.savePosUser(posUser);
+                                //generate random pin
+                                String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
+                                log.info("The generated pin is: " + randomPin);
 
-                       String message = "Your username is " + savedUser.getUsername() + ". Use password :" + randomPin + " to login to POS terminal";
-                       if (!ufsContactPerson.getEmail().isEmpty()) {
-                           notifyService.sendEmail(ufsContactPerson.getEmail(), "Login Credentials", message);
-                           loggerService.log("Sent login credentials for " + ufsContactPerson.getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
-                                   AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
+                                posUser.setActionStatus(AppConstants.STATUS_APPROVED);
+                                posUser.setPin(encoder.encode(randomPin));
+                                savedUser = posUserService.savePosUser(posUser);
 
-                       } else {
-                           if (!ufsContactPerson.getPhoneNumber().isEmpty()) {
-                               // send sms
-                               posUserService.sendSmsMessage(ufsContactPerson.getPhoneNumber(), message);
-                               loggerService.log("Sent login credentials for " + ufsContactPerson.getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
-                                       AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
+                                String message = "Your username is " + savedUser.getUsername() + ". Use password :" + randomPin + " to login to POS terminal";
+                                if (!ufsContactPerson.get().getEmail().isEmpty()) {
+                                    notifyService.sendEmail(ufsContactPerson.get().getEmail(), "Login Credentials", message);
+                                    loggerService.log("Sent login credentials for " + ufsContactPerson.get().getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
+                                            AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
 
-                           } else {
+                                } else {
+                                    if (!ufsContactPerson.get().getPhoneNumber().isEmpty()) {
+                                        // send sms
+                                        posUserService.sendSmsMessage(ufsContactPerson.get().getPhoneNumber(), message);
+                                        loggerService.log("Sent login credentials for " + ufsContactPerson.get().getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
+                                                AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
 
-                               loggerService.log("Failed to send login credentials for " + ufsContactPerson.getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
-                                       AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_FAILED_STRING,"No valid email or phone number.");
+                                    } else {
 
-                           }
-                       }
-                   });
+                                        loggerService.log("Failed to send login credentials for " + ufsContactPerson.get().getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
+                                                AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_FAILED_STRING,"No valid email or phone number.");
+
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    if(ufsContactPerson.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE)){
+                        List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
+                        if(!posUsers.isEmpty()){
+                            posUsers.forEach(posUser->{
+                                posUser.setActionStatus(AppConstants.STATUS_APPROVED);
+                                posUser.setIntrash(AppConstants.YES);
+                                posUser.setAction(AppConstants.ACTIVITY_DELETE);
+                                posUserService.savePosUser(posUser);
+
+                            });
+                        }
+
+                    }
+
                 }
-            }
+
         });
 
         return resp;
@@ -187,7 +209,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
     public ResponseEntity<ResponseWrapper> contactPersonDeviceAssign(@Valid @RequestBody contactPersonDeviceWrapper personDeviceWrapper){
         ResponseWrapper response =  new ResponseWrapper<>();
 
-        UfsContactPerson contactPerson = contactPersonService.findContactPersonById(personDeviceWrapper.getContactPersonId());
+        UfsContactPerson contactPerson = contactPersonService.findContactPersonByIdAndIntrash(personDeviceWrapper.getContactPersonId());
 
         String serialNumber = tmsDeviceService.findByDeviceIdAndIntrash(personDeviceWrapper.getDeviceId()).getSerialNo();
         UfsPosUser posUser = posUserService.findByContactPersonIdAndDeviceIdAndSerialNumber(personDeviceWrapper.getContactPersonId(), personDeviceWrapper.getDeviceId(),serialNumber);

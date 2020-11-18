@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -31,7 +32,12 @@ public class ContactPersonServiceTemplate implements ContactPersonService {
     }
 
     @Override
-    public UfsContactPerson findContactPersonById(Long id) {
+    public Optional<UfsContactPerson> findContactPersonById(Long id) {
+        return contactPersonRepository.findById(id);
+    }
+
+    @Override
+    public UfsContactPerson findContactPersonByIdAndIntrash(Long id) {
         return contactPersonRepository.findByIdAndIntrash(id,AppConstants.NO);
     }
 
