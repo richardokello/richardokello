@@ -42,7 +42,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isCorsRequest).permitAll()
                 //.antMatchers("/**").fullyAuthenticated()
-                //.antMatchers("/**").permitAll()
+                .antMatchers("/**").permitAll()
                 .antMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                         "/swagger-resources/**", "/v2/api-docs/**", "/images/**",
                         "/spring-security-rest/api/swagger-ui.html", "/encrypt").permitAll()
