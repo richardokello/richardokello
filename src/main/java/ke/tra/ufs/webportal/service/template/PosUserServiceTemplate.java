@@ -59,7 +59,7 @@ public class PosUserServiceTemplate implements PosUserService {
 
     @Override
     public UfsPosUser findByContactPersonIdAndDeviceIdAndSerialNumber(Long contactPersonId, BigDecimal tmsDeviceId, String serialNumber) {
-        return ufsPosUserRepository.findByContactPersonIdAndTmsDeviceIdAndSerialNumber(contactPersonId, tmsDeviceId, serialNumber);
+        return ufsPosUserRepository.findByContactPersonIdAndTmsDeviceIdAndSerialNumberAndIntrash(contactPersonId, tmsDeviceId, serialNumber,AppConstants.NO);
     }
 
     @Override
