@@ -41,7 +41,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isCorsRequest).permitAll()
-                //.antMatchers("/**").fullyAuthenticated()
                 .antMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                         "/swagger-resources/**", "/v2/api-docs/**", "/images/**",
                         "/spring-security-rest/api/swagger-ui.html", "/encrypt").permitAll()
@@ -238,6 +237,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/trained-agents/add").hasAuthority("CREATE_TRAINED_AGENT")
                 .antMatchers(HttpMethod.POST, "/trained-agents/upload").hasAuthority("CREATE_TRAINED_AGENT")
                 .antMatchers(HttpMethod.GET, "/trained-agents/trained-agents-template.csv").hasAuthority("VIEW_TRAINED_AGENT")
+                .antMatchers("/**").fullyAuthenticated()
                 .and()
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)
                 .cors()
