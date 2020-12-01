@@ -34,13 +34,13 @@ public class AcademicBridgeService {
             "API_SECRET=%s&" +
             "reference_number=%s&" +
             "paid_amount=%s&" +
-            "sender_name=%&" +
+            "sender_name=%s&" +
             "sender_phone_number=%s&" +
             "reason=%s"
     )
     private String savePaymentURL;
 
-    @Value("${academic-bridge.check-payment-status-url}%s")
+    @Value("${academic-bridge.check-payment-status-url}%s?API_KEY=%s&API_SECRET=%s")
     private String checkPaymentStatusURL;
 
     private final RestHTTPService restHTTPService;
@@ -51,18 +51,23 @@ public class AcademicBridgeService {
      * @param studentDetails Student bill number
      * @return student Information
      */
-    public ResponseEntity<GetStudentDetailsResponse> fetchStudentDetailsByBillNumber(GetStudentDetails studentDetails) {
+    public GetStudentDetailsResponse fetchStudentDetailsByBillNumber(GetStudentDetails studentDetails) {
+        GetStudentDetailsResponse response;
+        //ResponseEntity<GetStudentDetailsResponse> response;
         try {
             String requestURL = String.format(getStudentDetailsURL,
                     studentDetails.getBillNumber(),
                     academicBridgeAPIKey,
                     academicBridgeAPISecret);
-            ResponseEntity<GetStudentDetailsResponse> response = restHTTPService.get(baseUrl + requestURL, studentDetails, GetStudentDetailsResponse.class);
-            return response;
+            //response = restHTTPService.get(baseUrl + requestURL, studentDetails, GetStudentDetailsResponse.class);
+            String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
+            ObjectMapper mapper = new ObjectMapper();
+            response = mapper.readValue(results,  GetStudentDetailsResponse.class);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new ExternalHTTPRequestException("Error fetching student details from Academic Bridge API");
         }
+        return response;
     }
 
     /**
@@ -72,7 +77,7 @@ public class AcademicBridgeService {
      * @return payment results
      */
     public AcademicBridgeResponse sendPaymentDetailsToAcademicBridge(SavePaymentRequest savePaymentRequest) {
-        AcademicBridgeResponse response = new AcademicBridgeResponse();
+        AcademicBridgeResponse response;
 
         try {
             String requestURL = String.format(savePaymentURL,

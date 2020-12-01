@@ -5,11 +5,10 @@ import lombok.Data;
 @Data
 public class SavePaymentRequest {
     private String billNumber;
-    private String apiKey;
-    private String apiSecret;
     private String referenceNo;
     private double paidAmount;
     private String senderName;
     private String senderPhoneNo;
     private String reason;
+
 }
