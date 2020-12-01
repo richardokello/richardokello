@@ -1,0 +1,128 @@
+package co.ke.tracom.bprgatewaygen2.web.academicbridge.services;
+
+import co.ke.tracom.bprgatewaygen2.core.tracomhttp.resthttp.RestHTTPService;
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.AcademicBridgeResponse;
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.AcademicBridgePaymentStatusResponse;
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.PaymentStatusRequest;
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.savepayment.SavePaymentRequest;
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetails;
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
+import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AcademicBridgeService {
+    @Value("${academic-bridge.api-key}")
+    private String academicBridgeAPIKey;
+
+    @Value("${academic-bridge.api-secret}")
+    private String academicBridgeAPISecret;
+
+    @Value("${academic-bridge.get-student-details-url}%s?API_KEY=%s&API_SECRET=%s")
+    private String getStudentDetailsURL;
+
+    @Value("${academic-bridge.base.url}")
+    private String baseUrl;
+
+    @Value("${academic-bridge.save-payment-url}%s?" +
+            "API_KEY=%s&" +
+            "API_SECRET=%s&" +
+            "reference_number=%s&" +
+            "paid_amount=%s&" +
+            "sender_name=%&" +
+            "sender_phone_number=%s&" +
+            "reason=%s"
+    )
+    private String savePaymentURL;
+
+    @Value("${academic-bridge.check-payment-status-url}%s")
+    private String checkPaymentStatusURL;
+
+    private final RestHTTPService restHTTPService;
+
+    /**
+     * To get bill details given the bill number.
+     *
+     * @param studentDetails Student bill number
+     * @return student Information
+     */
+    public ResponseEntity<GetStudentDetailsResponse> fetchStudentDetailsByBillNumber(GetStudentDetails studentDetails) {
+        try {
+            String requestURL = String.format(getStudentDetailsURL,
+                    studentDetails.getBillNumber(),
+                    academicBridgeAPIKey,
+                    academicBridgeAPISecret);
+            ResponseEntity<GetStudentDetailsResponse> response = restHTTPService.get(baseUrl + requestURL, studentDetails, GetStudentDetailsResponse.class);
+            return response;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new ExternalHTTPRequestException("Error fetching student details from Academic Bridge API");
+        }
+    }
+
+    /**
+     * To save payment on academic bridge school’s database.
+     *
+     * @param savePaymentRequest save payment details
+     * @return payment results
+     */
+    public AcademicBridgeResponse sendPaymentDetailsToAcademicBridge(SavePaymentRequest savePaymentRequest) {
+        AcademicBridgeResponse response = new AcademicBridgeResponse();
+
+        try {
+            String requestURL = String.format(savePaymentURL,
+                    savePaymentRequest.getBillNumber(),
+                    academicBridgeAPIKey,
+                    academicBridgeAPISecret,
+                    savePaymentRequest.getReferenceNo(),
+                    savePaymentRequest.getPaidAmount(),
+                    savePaymentRequest.getSenderName(),
+                    savePaymentRequest.getSenderPhoneNo(),
+                    savePaymentRequest.getReason());
+            String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
+            ObjectMapper mapper = new ObjectMapper();
+            response = mapper.readValue(results,  AcademicBridgeResponse.class);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new ExternalHTTPRequestException("Error sending payment to Academic Bridge API");
+        }
+
+        return response;
+    }
+
+    /**
+     * To check if the payment was successfully saved on academic bridge given bank’s reference number.
+     *
+     * @param request Transaction reference no
+     * @return Transaction posting
+     */
+    public AcademicBridgePaymentStatusResponse checkPaymentStatus(PaymentStatusRequest request) {
+        AcademicBridgePaymentStatusResponse response = new AcademicBridgePaymentStatusResponse();
+        try {
+            String requestURL = String.format(checkPaymentStatusURL,
+                    request.getReferenceNo(),
+                    academicBridgeAPIKey,
+                    academicBridgeAPISecret);
+            String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
+            ObjectMapper mapper = new ObjectMapper();
+            response = mapper.readValue(results,  AcademicBridgePaymentStatusResponse.class);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new ExternalHTTPRequestException("Error checking payment status from Academic Bridge API");
+        }
+        return response;
+    }
+
+}
+
+
+
+
+
+
+
