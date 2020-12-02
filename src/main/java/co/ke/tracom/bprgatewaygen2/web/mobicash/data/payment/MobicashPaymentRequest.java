@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class PaymentRequest extends MobiCashRequest {
+public class MobicashPaymentRequest extends MobiCashRequest {
     private Date transactionDateTime;
     private String bankReference;
     private long amount;

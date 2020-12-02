@@ -2,13 +2,12 @@ package co.ke.tracom.bprgatewaygen2.web.mobicash.service;
 
 import co.ke.tracom.bprgatewaygen2.core.tracomhttp.resthttp.RestHTTPService;
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.NewSubscriber.NewSubscriberResponse;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsRequest;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsResponse;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationRequest;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationResponse;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.PaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.PaymentResponse;
+import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.MobicashPaymentRequest;
+import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.MobicashPaymentResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,15 +16,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class mobiCashService {
+public class MobiCashService {
 
-    @Value("http://server:port/mcash/oauth/token")
+    @Value("http://server:port")
+    private String baseURL;
+
+    @Value("/server:port/mcash/oauth/token")
     private String authRequestURL;
 
-    @Value("http://server:port/mcash/services/rest/1.2.1/bank")
+    @Value("/mcash/services/rest/1.2.1/bank")
     private String agentDetailsURL;
 
-    @Value("http://server:port/mcash/services/rest/1.2.1/bank/trustAccount")
+    @Value("/mcash/services/rest/1.2.1/bank/trustAccount")
     private String creditAccountURL;
 
     private String accessToken;
@@ -42,7 +44,7 @@ public class mobiCashService {
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 
         try {
-            String requestURL = authRequestURL;
+            String requestURL = baseURL + authRequestURL;
             ResponseEntity<String> response = restHTTPService.postRequest(authenticationRequest, requestURL);
             ObjectMapper mapper = new ObjectMapper();
             authenticationResponse = mapper.readValue(response.getBody(), AuthenticationResponse.class);
@@ -64,7 +66,7 @@ public class mobiCashService {
 
         try {
             agentDetailsRequest.setAccountNumber(accessToken);
-            String requestURL = agentDetailsURL;
+            String requestURL = baseURL + agentDetailsURL;
             ResponseEntity<String> response = restHTTPService.postRequest(agentDetailsRequest, requestURL);
             ObjectMapper mapper = new ObjectMapper();
             agentDetailsResponse = mapper.readValue(response.getBody(), AgentDetailsResponse.class);
@@ -82,15 +84,15 @@ public class mobiCashService {
      * @param paymentRequest
      * @return PaymentResponse payment response object
      */
-    public PaymentResponse sendPayment(PaymentRequest paymentRequest) {
-        PaymentResponse paymentResponse;
+    public MobicashPaymentResponse sendPayment(MobicashPaymentRequest paymentRequest) {
+        MobicashPaymentResponse paymentResponse;
 
         try {
             paymentRequest.setAuthorization(accessToken);
-            String requestURL = creditAccountURL;
+            String requestURL = baseURL + creditAccountURL;
             ResponseEntity<String> response = restHTTPService.postRequest(paymentRequest, requestURL);
             ObjectMapper mapper = new ObjectMapper();
-            paymentResponse = mapper.readValue(response.getBody(), PaymentResponse.class);
+            paymentResponse = mapper.readValue(response.getBody(), MobicashPaymentResponse.class);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new ExternalHTTPRequestException("Error sending payment MobiCash API");
