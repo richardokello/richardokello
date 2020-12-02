@@ -14,6 +14,7 @@ import ke.tra.ufs.webportal.entities.wrapper.*;
 import ke.tra.ufs.webportal.repository.CustomerRepository;
 import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
+import ke.tra.ufs.webportal.utils.UniqueStringGenerator;
 import ke.tra.ufs.webportal.wrappers.AgentTerminationWrapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -80,20 +81,29 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
-        if (customerRepository.findByBusinessLicenceNumberAndIntrash(customerOnboarding.getBusinessLicenseNumber(),AppConstants.INTRASH_NO).isPresent()) {
-            response.setMessage("Business Licence Already Exists");
-            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        //BusinessLicenceNumber check
+        if(Objects.nonNull(customerOnboarding.getBusinessLicenseNumber())){
+            if (customerRepository.findByBusinessLicenceNumberAndIntrash(customerOnboarding.getBusinessLicenseNumber(),AppConstants.INTRASH_NO).isPresent()) {
+                response.setMessage("Business Licence Already Exists");
+                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+            }
         }
 
-        if (customerRepository.findByBusinessNameAndIntrash(customerOnboarding.getBusinessName(),AppConstants.INTRASH_NO).isPresent()) {
-            response.setMessage("Business Name Already Exists");
-            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
-        }
+        //check business name
+       if(Objects.nonNull(customerOnboarding.getBusinessName())){
+           if (customerRepository.findByBusinessNameAndIntrash(customerOnboarding.getBusinessName(),AppConstants.INTRASH_NO).isPresent()) {
+               response.setMessage("Business Name Already Exists");
+               return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+           }
+       }
 
-        if (customerRepository.findByLocalRegistrationNumberAndIntrash(customerOnboarding.getLocalRegistrationNumber(),AppConstants.INTRASH_NO).isPresent()) {
-            response.setMessage("Local Registration Already Exists");
-            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
-        }
+       // check Local registration number
+       if(Objects.nonNull(customerOnboarding.getLocalRegistrationNumber())){
+           if (customerRepository.findByLocalRegistrationNumberAndIntrash(customerOnboarding.getLocalRegistrationNumber(),AppConstants.INTRASH_NO).isPresent()) {
+               response.setMessage("Local Registration Already Exists");
+               return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+           }
+       }
 
 
         //Errors Occurred While Onboarding Customer
@@ -152,7 +162,12 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
               custOutlet.setBankBranchIds(outlet.getBankBranchId());
               custOutlet.setLongitude(outlet.getLongitude());
               custOutlet.setLatitude(outlet.getLatitude());
-              custOutlet.setOutletCode(outlet.getOutletCode());
+              if(outlet.getOutletCode() != null){
+                  custOutlet.setOutletCode(outlet.getOutletCode());
+              }else{
+                  UniqueStringGenerator usg = UniqueStringGenerator.getInstance("OUTLET");
+                  custOutlet.setOutletCode(usg.getRandomCharacterRRN());
+              }
               custOutlet.setOutletName(outlet.getOutletName());
               custOutlet.setOperatingHours(outlet.getOperatingHours());
               custOutlet.setGeographicalRegionIds(outlet.getGeographicalRegionIds());
