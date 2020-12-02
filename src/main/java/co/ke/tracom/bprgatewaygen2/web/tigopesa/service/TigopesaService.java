@@ -1,14 +1,9 @@
 package co.ke.tracom.bprgatewaygen2.web.tigopesa.service;
 
-import co.ke.tracom.bprgatewaygen2.core.tracomhttp.resthttp.RestHTTPService;
 import co.ke.tracom.bprgatewaygen2.core.tracomhttp.xmlHttp.XMLHttpService;
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsRequest;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsResponse;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationRequest;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationResponse;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.PaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.PaymentResponse;
+import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentRequest;
+import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance.CheckBalanceRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance.CheckBalanceResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.transactionStatus.TransactionStatusRequest;
@@ -37,13 +32,13 @@ public class TigopesaService {
      * @param paymentRequest
      * @return payment response details
      */
-    public PaymentResponse sendPayment(PaymentRequest paymentRequest) {
-        PaymentResponse paymentResponse;
+    public BillPaymentResponse payBill(BillPaymentRequest paymentRequest) {
+        BillPaymentResponse paymentResponse;
 
         try {
-            ResponseEntity<String> response = xmlHttpService.post(paymentRequest, requestURL);
+            ResponseEntity<String> response = xmlHttpService.post(paymentRequest.getRequestXML(), requestURL, String.class);
             ObjectMapper mapper = new ObjectMapper();
-            paymentResponse = mapper.readValue(response.getBody(), PaymentResponse.class);
+            paymentResponse = mapper.readValue(response.getBody(), BillPaymentResponse.class);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new ExternalHTTPRequestException("Error getting agent details from MobiCash API");
@@ -62,7 +57,7 @@ public class TigopesaService {
         CheckBalanceResponse checkBalanceResponse;
 
         try {
-            ResponseEntity<String> response = xmlHttpService.post(checkBalanceRequest, requestURL);
+            ResponseEntity<String> response = xmlHttpService.post(checkBalanceRequest.getRequestXML(), requestURL, String.class);
             ObjectMapper mapper = new ObjectMapper();
             checkBalanceResponse = mapper.readValue(response.getBody(), CheckBalanceResponse.class);
         } catch (Exception ex) {
@@ -83,7 +78,7 @@ public class TigopesaService {
         TransactionStatusResponse transactionStatusResponse;
 
         try {
-            ResponseEntity<String> response = xmlHttpService.post(transactionStatusRequest, requestURL);
+            ResponseEntity<String> response = xmlHttpService.post(transactionStatusRequest.getRequestXML(), requestURL, String.class);
             ObjectMapper mapper = new ObjectMapper();
             transactionStatusResponse = mapper.readValue(response.getBody(), TransactionStatusResponse.class);
         } catch (Exception ex) {
@@ -104,7 +99,7 @@ public class TigopesaService {
         WalletPaymentResponse walletPaymentResponse;
 
         try {
-            ResponseEntity<String> response = xmlHttpService.post(walletPaymentRequest, requestURL);
+            ResponseEntity<String> response = xmlHttpService.post(walletPaymentRequest.getRequestXML(), requestURL, String.class);
             ObjectMapper mapper = new ObjectMapper();
             walletPaymentResponse = mapper.readValue(response.getBody(), WalletPaymentResponse.class);
         } catch (Exception ex) {
@@ -114,6 +109,5 @@ public class TigopesaService {
 
         return walletPaymentResponse;
     }
-
 }
 

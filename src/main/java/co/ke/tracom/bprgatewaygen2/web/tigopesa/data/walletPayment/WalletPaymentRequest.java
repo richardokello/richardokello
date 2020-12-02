@@ -9,7 +9,7 @@ public class WalletPaymentRequest extends TigopesaRequest {
     private String bankCode;
     private String amount;
 
-    public String generateRequestXML () {
+    public String getRequestXML () {
         String xmlRequestFormat = "<TCSRequest>\n" +
                 "<UserName>%s</UserName>\n" +
                 "<Password>%s</Password>\n" +

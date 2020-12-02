@@ -3,7 +3,7 @@ package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment;
 import lombok.Data;
 
 @Data
-public class PaymentResponse {
+public class BillPaymentResponse {
     private String errorCode;
     private String errorMessage;
     private String transactionId;
@@ -12,7 +12,7 @@ public class PaymentResponse {
     private int voucherCode;
     private String message;
 
-    public String generateResponseXML () {
+    private String getResponseXML () {
         String xmlResponseFormat = "<TCSReply>\n" +
                 "<Result>%s</Result>\n" +
                 "<Message>%s</Message>\n" +

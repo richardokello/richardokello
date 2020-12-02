@@ -9,7 +9,7 @@ public class CheckBalanceResponse {
     private String amount;
     private String referenceId;
 
-    public String generateRequestXML () {
+    public String getResponseXML () {
 
         String xmlMessage = "<TCSReply>\n" +
                 "<Result>%s</Result>\n" +

@@ -4,11 +4,11 @@ import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.TigopesaRequest;
 import lombok.Data;
 
 @Data
-public class PaymentRequest extends TigopesaRequest {
+public class BillPaymentRequest extends TigopesaRequest {
     private float amount;
     private String transactionId;
 
-    public String generateRequestXML () {
+    public String getRequestXML () {
         String xmlRequestFormat = "<TCSRequest>\n" +
                 "<UserName>%s</UserName>\n" +
                 "<Password>%s</Password>\n" +

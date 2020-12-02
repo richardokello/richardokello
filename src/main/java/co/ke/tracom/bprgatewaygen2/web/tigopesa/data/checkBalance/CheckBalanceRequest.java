@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class CheckBalanceRequest extends TigopesaRequest {
 
-    public String generateRequestXML() {
+    public String getRequestXML() {
         String xmlMessage = "<TCSRequest>\n" +
                 "<UserName>%s</UserName>\n" +
                 "<Password>%s</Password>\n" +

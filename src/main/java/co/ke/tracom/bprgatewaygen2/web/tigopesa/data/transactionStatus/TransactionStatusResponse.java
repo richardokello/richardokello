@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class TransactionStatusResponse extends TigopesaResponse {
 
-    public String generateResponseXML () {
+    public String getResponseXML () {
         String xmlResponseFormat = "<TCSReply>\n" +
                 "<Result>%s</Result>\n" +
                 "<Message>%s</Message>\n" +

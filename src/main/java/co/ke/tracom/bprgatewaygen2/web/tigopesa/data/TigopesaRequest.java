@@ -9,4 +9,5 @@ public class TigopesaRequest {
     private String msisdn;
     private String billNumber;
     private String companyCode;
+    private String requestXML;
 }
