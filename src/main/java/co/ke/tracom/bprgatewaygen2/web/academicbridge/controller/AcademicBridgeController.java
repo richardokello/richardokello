@@ -8,7 +8,6 @@ import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStu
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.services.AcademicBridgeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

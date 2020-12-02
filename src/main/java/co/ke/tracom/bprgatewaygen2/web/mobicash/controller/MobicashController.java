@@ -1,13 +1,5 @@
 package co.ke.tracom.bprgatewaygen2.web.mobicash.controller;
 
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.NewSubscriber.NewSubscriberRequest;
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.NewSubscriber.NewSubscriberResponse;
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.checkPayment.CheckPaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.paymentContribution.PaymentContributionRequest;
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.paymentContribution.PaymentContributionResponse;
-import co.ke.tracom.bprgatewaygen2.web.ltss.service.LtssService;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsRequest;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsResponse;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationRequest;

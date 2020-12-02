@@ -1,6 +1,6 @@
 package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment;
 
-import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.XMLRequestI;
+import co.ke.tracom.bprgatewaygen2.core.tracomhttp.xmlHttp.XMLRequestI;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.TigopesaRequest;
 import lombok.Data;
 

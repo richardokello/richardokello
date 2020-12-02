@@ -1,29 +1,50 @@
 package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.transactionStatus;
 
-import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.TigopesaResponse;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Data;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-
 @Data
-@XmlRootElement(name="TCSReply")
-@XmlAccessorType(XmlAccessType.NONE)
 public class TransactionStatusResponse {
-    @XmlAttribute(name="Result")
-    private int errorCode;
-    @XmlAttribute(name="Message")
-    private String errorMessage;
-    @XmlAttribute(name="transactionId")
+    @JsonProperty("Result")
+    private String Result; // errorCode
+
+    @JsonProperty("Message")
+    private String Message; // error Message
+
+    @JsonProperty("transactionId")
     private String transactionId;
-    @XmlAttribute(name="referenceId")
+
+    @JsonProperty("referenceId")
     private String referenceId;
-    @XmlAttribute(name="status")
+
+    @JsonProperty("status")
     private String status;
-    @XmlAttribute(name="voucherCode")
+
+    @JsonProperty("voucherCode")
     private int voucherCode;
-    @XmlAttribute(name="message")
+
+    @JsonProperty("message")
     private String message;
+
+    @JsonGetter("Message")
+    public String getMessage() {
+        return this.Message;
+    }
+
+    @JsonSetter("Message")
+    public void setMessage(String Message) {
+        this.Message = Message;
+    }
+
+    @JsonGetter("message")
+    public String get_message() {
+        return this.message;
+    }
+
+    @JsonSetter("message")
+    public void set_message(String message) {
+        this.message = message;
+    }
 }

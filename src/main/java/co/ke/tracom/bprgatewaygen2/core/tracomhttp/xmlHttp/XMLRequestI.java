@@ -1,4 +1,4 @@
-package co.ke.tracom.bprgatewaygen2.web.tigopesa.data;
+package co.ke.tracom.bprgatewaygen2.core.tracomhttp.xmlHttp;
 
 public interface XMLRequestI {
     String getRequestXML();

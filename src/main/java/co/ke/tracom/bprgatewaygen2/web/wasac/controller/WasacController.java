@@ -1,12 +1,5 @@
 package co.ke.tracom.bprgatewaygen2.web.wasac.controller;
 
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsRequest;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsResponse;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationRequest;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationResponse;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.MobicashPaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.MobicashPaymentResponse;
-import co.ke.tracom.bprgatewaygen2.web.mobicash.service.MobiCashService;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileResponse;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentRequest;

@@ -1,11 +1,5 @@
 package co.ke.tracom.bprgatewaygen2.web.ltss.controller;
 
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.*;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.ValidateNIDRequest;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.ValidateNIDResponse;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.paymentNotification.PaymentNotificationRequest;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.paymentNotification.PaymentNotificationResponse;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.service.AgaciroService;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.NewSubscriber.NewSubscriberRequest;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.NewSubscriber.NewSubscriberResponse;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.checkPayment.CheckPaymentRequest;

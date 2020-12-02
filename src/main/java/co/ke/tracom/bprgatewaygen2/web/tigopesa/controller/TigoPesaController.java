@@ -6,12 +6,9 @@ import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.transactionStatus.TransactionStatusRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.transactionStatus.TransactionStatusResponse;
+import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPaymentRequest;
+import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPaymentResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.service.TigopesaService;
-import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileRequest;
-import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileResponse;
-import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentResponse;
-import co.ke.tracom.bprgatewaygen2.web.wasac.service.WASACService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +32,20 @@ public class TigoPesaController {
     }
 
     @PostMapping("/balance")
-    public ResponseEntity<?> payBill(@RequestBody CheckBalanceRequest request) {
+    public ResponseEntity<?> checkBalance(@RequestBody CheckBalanceRequest request) {
         CheckBalanceResponse responseEntity = tigopesaService.checkBalance(request);
         return new ResponseEntity<>(responseEntity, HttpStatus.OK);
     }
 
     @PostMapping("/transaction/status")
-    public ResponseEntity<?> creditAccount(@RequestBody TransactionStatusRequest request) {
+    public ResponseEntity<?> checkTransactionStatus(@RequestBody TransactionStatusRequest request) {
         TransactionStatusResponse responseEntity = tigopesaService.checkTransactionStatus(request);
+        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+    }
+
+    @PostMapping("/wallet")
+    public ResponseEntity<?> creditWallet(@RequestBody WalletPaymentRequest request) {
+        WalletPaymentResponse responseEntity = tigopesaService.creditWallet(request);
         return new ResponseEntity<>(responseEntity, HttpStatus.OK);
     }
 }
