@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "description",
         "terminal"
 })
-public class PaymentRequest {
+public class WasacPaymentRequest {
 
     @JsonProperty("username")
     private String username;

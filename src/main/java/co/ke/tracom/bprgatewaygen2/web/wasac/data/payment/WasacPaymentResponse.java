@@ -1,11 +1,5 @@
 package co.ke.tracom.bprgatewaygen2.web.wasac.data.payment;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -14,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "response"
 })
-public class PaymentResponse {
+public class WasacPaymentResponse {
 
     private String status;
 
@@ -35,7 +29,7 @@ public class PaymentResponse {
         return status;
     }
 
-    public PaymentResponse setStatus(String status) {
+    public WasacPaymentResponse setStatus(String status) {
         this.status = status;
         return this;
     }

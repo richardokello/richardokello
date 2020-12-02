@@ -4,8 +4,8 @@ import co.ke.tracom.bprgatewaygen2.core.tracomhttp.resthttp.RestHTTPService;
 import co.ke.tracom.bprgatewaygen2.core.util.AppConstants;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileResponse;
-import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.PaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.PaymentResponse;
+import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentRequest;
+import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +16,7 @@ public class WASACService {
     @Value("${wasac.customer-profile.request-base-url}")
     private String WASACBaseURL;
     @Value("${wasac.customer-profile.request-suffix-url}")
-    private String WASACSuffixURL;
+    private String WASACProfileURL;
     @Value("${wasac.payment.advise-url}")
     private String WASACSPaymentAdviseURL;
 
@@ -43,7 +43,7 @@ public class WASACService {
     public CustomerProfileResponse fetchCustomerProfile(CustomerProfileRequest profileRequest) {
         CustomerProfileResponse profileResponse = new CustomerProfileResponse().setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value()  );
         try {
-            String requestURL = WASACBaseURL + profileRequest.getCustomerId() + WASACSuffixURL;
+            String requestURL = WASACBaseURL + profileRequest.getCustomerId() + WASACProfileURL;
             String results = restHTTPService.sendGetRequest(requestURL);
 
             ObjectMapper mapper = new ObjectMapper();
@@ -55,13 +55,13 @@ public class WASACService {
         return profileResponse;
     }
 
-    public PaymentResponse payWaterBill(PaymentRequest request) {
-        PaymentResponse paymentResponse = new PaymentResponse().setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
+    public WasacPaymentResponse payWaterBill(WasacPaymentRequest request) {
+        WasacPaymentResponse paymentResponse = new WasacPaymentResponse().setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
         try {
             ResponseEntity<String> response= restHTTPService.postRequest(request, WASACSPaymentAdviseURL);
 
             ObjectMapper mapper = new ObjectMapper();
-            PaymentResponse paymentAdviseResponse = mapper.readValue(response.getBody(), PaymentResponse.class);
+            WasacPaymentResponse paymentAdviseResponse = mapper.readValue(response.getBody(), WasacPaymentResponse.class);
             paymentAdviseResponse.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
         } catch (Exception e) {
             e.printStackTrace();
