@@ -11,10 +11,13 @@ import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.transactionStatus.Transacti
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPaymentResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.io.DataInput;
 
 @Service
 @RequiredArgsConstructor
@@ -36,14 +39,13 @@ public class TigopesaService {
         BillPaymentResponse paymentResponse;
 
         try {
-            ResponseEntity<String> response = xmlHttpService.post(paymentRequest.getRequestXML(), requestURL, String.class);
-            ObjectMapper mapper = new ObjectMapper();
+            ResponseEntity<String> response = xmlHttpService.post(paymentRequest, requestURL, String.class);
+            XmlMapper mapper = new XmlMapper();
             paymentResponse = mapper.readValue(response.getBody(), BillPaymentResponse.class);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new ExternalHTTPRequestException("Error getting agent details from MobiCash API");
         }
-
         return paymentResponse;
     }
 
@@ -57,8 +59,8 @@ public class TigopesaService {
         CheckBalanceResponse checkBalanceResponse;
 
         try {
-            ResponseEntity<String> response = xmlHttpService.post(checkBalanceRequest.getRequestXML(), requestURL, String.class);
-            ObjectMapper mapper = new ObjectMapper();
+            ResponseEntity<String> response = xmlHttpService.post(checkBalanceRequest, requestURL, String.class);
+            XmlMapper mapper = new XmlMapper();
             checkBalanceResponse = mapper.readValue(response.getBody(), CheckBalanceResponse.class);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -78,8 +80,8 @@ public class TigopesaService {
         TransactionStatusResponse transactionStatusResponse;
 
         try {
-            ResponseEntity<String> response = xmlHttpService.post(transactionStatusRequest.getRequestXML(), requestURL, String.class);
-            ObjectMapper mapper = new ObjectMapper();
+            ResponseEntity<String> response = xmlHttpService.post(transactionStatusRequest, requestURL, String.class);
+            XmlMapper mapper = new XmlMapper();
             transactionStatusResponse = mapper.readValue(response.getBody(), TransactionStatusResponse.class);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -99,8 +101,8 @@ public class TigopesaService {
         WalletPaymentResponse walletPaymentResponse;
 
         try {
-            ResponseEntity<String> response = xmlHttpService.post(walletPaymentRequest.getRequestXML(), requestURL, String.class);
-            ObjectMapper mapper = new ObjectMapper();
+            ResponseEntity<String> response = xmlHttpService.post(walletPaymentRequest, requestURL, String.class);
+            XmlMapper mapper = new XmlMapper();
             walletPaymentResponse = mapper.readValue(response.getBody(), WalletPaymentResponse.class);
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -2,34 +2,27 @@ package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment;
 
 import lombok.Data;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
 @Data
+@XmlRootElement(name="TCSReply")
+@XmlAccessorType(XmlAccessType.NONE)
 public class BillPaymentResponse {
-    private String errorCode;
+    @XmlAttribute(name="Result")
+    private int errorCode;
+    @XmlAttribute(name="Message")
     private String errorMessage;
+    @XmlAttribute(name="transactionId")
     private String transactionId;
+    @XmlAttribute(name="referenceId")
     private String referenceId;
+    @XmlAttribute(name="status")
     private String status;
+    @XmlAttribute(name="voucherCode")
     private int voucherCode;
+    @XmlAttribute(name="message")
     private String message;
-
-    private String getResponseXML () {
-        String xmlResponseFormat = "<TCSReply>\n" +
-                "<Result>%s</Result>\n" +
-                "<Message>%s</Message>\n" +
-                "<transactionId>%s</transactionId>\n" +
-                "<referenceId>%s</ referenceId >\n" +
-                "<status>%s</status>\n" +
-                "<voucherCode>%s</voucherCode>\n" +
-                "<message>%s</message>\n" +
-                "</TCSReply>";
-
-        return String.format(xmlResponseFormat,
-                errorCode,
-                errorMessage,
-                transactionId,
-                referenceId,
-                status,
-                voucherCode,
-                message);
-    }
 }

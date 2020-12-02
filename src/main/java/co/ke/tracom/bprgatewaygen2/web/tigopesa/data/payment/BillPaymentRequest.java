@@ -1,10 +1,11 @@
 package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment;
 
+import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.XMLRequestI;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.TigopesaRequest;
 import lombok.Data;
 
 @Data
-public class BillPaymentRequest extends TigopesaRequest {
+public class BillPaymentRequest extends TigopesaRequest implements XMLRequestI {
     private float amount;
     private String transactionId;
 

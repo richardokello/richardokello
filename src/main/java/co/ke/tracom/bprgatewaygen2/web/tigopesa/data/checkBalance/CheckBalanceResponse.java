@@ -2,26 +2,21 @@ package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance;
 
 import lombok.Data;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
 @Data
+@XmlRootElement(name="TCSReply")
+@XmlAccessorType(XmlAccessType.NONE)
 public class CheckBalanceResponse {
-    private String errorCode;
+    @XmlAttribute(name="Result")
+    private int errorCode;
+    @XmlAttribute(name="Message")
     private String errorMessage;
-    private String amount;
+    @XmlAttribute(name="referenceId")
     private String referenceId;
-
-    public String getResponseXML () {
-
-        String xmlMessage = "<TCSReply>\n" +
-                "<Result>%s</Result>\n" +
-                "<Message>%s</Message>\n" +
-                "<amount>%s</amount>\n" +
-                "<referenceId>%s</referenceId>\n" +
-                "</TCSReply>";
-
-        return String.format(xmlMessage,
-                this.getErrorCode(),
-                this.getErrorMessage(),
-                this.getAmount(),
-                this.getReferenceId());
-    }
+    @XmlAttribute(name="amount")
+    private String amount;
 }

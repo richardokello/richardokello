@@ -1,10 +1,11 @@
 package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance;
 
+import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.XMLRequestI;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.TigopesaRequest;
 import lombok.Data;
 
 @Data
-public class CheckBalanceRequest extends TigopesaRequest {
+public class CheckBalanceRequest extends TigopesaRequest implements XMLRequestI {
 
     public String getRequestXML() {
         String xmlMessage = "<TCSRequest>\n" +
