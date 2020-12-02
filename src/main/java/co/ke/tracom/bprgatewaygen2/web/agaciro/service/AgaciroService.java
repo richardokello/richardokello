@@ -66,10 +66,10 @@ public class AgaciroService {
      * @return
      */
     public InstitutionByNameResponse getInstitutionByName(InstitutionByNameRequest getInstitutionByNameRequest) {
-        InstitutionByNameResponse institution = new InstitutionByNameResponse();
+        InstitutionByNameResponse institution = null;
 
         try {
-            String requestURL = String.format(getInstitutionsURL,
+            String requestURL = String.format(getInstitutionByNameURL,
                     getInstitutionByNameRequest.getUsername(),
                     getInstitutionByNameRequest.getPassword(),
                     getInstitutionByNameRequest.getInstitution_name());
@@ -89,10 +89,10 @@ public class AgaciroService {
      * @return
      */
     public InstitutionByCodeResponse getInstitutionByCode(InstitutionByCodeRequest getInstitutionByCodeRequest) {
-        InstitutionByCodeResponse institution = new InstitutionByCodeResponse();
+        InstitutionByCodeResponse institution = null;
 
         try {
-            String requestURL = String.format(getInstitutionsURL,
+            String requestURL = String.format(getInstitutionByCodeURL,
                     getInstitutionByCodeRequest.getUsername(),
                     getInstitutionByCodeRequest.getPassword(),
                     getInstitutionByCodeRequest.getInstitution_code());
@@ -113,10 +113,10 @@ public class AgaciroService {
      * @return ValidateNIDResponse
      */
     public ValidateNIDResponse validateNID(ValidateNIDRequest validateNIDRequest) {
-        ValidateNIDResponse response = new ValidateNIDResponse();
+        ValidateNIDResponse response = null;
 
         try {
-            String requestURL = String.format(getInstitutionsURL,
+            String requestURL = String.format(validateNIDURL,
                     validateNIDRequest.getUsername(),
                     validateNIDRequest.getPassword(),
                     validateNIDRequest.getNid());
@@ -136,7 +136,7 @@ public class AgaciroService {
      * @return
      */
     public PaymentNotificationResponse sendPaymentNotification(PaymentNotificationRequest getPaymentNotificationRequest) {
-        PaymentNotificationResponse paymentNotification = new PaymentNotificationResponse();
+        PaymentNotificationResponse paymentNotification=null;
 
         try {
             ResponseEntity<String> response = restHTTPService.postRequest(getPaymentNotificationRequest, agaciroBaseURL + paymentNotificationURL);

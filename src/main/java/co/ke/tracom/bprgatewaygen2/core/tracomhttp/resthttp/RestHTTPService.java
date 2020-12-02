@@ -4,6 +4,7 @@ import co.ke.tracom.bprgatewaygen2.core.tracomhttp.CustomHTTPCommunicationInterf
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.MobiCashRequest;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.internal.HEMLogging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +24,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 
 @Service
+@RequiredArgsConstructor
 public class RestHTTPService implements CustomHTTPCommunicationInterface {
     final private Logger logger = LoggerFactory.getLogger(RestHTTPService.class);
     private static final String USER_AGENT = "Mozilla/5.0";
 
-    @Autowired
-    RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public ResponseEntity<String> postRequest(Object request, String url) throws Exception {
         //Fetch Host
@@ -92,14 +93,6 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
         return response.toString();
 
 
-    }
-
-    public <T extends Object> ResponseEntity<T> get(String apiUrl, Object request, Class<T> responseClazz) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Object> entity = new HttpEntity<>(httpHeaders);
-        ResponseEntity<T> responseEntity = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, responseClazz);
-        return responseEntity;
     }
 
 }
