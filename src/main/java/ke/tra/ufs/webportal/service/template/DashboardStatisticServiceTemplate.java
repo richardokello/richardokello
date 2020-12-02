@@ -85,7 +85,7 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
     public List<DashboardItemsWrapper> getDashboardStatistics() {
 
         List<DashboardItemsWrapper> single = new ArrayList<>();
-        single.add(new DashboardItemsWrapper("Total Customers", getTotalAgents(AppConstants.NO), "/agency-webportal/customers"));
+        single.add(new DashboardItemsWrapper("Total Customers", getTotalAgents(AppConstants.NO), "/agency-webportal/merchants"));
         single.add(new DashboardItemsWrapper("Total Bank Branches", getTotalBankBranches(AppConstants.NO), "/agency-webportal/bank-branches"));
         single.add(new DashboardItemsWrapper("Total Bank Regions", getTotalBankRegions(AppConstants.NO), "/agency-webportal/bank-regions"));
         single.add(new DashboardItemsWrapper("Agents Assigned Device", getTotalAssignedDeviceAgents(AppConstants.NO), "/agency-webportal/device-management/assigned-devices-list"));
