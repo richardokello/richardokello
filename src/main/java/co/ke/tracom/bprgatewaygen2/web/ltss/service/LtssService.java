@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ltssService {
+public class LtssService {
 
     @Value("http://10.10.90.40")
     private String ltssBaseURL;
