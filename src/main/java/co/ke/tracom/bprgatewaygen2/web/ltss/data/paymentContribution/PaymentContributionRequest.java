@@ -12,5 +12,5 @@ public class PaymentContributionRequest {
     private String description;
     private String intermediary;
     private String extReferenceNo;
-    private Date paymentDate;
+    private String paymentDate;
 }

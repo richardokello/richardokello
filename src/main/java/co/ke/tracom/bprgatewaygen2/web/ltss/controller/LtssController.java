@@ -1,7 +1,7 @@
 package co.ke.tracom.bprgatewaygen2.web.ltss.controller;
 
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.NewSubscriber.NewSubscriberRequest;
-import co.ke.tracom.bprgatewaygen2.web.ltss.data.NewSubscriber.NewSubscriberResponse;
+import co.ke.tracom.bprgatewaygen2.web.ltss.data.newSubscriber.NewSubscriberRequest;
+import co.ke.tracom.bprgatewaygen2.web.ltss.data.newSubscriber.NewSubscriberResponse;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.checkPayment.CheckPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;

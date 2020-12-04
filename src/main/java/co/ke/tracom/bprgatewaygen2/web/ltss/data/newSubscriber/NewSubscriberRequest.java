@@ -1,11 +1,9 @@
-package co.ke.tracom.bprgatewaygen2.web.ltss.data.NewSubscriber;
+package co.ke.tracom.bprgatewaygen2.web.ltss.data.newSubscriber;
 
 import lombok.Data;
 
 @Data
-public class NewSubscriberResponse {
-    private String status;
-    private String message;
+public class NewSubscriberRequest {
     private String identification;
     private String phone;
     private String occupation;
