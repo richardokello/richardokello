@@ -5,13 +5,12 @@ import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.AcademicBridgeRespons
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.AcademicBridgePaymentStatusResponse;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.PaymentStatusRequest;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.savepayment.SavePaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetails;
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsRequest;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,18 +47,16 @@ public class AcademicBridgeService {
     /**
      * To get bill details given the bill number.
      *
-     * @param studentDetails Student bill number
+     * @param request Student bill number
      * @return student Information
      */
-    public GetStudentDetailsResponse fetchStudentDetailsByBillNumber(GetStudentDetails studentDetails) {
+    public GetStudentDetailsResponse fetchStudentDetailsByBillNumber(GetStudentDetailsRequest request) {
         GetStudentDetailsResponse response;
-        //ResponseEntity<GetStudentDetailsResponse> response;
         try {
             String requestURL = String.format(getStudentDetailsURL,
-                    studentDetails.getBillNumber(),
+                    request.getBillNumber(),
                     academicBridgeAPIKey,
                     academicBridgeAPISecret);
-            //response = restHTTPService.get(baseUrl + requestURL, studentDetails, GetStudentDetailsResponse.class);
             String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
             ObjectMapper mapper = new ObjectMapper();
             response = mapper.readValue(results,  GetStudentDetailsResponse.class);
@@ -71,7 +68,7 @@ public class AcademicBridgeService {
     }
 
     /**
-     * To save payment on academic bridge school’s database.
+     * Save payment on academic bridge school’s database.
      *
      * @param savePaymentRequest save payment details
      * @return payment results
@@ -101,13 +98,13 @@ public class AcademicBridgeService {
     }
 
     /**
-     * To check if the payment was successfully saved on academic bridge given bank’s reference number.
+     * Check if the payment was successfully saved on academic bridge given bank’s reference number.
      *
      * @param request Transaction reference no
      * @return Transaction posting
      */
     public AcademicBridgePaymentStatusResponse checkPaymentStatus(PaymentStatusRequest request) {
-        AcademicBridgePaymentStatusResponse response = new AcademicBridgePaymentStatusResponse();
+        AcademicBridgePaymentStatusResponse response;
         try {
             String requestURL = String.format(checkPaymentStatusURL,
                     request.getReferenceNo(),

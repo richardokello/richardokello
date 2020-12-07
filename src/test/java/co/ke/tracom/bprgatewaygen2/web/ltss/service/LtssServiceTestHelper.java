@@ -63,7 +63,6 @@ public class LtssServiceTestHelper {
         responseObj.setPhone("0731112523");
         responseObj.setFrequency(1);
         responseObj.setOccupation("1");
-
         return responseObj;
     }
 

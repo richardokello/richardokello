@@ -5,13 +5,12 @@ import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfil
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentResponse;
 import co.ke.tracom.bprgatewaygen2.web.wasac.service.WASACService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -21,14 +20,24 @@ public class WasacController {
 
     private final WASACService wasacService;
 
-    @PostMapping("/customer/profile")
-    public ResponseEntity<?> getCustomerProfile(@RequestBody CustomerProfileRequest request) {
+    @ApiOperation(
+            value = "Get the customer profile details from WASAC given a customer ID",
+            response = CustomerProfileResponse.class)
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<?> getCustomerProfile(@ApiParam(value = "Customer ID", required = true)
+                                                    @PathVariable String customerId) {
+        CustomerProfileRequest request = new CustomerProfileRequest();
+        request.setCustomerId(customerId);
         CustomerProfileResponse responseEntity = wasacService.fetchCustomerProfile(request);
         return new ResponseEntity<>(responseEntity, HttpStatus.OK);
     }
 
-    @PostMapping("/bill")
-    public ResponseEntity<?> creditAccount(@RequestBody WasacPaymentRequest request) {
+    @ApiOperation(
+            value = "Post payment details to WASAC. Username and password needed for authentication",
+            response = WasacPaymentResponse.class)
+    @PostMapping("/payment")
+    public ResponseEntity<?> creditAccount(@ApiParam(value = "Payment details", required = true)
+                                               @RequestBody WasacPaymentRequest request) {
         WasacPaymentResponse responseEntity = wasacService.payWaterBill(request);
         return new ResponseEntity<>(responseEntity, HttpStatus.OK);
     }

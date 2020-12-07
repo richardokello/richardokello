@@ -1,4 +1,4 @@
-package co.ke.tracom.bprgatewaygen2;
+package co.ke.tracom.bprgatewaygen2.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

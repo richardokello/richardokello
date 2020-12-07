@@ -5,7 +5,7 @@ import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.AcademicBridgeRespons
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.AcademicBridgePaymentStatusResponse;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.PaymentStatusRequest;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.savepayment.SavePaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetails;
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsRequest;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -78,7 +78,7 @@ public class AcademicBridgeServiceTest {
     @Test
     public void fetchStudentDetailsByBillNumber() throws JsonProcessingException {
         GetStudentDetailsResponse expectedResponse = generateStudentDetailsResponse();
-        GetStudentDetails userDetailsRequest = generateStudentDetailsRequest();
+        GetStudentDetailsRequest userDetailsRequest = generateStudentDetailsRequest();
         String studentDetailsUrl = generateGetStudentDetailsUrl(userDetailsRequest);
         String expectedResponseString = objectMapper.writeValueAsString(expectedResponse);
 
@@ -182,14 +182,14 @@ public class AcademicBridgeServiceTest {
         return details;
     }
 
-    private GetStudentDetails generateStudentDetailsRequest () {
-        GetStudentDetails details = new GetStudentDetails();
+    private GetStudentDetailsRequest generateStudentDetailsRequest () {
+        GetStudentDetailsRequest details = new GetStudentDetailsRequest();
         details.setBillNumber("12345");
         return details;
     }
 
     // Generates relative url for getting student details
-    private String generateGetStudentDetailsUrl(GetStudentDetails studentDetails) {
+    private String generateGetStudentDetailsUrl(GetStudentDetailsRequest studentDetails) {
         String requestURL = String.format(getStudentDetailsURL,
                 studentDetails.getBillNumber(),
                 academicBridgeAPIKey,

@@ -23,7 +23,7 @@ public class LtssService {
     @Value("${ltss.base.url}")
     private String ltssBaseUrl;
 
-    @Value("${ltss.nationalId.validation.Url}")
+    @Value("${ltss.nationalId.validation.url}")
     private String nationalIdValidationUrl;
 
     @Value("${ltss.payment.contribution.url}")
