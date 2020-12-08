@@ -23,6 +23,11 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 
+
+/**
+ * This class provides convenient methods for making HTTP requests to a remote API
+ * by defining a wrapper over the rest template client.
+ */
 @Service
 @RequiredArgsConstructor
 public class RestHTTPService implements CustomHTTPCommunicationInterface {
@@ -33,7 +38,7 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
 
     public ResponseEntity<String> postRequest(Object request, String url) throws Exception {
         //Fetch Host
-        /*Pack the URL for this request*/
+        /* Pack the URL for this request */
         UriComponents uriComponents = UriComponentsBuilder
                 .fromHttpUrl(url)
                 .build()

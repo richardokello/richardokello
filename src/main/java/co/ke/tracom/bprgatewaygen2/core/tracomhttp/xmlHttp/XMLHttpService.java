@@ -11,6 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * This class provides convenient methods for making HTTP requests to a remote API
+ * that uses XML formatted request and response.
+ */
 @Component
 @RequiredArgsConstructor
 public class XMLHttpService {
