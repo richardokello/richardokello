@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class CustomerProfileRequest {
-    private String customerId;
+
+  private String customerId;
 }

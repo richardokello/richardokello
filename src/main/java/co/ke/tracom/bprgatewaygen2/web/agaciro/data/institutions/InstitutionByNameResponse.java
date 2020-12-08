@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class InstitutionByNameResponse extends AgaciroResponse {
-    private Object institution;
+
+  private Object institution;
 }

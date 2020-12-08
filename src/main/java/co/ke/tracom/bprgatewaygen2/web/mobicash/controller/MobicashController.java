@@ -21,28 +21,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MobicashController {
 
-    private final MobiCashService mobiCashService;
+  private final MobiCashService mobiCashService;
 
-    /**
-     * Retrieves dynamic token to be used for subsequent requests
-     * @param request Authentication request object
-     * @return authorization token
-     */
-    @PostMapping("/oauth/token")
-    public ResponseEntity<?> requestToken(@RequestBody AuthenticationRequest request) {
-        AuthenticationResponse responseEntity = mobiCashService.authRequest(request);
-        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
-    }
+  /**
+   * Retrieves dynamic token to be used for subsequent requests
+   *
+   * @param request Authentication request object
+   * @return authorization token
+   */
+  @PostMapping("/oauth/token")
+  public ResponseEntity<?> requestToken(@RequestBody AuthenticationRequest request) {
+    AuthenticationResponse responseEntity = mobiCashService.authRequest(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
 
-    @PostMapping("/agent")
-    public ResponseEntity<?> getAgentDetails(@RequestBody AgentDetailsRequest request) {
-        AgentDetailsResponse responseEntity = mobiCashService.getAgentDetails(request);
-        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
-    }
+  @PostMapping("/agent")
+  public ResponseEntity<?> getAgentDetails(@RequestBody AgentDetailsRequest request) {
+    AgentDetailsResponse responseEntity = mobiCashService.getAgentDetails(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
 
-    @PostMapping("/account")
-    public ResponseEntity<?> creditAccount(@RequestBody MobicashPaymentRequest request) {
-        MobicashPaymentResponse responseEntity = mobiCashService.sendPayment(request);
-        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
-    }
+  @PostMapping("/account")
+  public ResponseEntity<?> creditAccount(@RequestBody MobicashPaymentRequest request) {
+    MobicashPaymentResponse responseEntity = mobiCashService.sendPayment(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
 }

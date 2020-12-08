@@ -23,29 +23,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TigoPesaController {
 
-    private final TigopesaService tigopesaService;
+  private final TigopesaService tigopesaService;
 
-    @PostMapping("/bill")
-    public ResponseEntity<?> payBill(@RequestBody BillPaymentRequest request) {
-        BillPaymentResponse responseEntity = tigopesaService.payBill(request);
-        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
-    }
+  @PostMapping("/bill")
+  public ResponseEntity<?> payBill(@RequestBody BillPaymentRequest request) {
+    BillPaymentResponse responseEntity = tigopesaService.payBill(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
 
-    @PostMapping("/balance")
-    public ResponseEntity<?> checkBalance(@RequestBody CheckBalanceRequest request) {
-        CheckBalanceResponse responseEntity = tigopesaService.checkBalance(request);
-        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
-    }
+  @PostMapping("/balance")
+  public ResponseEntity<?> checkBalance(@RequestBody CheckBalanceRequest request) {
+    CheckBalanceResponse responseEntity = tigopesaService.checkBalance(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
 
-    @PostMapping("/transaction/status")
-    public ResponseEntity<?> checkTransactionStatus(@RequestBody TransactionStatusRequest request) {
-        TransactionStatusResponse responseEntity = tigopesaService.checkTransactionStatus(request);
-        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
-    }
+  @PostMapping("/transaction/status")
+  public ResponseEntity<?> checkTransactionStatus(@RequestBody TransactionStatusRequest request) {
+    TransactionStatusResponse responseEntity = tigopesaService.checkTransactionStatus(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
 
-    @PostMapping("/wallet")
-    public ResponseEntity<?> creditWallet(@RequestBody WalletPaymentRequest request) {
-        WalletPaymentResponse responseEntity = tigopesaService.creditWallet(request);
-        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
-    }
+  @PostMapping("/wallet")
+  public ResponseEntity<?> creditWallet(@RequestBody WalletPaymentRequest request) {
+    WalletPaymentResponse responseEntity = tigopesaService.creditWallet(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
 }

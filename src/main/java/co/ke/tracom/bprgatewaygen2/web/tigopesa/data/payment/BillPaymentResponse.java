@@ -1,59 +1,52 @@
 package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
-import org.springframework.data.annotation.Transient;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 
 @Data
 public class BillPaymentResponse {
-    @JsonProperty("Result")
-    private String Result; // errorCode
 
-    @JsonProperty("Message")
-    private String Message; // error Message
+  @JsonProperty("Result")
+  private String Result; // errorCode
 
-    @JsonProperty("transactionId")
-    private String transactionId;
+  @JsonProperty("Message")
+  private String Message; // error Message
 
-    @JsonProperty("referenceId")
-    private String referenceId;
+  @JsonProperty("transactionId")
+  private String transactionId;
 
-    @JsonProperty("status")
-    private String status;
+  @JsonProperty("referenceId")
+  private String referenceId;
 
-    @JsonProperty("voucherCode")
-    private int voucherCode;
+  @JsonProperty("status")
+  private String status;
 
-    @JsonProperty("message")
-    private String message;
+  @JsonProperty("voucherCode")
+  private int voucherCode;
 
-    @JsonGetter("Message")
-    public String getMessage() {
-        return this.Message;
-    }
+  @JsonProperty("message")
+  private String message;
 
-    @JsonSetter("Message")
-    public void setMessage(String Message) {
-        this.Message = Message;
-    }
+  @JsonGetter("Message")
+  public String getMessage() {
+    return this.Message;
+  }
 
-    @JsonGetter("message")
-    public String get_message() {
-        return this.message;
-    }
+  @JsonSetter("Message")
+  public void setMessage(String Message) {
+    this.Message = Message;
+  }
 
-    @JsonSetter("message")
-    public void set_message(String message) {
-        this.message = message;
-    }
+  @JsonGetter("message")
+  public String get_message() {
+    return this.message;
+  }
+
+  @JsonSetter("message")
+  public void set_message(String message) {
+    this.message = message;
+  }
 
 }

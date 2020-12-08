@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class AuthenticationRequest {
-    private String clientCode;
-    private String clientSecret;
-    private String grantType;
-    private String authorization; // Initially shared by MobiCash
+
+  private String clientCode;
+  private String clientSecret;
+  private String grantType;
+  private String authorization; // Initially shared by MobiCash
 }

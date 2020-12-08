@@ -10,7 +10,12 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -18,28 +23,28 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class WasacController {
 
-    private final WASACService wasacService;
+  private final WASACService wasacService;
 
-    @ApiOperation(
-            value = "Get the customer profile details from WASAC given a customer ID",
-            response = CustomerProfileResponse.class)
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<?> getCustomerProfile(@ApiParam(value = "Customer ID", required = true)
-                                                    @PathVariable String customerId) {
-        CustomerProfileRequest request = new CustomerProfileRequest();
-        request.setCustomerId(customerId);
-        CustomerProfileResponse responseEntity = wasacService.fetchCustomerProfile(request);
-        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
-    }
+  @ApiOperation(
+      value = "Get the customer profile details from WASAC given a customer ID",
+      response = CustomerProfileResponse.class)
+  @GetMapping("/customer/{customerId}")
+  public ResponseEntity<?> getCustomerProfile(@ApiParam(value = "Customer ID", required = true)
+  @PathVariable String customerId) {
+    CustomerProfileRequest request = new CustomerProfileRequest();
+    request.setCustomerId(customerId);
+    CustomerProfileResponse responseEntity = wasacService.fetchCustomerProfile(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
 
-    @ApiOperation(
-            value = "Post payment details to WASAC. Username and password needed for authentication",
-            response = WasacPaymentResponse.class)
-    @PostMapping("/payment")
-    public ResponseEntity<?> creditAccount(@ApiParam(value = "Payment details", required = true)
-                                               @RequestBody WasacPaymentRequest request) {
-        WasacPaymentResponse responseEntity = wasacService.payWaterBill(request);
-        return new ResponseEntity<>(responseEntity, HttpStatus.OK);
-    }
+  @ApiOperation(
+      value = "Post payment details to WASAC. Username and password needed for authentication",
+      response = WasacPaymentResponse.class)
+  @PostMapping("/payment")
+  public ResponseEntity<?> creditAccount(@ApiParam(value = "Payment details", required = true)
+  @RequestBody WasacPaymentRequest request) {
+    WasacPaymentResponse responseEntity = wasacService.payWaterBill(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
 }
 

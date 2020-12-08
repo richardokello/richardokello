@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class AgaciroResponse {
-    private String result_code;
-    private String message;
+  private String result_code;
+  private String message;
 }

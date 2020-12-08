@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class MobiCashRequest {
-    private String clientCode;
-    private String transactionIdentifier;
-    private String accountNumber;
-    private String authorization;
+
+  private String clientCode;
+  private String transactionIdentifier;
+  private String accountNumber;
+  private String authorization;
 }

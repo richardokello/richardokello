@@ -4,9 +4,10 @@ import lombok.Data;
 
 @Data
 public class NewSubscriberRequest {
-    private String identification;
-    private String phone;
-    private String occupation;
-    private int frequency;
-    private long amount;
+
+  private String identification;
+  private String phone;
+  private String occupation;
+  private int frequency;
+  private long amount;
 }

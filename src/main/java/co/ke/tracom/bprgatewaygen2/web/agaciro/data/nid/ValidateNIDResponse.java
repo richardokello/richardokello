@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class ValidateNIDResponse extends AgaciroResponse {
-    private Object document;
+
+  private Object document;
 }

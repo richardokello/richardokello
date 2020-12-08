@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class DocumentNID {
-    private String nid;
+
+  private String nid;
 }

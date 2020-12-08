@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class PaymentNotificationResponse extends AgaciroResponse {
-    private Object payment;
+
+  private Object payment;
 }

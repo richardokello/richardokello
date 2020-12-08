@@ -5,4 +5,5 @@ import lombok.Data;
 
 @Data
 public class AgentDetailsRequest extends MobiCashRequest {
+
 }

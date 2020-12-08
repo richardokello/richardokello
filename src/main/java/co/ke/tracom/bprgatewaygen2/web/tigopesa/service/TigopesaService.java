@@ -2,15 +2,14 @@ package co.ke.tracom.bprgatewaygen2.web.tigopesa.service;
 
 import co.ke.tracom.bprgatewaygen2.core.tracomhttp.xmlHttp.XMLHttpService;
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
-import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance.CheckBalanceRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance.CheckBalanceResponse;
+import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentRequest;
+import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.transactionStatus.TransactionStatusRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.transactionStatus.TransactionStatusResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPaymentResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,98 +20,103 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TigopesaService {
 
-    @Value("")
-    private String baseURL;
+  //private final RestHTTPService restHTTPService;
+  private final XMLHttpService xmlHttpService;
+  @Value("")
+  private String baseURL;
+  @Value("/TELEPIN")
+  private String requestURL;
 
-    @Value("/TELEPIN")
-    private String requestURL;
+  /**
+   * This method is used to pay bills
+   *
+   * @param paymentRequest
+   * @return payment response details
+   */
+  public BillPaymentResponse payBill(BillPaymentRequest paymentRequest) {
+    BillPaymentResponse paymentResponse;
 
-    //private final RestHTTPService restHTTPService;
-    private final XMLHttpService xmlHttpService;
+    try {
+      ResponseEntity<String> response = xmlHttpService
+          .post(paymentRequest, baseURL + requestURL, String.class);
+      System.out.println("=========================> " + response.getBody());
+      XmlMapper mapper = new XmlMapper();
+      //ObjectMapper mapper =  new ObjectMapper();
+      paymentResponse = mapper.readValue(response.getBody(), BillPaymentResponse.class);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw new ExternalHTTPRequestException("Error getting agent details from TigoPesa API");
+    }
+    return paymentResponse;
+  }
 
-    /**
-     * This method is used to pay bills
-     *
-     * @param paymentRequest
-     * @return payment response details
-     */
-    public BillPaymentResponse payBill(BillPaymentRequest paymentRequest) {
-        BillPaymentResponse paymentResponse;
+  /**
+   * Retrieves balance of the bill which customer has to pay
+   *
+   * @param checkBalanceRequest
+   * @return customer balance details
+   */
+  public CheckBalanceResponse checkBalance(CheckBalanceRequest checkBalanceRequest) {
+    CheckBalanceResponse checkBalanceResponse;
 
-        try {
-            ResponseEntity<String> response = xmlHttpService.post(paymentRequest, baseURL+requestURL, String.class);
-            System.out.println("=========================> " + response.getBody());
-            XmlMapper mapper = new XmlMapper();
-            //ObjectMapper mapper =  new ObjectMapper();
-            paymentResponse = mapper.readValue(response.getBody(), BillPaymentResponse.class);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new ExternalHTTPRequestException("Error getting agent details from TigoPesa API");
-        }
-        return paymentResponse;
+    try {
+      ResponseEntity<String> response = xmlHttpService
+          .post(checkBalanceRequest, baseURL + requestURL, String.class);
+      XmlMapper mapper = new XmlMapper();
+      checkBalanceResponse = mapper.readValue(response.getBody(), CheckBalanceResponse.class);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw new ExternalHTTPRequestException("Error paying bill using TigoPesa API");
     }
 
-    /**
-     * Retrieves balance of the bill which customer has to pay
-     *
-     * @param checkBalanceRequest
-     * @return customer balance details
-     */
-    public CheckBalanceResponse checkBalance(CheckBalanceRequest checkBalanceRequest) {
-        CheckBalanceResponse checkBalanceResponse;
+    return checkBalanceResponse;
+  }
 
-        try {
-            ResponseEntity<String> response = xmlHttpService.post(checkBalanceRequest, baseURL+requestURL, String.class);
-            XmlMapper mapper = new XmlMapper();
-            checkBalanceResponse = mapper.readValue(response.getBody(), CheckBalanceResponse.class);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new ExternalHTTPRequestException("Error paying bill using TigoPesa API");
-        }
+  /**
+   * Get the transaction status
+   *
+   * @param transactionStatusRequest
+   * @return transaction status response details
+   */
+  public TransactionStatusResponse checkTransactionStatus(
+      TransactionStatusRequest transactionStatusRequest) {
+    TransactionStatusResponse transactionStatusResponse;
 
-        return checkBalanceResponse;
+    try {
+      ResponseEntity<String> response = xmlHttpService
+          .post(transactionStatusRequest, baseURL + requestURL, String.class);
+      XmlMapper mapper = new XmlMapper();
+      transactionStatusResponse = mapper
+          .readValue(response.getBody(), TransactionStatusResponse.class);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw new ExternalHTTPRequestException("Error getting transaction status using TigoPesa API");
     }
 
-    /**
-     * Get the transaction status
-     *
-     * @param transactionStatusRequest
-     * @return transaction status response details
-     */
-    public TransactionStatusResponse checkTransactionStatus(TransactionStatusRequest transactionStatusRequest) {
-        TransactionStatusResponse transactionStatusResponse;
+    return transactionStatusResponse;
+  }
 
-        try {
-            ResponseEntity<String> response = xmlHttpService.post(transactionStatusRequest, baseURL+requestURL, String.class);
-            XmlMapper mapper = new XmlMapper();
-            transactionStatusResponse = mapper.readValue(response.getBody(), TransactionStatusResponse.class);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new ExternalHTTPRequestException("Error getting transaction status using TigoPesa API");
-        }
+  /**
+   * Deposit money to MFS wallet
+   *
+   * @param walletPaymentRequest
+   * @return wallet payment response details
+   */
+  public WalletPaymentResponse creditWallet(WalletPaymentRequest walletPaymentRequest) {
+    WalletPaymentResponse walletPaymentResponse;
 
-        return transactionStatusResponse;
+    try {
+      ResponseEntity<String> response = xmlHttpService
+          .post(walletPaymentRequest, baseURL + requestURL, String.class);
+      XmlMapper mapper = new XmlMapper();
+      walletPaymentResponse = mapper.readValue(response.getBody(), WalletPaymentResponse.class);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw new ExternalHTTPRequestException(
+          "Error depositing money to MFS wallet using TigoPesa API");
     }
 
-    /**
-     * Deposit money to MFS wallet
-     *
-     * @param walletPaymentRequest
-     * @return wallet payment response details
-     */
-    public WalletPaymentResponse creditWallet(WalletPaymentRequest walletPaymentRequest) {
-        WalletPaymentResponse walletPaymentResponse;
-
-        try {
-            ResponseEntity<String> response = xmlHttpService.post(walletPaymentRequest, baseURL+requestURL, String.class);
-            XmlMapper mapper = new XmlMapper();
-            walletPaymentResponse = mapper.readValue(response.getBody(), WalletPaymentResponse.class);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new ExternalHTTPRequestException("Error depositing money to MFS wallet using TigoPesa API");
-        }
-
-        return walletPaymentResponse;
-    }
+    return walletPaymentResponse;
+  }
 }
 

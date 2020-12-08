@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class PaymentStatusRequest {
-    private String referenceNo;
+
+  private String referenceNo;
 }

@@ -7,46 +7,47 @@ import lombok.Data;
 
 @Data
 public class WalletPaymentResponse {
-    @JsonProperty("Result")
-    private String Result; // errorCode
 
-    @JsonProperty("Message")
-    private String Message; // error Message
+  @JsonProperty("Result")
+  private String Result; // errorCode
 
-    @JsonProperty("transactionId")
-    private String transactionId;
+  @JsonProperty("Message")
+  private String Message; // error Message
 
-    @JsonProperty("referenceId")
-    private String referenceId;
+  @JsonProperty("transactionId")
+  private String transactionId;
 
-    @JsonProperty("status")
-    private String status;
+  @JsonProperty("referenceId")
+  private String referenceId;
 
-    @JsonProperty("voucherCode")
-    private int voucherCode;
+  @JsonProperty("status")
+  private String status;
 
-    @JsonProperty("message")
-    private String message;
+  @JsonProperty("voucherCode")
+  private int voucherCode;
 
-    @JsonGetter("Message")
-    public String getMessage() {
-        return this.Message;
-    }
+  @JsonProperty("message")
+  private String message;
 
-    @JsonSetter("Message")
-    public void setMessage(String Message) {
-        this.Message = Message;
-    }
+  @JsonGetter("Message")
+  public String getMessage() {
+    return this.Message;
+  }
 
-    @JsonGetter("message")
-    public String get_message() {
-        return this.message;
-    }
+  @JsonSetter("Message")
+  public void setMessage(String Message) {
+    this.Message = Message;
+  }
 
-    @JsonSetter("message")
-    public void set_message(String message) {
-        this.message = message;
-    }
+  @JsonGetter("message")
+  public String get_message() {
+    return this.message;
+  }
+
+  @JsonSetter("message")
+  public void set_message(String message) {
+    this.message = message;
+  }
 }
 
 

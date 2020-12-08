@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class AcademicBridgePaymentStatusResponse extends AcademicBridgeResponse {
 
-    private String ab_reference;
+  private String ab_reference;
 }

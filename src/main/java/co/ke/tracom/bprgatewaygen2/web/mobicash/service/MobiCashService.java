@@ -18,86 +18,83 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MobiCashService {
 
-    @Value("http://server:port")
-    private String baseURL;
+  private final RestHTTPService restHTTPService;
+  @Value("http://server:port")
+  private String baseURL;
+  @Value("/server:port/mcash/oauth/token")
+  private String authRequestURL;
+  @Value("/mcash/services/rest/1.2.1/bank")
+  private String agentDetailsURL;
+  @Value("/mcash/services/rest/1.2.1/bank/trustAccount")
+  private String creditAccountURL;
+  private String accessToken;
 
-    @Value("/server:port/mcash/oauth/token")
-    private String authRequestURL;
+  /**
+   * Obtains and sets access authentication token from remote API
+   *
+   * @param authenticationRequest
+   * @return AuthenticationResponse authentication details
+   */
+  public AuthenticationResponse authRequest(AuthenticationRequest authenticationRequest) {
+    AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 
-    @Value("/mcash/services/rest/1.2.1/bank")
-    private String agentDetailsURL;
+    try {
+      String requestURL = baseURL + authRequestURL;
+      ResponseEntity<String> response = restHTTPService
+          .postRequest(authenticationRequest, requestURL);
+      ObjectMapper mapper = new ObjectMapper();
+      authenticationResponse = mapper.readValue(response.getBody(), AuthenticationResponse.class);
+      accessToken = authenticationResponse.getAccess_token();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return authenticationResponse;
+  }
 
-    @Value("/mcash/services/rest/1.2.1/bank/trustAccount")
-    private String creditAccountURL;
+  /**
+   * Retrieves agent details using phone number or agent mcash ID
+   *
+   * @param agentDetailsRequest
+   * @return AgentDetailsResponse agent details
+   */
+  public AgentDetailsResponse getAgentDetails(AgentDetailsRequest agentDetailsRequest) {
+    AgentDetailsResponse agentDetailsResponse;
 
-    private String accessToken;
-
-    private final RestHTTPService restHTTPService;
-
-    /**
-     * Obtains and sets access authentication token from remote API
-     *
-     * @param authenticationRequest
-     * @return AuthenticationResponse authentication details
-     */
-    public AuthenticationResponse authRequest(AuthenticationRequest authenticationRequest) {
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-
-        try {
-            String requestURL = baseURL + authRequestURL;
-            ResponseEntity<String> response = restHTTPService.postRequest(authenticationRequest, requestURL);
-            ObjectMapper mapper = new ObjectMapper();
-            authenticationResponse = mapper.readValue(response.getBody(), AuthenticationResponse.class);
-            accessToken = authenticationResponse.getAccess_token();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return authenticationResponse;
+    try {
+      agentDetailsRequest.setAccountNumber(accessToken);
+      String requestURL = baseURL + agentDetailsURL;
+      ResponseEntity<String> response = restHTTPService
+          .postRequest(agentDetailsRequest, requestURL);
+      ObjectMapper mapper = new ObjectMapper();
+      agentDetailsResponse = mapper.readValue(response.getBody(), AgentDetailsResponse.class);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw new ExternalHTTPRequestException("Error getting agent details from MobiCash API");
     }
 
-    /**
-     * Retrieves agent details using phone number or agent mcash ID
-     *
-     * @param agentDetailsRequest
-     * @return AgentDetailsResponse agent details
-     */
-    public AgentDetailsResponse getAgentDetails(AgentDetailsRequest agentDetailsRequest) {
-        AgentDetailsResponse agentDetailsResponse;
+    return agentDetailsResponse;
+  }
 
-        try {
-            agentDetailsRequest.setAccountNumber(accessToken);
-            String requestURL = baseURL + agentDetailsURL;
-            ResponseEntity<String> response = restHTTPService.postRequest(agentDetailsRequest, requestURL);
-            ObjectMapper mapper = new ObjectMapper();
-            agentDetailsResponse = mapper.readValue(response.getBody(), AgentDetailsResponse.class);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new ExternalHTTPRequestException("Error getting agent details from MobiCash API");
-        }
+  /**
+   * Credits a specific MobiCash account
+   *
+   * @param paymentRequest
+   * @return PaymentResponse payment response object
+   */
+  public MobicashPaymentResponse sendPayment(MobicashPaymentRequest paymentRequest) {
+    MobicashPaymentResponse paymentResponse;
 
-        return agentDetailsResponse;
+    try {
+      paymentRequest.setAuthorization(accessToken);
+      String requestURL = baseURL + creditAccountURL;
+      ResponseEntity<String> response = restHTTPService.postRequest(paymentRequest, requestURL);
+      ObjectMapper mapper = new ObjectMapper();
+      paymentResponse = mapper.readValue(response.getBody(), MobicashPaymentResponse.class);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw new ExternalHTTPRequestException("Error sending payment MobiCash API");
     }
 
-    /**
-     * Credits a specific MobiCash account
-     *
-     * @param paymentRequest
-     * @return PaymentResponse payment response object
-     */
-    public MobicashPaymentResponse sendPayment(MobicashPaymentRequest paymentRequest) {
-        MobicashPaymentResponse paymentResponse;
-
-        try {
-            paymentRequest.setAuthorization(accessToken);
-            String requestURL = baseURL + creditAccountURL;
-            ResponseEntity<String> response = restHTTPService.postRequest(paymentRequest, requestURL);
-            ObjectMapper mapper = new ObjectMapper();
-            paymentResponse = mapper.readValue(response.getBody(), MobicashPaymentResponse.class);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new ExternalHTTPRequestException("Error sending payment MobiCash API");
-        }
-
-        return paymentResponse;
-    }
+    return paymentResponse;
+  }
 }

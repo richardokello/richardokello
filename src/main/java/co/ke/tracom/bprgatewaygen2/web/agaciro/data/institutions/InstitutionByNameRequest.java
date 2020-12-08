@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class InstitutionByNameRequest extends AgaciroRequest {
-    private String institution_name;
+
+  private String institution_name;
 }

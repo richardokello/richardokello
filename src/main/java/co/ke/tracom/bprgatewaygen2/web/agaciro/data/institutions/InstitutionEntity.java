@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class InstitutionEntity {
-    private String code;
-    private String name;
+
+  private String code;
+  private String name;
 }

@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class GetStudentDetailsRequest {
-    private String billNumber;
+
+  private String billNumber;
 }

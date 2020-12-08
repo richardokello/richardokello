@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class MobiCashResponse {
-    private String responseCode;
-    private String statusCode;
-    private String responseDescription;
+
+  private String responseCode;
+  private String statusCode;
+  private String responseDescription;
 }

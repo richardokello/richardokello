@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class Payment {
-    private String payment;
+
+  private String payment;
 }
