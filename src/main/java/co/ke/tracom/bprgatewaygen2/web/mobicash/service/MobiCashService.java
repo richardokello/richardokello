@@ -61,7 +61,7 @@ public class MobiCashService {
     AgentDetailsResponse agentDetailsResponse;
 
     try {
-      agentDetailsRequest.setAccountNumber(accessToken);
+      agentDetailsRequest.setAuthorization(accessToken);
       String requestURL = baseURL + agentDetailsURL;
       ResponseEntity<String> response = restHTTPService
           .postRequest(agentDetailsRequest, requestURL);

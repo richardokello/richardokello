@@ -1,8 +1,6 @@
 package co.ke.tracom.bprgatewaygen2.web.agaciro.service;
 
 import co.ke.tracom.bprgatewaygen2.core.util.CustomObjectMapper;
-import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.AcademicBridgePaymentStatusResponse;
-import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.PaymentStatusRequest;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.*;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.DocumentNID;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.ValidateNIDRequest;
@@ -145,7 +143,7 @@ public class AgaciroServiceTest {
         String requestURL = String.format(getInstitutionByNameURL,
                 institutionByNameRequest.getUsername(),
                 institutionByNameRequest.getPassword(),
-                institutionByNameRequest.getInstitution_name());
+                institutionByNameRequest.getInstitutionName());
         return requestURL;
     }
 
@@ -153,7 +151,7 @@ public class AgaciroServiceTest {
         InstitutionByNameRequest req = new InstitutionByNameRequest();
         req.setPassword("1234");
         req.setUsername("Putin");
-        req.setInstitution_name("ALADIN");
+        req.setInstitutionName("ALADIN");
         return req;
     }
 
@@ -191,7 +189,7 @@ public class AgaciroServiceTest {
         String requestURL = String.format(getInstitutionByCodeURL,
                 institutionByCodeRequest.getUsername(),
                 institutionByCodeRequest.getPassword(),
-                institutionByCodeRequest.getInstitution_code());
+                institutionByCodeRequest.getInstitutionCode());
         return requestURL;
     }
 
@@ -199,7 +197,7 @@ public class AgaciroServiceTest {
         InstitutionByCodeRequest req = new InstitutionByCodeRequest();
         req.setPassword("1234");
         req.setUsername("Putin");
-        req.setInstitution_code("0000");
+        req.setInstitutionCode("0000");
         return req;
     }
 
@@ -299,20 +297,20 @@ public class AgaciroServiceTest {
     private PaymentNotificationRequest generatePaymentNotificationRequest() {
         PaymentNotificationRequest req = new PaymentNotificationRequest();
         req.setAmount(300);
-        req.setContributor_type("company");
+        req.setContributorType("company");
         req.setUsername("putin");
         req.setPassword("12345");
-        req.setCredited_account_number("98765");
+        req.setCreditedAccountNumber("98765");
         req.setDesignation("John Doe");
         req.setEmployee(true);
-        req.setInstitution_code("200");
-        req.setMovement_number("888");
+        req.setInstitutionCode("200");
+        req.setMovementNumber("888");
         req.setNid("3077654");
-        req.setOperation_nature(new Date());
-        req.setPhone_number("0112345");
-        req.setTransaction_date("Dec 2020");
+        req.setOperationNature(new Date());
+        req.setPhoneNumber("0112345");
+        req.setTransactionDate("Dec 2020");
         req.setReason("Sample reason");
-        req.setPassport_number("778899");
+        req.setPassportNumber("778899");
 
         return req;
     }

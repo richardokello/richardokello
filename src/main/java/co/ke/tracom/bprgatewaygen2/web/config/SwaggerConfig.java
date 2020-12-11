@@ -34,12 +34,10 @@ public class SwaggerConfig {
   }
 
   private ApiInfo apiEndPointsInfo() {
-    return new ApiInfoBuilder().title("Swagger Documentation for BPR gateway")
+    return new ApiInfoBuilder()
+        .title("Swagger Documentation for BPR gateway")
         .description("")
-        .contact(new Contact("John Paul Mulongo",
-            "",
-            "john.mulongo@tracom.co.ke"))
-        .version("1.0.0")
+        .contact(new Contact("John Paul Mulongo", "", "john.mulongo@tracom.co.ke"))
         .build();
   }
 }

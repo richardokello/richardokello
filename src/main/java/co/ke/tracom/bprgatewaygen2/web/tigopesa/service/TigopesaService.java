@@ -28,7 +28,7 @@ public class TigopesaService {
   private String requestURL;
 
   /**
-   * This method is used to pay bills
+   * This method is used to pay bills.
    *
    * @param paymentRequest
    * @return payment response details

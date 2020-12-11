@@ -71,7 +71,7 @@ public class AgaciroService {
       String requestURL = String.format(getInstitutionByNameURL,
           getInstitutionByNameRequest.getUsername(),
           getInstitutionByNameRequest.getPassword(),
-          getInstitutionByNameRequest.getInstitution_name());
+          getInstitutionByNameRequest.getInstitutionName());
       String results = restHTTPService.sendGetRequest(agaciroBaseURL + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       institution = mapper.readValue(results, InstitutionByNameResponse.class);
@@ -95,7 +95,7 @@ public class AgaciroService {
       String requestURL = String.format(getInstitutionByCodeURL,
           getInstitutionByCodeRequest.getUsername(),
           getInstitutionByCodeRequest.getPassword(),
-          getInstitutionByCodeRequest.getInstitution_code());
+          getInstitutionByCodeRequest.getInstitutionCode());
       String results = restHTTPService.sendGetRequest(requestURL);
       ObjectMapper mapper = new ObjectMapper();
       institution = mapper.readValue(results, InstitutionByCodeResponse.class);

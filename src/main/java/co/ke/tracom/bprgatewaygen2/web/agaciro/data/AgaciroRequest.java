@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class AgaciroRequest {
-
   private String username;
   private String password;
 }

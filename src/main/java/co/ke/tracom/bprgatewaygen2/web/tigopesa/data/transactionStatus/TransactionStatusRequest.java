@@ -7,8 +7,6 @@ import lombok.Data;
 @Data
 public class TransactionStatusRequest extends TigopesaRequest implements XMLRequestI {
 
-  private String transactionId;
-
   public String getRequestXML() {
     String xmlMessage = "<TCSRequest>\n" +
         "<UserName>%s</UserName>" +

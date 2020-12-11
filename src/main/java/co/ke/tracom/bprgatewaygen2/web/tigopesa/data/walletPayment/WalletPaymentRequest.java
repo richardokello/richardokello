@@ -2,12 +2,21 @@ package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment;
 
 import co.ke.tracom.bprgatewaygen2.core.tracomhttp.xmlHttp.XMLRequestI;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.TigopesaRequest;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class WalletPaymentRequest extends TigopesaRequest implements XMLRequestI {
 
+  @ApiModelProperty(
+      name = "Transaction ID",
+      value = "Bank transaction ID",
+      required = true)
   private String transactionId;
+  @ApiModelProperty(
+      name = "Bank code",
+      value = "Unique code of bank",
+      required = true)
   private String bankCode;
   private String amount;
 

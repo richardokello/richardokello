@@ -32,7 +32,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
       HttpStatus status,
       WebRequest request) {
     ErrorDetail errorDetail = new ErrorDetail();
-    errorDetail.setTitle("Rest Internal Exception");
+    errorDetail.setTitle("BPR Gateway Exception");
     errorDetail.setStatus(status.value());
     errorDetail.setMessage(ex.getMessage());
     errorDetail.setTimestamp(new Date());

@@ -120,6 +120,7 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <!-- Add most recent guava version -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

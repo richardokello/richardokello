@@ -27,7 +27,7 @@ public class AcademicBridgeController {
   private final AcademicBridgeService academicBridgeService;
 
   @ApiOperation(
-      value = "Get student bill details given the bill number",
+      value = "Returns student bill details given the bill number",
       response = GetStudentDetailsResponse.class)
   @GetMapping(value = "/students/info/{billNumber}")
   public ResponseEntity<?> getStudentDetails(
@@ -41,7 +41,7 @@ public class AcademicBridgeController {
   }
 
   @ApiOperation(
-      value = "Save payment on academic bridge school's database for a given bill number",
+      value = "Saves payment on academic bridge school's database for a given bill number",
       response = AcademicBridgeResponse.class)
   @PostMapping("/students/{billNumber}")
   public ResponseEntity<?> savePayment(@ApiParam(value = "Student bill number", required = true)
@@ -55,7 +55,7 @@ public class AcademicBridgeController {
   }
 
   @ApiOperation(
-      value = "Check if a payment was successfully saved on academic bridge given bank’s reference number.",
+      value = "Checks if a payment was successfully saved on academic bridge given bank’s reference number.",
       response = AcademicBridgePaymentStatusResponse.class)
   @GetMapping("students/status/{referenceNumber}")
   public ResponseEntity<?> AcademicBridgePaymentStatusResponse(

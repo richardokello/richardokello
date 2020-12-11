@@ -22,10 +22,12 @@ public class AcademicBridgeService {
   private String academicBridgeAPIKey;
   @Value("${academic-bridge.api-secret}")
   private String academicBridgeAPISecret;
+  /* Provide bill number as first substitution */
   @Value("${academic-bridge.get-student-details-url}%s?API_KEY=%s&API_SECRET=%s")
   private String getStudentDetailsURL;
   @Value("${academic-bridge.base.url}")
   private String baseUrl;
+  /* Provide bill number as first substitution */
   @Value("${academic-bridge.save-payment-url}%s?" +
       "API_KEY=%s&" +
       "API_SECRET=%s&" +
@@ -36,6 +38,7 @@ public class AcademicBridgeService {
       "reason=%s"
   )
   private String savePaymentURL;
+  /* Provide reference number as first substitution */
   @Value("${academic-bridge.check-payment-status-url}%s?API_KEY=%s&API_SECRET=%s")
   private String checkPaymentStatusURL;
 
