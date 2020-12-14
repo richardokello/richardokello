@@ -1,19 +1,14 @@
 package co.ke.tracom.bprgatewaygen2.web.billMenus.service;
 
 
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.InstitutionByCodeResponse;
 import co.ke.tracom.bprgatewaygen2.web.billMenus.data.BillMenuResponse;
-import co.ke.tracom.bprgatewaygen2.web.billMenus.data.Menu;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -31,6 +26,9 @@ public class BillMenusService {
   /**
    * This method gets run when this bean is initialized. It loads the data (json formatted)
    * about all bill Menus currently available.
+   *
+   * Bill menu data is saved a json file in the resources/data folder. Any new menu implemented in
+   * this gateway should have its data saved in this json file.
    *
    * @throws IOException
    */
