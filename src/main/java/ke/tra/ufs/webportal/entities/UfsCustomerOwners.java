@@ -75,14 +75,14 @@ public class UfsCustomerOwners implements Serializable {
     @Column(name = "PHONE_NUMBER")
     private String directorPrimaryContactNumber;
     @Basic(optional = false)
-    @NotNull
+//    @NotNull
     @Filter
     @Searchable
     @ModifiableField
     @Size(min = 1, max = 15)
     @Column(name = "ID_NUMBER")
     private String directorIdNumber;
-    @NotNull
+//    @NotNull
     @Filter
     @Searchable
     @ModifiableField
