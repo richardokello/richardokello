@@ -8,7 +8,6 @@ import lombok.Data;
 public class PaymentContributionRequest {
   @ApiModelProperty(name = "Beneficiary",
       value = "Payment beneficiary",
-      example = "{ 'identification': '12233344555644', 'name': 'RWAHUNGU Eric'",
       required = true)
   private NationalIDValidationRequest beneficiary;
   private String amount;

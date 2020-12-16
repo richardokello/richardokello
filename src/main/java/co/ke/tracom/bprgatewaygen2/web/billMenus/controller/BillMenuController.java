@@ -1,7 +1,9 @@
 package co.ke.tracom.bprgatewaygen2.web.billMenus.controller;
 
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
 import co.ke.tracom.bprgatewaygen2.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgatewaygen2.web.billMenus.service.BillMenusService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,9 @@ public class BillMenuController {
 
   private final BillMenusService billMenusService;
 
-  /**
-   * Return all menu items currently available.
-   */
+  @ApiOperation(
+          value = "Return all currently available menu items ",
+          response = BillMenuResponse.class)
   @GetMapping
   public ResponseEntity<?> getBillMenus() {
 
