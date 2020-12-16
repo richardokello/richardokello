@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/wasac")
+@RequestMapping(name = "/api/wasac", produces = {"application/json"})
 @RequiredArgsConstructor
 public class WasacController {
 

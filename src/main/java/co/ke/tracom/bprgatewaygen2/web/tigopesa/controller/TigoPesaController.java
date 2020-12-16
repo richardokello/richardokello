@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/tigopesa")
+@RequestMapping(name = "/api/tigopesa", produces = {"application/json"})
 @RequiredArgsConstructor
 public class TigoPesaController {
 

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/ltss")
+@RequestMapping(name = "/api/ltss", produces = {"application/json"})
 @RequiredArgsConstructor
 public class LtssController {
 

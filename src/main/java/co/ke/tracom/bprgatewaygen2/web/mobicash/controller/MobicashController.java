@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/mobicash")
+@RequestMapping(name = "/api/mobicash", produces = {"application/json"})
 @RequiredArgsConstructor
 public class MobicashController {
 
