@@ -7,6 +7,7 @@ package ke.tra.ufs.webportal.entities;
 
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Searchable;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -119,6 +120,16 @@ public class UfsPosUser implements Serializable {
     @Filter
     @Column(name = "FIRST_TIME_USER")
     private Short firstTimeUser;
+
+    @Filter
+    @Searchable
+    @Column(name = "MERCHANT_NAME")
+    private String merchantName;
+
+    @Filter
+    @Searchable
+    @Column(name = "OUTLET_NAME")
+    private String outletName;
 
 
 }
