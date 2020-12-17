@@ -38,32 +38,24 @@ public class UfsContactPerson implements Serializable {
     @GeneratedValue(generator = "UFS_CONTACT_PERSON_SEQ")
     @Column(name = "ID")
     private Long id;
-    @Basic(optional = false)
-    @NotNull
     @Filter
     @Searchable
     @ModifiableField
     @Size(min = 1, max = 50)
     @Column(name = "NAME")
     private String name;
-    @Basic(optional = false)
-    @NotNull
     @Filter
     @Searchable
     @ModifiableField
     @Size(min = 1, max = 20)
     @Column(name = "ID_NUMBER")
     private String idNumber;
-    @Basic(optional = false)
-    @NotNull
     @Filter
     @Searchable
     @ModifiableField
     @Size(min = 1, max = 15)
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
-    @Basic(optional = false)
-    @NotNull
     @Filter
     @Searchable
     @ModifiableField

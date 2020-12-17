@@ -57,6 +57,8 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
     @Transactional
     public ResponseEntity<ResponseWrapper<UfsContactPerson>> create(@RequestBody @Valid UfsContactPerson ufsContactPerson) {
         ResponseWrapper response = new ResponseWrapper();
+        String outletName = null;
+        String merchantName = null;
 
         //check if contact person user name already exists
         UfsContactPerson contactPerson = contactPersonService.findByUsername(ufsContactPerson.getUserName());
@@ -69,6 +71,10 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
         if ((!creationResp.getStatusCode().equals(HttpStatus.CREATED)) || (ufsContactPerson.getDeviceId() == null)) {
             return creationResp;
         }
+
+        outletName = contactPerson.getCustomerOutlet().getOutletName();
+        merchantName = contactPerson.getCustomerOutlet().getCustomerId().getBusinessName();
+
         String serialNumber = tmsDeviceService.findByDeviceIdAndIntrash(ufsContactPerson.getDeviceId()).getSerialNo();
         UfsPosUser posUser = posUserService.findByContactPersonIdAndDeviceIdAndSerialNumber(ufsContactPerson.getId(), ufsContactPerson.getDeviceId(),serialNumber);
 
@@ -88,6 +94,8 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
             ufsPosUser.setIdNumber(ufsContactPerson.getIdNumber());
             ufsPosUser.setSerialNumber(serialNumber);
             ufsPosUser.setFirstTimeUser((short)0);
+            posUser.setMerchantName(merchantName);
+            posUser.setOutletName(outletName);
 
             String[] name = ufsContactPerson.getName().split("\\s+");
             if (name.length > 0) {
