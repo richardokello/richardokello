@@ -87,8 +87,8 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
         List<DashboardItemsWrapper> single = new ArrayList<>();
         single.add(new DashboardItemsWrapper("Total Merchants", getTotalAgents(AppConstants.NO), "/agency-webportal/merchants"));
         single.add(new DashboardItemsWrapper("Total Bank Branches", getTotalBankBranches(AppConstants.NO), "/agency-webportal/bank-branches"));
-        single.add(new DashboardItemsWrapper("Total Bank Regions", getTotalBankRegions(AppConstants.NO), "/agency-webportal/bank-regions"));
-        single.add(new DashboardItemsWrapper("Agents Assigned Device", getTotalAssignedDeviceAgents(AppConstants.NO), "/agency-webportal/device-management/assigned-devices-list"));
+        single.add(new DashboardItemsWrapper("Total Bank Zones", getTotalBankRegions(AppConstants.NO), "/agency-webportal/bank-zones"));
+        single.add(new DashboardItemsWrapper("Merchants Assigned Device", getTotalAssignedDeviceAgents(AppConstants.NO), "/agency-webportal/device-management/assigned-devices-list"));
 //        single.add(new DashboardItemsWrapper("Total Outlets", getTotalOutlets(AppConstants.NO), "/agency-webportal/customer-outlets"));
         single.add(new DashboardItemsWrapper("Total Outlets", getTotalOutlets(AppConstants.NO), ""));
         //single.add(new DashboardItemsWrapper("Agent Supervisors", getTotalTypeUsers(AppConstants.USER_TYPE_AGENT_SUPERVISOR, AppConstants.NO), "/common-modules/users/agent-supervisors"));
