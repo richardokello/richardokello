@@ -184,6 +184,10 @@ public class UfsCustomer implements Serializable {
     @Searchable
     @Column(name = "STATUS", insertable = false)
     private String status;
+    @Size(max = 50)
+    @Column(name = "CREATED_BY")
+    @Filter
+    private String createdBy;
 
     public UfsCustomer() {
     }
@@ -436,6 +440,14 @@ public class UfsCustomer implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     @Override

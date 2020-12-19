@@ -41,25 +41,21 @@ public class UfsContactPerson implements Serializable {
     @Filter
     @Searchable
     @ModifiableField
-    @Size(min = 1, max = 50)
     @Column(name = "NAME")
     private String name;
     @Filter
     @Searchable
     @ModifiableField
-    @Size(min = 1, max = 20)
     @Column(name = "ID_NUMBER")
     private String idNumber;
     @Filter
     @Searchable
     @ModifiableField
-    @Size(min = 1, max = 15)
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
     @Filter
     @Searchable
     @ModifiableField
-    @Size(min = 1, max = 100)
     @Column(name = "EMAIL")
     private String email;
     @Column(name = "POS_ROLE")

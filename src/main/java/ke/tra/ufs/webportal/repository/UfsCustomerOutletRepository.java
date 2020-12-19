@@ -14,6 +14,8 @@ public interface UfsCustomerOutletRepository extends CrudRepository<UfsCustomerO
 
     public UfsCustomerOutlet findByCustomerIds(BigDecimal customerId);
 
+    public UfsCustomerOutlet findByIdAndIntrash(Long outletId, String intrash);
+
     public UfsCustomerOutlet findByOutletCode(String outletCode);
 
    public UfsCustomerOutlet findByCustomerIdsAndIntrash(BigDecimal customerId,String intrash);

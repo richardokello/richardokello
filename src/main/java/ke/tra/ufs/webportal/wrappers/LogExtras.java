@@ -1,5 +1,6 @@
 package ke.tra.ufs.webportal.wrappers;
 
+import ke.tra.ufs.webportal.entities.UfsAuthentication;
 import ke.tra.ufs.webportal.repository.AuthenticationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,8 @@ public class LogExtras {
     private String clientId;
     @Autowired
     AuthenticationRepository urepo;
+
+    String fullName = null;
 
     //    Authentication auth;
     private final HttpServletRequest request;
@@ -72,6 +75,12 @@ public class LogExtras {
         }
 
         System.out.println("LOGGED IN USER : " + username);
-        return urepo.findByusernameIgnoreCase(username).getUserId();
+        UfsAuthentication userAuth = urepo.findByusernameIgnoreCase(username);
+        fullName = userAuth.getUser().getFullName();
+        return userAuth.getUserId();
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 }
