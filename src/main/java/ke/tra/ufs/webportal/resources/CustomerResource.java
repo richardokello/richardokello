@@ -16,6 +16,7 @@ import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.utils.UniqueStringGenerator;
 import ke.tra.ufs.webportal.wrappers.AgentTerminationWrapper;
+import ke.tra.ufs.webportal.wrappers.LogExtras;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -43,10 +44,11 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     private final UfsCustomerOutletService outletService;
     private final ContactPersonService contactPersonService;
     private final CustomerRepository customerRepository;
+    private final LogExtras logExtras;
 
 
     public CustomerResource(LoggerService loggerService, EntityManager entityManager, CustomerService customerService, TmsDeviceService deviceService,
-                            CustomerOwnersService ownersService, UfsCustomerOutletService outletService, ContactPersonService contactPersonService, CustomerRepository customerRepository) {
+                            CustomerOwnersService ownersService, UfsCustomerOutletService outletService, ContactPersonService contactPersonService, CustomerRepository customerRepository,LogExtras logExtras) {
         super(loggerService, entityManager);
         this.customerService = customerService;
         this.deviceService = deviceService;
@@ -54,6 +56,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         this.outletService = outletService;
         this.contactPersonService = contactPersonService;
         this.customerRepository = customerRepository;
+        this.logExtras = logExtras;
     }
 
     /**
@@ -126,6 +129,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setCustomerTypeId(customerOnboarding.getCustomerTypeId());
         customer.setCommercialActivityId(customerOnboarding.getCommercialActivityId());
         customer.setEstateId(customerOnboarding.getEstateId());
+        customer.setCreatedBy(logExtras.getFullName());
         UfsCustomer ufsCustomer = customerService.saveCustomer(customer);
 
         loggerService.log("Created Record successfully ",UfsCustomer.class.getSimpleName(),ufsCustomer.getId(),AppConstants.ACTIVITY_CREATE,AppConstants.STATUS_COMPLETED,null);

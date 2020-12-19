@@ -8,10 +8,7 @@ import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
-import ke.tra.ufs.webportal.entities.UfsContactPerson;
-import ke.tra.ufs.webportal.entities.UfsCustomer;
-import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
-import ke.tra.ufs.webportal.entities.UfsPosUser;
+import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.entities.wrapper.contactPersonDeviceWrapper;
 import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
@@ -36,6 +33,7 @@ import java.util.*;
 public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Long, UfsEdittedRecord> {
 
     private final ContactPersonService contactPersonService;
+    private final UfsCustomerOutletService customerOutletService;
     private final PosUserService posUserService;
     private final SysConfigService configService;
     private final PasswordEncoder encoder;
@@ -43,7 +41,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
     private final TmsDeviceService tmsDeviceService;
 
     public UfsContactPersonResource(LoggerService loggerService, EntityManager entityManager,ContactPersonService contactPersonService,PosUserService posUserService,
-                                    SysConfigService configService,PasswordEncoder encoder,NotifyService notifyService,TmsDeviceService tmsDeviceService ) {
+                                    SysConfigService configService,PasswordEncoder encoder,NotifyService notifyService,TmsDeviceService tmsDeviceService,UfsCustomerOutletService customerOutletService ) {
         super(loggerService, entityManager);
         this.contactPersonService = contactPersonService;
         this.posUserService = posUserService;
@@ -51,6 +49,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
         this.encoder = encoder;
         this.notifyService = notifyService;
         this.tmsDeviceService = tmsDeviceService;
+        this.customerOutletService = customerOutletService;
     }
 
     @Override
@@ -72,8 +71,13 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
             return creationResp;
         }
 
-        outletName = contactPerson.getCustomerOutlet().getOutletName();
-        merchantName = contactPerson.getCustomerOutlet().getCustomerId().getBusinessName();
+        //check outlet by outletId
+        UfsCustomerOutlet customerOutlet = customerOutletService.findById(ufsContactPerson.getCustomerOutletId());
+        if(Objects.nonNull(customerOutlet)){
+            outletName = customerOutlet.getOutletName();
+            merchantName = customerOutlet.getCustomerId().getBusinessName();
+
+        }
 
         String serialNumber = tmsDeviceService.findByDeviceIdAndIntrash(ufsContactPerson.getDeviceId()).getSerialNo();
         UfsPosUser posUser = posUserService.findByContactPersonIdAndDeviceIdAndSerialNumber(ufsContactPerson.getId(), ufsContactPerson.getDeviceId(),serialNumber);

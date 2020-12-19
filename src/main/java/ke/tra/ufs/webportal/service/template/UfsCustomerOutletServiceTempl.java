@@ -25,6 +25,11 @@ public class UfsCustomerOutletServiceTempl implements UfsCustomerOutletService {
     }
 
     @Override
+    public UfsCustomerOutlet findById(Long outletId) {
+        return customerOutletRepository.findByIdAndIntrash(outletId,AppConstants.NO);
+    }
+
+    @Override
     public UfsCustomerOutlet saveOutlet(UfsCustomerOutlet outlet) {
         return customerOutletRepository.save(outlet);
     }
