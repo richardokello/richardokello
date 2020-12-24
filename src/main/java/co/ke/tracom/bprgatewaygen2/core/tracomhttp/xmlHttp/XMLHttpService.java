@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * This class provides convenient methods for making HTTP requests to a remote API
- * that uses XML formatted request and response.
+ * that handles XML formatted requests and responses.
  */
 @Component
 @RequiredArgsConstructor
@@ -21,6 +21,14 @@ public class XMLHttpService {
     final private Logger logger = LoggerFactory.getLogger(XMLHttpService.class);
     private final RestTemplate restTemplate;
 
+    /**
+     *
+     * @param request          an XMLRequestI object
+     * @param apiUrl           The URL you are sending the request to
+     * @param responseClass    The class that parses the response into an appropriate format
+     * @param <T>
+     * @return                 a response object
+     */
     public <T extends Object> ResponseEntity<T> post(XMLRequestI request, String apiUrl, Class<T> responseClass)  {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_XML);

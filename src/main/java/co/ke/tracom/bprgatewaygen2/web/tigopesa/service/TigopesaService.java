@@ -12,25 +12,28 @@ import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPayment
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPaymentResponse;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TigopesaService {
 
-  //private final RestHTTPService restHTTPService;
   private final XMLHttpService xmlHttpService;
+
   @Value("")
   private String baseURL;
+
   @Value("/TELEPIN")
   private String requestURL;
 
   /**
-   * This method is used to pay bills.
+   * This method is used to send a pay bill request.
    *
-   * @param paymentRequest
+   * @param paymentRequest request object with payment details
    * @return payment response details
    */
   public BillPaymentResponse payBill(BillPaymentRequest paymentRequest) {
@@ -39,12 +42,12 @@ public class TigopesaService {
     try {
       ResponseEntity<String> response = xmlHttpService
           .post(paymentRequest, baseURL + requestURL, String.class);
-      System.out.println("=========================> " + response.getBody());
       XmlMapper mapper = new XmlMapper();
-      //ObjectMapper mapper =  new ObjectMapper();
       paymentResponse = mapper.readValue(response.getBody(), BillPaymentResponse.class);
+      log.info("TIGOPESA SERVICE RESPONSE: {}", paymentResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException("Error getting agent details from TigoPesa API");
     }
     return paymentResponse;
@@ -64,8 +67,10 @@ public class TigopesaService {
           .post(checkBalanceRequest, baseURL + requestURL, String.class);
       XmlMapper mapper = new XmlMapper();
       checkBalanceResponse = mapper.readValue(response.getBody(), CheckBalanceResponse.class);
+      log.info("TIGOPESA SERVICE RESPONSE: {}", checkBalanceResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException("Error paying bill using TigoPesa API");
     }
 
@@ -88,8 +93,10 @@ public class TigopesaService {
       XmlMapper mapper = new XmlMapper();
       transactionStatusResponse = mapper
           .readValue(response.getBody(), TransactionStatusResponse.class);
+      log.info("TIGOPESA SERVICE RESPONSE: {}", transactionStatusResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException("Error getting transaction status using TigoPesa API");
     }
 
@@ -110,13 +117,19 @@ public class TigopesaService {
           .post(walletPaymentRequest, baseURL + requestURL, String.class);
       XmlMapper mapper = new XmlMapper();
       walletPaymentResponse = mapper.readValue(response.getBody(), WalletPaymentResponse.class);
+      log.info("TIGOPESA SERVICE RESPONSE: {}", walletPaymentResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException(
           "Error depositing money to MFS wallet using TigoPesa API");
     }
 
     return walletPaymentResponse;
+  }
+
+  private void logError (Exception ex) {
+    log.error("TIGOPESA SERVICE: {}", ex.getMessage());
   }
 }
 

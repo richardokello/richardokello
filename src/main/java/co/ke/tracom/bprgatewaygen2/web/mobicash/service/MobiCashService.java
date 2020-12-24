@@ -10,23 +10,30 @@ import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.MobicashPaymentRequ
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.MobicashPaymentResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MobiCashService {
 
   private final RestHTTPService restHTTPService;
+
   @Value("http://server:port")
   private String baseURL;
+
   @Value("/server:port/mcash/oauth/token")
   private String authRequestURL;
+
   @Value("/mcash/services/rest/1.2.1/bank")
   private String agentDetailsURL;
+
   @Value("/mcash/services/rest/1.2.1/bank/trustAccount")
   private String creditAccountURL;
+
   private String accessToken;
 
   /**
@@ -44,9 +51,12 @@ public class MobiCashService {
           .postRequest(authenticationRequest, requestURL);
       ObjectMapper mapper = new ObjectMapper();
       authenticationResponse = mapper.readValue(response.getBody(), AuthenticationResponse.class);
+      log.info("MOBICASH SERVICE RESPONSE: {}", authenticationResponse);
       accessToken = authenticationResponse.getAccess_token();
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
+      throw new ExternalHTTPRequestException("Error during authentication");
     }
     return authenticationResponse;
   }
@@ -67,8 +77,10 @@ public class MobiCashService {
           .postRequest(agentDetailsRequest, requestURL);
       ObjectMapper mapper = new ObjectMapper();
       agentDetailsResponse = mapper.readValue(response.getBody(), AgentDetailsResponse.class);
+      log.info("MOBICASH SERVICE RESPONSE: {}", agentDetailsResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException("Error getting agent details from MobiCash API");
     }
 
@@ -90,11 +102,17 @@ public class MobiCashService {
       ResponseEntity<String> response = restHTTPService.postRequest(paymentRequest, requestURL);
       ObjectMapper mapper = new ObjectMapper();
       paymentResponse = mapper.readValue(response.getBody(), MobicashPaymentResponse.class);
+      log.info("MOBICASH SERVICE RESPONSE: {}", paymentResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
-      throw new ExternalHTTPRequestException("Error sending payment MobiCash API");
+     logError(ex);
+      throw new ExternalHTTPRequestException("Error sending payment to MobiCash API");
     }
 
     return paymentResponse;
+  }
+
+  private void logError (Exception ex) {
+    log.error("MOBICASH SERVICE: {}", ex.getMessage());
   }
 }

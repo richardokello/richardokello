@@ -38,6 +38,11 @@ public class WebConfig extends WebMvcConfigurerAdapter implements WebMvcConfigur
     configurer.defaultContentType(MediaType.APPLICATION_JSON);
   }
 
+  /**
+   * Set default global response type to always be JSON
+   *
+   * @param converters
+   */
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
     MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();

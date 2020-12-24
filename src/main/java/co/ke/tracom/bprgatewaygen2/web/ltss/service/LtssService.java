@@ -11,23 +11,30 @@ import co.ke.tracom.bprgatewaygen2.web.ltss.data.paymentContribution.PaymentCont
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.paymentContribution.PaymentContributionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class LtssService {
 
   private final RestHTTPService restHttpService;
+
   @Value("${ltss.base.url}")
   private String ltssBaseUrl;
+
   @Value("${ltss.nationalId.validation.url}")
   private String nationalIdValidationUrl;
+
   @Value("${ltss.payment.contribution.url}")
   private String paymentContributionUrl;
+
   @Value("${ltss.payment.check.url}")
   private String checkPaymentByRefNoUrl;
+
   @Value("${ltss.register.subscriber.url}")
   private String registerNewSubscriberURL;
 
@@ -46,8 +53,10 @@ public class LtssService {
       ResponseEntity<String> response = restHttpService.postRequest(validationRequest, requestURL);
       ObjectMapper mapper = new ObjectMapper();
       validationResponse = mapper.readValue(response.getBody(), NationalIDValidationResponse.class);
+      log.info("LTSS SERVICE RESPONSE: {}", validationResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException("Error validation National ID from LTSS API");
     }
     return validationResponse;
@@ -70,8 +79,10 @@ public class LtssService {
       ObjectMapper mapper = new ObjectMapper();
       paymentContributionResponse = mapper
           .readValue(response.getBody(), PaymentContributionResponse.class);
+      log.info("LTSS SERVICE RESPONSE: {}", paymentContributionResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException("Error sending payment contribution to LTSS API");
     }
     return paymentContributionResponse;
@@ -89,8 +100,10 @@ public class LtssService {
     try {
       String requestURL = ltssBaseUrl + checkPaymentByRefNoUrl;
       response = restHttpService.postRequest(checkPaymentRequest, requestURL);
+      log.info("LTSS SERVICE RESPONSE: {}", response);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException(
           "Error checking payment by reference number from LTSS API");
     }
@@ -112,11 +125,18 @@ public class LtssService {
           .postRequest(newSubscriberRequest, requestURL);
       ObjectMapper mapper = new ObjectMapper();
       newSubscriberResponse = mapper.readValue(response.getBody(), NewSubscriberResponse.class);
+      log.info("LTSS SERVICE RESPONSE: {}", newSubscriberResponse);
+
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException("Error registering a new subscriber in  LTSS Service");
     }
     return newSubscriberResponse;
+  }
+
+  private void logError (Exception ex) {
+    log.error("LTSS SERVICE: {}", ex.getMessage());
   }
 }
 

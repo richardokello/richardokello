@@ -10,23 +10,30 @@ import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStu
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AcademicBridgeService {
 
   private final RestHTTPService restHTTPService;
+
   @Value("${academic-bridge.api-key}")
   private String academicBridgeAPIKey;
+
   @Value("${academic-bridge.api-secret}")
   private String academicBridgeAPISecret;
+
   /* Provide bill number as first substitution */
   @Value("${academic-bridge.get-student-details-url}%s?API_KEY=%s&API_SECRET=%s")
   private String getStudentDetailsURL;
+
   @Value("${academic-bridge.base.url}")
   private String baseUrl;
+
   /* Provide bill number as first substitution */
   @Value("${academic-bridge.save-payment-url}%s?" +
       "API_KEY=%s&" +
@@ -38,6 +45,7 @@ public class AcademicBridgeService {
       "reason=%s"
   )
   private String savePaymentURL;
+
   /* Provide reference number as first substitution */
   @Value("${academic-bridge.check-payment-status-url}%s?API_KEY=%s&API_SECRET=%s")
   private String checkPaymentStatusURL;
@@ -59,8 +67,10 @@ public class AcademicBridgeService {
       String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       response = mapper.readValue(results, GetStudentDetailsResponse.class);
+      log.info("ACADEMIC BRIDGE RESPONSE: {}", response);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException(
           "Error fetching student details from Academic Bridge API");
     }
@@ -90,8 +100,10 @@ public class AcademicBridgeService {
       String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       response = mapper.readValue(results, AcademicBridgeResponse.class);
+      log.info("ACADEMIC BRIDGE RESPONSE: {}", response);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException("Error sending payment to Academic Bridge API");
     }
 
@@ -114,12 +126,18 @@ public class AcademicBridgeService {
       String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       response = mapper.readValue(results, AcademicBridgePaymentStatusResponse.class);
+      log.info("ACADEMIC BRIDGE RESPONSE: {}", response);
     } catch (Exception ex) {
       ex.printStackTrace();
+      logError(ex);
       throw new ExternalHTTPRequestException(
           "Error checking payment status from Academic Bridge API");
     }
     return response;
+  }
+
+  private void logError (Exception ex) {
+    log.error("ACADEMIC BRIDGE: {}", ex.getMessage());
   }
 
 }

@@ -25,16 +25,14 @@ import java.net.http.HttpResponse;
 
 
 /**
- * This class provides convenient methods for making HTTP requests to a remote API
- * by defining a wrapper over the rest template client.
+ * This class provides convenient methods for making HTTP requests some given URL
+ *
  */
 @Service
 @RequiredArgsConstructor
 public class RestHTTPService implements CustomHTTPCommunicationInterface {
     final private Logger logger = LoggerFactory.getLogger(RestHTTPService.class);
     private static final String USER_AGENT = "Mozilla/5.0";
-
-    private final RestTemplate restTemplate;
 
     public ResponseEntity<String> postRequest(Object request, String url) throws Exception {
         //Fetch Host
@@ -76,7 +74,7 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
         httpClient.setRequestMethod("GET");
 
         //add request header
-        httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
+        httpClient.setRequestProperty("User-Agent", USER_AGENT);
 
         int responseCode = httpClient.getResponseCode();
         logger.info("SERVICE REQUEST : {} ", url);
@@ -96,7 +94,6 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
 
         }
         return response.toString();
-
 
     }
 

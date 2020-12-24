@@ -8,19 +8,24 @@ import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class WASACService {
 
   private final RestHTTPService restHTTPService;
+
   @Value("${wasac.customer-profile.request-base-url}")
   private String WASACBaseURL;
+
   @Value("${wasac.customer-profile.request-suffix-url}")
   private String WASACProfileURL;
+
   @Value("${wasac.payment.advise-url}")
   private String WASACSPaymentAdviseURL;
 
@@ -44,8 +49,10 @@ public class WASACService {
       CustomerProfileResponse customerProfileResult = mapper
           .readValue(results, CustomerProfileResponse.class);
       customerProfileResult.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
+      log.info("WASAC SERVICE RESPONSE: {}", customerProfileResult);
     } catch (Exception e) {
       e.printStackTrace();
+      logError(e);
     }
     return profileResponse;
   }
@@ -61,9 +68,15 @@ public class WASACService {
       WasacPaymentResponse paymentAdviseResponse = mapper
           .readValue(response.getBody(), WasacPaymentResponse.class);
       paymentAdviseResponse.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
+      log.info("WASAC SERVICE RESPONSE: {}", paymentAdviseResponse);
     } catch (Exception e) {
+      logError(e);
       e.printStackTrace();
     }
     return paymentResponse;
+  }
+
+  private void logError (Exception ex) {
+    log.error("WASAC SERVICE: {}", ex.getMessage());
   }
 }

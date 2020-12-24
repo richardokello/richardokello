@@ -1,6 +1,5 @@
 package co.ke.tracom.bprgatewaygen2.web.billMenus.controller;
 
-import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
 import co.ke.tracom.bprgatewaygen2.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgatewaygen2.web.billMenus.service.BillMenusService;
 import io.swagger.annotations.ApiOperation;

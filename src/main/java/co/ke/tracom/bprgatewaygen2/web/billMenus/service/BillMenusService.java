@@ -2,6 +2,7 @@ package co.ke.tracom.bprgatewaygen2.web.billMenus.service;
 
 
 import co.ke.tracom.bprgatewaygen2.web.billMenus.data.BillMenuResponse;
+import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +28,8 @@ public class BillMenusService {
    * This method gets run when this bean is initialized. It loads the data (json formatted)
    * about all bill Menus currently available.
    *
-   * Bill menu data is saved a json file in the resources/data folder. Any new menu implemented in
-   * this gateway should have its data saved in this json file.
+   * Bill menu data is saved in a json file in the resources/data folder. Any new menu implemented in
+   * this gateway should have its data added to this json file.
    *
    * @throws IOException
    */
@@ -43,8 +44,12 @@ public class BillMenusService {
       // Parse json file into menu items
       ObjectMapper mapper = new ObjectMapper();
       billMenuResponse = mapper.readValue(content, BillMenuResponse.class);
+      log.info("BILL MENU SERVICE RESPONSE: {}", billMenuResponse);
     } catch (Exception ex) {
-      log.error(ex.getMessage());
+      ex.printStackTrace();
+      log.error("BILL MENU SERVICE: {}", ex.getMessage());
+      throw new ExternalHTTPRequestException(
+              "Error fetching bill menus");
     }
   }
 
