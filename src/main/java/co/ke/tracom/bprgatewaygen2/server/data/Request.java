@@ -12,5 +12,5 @@ public class Request {
     private String password;
     private String serialNumber;
     private String tid;
-    private String tnxType;
+    private String txnType;
 }
