@@ -48,5 +48,4 @@ public class BillPaymentResponse {
   public void set_message(String message) {
     this.message = message;
   }
-
 }

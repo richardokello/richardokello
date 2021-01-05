@@ -1,6 +1,5 @@
 package co.ke.tracom.bprgatewaygen2.web.agaciro.data;
 
-
 import lombok.Data;
 
 @Data

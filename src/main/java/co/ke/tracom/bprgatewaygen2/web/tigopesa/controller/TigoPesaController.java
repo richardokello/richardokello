@@ -1,6 +1,5 @@
 package co.ke.tracom.bprgatewaygen2.web.tigopesa.controller;
 
-import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance.CheckBalanceRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance.CheckBalanceResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentRequest;
@@ -19,17 +18,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
-@RequestMapping(name = "/api/tigopesa", produces = {"application/json"})
+@RequestMapping(
+    name = "/api/tigopesa",
+    produces = {"application/json"})
 @RequiredArgsConstructor
 public class TigoPesaController {
 
   private final TigopesaService tigopesaService;
 
-  @ApiOperation(
-      value = "Make a bill payment",
-      response = BillPaymentResponse.class)
+  @ApiOperation(value = "Make a bill payment", response = BillPaymentResponse.class)
   @PostMapping("/bill")
   public ResponseEntity<?> payBill(@RequestBody BillPaymentRequest request) {
     BillPaymentResponse responseEntity = tigopesaService.payBill(request);
@@ -45,18 +43,14 @@ public class TigoPesaController {
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
 
-  @ApiOperation(
-      value = "Checks the transaction status",
-      response = TransactionStatusResponse.class)
+  @ApiOperation(value = "Checks the transaction status", response = TransactionStatusResponse.class)
   @PostMapping("/transaction/status")
   public ResponseEntity<?> checkTransactionStatus(@RequestBody TransactionStatusRequest request) {
     TransactionStatusResponse responseEntity = tigopesaService.checkTransactionStatus(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
 
-  @ApiOperation(
-      value = "Deposits amount to virtual wallet",
-      response = WalletPaymentResponse.class)
+  @ApiOperation(value = "Deposits amount to virtual wallet", response = WalletPaymentResponse.class)
   @PostMapping("/wallet")
   public ResponseEntity<?> creditWallet(@RequestBody WalletPaymentRequest request) {
     WalletPaymentResponse responseEntity = tigopesaService.creditWallet(request);

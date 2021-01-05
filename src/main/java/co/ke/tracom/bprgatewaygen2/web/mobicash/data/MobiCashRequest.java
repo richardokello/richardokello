@@ -11,19 +11,19 @@ public class MobiCashRequest {
       value = "Bank partner Identifier code. Provided by MobiCash",
       required = true)
   private String clientCode;
+
   @ApiModelProperty(
       name = "Transaction Identifier",
       value = "Bank partner unique number",
       required = true)
   private String transactionIdentifier;
+
   @ApiModelProperty(
       name = "Transaction Identifier",
       value = "Client/Agent account number. Can be phone number or MCash ID",
       required = true)
   private String accountNumber;
-  @ApiModelProperty(
-      name = "Authorization",
-      value = "Dynamic token",
-      required = true)
+
+  @ApiModelProperty(name = "Authorization", value = "Dynamic token", required = true)
   private String authorization;
 }

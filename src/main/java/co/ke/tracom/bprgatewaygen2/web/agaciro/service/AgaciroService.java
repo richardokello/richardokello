@@ -1,12 +1,7 @@
 package co.ke.tracom.bprgatewaygen2.web.agaciro.service;
 
 import co.ke.tracom.bprgatewaygen2.core.tracomhttp.resthttp.RestHTTPService;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.InstitutionByCodeRequest;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.InstitutionByCodeResponse;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.InstitutionByNameRequest;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.InstitutionByNameResponse;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.InstitutionsRequest;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.InstitutionsResponse;
+import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.*;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.ValidateNIDRequest;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.ValidateNIDResponse;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.paymentNotification.PaymentNotificationRequest;
@@ -54,9 +49,11 @@ public class AgaciroService {
     InstitutionsResponse institutions = new InstitutionsResponse();
 
     try {
-      String requestURL = String.format(getInstitutionsURL,
-          getInstitutionsRequest.getUsername(),
-          getInstitutionsRequest.getPassword());
+      String requestURL =
+          String.format(
+              getInstitutionsURL,
+              getInstitutionsRequest.getUsername(),
+              getInstitutionsRequest.getPassword());
       String results = restHTTPService.sendGetRequest(agaciroBaseURL + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       institutions = mapper.readValue(results, InstitutionsResponse.class);
@@ -64,8 +61,7 @@ public class AgaciroService {
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
-      throw new ExternalHTTPRequestException(
-              "Error fetching institutions from Agaciro API");
+      throw new ExternalHTTPRequestException("Error fetching institutions from Agaciro API");
     }
     return institutions;
   }
@@ -81,10 +77,12 @@ public class AgaciroService {
     InstitutionByNameResponse institution = null;
 
     try {
-      String requestURL = String.format(getInstitutionByNameURL,
-          getInstitutionByNameRequest.getUsername(),
-          getInstitutionByNameRequest.getPassword(),
-          getInstitutionByNameRequest.getInstitutionName());
+      String requestURL =
+          String.format(
+              getInstitutionByNameURL,
+              getInstitutionByNameRequest.getUsername(),
+              getInstitutionByNameRequest.getPassword(),
+              getInstitutionByNameRequest.getInstitutionName());
       String results = restHTTPService.sendGetRequest(agaciroBaseURL + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       institution = mapper.readValue(results, InstitutionByNameResponse.class);
@@ -93,7 +91,7 @@ public class AgaciroService {
       ex.printStackTrace();
       logError(ex);
       throw new ExternalHTTPRequestException(
-              "Error fetching institutions by name from Agaciro API");
+          "Error fetching institutions by name from Agaciro API");
     }
     return institution;
   }
@@ -109,10 +107,12 @@ public class AgaciroService {
     InstitutionByCodeResponse institution = null;
 
     try {
-      String requestURL = String.format(getInstitutionByCodeURL,
-          getInstitutionByCodeRequest.getUsername(),
-          getInstitutionByCodeRequest.getPassword(),
-          getInstitutionByCodeRequest.getInstitutionCode());
+      String requestURL =
+          String.format(
+              getInstitutionByCodeURL,
+              getInstitutionByCodeRequest.getUsername(),
+              getInstitutionByCodeRequest.getPassword(),
+              getInstitutionByCodeRequest.getInstitutionCode());
       String results = restHTTPService.sendGetRequest(requestURL);
       ObjectMapper mapper = new ObjectMapper();
       institution = mapper.readValue(results, InstitutionByCodeResponse.class);
@@ -120,8 +120,7 @@ public class AgaciroService {
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
-      throw new ExternalHTTPRequestException(
-              "Error fetching institution by code from Agaciro API");
+      throw new ExternalHTTPRequestException("Error fetching institution by code from Agaciro API");
     }
 
     return institution;
@@ -137,10 +136,12 @@ public class AgaciroService {
     ValidateNIDResponse response = null;
 
     try {
-      String requestURL = String.format(validateNIDURL,
-          validateNIDRequest.getUsername(),
-          validateNIDRequest.getPassword(),
-          validateNIDRequest.getNid());
+      String requestURL =
+          String.format(
+              validateNIDURL,
+              validateNIDRequest.getUsername(),
+              validateNIDRequest.getPassword(),
+              validateNIDRequest.getNid());
       String results = restHTTPService.sendGetRequest(agaciroBaseURL + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       response = mapper.readValue(results, ValidateNIDResponse.class);
@@ -148,8 +149,7 @@ public class AgaciroService {
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
-      throw new ExternalHTTPRequestException(
-              "Error validating NID from Agaciro API");
+      throw new ExternalHTTPRequestException("Error validating NID from Agaciro API");
     }
 
     return response;
@@ -164,23 +164,22 @@ public class AgaciroService {
     PaymentNotificationResponse paymentNotification;
 
     try {
-      ResponseEntity<String> response = restHTTPService
-          .postRequest(getPaymentNotificationRequest, agaciroBaseURL + paymentNotificationURL);
+      ResponseEntity<String> response =
+          restHTTPService.postRequest(
+              getPaymentNotificationRequest, agaciroBaseURL + paymentNotificationURL);
       ObjectMapper mapper = new ObjectMapper();
       paymentNotification = mapper.readValue(response.getBody(), PaymentNotificationResponse.class);
       log.info("AGACIRO SERVICE RESPONSE: {}", paymentNotification);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
-      throw new ExternalHTTPRequestException(
-              "Error getting payment notification from Agaciro API");
+      throw new ExternalHTTPRequestException("Error getting payment notification from Agaciro API");
     }
 
     return paymentNotification;
   }
 
-  private void logError (Exception ex) {
+  private void logError(Exception ex) {
     log.error("AGACIRO SERVICE: {}", ex.getMessage());
   }
 }
-

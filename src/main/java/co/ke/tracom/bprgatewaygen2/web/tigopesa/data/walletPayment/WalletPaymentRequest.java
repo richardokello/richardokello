@@ -8,31 +8,29 @@ import lombok.Data;
 @Data
 public class WalletPaymentRequest extends TigopesaRequest implements XMLRequestI {
 
-  @ApiModelProperty(
-      name = "Transaction ID",
-      value = "Bank transaction ID",
-      required = true)
+  @ApiModelProperty(name = "Transaction ID", value = "Bank transaction ID", required = true)
   private String transactionId;
-  @ApiModelProperty(
-      name = "Bank code",
-      value = "Unique code of bank",
-      required = true)
+
+  @ApiModelProperty(name = "Bank code", value = "Unique code of bank", required = true)
   private String bankCode;
+
   private String amount;
 
   public String getRequestXML() {
-    String xmlRequestFormat = "<TCSRequest>\n" +
-        "<UserName>%s</UserName>\n" +
-        "<Password>%s</Password>\n" +
-        "<Function name=\"WALLETPAYMENT\">\n" +
-        "<msisdn>%s</msisdn>\n" +
-        "<amount>%s</amount>\n" +
-        "<transactionId>%s</ transactionId >\n" +
-        "<bankCode>%s</ bankCode>\n" +
-        "</Function>\n" +
-        "</TCSRequest>";
+    String xmlRequestFormat =
+        "<TCSRequest>\n"
+            + "<UserName>%s</UserName>\n"
+            + "<Password>%s</Password>\n"
+            + "<Function name=\"WALLETPAYMENT\">\n"
+            + "<msisdn>%s</msisdn>\n"
+            + "<amount>%s</amount>\n"
+            + "<transactionId>%s</ transactionId >\n"
+            + "<bankCode>%s</ bankCode>\n"
+            + "</Function>\n"
+            + "</TCSRequest>";
 
-    return String.format(xmlRequestFormat,
+    return String.format(
+        xmlRequestFormat,
         this.getUsername(),
         this.getPassword(),
         this.getMsisdn(),

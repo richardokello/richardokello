@@ -35,15 +35,15 @@ public class AcademicBridgeService {
   private String baseUrl;
 
   /* Provide bill number as first substitution */
-  @Value("${academic-bridge.save-payment-url}%s?" +
-      "API_KEY=%s&" +
-      "API_SECRET=%s&" +
-      "reference_number=%s&" +
-      "paid_amount=%s&" +
-      "sender_name=%s&" +
-      "sender_phone_number=%s&" +
-      "reason=%s"
-  )
+  @Value(
+      "${academic-bridge.save-payment-url}%s?"
+          + "API_KEY=%s&"
+          + "API_SECRET=%s&"
+          + "reference_number=%s&"
+          + "paid_amount=%s&"
+          + "sender_name=%s&"
+          + "sender_phone_number=%s&"
+          + "reason=%s")
   private String savePaymentURL;
 
   /* Provide reference number as first substitution */
@@ -60,10 +60,12 @@ public class AcademicBridgeService {
       GetStudentDetailsRequest request) {
     GetStudentDetailsResponse response;
     try {
-      String requestURL = String.format(getStudentDetailsURL,
-          request.getBillNumber(),
-          academicBridgeAPIKey,
-          academicBridgeAPISecret);
+      String requestURL =
+          String.format(
+              getStudentDetailsURL,
+              request.getBillNumber(),
+              academicBridgeAPIKey,
+              academicBridgeAPISecret);
       String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       response = mapper.readValue(results, GetStudentDetailsResponse.class);
@@ -88,15 +90,17 @@ public class AcademicBridgeService {
     AcademicBridgeResponse response;
 
     try {
-      String requestURL = String.format(savePaymentURL,
-          savePaymentRequest.getBillNumber(),
-          academicBridgeAPIKey,
-          academicBridgeAPISecret,
-          savePaymentRequest.getReferenceNo(),
-          savePaymentRequest.getPaidAmount(),
-          savePaymentRequest.getSenderName(),
-          savePaymentRequest.getSenderPhoneNo(),
-          savePaymentRequest.getReason());
+      String requestURL =
+          String.format(
+              savePaymentURL,
+              savePaymentRequest.getBillNumber(),
+              academicBridgeAPIKey,
+              academicBridgeAPISecret,
+              savePaymentRequest.getReferenceNo(),
+              savePaymentRequest.getPaidAmount(),
+              savePaymentRequest.getSenderName(),
+              savePaymentRequest.getSenderPhoneNo(),
+              savePaymentRequest.getReason());
       String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       response = mapper.readValue(results, AcademicBridgeResponse.class);
@@ -119,10 +123,12 @@ public class AcademicBridgeService {
   public AcademicBridgePaymentStatusResponse checkPaymentStatus(PaymentStatusRequest request) {
     AcademicBridgePaymentStatusResponse response;
     try {
-      String requestURL = String.format(checkPaymentStatusURL,
-          request.getReferenceNo(),
-          academicBridgeAPIKey,
-          academicBridgeAPISecret);
+      String requestURL =
+          String.format(
+              checkPaymentStatusURL,
+              request.getReferenceNo(),
+              academicBridgeAPIKey,
+              academicBridgeAPISecret);
       String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
       ObjectMapper mapper = new ObjectMapper();
       response = mapper.readValue(results, AcademicBridgePaymentStatusResponse.class);
@@ -136,15 +142,7 @@ public class AcademicBridgeService {
     return response;
   }
 
-  private void logError (Exception ex) {
+  private void logError(Exception ex) {
     log.error("ACADEMIC BRIDGE: {}", ex.getMessage());
   }
-
 }
-
-
-
-
-
-
-

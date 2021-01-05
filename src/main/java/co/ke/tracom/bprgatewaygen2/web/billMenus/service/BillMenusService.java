@@ -1,35 +1,33 @@
 package co.ke.tracom.bprgatewaygen2.web.billMenus.service;
 
-
 import co.ke.tracom.bprgatewaygen2.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class BillMenusService {
 
+  private final ResourceLoader resourceLoader;
   BillMenuResponse billMenuResponse;
 
-
-  private final ResourceLoader resourceLoader;
-
   /**
-   * This method gets run when this bean is initialized. It loads the data (json formatted)
-   * about all bill Menus currently available.
+   * This method gets run when this bean is initialized. It loads the data (json formatted) about
+   * all bill Menus currently available.
    *
-   * Bill menu data is saved in a json file in the resources/data folder. Any new menu implemented in
-   * this gateway should have its data added to this json file.
+   * <p>Bill menu data is saved in a json file in the resources/data folder. Any new menu
+   * implemented in this gateway should have its data added to this json file.
    *
    * @throws IOException
    */
@@ -48,13 +46,11 @@ public class BillMenusService {
     } catch (Exception ex) {
       ex.printStackTrace();
       log.error("BILL MENU SERVICE: {}", ex.getMessage());
-      throw new ExternalHTTPRequestException(
-              "Error fetching bill menus");
+      throw new ExternalHTTPRequestException("Error fetching bill menus");
     }
   }
 
   public BillMenuResponse getAllMenus() {
     return billMenuResponse;
   }
-
 }

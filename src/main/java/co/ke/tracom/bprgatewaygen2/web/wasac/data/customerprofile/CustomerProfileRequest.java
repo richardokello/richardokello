@@ -6,9 +6,6 @@ import lombok.Data;
 @Data
 public class CustomerProfileRequest {
 
-  @ApiModelProperty(
-      name = "Customer ID",
-      value = "Unique customer identifier",
-      required = true)
+  @ApiModelProperty(name = "Customer ID", value = "Unique customer identifier", required = true)
   private String customerId;
 }

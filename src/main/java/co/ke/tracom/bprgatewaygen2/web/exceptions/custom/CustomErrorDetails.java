@@ -1,27 +1,23 @@
 package co.ke.tracom.bprgatewaygen2.web.exceptions.custom;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
-/**
- * Enables all exceptions report same format of message
- */
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/** Enables all exceptions report same format of message */
 @Component
-public class CustomErrorDetails
-    extends DefaultErrorAttributes {
+public class CustomErrorDetails extends DefaultErrorAttributes {
 
   @Override
-  public Map<String, Object> getErrorAttributes(
-      WebRequest webRequest,
-      boolean includeStackTrace) {
-    //Get all the normal error information
-    Map<String, Object> errorAttributes =
-        super.getErrorAttributes(webRequest, includeStackTrace);
+  public Map<String, Object> getErrorAttributes(WebRequest webRequest, boolean includeStackTrace) {
+    // Get all the normal error information
+    Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, includeStackTrace);
 
-    // Linked HashMaps maintain the order the items are inserted. It's used here so that the error JSON
+    // Linked HashMaps maintain the order the items are inserted. It's used here so that the error
+    // JSON
     // produced from this class lists the attributes in the same order as other classes.
     Map<String, Object> errorDetails = new LinkedHashMap<>();
     errorDetails.put("title", errorAttributes.get("error"));

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/api/menus")
@@ -19,8 +18,8 @@ public class BillMenuController {
   private final BillMenusService billMenusService;
 
   @ApiOperation(
-          value = "Return all currently available menu items ",
-          response = BillMenuResponse.class)
+      value = "Return all currently available menu items ",
+      response = BillMenuResponse.class)
   @GetMapping
   public ResponseEntity<?> getBillMenus() {
 
@@ -28,6 +27,4 @@ public class BillMenuController {
 
     return new ResponseEntity<>(billMenuResponse, HttpStatus.OK);
   }
-
-
 }

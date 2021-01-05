@@ -30,24 +30,26 @@ public class WASACService {
   private String WASACSPaymentAdviseURL;
 
   /**
-   * Fetch customer data given Customer ID from remote API. URL: https://dev.api.wasac.rw/<customerid>/profile
-   * <p>
-   * postname: client postname name: client name zone: zone(location) mobile: mobile phone number
+   * Fetch customer data given Customer ID from remote API. URL:
+   * https://dev.api.wasac.rw/<customerid>/profile
+   *
+   * <p>postname: client postname name: client name zone: zone(location) mobile: mobile phone number
    * email: clients email phone: clients' fixed phone personnalid: National ID branch: WASAC branch
    * balance: Due balance meterid: Water Meter Number customerid: Unique customer identifier
    *
    * @param profileRequest
    */
   public CustomerProfileResponse fetchCustomerProfile(CustomerProfileRequest profileRequest) {
-    CustomerProfileResponse profileResponse = new CustomerProfileResponse()
-        .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
+    CustomerProfileResponse profileResponse =
+        new CustomerProfileResponse()
+            .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
     try {
       String requestURL = WASACBaseURL + profileRequest.getCustomerId() + WASACProfileURL;
       String results = restHTTPService.sendGetRequest(requestURL);
 
       ObjectMapper mapper = new ObjectMapper();
-      CustomerProfileResponse customerProfileResult = mapper
-          .readValue(results, CustomerProfileResponse.class);
+      CustomerProfileResponse customerProfileResult =
+          mapper.readValue(results, CustomerProfileResponse.class);
       customerProfileResult.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
       log.info("WASAC SERVICE RESPONSE: {}", customerProfileResult);
     } catch (Exception e) {
@@ -58,15 +60,16 @@ public class WASACService {
   }
 
   public WasacPaymentResponse payWaterBill(WasacPaymentRequest request) {
-    WasacPaymentResponse paymentResponse = new WasacPaymentResponse()
-        .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
+    WasacPaymentResponse paymentResponse =
+        new WasacPaymentResponse()
+            .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
     try {
-      ResponseEntity<String> response = restHTTPService
-          .postRequest(request, WASACSPaymentAdviseURL);
+      ResponseEntity<String> response =
+          restHTTPService.postRequest(request, WASACSPaymentAdviseURL);
 
       ObjectMapper mapper = new ObjectMapper();
-      WasacPaymentResponse paymentAdviseResponse = mapper
-          .readValue(response.getBody(), WasacPaymentResponse.class);
+      WasacPaymentResponse paymentAdviseResponse =
+          mapper.readValue(response.getBody(), WasacPaymentResponse.class);
       paymentAdviseResponse.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
       log.info("WASAC SERVICE RESPONSE: {}", paymentAdviseResponse);
     } catch (Exception e) {
@@ -76,7 +79,7 @@ public class WASACService {
     return paymentResponse;
   }
 
-  private void logError (Exception ex) {
+  private void logError(Exception ex) {
     log.error("WASAC SERVICE: {}", ex.getMessage());
   }
 }

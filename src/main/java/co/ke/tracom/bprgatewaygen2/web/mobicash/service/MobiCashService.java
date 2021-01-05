@@ -47,8 +47,8 @@ public class MobiCashService {
 
     try {
       String requestURL = baseURL + authRequestURL;
-      ResponseEntity<String> response = restHTTPService
-          .postRequest(authenticationRequest, requestURL);
+      ResponseEntity<String> response =
+          restHTTPService.postRequest(authenticationRequest, requestURL);
       ObjectMapper mapper = new ObjectMapper();
       authenticationResponse = mapper.readValue(response.getBody(), AuthenticationResponse.class);
       log.info("MOBICASH SERVICE RESPONSE: {}", authenticationResponse);
@@ -73,8 +73,8 @@ public class MobiCashService {
     try {
       agentDetailsRequest.setAuthorization(accessToken);
       String requestURL = baseURL + agentDetailsURL;
-      ResponseEntity<String> response = restHTTPService
-          .postRequest(agentDetailsRequest, requestURL);
+      ResponseEntity<String> response =
+          restHTTPService.postRequest(agentDetailsRequest, requestURL);
       ObjectMapper mapper = new ObjectMapper();
       agentDetailsResponse = mapper.readValue(response.getBody(), AgentDetailsResponse.class);
       log.info("MOBICASH SERVICE RESPONSE: {}", agentDetailsResponse);
@@ -105,14 +105,14 @@ public class MobiCashService {
       log.info("MOBICASH SERVICE RESPONSE: {}", paymentResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
-     logError(ex);
+      logError(ex);
       throw new ExternalHTTPRequestException("Error sending payment to MobiCash API");
     }
 
     return paymentResponse;
   }
 
-  private void logError (Exception ex) {
+  private void logError(Exception ex) {
     log.error("MOBICASH SERVICE: {}", ex.getMessage());
   }
 }

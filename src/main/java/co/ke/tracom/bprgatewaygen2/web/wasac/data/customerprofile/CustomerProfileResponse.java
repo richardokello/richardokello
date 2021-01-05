@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "response"
-})
+@JsonPropertyOrder({"response"})
 public class CustomerProfileResponse {
 
   private String status;
@@ -25,7 +23,6 @@ public class CustomerProfileResponse {
     this.response = response;
   }
 
-
   public String getStatus() {
     return status;
   }
@@ -37,9 +34,6 @@ public class CustomerProfileResponse {
 
   @Override
   public String toString() {
-    return "CustomerProfileResponse{" +
-        "status='" + status + '\'' +
-        ", response=" + response +
-        '}';
+    return "CustomerProfileResponse{" + "status='" + status + '\'' + ", response=" + response + '}';
   }
 }

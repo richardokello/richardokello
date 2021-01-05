@@ -1,6 +1,5 @@
 package co.ke.tracom.bprgatewaygen2.web.exceptions.models;
 
-import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

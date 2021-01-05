@@ -8,18 +8,20 @@ import lombok.Data;
 public class TransactionStatusRequest extends TigopesaRequest implements XMLRequestI {
 
   public String getRequestXML() {
-    String xmlMessage = "<TCSRequest>\n" +
-        "<UserName>%s</UserName>" +
-        "<Password>%s</Password>\n" +
-        "<Function name=\"TRANSACTIONSTATUS\">\n" +
-        "<msisdn>%s</msisdn>\n" +
-        "<transactionId>%s</transactionId>\n" +
-        "<billNumber>%s</billNumber>\n" +
-        "<companyCode>%s</ companyCode >\n" +
-        "</Function>\n" +
-        "</TCSRequest>";
+    String xmlMessage =
+        "<TCSRequest>\n"
+            + "<UserName>%s</UserName>"
+            + "<Password>%s</Password>\n"
+            + "<Function name=\"TRANSACTIONSTATUS\">\n"
+            + "<msisdn>%s</msisdn>\n"
+            + "<transactionId>%s</transactionId>\n"
+            + "<billNumber>%s</billNumber>\n"
+            + "<companyCode>%s</ companyCode >\n"
+            + "</Function>\n"
+            + "</TCSRequest>";
 
-    return String.format(xmlMessage,
+    return String.format(
+        xmlMessage,
         this.getUsername(),
         this.getPassword(),
         this.getMsisdn(),

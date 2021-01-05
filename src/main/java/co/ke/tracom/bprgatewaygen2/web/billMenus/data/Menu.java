@@ -1,10 +1,10 @@
 package co.ke.tracom.bprgatewaygen2.web.billMenus.data;
 
-
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -19,5 +19,4 @@ public class Menu {
   /* List of fields to be presented to the user for gathering their input.
    * Empty if submenu is present */
   private List<MenuField> fields;
-
 }

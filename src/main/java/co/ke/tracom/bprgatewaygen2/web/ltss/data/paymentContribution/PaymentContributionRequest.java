@@ -6,16 +6,16 @@ import lombok.Data;
 
 @Data
 public class PaymentContributionRequest {
-  @ApiModelProperty(name = "Beneficiary",
-      value = "Payment beneficiary",
-      required = true)
+  @ApiModelProperty(name = "Beneficiary", value = "Payment beneficiary", required = true)
   private NationalIDValidationRequest beneficiary;
+
   private String amount;
-  @ApiModelProperty(name = "Description",
-      value = "Reason for payment ",
-      required = true)
+
+  @ApiModelProperty(name = "Description", value = "Reason for payment ", required = true)
   private String description;
-  @ApiModelProperty(name = "Intermediary",
+
+  @ApiModelProperty(
+      name = "Intermediary",
       value = "Payment Service Provider’s name (60)",
       required = true)
   private String intermediary;

@@ -11,5 +11,4 @@ public class SavePaymentRequest {
   private String senderName;
   private String senderPhoneNo;
   private String reason;
-
 }

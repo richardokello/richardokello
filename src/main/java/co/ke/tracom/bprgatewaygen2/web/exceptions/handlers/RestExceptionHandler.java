@@ -2,8 +2,6 @@ package co.ke.tracom.bprgatewaygen2.web.exceptions.handlers;
 
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
 import co.ke.tracom.bprgatewaygen2.web.exceptions.models.ErrorDetail;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 /** This is the driving class when an exception occurs. All exceptions are handled here. */
 @Order(Ordered.HIGHEST_PRECEDENCE)

@@ -1,27 +1,20 @@
 package co.ke.tracom.bprgatewaygen2.web.wasac.data.payment;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "status",
-    "reason"
-})
+@JsonPropertyOrder({"status", "reason"})
 public class Response {
 
+  @JsonIgnore
+  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
   @JsonProperty("status")
   private String status;
   @JsonProperty("reason")
   private String reason;
-  @JsonIgnore
-  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
   @JsonProperty("status")
   public String getStatus() {
@@ -52,5 +45,4 @@ public class Response {
   public void setAdditionalProperty(String name, Object value) {
     this.additionalProperties.put(name, value);
   }
-
 }

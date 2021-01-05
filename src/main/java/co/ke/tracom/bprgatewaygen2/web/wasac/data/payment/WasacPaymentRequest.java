@@ -1,30 +1,28 @@
 package co.ke.tracom.bprgatewaygen2.web.wasac.data.payment;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "username",
-    "password",
-    "customerid",
-    "reference",
-    "event",
-    "account",
-    "operationdate",
-    "valuedate",
-    "amountcredit",
-    "description",
-    "terminal"
+  "username",
+  "password",
+  "customerid",
+  "reference",
+  "event",
+  "account",
+  "operationdate",
+  "valuedate",
+  "amountcredit",
+  "description",
+  "terminal"
 })
 public class WasacPaymentRequest {
 
+  @JsonIgnore
+  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
   @JsonProperty("username")
   private String username;
   @JsonProperty("password")
@@ -47,8 +45,6 @@ public class WasacPaymentRequest {
   private String description;
   @JsonProperty("terminal")
   private String terminal;
-  @JsonIgnore
-  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
   @JsonProperty("username")
   public String getUsername() {
@@ -169,5 +165,4 @@ public class WasacPaymentRequest {
   public void setAdditionalProperty(String name, Object value) {
     this.additionalProperties.put(name, value);
   }
-
 }

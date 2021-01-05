@@ -1,7 +1,8 @@
 package co.ke.tracom.bprgatewaygen2.web.ltss.data;
 
-import java.util.Date;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class LTSSResponse {

@@ -1,6 +1,5 @@
 package co.ke.tracom.bprgatewaygen2.web.mobicash.controller;
 
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.ValidateNIDResponse;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsRequest;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.agent.AgentDetailsResponse;
 import co.ke.tracom.bprgatewaygen2.web.mobicash.data.authentication.AuthenticationRequest;
@@ -17,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
-@RequestMapping(name = "/api/mobicash", produces = {"application/json"})
+@RequestMapping(
+    name = "/api/mobicash",
+    produces = {"application/json"})
 @RequiredArgsConstructor
 public class MobicashController {
 
@@ -40,9 +40,7 @@ public class MobicashController {
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
 
-  @ApiOperation(
-      value = "Returns agent details",
-      response = AgentDetailsResponse.class)
+  @ApiOperation(value = "Returns agent details", response = AgentDetailsResponse.class)
   @PostMapping("/agent")
   public ResponseEntity<?> getAgentDetails(@RequestBody AgentDetailsRequest request) {
     AgentDetailsResponse responseEntity = mobiCashService.getAgentDetails(request);

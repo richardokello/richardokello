@@ -74,11 +74,11 @@ public class LtssService {
 
     try {
       String requestURL = ltssBaseUrl + paymentContributionUrl;
-      ResponseEntity<String> response = restHttpService
-          .postRequest(paymentContributionRequest, requestURL);
+      ResponseEntity<String> response =
+          restHttpService.postRequest(paymentContributionRequest, requestURL);
       ObjectMapper mapper = new ObjectMapper();
-      paymentContributionResponse = mapper
-          .readValue(response.getBody(), PaymentContributionResponse.class);
+      paymentContributionResponse =
+          mapper.readValue(response.getBody(), PaymentContributionResponse.class);
       log.info("LTSS SERVICE RESPONSE: {}", paymentContributionResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -93,7 +93,7 @@ public class LtssService {
    *
    * @param checkPaymentRequest check payment request object
    * @return response entity from remote API; Structure of response is not specified in LTSS service
-   * documentation so an explicit response object to reflect this is not declared
+   *     documentation so an explicit response object to reflect this is not declared
    */
   public ResponseEntity<?> checkPaymentByRefNo(CheckPaymentRequest checkPaymentRequest) {
     ResponseEntity<String> response;
@@ -121,8 +121,8 @@ public class LtssService {
 
     try {
       String requestURL = ltssBaseUrl + registerNewSubscriberURL;
-      ResponseEntity<String> response = restHttpService
-          .postRequest(newSubscriberRequest, requestURL);
+      ResponseEntity<String> response =
+          restHttpService.postRequest(newSubscriberRequest, requestURL);
       ObjectMapper mapper = new ObjectMapper();
       newSubscriberResponse = mapper.readValue(response.getBody(), NewSubscriberResponse.class);
       log.info("LTSS SERVICE RESPONSE: {}", newSubscriberResponse);
@@ -135,47 +135,7 @@ public class LtssService {
     return newSubscriberResponse;
   }
 
-  private void logError (Exception ex) {
+  private void logError(Exception ex) {
     log.error("LTSS SERVICE: {}", ex.getMessage());
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

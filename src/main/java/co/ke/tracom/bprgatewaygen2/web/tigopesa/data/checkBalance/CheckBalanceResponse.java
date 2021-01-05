@@ -17,5 +17,4 @@ public class CheckBalanceResponse {
 
   @JsonProperty("amount")
   private float amount;
-
 }

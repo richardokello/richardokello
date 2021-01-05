@@ -6,40 +6,50 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "postname",
-    "name",
-    "zone",
-    "mobile",
-    "email",
-    "phone",
-    "personnalid",
-    "branch",
-    "balance",
-    "meterid",
-    "customerid"
+  "postname",
+  "name",
+  "zone",
+  "mobile",
+  "email",
+  "phone",
+  "personnalid",
+  "branch",
+  "balance",
+  "meterid",
+  "customerid"
 })
 public class Response {
 
   @JsonProperty("postname")
   private String postname;
+
   @JsonProperty("name")
   private String name;
+
   @JsonProperty("zone")
   private String zone;
+
   @JsonProperty("mobile")
   private String mobile;
+
   @JsonProperty("email")
   private String email;
+
   @JsonProperty("phone")
   private String phone;
+
   @JsonProperty("personnalid")
   private Object personnalid;
+
   @JsonProperty("branch")
   private String branch;
+
   @JsonProperty("balance")
   private String balance;
+
   @JsonProperty("meterid")
   private String meterid;
+
   @JsonProperty("customerid")
   private String customerid;
 
@@ -152,5 +162,4 @@ public class Response {
   public void setCustomerid(String customerid) {
     this.customerid = customerid;
   }
-
 }

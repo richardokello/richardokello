@@ -1,8 +1,9 @@
 package co.ke.tracom.bprgatewaygen2.web.agaciro.data.paymentNotification;
 
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.AgaciroRequest;
-import java.util.Date;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class PaymentNotificationRequest extends AgaciroRequest {

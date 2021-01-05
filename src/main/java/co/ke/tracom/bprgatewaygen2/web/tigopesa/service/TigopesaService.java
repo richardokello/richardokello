@@ -40,8 +40,8 @@ public class TigopesaService {
     BillPaymentResponse paymentResponse;
 
     try {
-      ResponseEntity<String> response = xmlHttpService
-          .post(paymentRequest, baseURL + requestURL, String.class);
+      ResponseEntity<String> response =
+          xmlHttpService.post(paymentRequest, baseURL + requestURL, String.class);
       XmlMapper mapper = new XmlMapper();
       paymentResponse = mapper.readValue(response.getBody(), BillPaymentResponse.class);
       log.info("TIGOPESA SERVICE RESPONSE: {}", paymentResponse);
@@ -63,8 +63,8 @@ public class TigopesaService {
     CheckBalanceResponse checkBalanceResponse;
 
     try {
-      ResponseEntity<String> response = xmlHttpService
-          .post(checkBalanceRequest, baseURL + requestURL, String.class);
+      ResponseEntity<String> response =
+          xmlHttpService.post(checkBalanceRequest, baseURL + requestURL, String.class);
       XmlMapper mapper = new XmlMapper();
       checkBalanceResponse = mapper.readValue(response.getBody(), CheckBalanceResponse.class);
       log.info("TIGOPESA SERVICE RESPONSE: {}", checkBalanceResponse);
@@ -88,11 +88,11 @@ public class TigopesaService {
     TransactionStatusResponse transactionStatusResponse;
 
     try {
-      ResponseEntity<String> response = xmlHttpService
-          .post(transactionStatusRequest, baseURL + requestURL, String.class);
+      ResponseEntity<String> response =
+          xmlHttpService.post(transactionStatusRequest, baseURL + requestURL, String.class);
       XmlMapper mapper = new XmlMapper();
-      transactionStatusResponse = mapper
-          .readValue(response.getBody(), TransactionStatusResponse.class);
+      transactionStatusResponse =
+          mapper.readValue(response.getBody(), TransactionStatusResponse.class);
       log.info("TIGOPESA SERVICE RESPONSE: {}", transactionStatusResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -113,8 +113,8 @@ public class TigopesaService {
     WalletPaymentResponse walletPaymentResponse;
 
     try {
-      ResponseEntity<String> response = xmlHttpService
-          .post(walletPaymentRequest, baseURL + requestURL, String.class);
+      ResponseEntity<String> response =
+          xmlHttpService.post(walletPaymentRequest, baseURL + requestURL, String.class);
       XmlMapper mapper = new XmlMapper();
       walletPaymentResponse = mapper.readValue(response.getBody(), WalletPaymentResponse.class);
       log.info("TIGOPESA SERVICE RESPONSE: {}", walletPaymentResponse);
@@ -128,8 +128,7 @@ public class TigopesaService {
     return walletPaymentResponse;
   }
 
-  private void logError (Exception ex) {
+  private void logError(Exception ex) {
     log.error("TIGOPESA SERVICE: {}", ex.getMessage());
   }
 }
-

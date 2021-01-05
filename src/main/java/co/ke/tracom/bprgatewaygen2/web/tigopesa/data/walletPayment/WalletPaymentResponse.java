@@ -49,5 +49,3 @@ public class WalletPaymentResponse {
     this.message = message;
   }
 }
-
-
