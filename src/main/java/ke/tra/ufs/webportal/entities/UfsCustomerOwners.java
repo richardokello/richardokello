@@ -57,7 +57,7 @@ public class UfsCustomerOwners implements Serializable {
     @Filter
     @Searchable
     @ModifiableField
-    @Size(min = 1, max = 20)
+//    @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String directorName;
     @JoinColumn(name = "DESIGNATION", referencedColumnName = "ID",insertable = false,updatable = false)
