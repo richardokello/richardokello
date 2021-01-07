@@ -1,9 +1,6 @@
 package co.ke.tracom.bprgatewaygen2.web.ltss.service;
 
-import co.ke.tracom.bprgatewaygen2.core.util.CustomObjectMapper;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.InstitutionsRequest;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.InstitutionsResponse;
-import co.ke.tracom.bprgatewaygen2.web.agaciro.service.AgaciroService;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.checkPayment.CheckPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;
@@ -29,7 +26,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static co.ke.tracom.bprgatewaygen2.web.TestUtil.configureWireMockForOkPostResponse;
-import static co.ke.tracom.bprgatewaygen2.web.TestUtil.configureWireMockForOkResponse;
 import static co.ke.tracom.bprgatewaygen2.web.ltss.service.LtssServiceTestHelper.*;
 import static org.junit.Assert.*;
 

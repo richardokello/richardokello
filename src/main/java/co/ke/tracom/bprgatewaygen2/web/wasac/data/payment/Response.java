@@ -11,8 +11,10 @@ public class Response {
 
   @JsonIgnore
   private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
   @JsonProperty("status")
   private String status;
+
   @JsonProperty("reason")
   private String reason;
 

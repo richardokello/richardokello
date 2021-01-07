@@ -1,6 +1,6 @@
 package co.ke.tracom.bprgatewaygen2.web.academicbridge.services;
 
-import co.ke.tracom.bprgatewaygen2.core.util.CustomObjectMapper;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.AcademicBridgeResponse;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.AcademicBridgePaymentStatusResponse;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.PaymentStatusRequest;

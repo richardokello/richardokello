@@ -1,6 +1,6 @@
 package co.ke.tracom.bprgatewaygen2.web.tigopesa.service;
 
-import co.ke.tracom.bprgatewaygen2.core.util.CustomObjectMapper;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance.CheckBalanceRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance.CheckBalanceResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.payment.BillPaymentRequest;
@@ -9,7 +9,6 @@ import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.transactionStatus.Transacti
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.transactionStatus.TransactionStatusResponse;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPaymentResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;

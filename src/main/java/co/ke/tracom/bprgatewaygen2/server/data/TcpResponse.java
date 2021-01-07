@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class TcpResponse {
-    private int status;
-    private String message;
-    private List data;
+  private int status;
+  private String message;
+  private List data;
 }

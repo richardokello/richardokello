@@ -13,4 +13,5 @@ public class TcpRequest {
   private String serialNumber;
   private String tid;
   private String txnType;
+  private String bill;
 }

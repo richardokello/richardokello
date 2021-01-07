@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Returns all bill menu items as a json string */
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/api/menus")

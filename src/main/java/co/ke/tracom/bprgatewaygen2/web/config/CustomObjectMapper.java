@@ -1,4 +1,4 @@
-package co.ke.tracom.bprgatewaygen2.core.util;
+package co.ke.tracom.bprgatewaygen2.web.config;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;

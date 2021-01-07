@@ -2,17 +2,21 @@ package co.ke.tracom.bprgatewaygen2.server;
 
 import co.ke.tracom.bprgatewaygen2.server.data.TcpRequest;
 import co.ke.tracom.bprgatewaygen2.server.data.TcpResponse;
-import co.ke.tracom.bprgatewaygen2.web.billMenus.data.BillMenuResponse;
+import co.ke.tracom.bprgatewaygen2.web.academicbridge.services.AcademicBridgeService;
 import co.ke.tracom.bprgatewaygen2.web.billMenus.service.BillMenusService;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.config.SpringContext;
+import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.UnprocessableEntityException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
 import io.vertx.core.net.NetServerOptions;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This server handles TCP requests for any given bill and dispatches them to an appropriate handler
+ */
 @Slf4j
 public class TcpServer {
 
@@ -28,48 +32,59 @@ public class TcpServer {
     return SpringContext.getBean(BillMenusService.class);
   }
 
-  public void addRequestHandler() {
+  private AcademicBridgeService getAcademicBridgeService() {
+    return SpringContext.getBean(AcademicBridgeService.class);
+  }
+
+  public void addRequestHandlers() {
     server.connectHandler(
         socket -> {
           socket.handler(
               buffer -> {
-                  ObjectMapper mapper = new ObjectMapper();
+                CustomObjectMapper mapper = new CustomObjectMapper();
                 try {
-                  TcpRequest req = mapper.readValue(buffer.toString(), TcpRequest.class);
+                  String requestString = buffer.toString();
+                  TcpRequest req = mapper.readValue(requestString, TcpRequest.class);
                   log.info("GENERIC REQUEST OBJECT: {}", req);
+                  String billType = req.getBill();
 
-                  String transactionType = req.getTxnType();
-                  switch (transactionType) {
-                    case "fetch-menu":
-                      BillMenuResponse billMenuResponse = getBillmenuService().getAllMenus();
-                      Buffer outBuffer = Buffer.buffer();
-                      outBuffer.appendString(mapper.writeValueAsString(billMenuResponse));
-                      socket.write(outBuffer);
+                  switch (billType) {
+                    case "menu":
+                      BillRequestHandler.menu(requestString, getBillmenuService(), socket);
+                      break;
+
+                    case "academic-bridge":
+                      BillRequestHandler.academicBridge(
+                          requestString, getAcademicBridgeService(), socket);
                       break;
                     default:
-                      // default response - invalid input/undefined response -  error?
-                      break;
+                      throw new UnprocessableEntityException("Entity cannot be processed");
                   }
-                } catch (JsonProcessingException e) {
-                    TcpResponse response = new TcpResponse();
-                    response.setMessage("Bad request format. Should be json formatted");
-                    response.setStatus(400);
-                    Buffer outBuffer = Buffer.buffer();
-                    try {
-                        outBuffer.appendString(mapper.writeValueAsString(response));
-                    } catch (JsonProcessingException ex) {
-                        ex.printStackTrace();
-                        log.error("TCP SERVER ERROR: {}", ex.getMessage());
-                    }
+                } catch (JsonProcessingException
+                    | UnprocessableEntityException
+                    | NullPointerException e) {
+                  e.printStackTrace();
+                  TcpResponse response = new TcpResponse();
+                  response.setMessage("Bad request: " + e.getMessage());
+                  response.setStatus(400);
+                  Buffer outBuffer = Buffer.buffer();
+                  try {
+                    outBuffer.appendString(mapper.writeValueAsString(response));
                     socket.write(outBuffer);
-                  log.error("TCP SERVER ERROR: {}", e.getMessage());
+                  } catch (JsonProcessingException ex) {
+                    ex.printStackTrace();
+                    log.error("TCP SERVER ERROR: {}", ex.getMessage());
+                    socket.write(ex.getMessage());
+                  }
+                } finally {
+                  socket.close();
                 }
               });
         });
   }
 
   public void start() {
-    addRequestHandler();
+    addRequestHandlers();
     server.listen(
         res -> {
           if (res.succeeded()) {

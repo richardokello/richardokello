@@ -59,6 +59,7 @@ public class AcademicBridgeService {
   public GetStudentDetailsResponse fetchStudentDetailsByBillNumber(
       GetStudentDetailsRequest request) {
     GetStudentDetailsResponse response;
+
     try {
       String requestURL =
           String.format(

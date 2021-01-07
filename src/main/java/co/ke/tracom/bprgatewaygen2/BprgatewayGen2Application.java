@@ -1,7 +1,6 @@
 package co.ke.tracom.bprgatewaygen2;
 
 import co.ke.tracom.bprgatewaygen2.server.TcpServer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -12,5 +11,4 @@ public class BprgatewayGen2Application {
     SpringApplication.run(BprgatewayGen2Application.class, args);
     new TcpServer(5050).start();
   }
-
 }

@@ -57,7 +57,7 @@ public class AcademicBridgeController {
           "Checks if a payment was successfully saved on academic bridge given bank’s reference number.",
       response = AcademicBridgePaymentStatusResponse.class)
   @GetMapping("students/status/{referenceNumber}")
-  public ResponseEntity<?> AcademicBridgePaymentStatusResponse(
+  public ResponseEntity<?> checkPaymentStatus(
       @ApiParam(value = "Student bill number", required = true) @PathVariable
           String referenceNumber) {
     PaymentStatusRequest request = new PaymentStatusRequest();

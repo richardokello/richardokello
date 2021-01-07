@@ -23,26 +23,37 @@ public class WasacPaymentRequest {
 
   @JsonIgnore
   private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
   @JsonProperty("username")
   private String username;
+
   @JsonProperty("password")
   private String password;
+
   @JsonProperty("customerid")
   private String customerid;
+
   @JsonProperty("reference")
   private String reference;
+
   @JsonProperty("event")
   private String event;
+
   @JsonProperty("account")
   private String account;
+
   @JsonProperty("operationdate")
   private String operationdate;
+
   @JsonProperty("valuedate")
   private String valuedate;
+
   @JsonProperty("amountcredit")
   private String amountcredit;
+
   @JsonProperty("description")
   private String description;
+
   @JsonProperty("terminal")
   private String terminal;
 

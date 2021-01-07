@@ -1,6 +1,6 @@
 package co.ke.tracom.bprgatewaygen2.web.agaciro.service;
 
-import co.ke.tracom.bprgatewaygen2.core.util.CustomObjectMapper;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.institutions.*;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.DocumentNID;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.ValidateNIDRequest;
