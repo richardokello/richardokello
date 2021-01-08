@@ -9,6 +9,7 @@ import co.ke.tracom.bprgatewaygen2.web.mobicash.data.payment.MobicashPaymentResp
 import co.ke.tracom.bprgatewaygen2.web.mobicash.service.MobiCashService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping(
     name = "/api/mobicash",
@@ -36,6 +38,7 @@ public class MobicashController {
       response = AuthenticationResponse.class)
   @PostMapping("/oauth/token")
   public ResponseEntity<?> requestToken(@RequestBody AuthenticationRequest request) {
+    log.info("MOBICASH REQUEST DATA - AUTHENTICATION: {}", request);
     AuthenticationResponse responseEntity = mobiCashService.authRequest(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
@@ -43,6 +46,7 @@ public class MobicashController {
   @ApiOperation(value = "Returns agent details", response = AgentDetailsResponse.class)
   @PostMapping("/agent")
   public ResponseEntity<?> getAgentDetails(@RequestBody AgentDetailsRequest request) {
+    log.info("MOBICASH REQUEST DATA - AGENT DETAILS: {}", request);
     AgentDetailsResponse responseEntity = mobiCashService.getAgentDetails(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
@@ -52,6 +56,7 @@ public class MobicashController {
       response = AgentDetailsResponse.class)
   @PostMapping("/account")
   public ResponseEntity<?> creditAccount(@RequestBody MobicashPaymentRequest request) {
+    log.info("MOBICASH REQUEST DATA - ACCOUNT CREDIT: {}", request);
     MobicashPaymentResponse responseEntity = mobiCashService.sendPayment(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }

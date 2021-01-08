@@ -10,10 +10,12 @@ import co.ke.tracom.bprgatewaygen2.web.academicbridge.services.AcademicBridgeSer
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/academic-bridge/payments")
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class AcademicBridgeController {
       @ApiParam(value = "Student bill number", required = true) @PathVariable String billNumber) {
     GetStudentDetailsRequest request = new GetStudentDetailsRequest();
     request.setBillNumber(billNumber);
+    log.info("ACADEMIC BRIDGE REQUEST DATA - STUDENT DETAILS: {}", request);
     GetStudentDetailsResponse responseEntity =
         academicBridgeService.fetchStudentDetailsByBillNumber(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
@@ -37,7 +40,7 @@ public class AcademicBridgeController {
   @ApiOperation(
       value = "Saves payment on academic bridge school's database for a given bill number",
       response = AcademicBridgeResponse.class)
-  @PostMapping("/students/{billNumber}")
+  @PostMapping(value = "/students/{billNumber}")
   public ResponseEntity<?> savePayment(
       @ApiParam(value = "Student bill number", required = true) @PathVariable String billNumber,
       @ApiParam(
@@ -47,6 +50,7 @@ public class AcademicBridgeController {
           @RequestBody
           SavePaymentRequest request) {
     request.setBillNumber(billNumber);
+    log.info("ACADEMIC BRIDGE REQUEST DATA - SAVE PAYMENT: {}", request);
     AcademicBridgeResponse responseEntity =
         academicBridgeService.sendPaymentDetailsToAcademicBridge(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
@@ -62,6 +66,7 @@ public class AcademicBridgeController {
           String referenceNumber) {
     PaymentStatusRequest request = new PaymentStatusRequest();
     request.setReferenceNo(referenceNumber);
+    log.info("ACADEMIC BRIDGE REQUEST DATA - CHECK PAYMENT STATUS: {}", request);
     AcademicBridgePaymentStatusResponse responseEntity =
         academicBridgeService.checkPaymentStatus(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);

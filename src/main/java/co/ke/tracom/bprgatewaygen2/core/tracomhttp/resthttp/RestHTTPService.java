@@ -71,7 +71,6 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
     // add request header
     httpClient.setRequestProperty("User-Agent", USER_AGENT);
 
-    int responseCode = httpClient.getResponseCode();
     logger.info("SERVICE REQUEST : {} ", url);
     StringBuilder response = new StringBuilder();
     try (BufferedReader in =

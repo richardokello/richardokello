@@ -11,6 +11,7 @@ import co.ke.tracom.bprgatewaygen2.web.tigopesa.data.walletPayment.WalletPayment
 import co.ke.tracom.bprgatewaygen2.web.tigopesa.service.TigopesaService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping(
     name = "/api/tigopesa",
@@ -30,6 +32,7 @@ public class TigoPesaController {
   @ApiOperation(value = "Make a bill payment", response = BillPaymentResponse.class)
   @PostMapping("/bill")
   public ResponseEntity<?> payBill(@RequestBody BillPaymentRequest request) {
+    log.info("TIGOPESA REQUEST DATA - BILL PAYMENT: {}", request);
     BillPaymentResponse responseEntity = tigopesaService.payBill(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
@@ -39,6 +42,7 @@ public class TigoPesaController {
       response = CheckBalanceResponse.class)
   @PostMapping("/balance")
   public ResponseEntity<?> checkBalance(@RequestBody CheckBalanceRequest request) {
+    log.info("TIGOPESA REQUEST DATA - CHECK BALANCE: {}", request);
     CheckBalanceResponse responseEntity = tigopesaService.checkBalance(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
@@ -46,6 +50,7 @@ public class TigoPesaController {
   @ApiOperation(value = "Checks the transaction status", response = TransactionStatusResponse.class)
   @PostMapping("/transaction/status")
   public ResponseEntity<?> checkTransactionStatus(@RequestBody TransactionStatusRequest request) {
+    log.info("TIGOPESA REQUEST DATA - CHECK TRANSACTION: {}", request);
     TransactionStatusResponse responseEntity = tigopesaService.checkTransactionStatus(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
@@ -53,6 +58,7 @@ public class TigoPesaController {
   @ApiOperation(value = "Deposits amount to virtual wallet", response = WalletPaymentResponse.class)
   @PostMapping("/wallet")
   public ResponseEntity<?> creditWallet(@RequestBody WalletPaymentRequest request) {
+    log.info("TIGOPESA REQUEST DATA - WALLET DEPOSIT: {}", request);
     WalletPaymentResponse responseEntity = tigopesaService.creditWallet(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }

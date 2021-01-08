@@ -24,6 +24,7 @@ public class TigopesaService {
 
   private final XMLHttpService xmlHttpService;
 
+  // Todo: set base url once provided (not available in the docs)
   @Value("")
   private String baseURL;
 
@@ -42,9 +43,9 @@ public class TigopesaService {
     try {
       ResponseEntity<String> response =
           xmlHttpService.post(paymentRequest, baseURL + requestURL, String.class);
+      log.info("TIGOPESA SERVICE RESPONSE: {}", response);
       XmlMapper mapper = new XmlMapper();
       paymentResponse = mapper.readValue(response.getBody(), BillPaymentResponse.class);
-      log.info("TIGOPESA SERVICE RESPONSE: {}", paymentResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -65,9 +66,9 @@ public class TigopesaService {
     try {
       ResponseEntity<String> response =
           xmlHttpService.post(checkBalanceRequest, baseURL + requestURL, String.class);
+      log.info("TIGOPESA SERVICE RESPONSE: {}", response);
       XmlMapper mapper = new XmlMapper();
       checkBalanceResponse = mapper.readValue(response.getBody(), CheckBalanceResponse.class);
-      log.info("TIGOPESA SERVICE RESPONSE: {}", checkBalanceResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -90,10 +91,10 @@ public class TigopesaService {
     try {
       ResponseEntity<String> response =
           xmlHttpService.post(transactionStatusRequest, baseURL + requestURL, String.class);
+      log.info("TIGOPESA SERVICE RESPONSE: {}", response);
       XmlMapper mapper = new XmlMapper();
       transactionStatusResponse =
           mapper.readValue(response.getBody(), TransactionStatusResponse.class);
-      log.info("TIGOPESA SERVICE RESPONSE: {}", transactionStatusResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);

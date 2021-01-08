@@ -1,6 +1,7 @@
 package co.ke.tracom.bprgatewaygen2.web.ltss.service;
 
 import co.ke.tracom.bprgatewaygen2.core.tracomhttp.resthttp.RestHTTPService;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.checkPayment.CheckPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
@@ -9,7 +10,6 @@ import co.ke.tracom.bprgatewaygen2.web.ltss.data.newSubscriber.NewSubscriberRequ
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.newSubscriber.NewSubscriberResponse;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.paymentContribution.PaymentContributionRequest;
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.paymentContribution.PaymentContributionResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class LtssService {
+
+  private final CustomObjectMapper mapper = new CustomObjectMapper();
 
   private final RestHTTPService restHttpService;
 
@@ -51,9 +53,8 @@ public class LtssService {
     try {
       String requestURL = ltssBaseUrl + nationalIdValidationUrl;
       ResponseEntity<String> response = restHttpService.postRequest(validationRequest, requestURL);
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("LTSS SERVICE RESPONSE: {}", response);
       validationResponse = mapper.readValue(response.getBody(), NationalIDValidationResponse.class);
-      log.info("LTSS SERVICE RESPONSE: {}", validationResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -76,10 +77,9 @@ public class LtssService {
       String requestURL = ltssBaseUrl + paymentContributionUrl;
       ResponseEntity<String> response =
           restHttpService.postRequest(paymentContributionRequest, requestURL);
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("LTSS SERVICE RESPONSE: {}", response);
       paymentContributionResponse =
           mapper.readValue(response.getBody(), PaymentContributionResponse.class);
-      log.info("LTSS SERVICE RESPONSE: {}", paymentContributionResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -93,7 +93,7 @@ public class LtssService {
    *
    * @param checkPaymentRequest check payment request object
    * @return response entity from remote API; Structure of response is not specified in LTSS service
-   *     documentation so an explicit response object to reflect this is not declared
+   *     documentation so an explicit response object to parse the response has not been used
    */
   public ResponseEntity<?> checkPaymentByRefNo(CheckPaymentRequest checkPaymentRequest) {
     ResponseEntity<String> response;
@@ -123,9 +123,8 @@ public class LtssService {
       String requestURL = ltssBaseUrl + registerNewSubscriberURL;
       ResponseEntity<String> response =
           restHttpService.postRequest(newSubscriberRequest, requestURL);
-      ObjectMapper mapper = new ObjectMapper();
-      newSubscriberResponse = mapper.readValue(response.getBody(), NewSubscriberResponse.class);
       log.info("LTSS SERVICE RESPONSE: {}", newSubscriberResponse);
+      newSubscriberResponse = mapper.readValue(response.getBody(), NewSubscriberResponse.class);
 
     } catch (Exception ex) {
       ex.printStackTrace();

@@ -21,7 +21,7 @@ public class XMLHttpService {
   private final RestTemplate restTemplate;
 
   /**
-   * @param request an XMLRequestI object
+   * @param request an object that implements XMLRequestI interface
    * @param apiUrl The URL you are sending the request to
    * @param responseClass The class that parses the response into an appropriate format
    * @param <T>
@@ -31,7 +31,7 @@ public class XMLHttpService {
       XMLRequestI request, String apiUrl, Class<T> responseClass) {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.APPLICATION_XML);
-    logger.info("REQUEST XML: {}", request.getRequestXML());
+    logger.info("XML REQUEST STRING: {}", request.getRequestXML());
     HttpEntity<String> entity = new HttpEntity<>(request.getRequestXML(), httpHeaders);
     ResponseEntity<T> responseEntity = restTemplate.postForEntity(apiUrl, entity, responseClass);
     logger.info(

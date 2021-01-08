@@ -8,10 +8,12 @@ import co.ke.tracom.bprgatewaygen2.web.wasac.service.WASACService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping(
     name = "/api/wasac",
@@ -29,6 +31,7 @@ public class WasacController {
       @ApiParam(value = "Customer ID", required = true) @PathVariable String customerId) {
     CustomerProfileRequest request = new CustomerProfileRequest();
     request.setCustomerId(customerId);
+    log.info("WASAC REQUEST DATA - CUSTOMER REQUEST: {}", request);
     CustomerProfileResponse responseEntity = wasacService.fetchCustomerProfile(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
@@ -40,6 +43,7 @@ public class WasacController {
   public ResponseEntity<?> creditAccount(
       @ApiParam(value = "Payment details", required = true) @RequestBody
           WasacPaymentRequest request) {
+    log.info("WASAC REQUEST DATA - PAYMENT: {}", request);
     WasacPaymentResponse responseEntity = wasacService.payWaterBill(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }

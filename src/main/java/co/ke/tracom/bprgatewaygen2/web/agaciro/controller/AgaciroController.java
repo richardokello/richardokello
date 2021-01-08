@@ -9,10 +9,12 @@ import co.ke.tracom.bprgatewaygen2.web.agaciro.service.AgaciroService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/agaciro")
 @RequiredArgsConstructor
@@ -28,6 +30,10 @@ public class AgaciroController {
   public ResponseEntity<?> getInstitutions(
       @ApiParam(value = "Request object", required = true) @RequestBody
           InstitutionsRequest request) {
+    log.info(
+        "AGACIRO REQUEST DATA - GET INSTITUTIONS: username={} password={}",
+        request.getUsername(),
+        request.getPassword());
     InstitutionsResponse responseEntity = agaciroService.getInstitutions(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
@@ -37,6 +43,7 @@ public class AgaciroController {
       response = InstitutionByNameResponse.class)
   @GetMapping("/institutions/name")
   public ResponseEntity<?> getInstitutionByName(@RequestBody InstitutionByNameRequest request) {
+    log.info("AGACIRO REQUEST DATA - GET INSTITUTION BY NAME: {}", request);
     InstitutionByNameResponse responseEntity = agaciroService.getInstitutionByName(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
@@ -46,6 +53,7 @@ public class AgaciroController {
       response = InstitutionByCodeResponse.class)
   @GetMapping("/institutions/code")
   public ResponseEntity<?> getInstitutionByCode(@RequestBody InstitutionByCodeRequest request) {
+    log.info("AGACIRO REQUEST DATA - GET INSTITUTION BY CODE: {}", request);
     InstitutionByCodeResponse responseEntity = agaciroService.getInstitutionByCode(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }

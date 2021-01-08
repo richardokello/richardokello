@@ -7,6 +7,7 @@ import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.paymentstatus.Payment
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.savepayment.SavePaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsRequest;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 public class AcademicBridgeService {
+
+  private final CustomObjectMapper mapper = new CustomObjectMapper();
 
   private final RestHTTPService restHTTPService;
 
@@ -51,7 +54,7 @@ public class AcademicBridgeService {
   private String checkPaymentStatusURL;
 
   /**
-   * To get bill details given the bill number.
+   * To get student details given the bill number.
    *
    * @param request Student bill number
    * @return student Information
@@ -59,7 +62,6 @@ public class AcademicBridgeService {
   public GetStudentDetailsResponse fetchStudentDetailsByBillNumber(
       GetStudentDetailsRequest request) {
     GetStudentDetailsResponse response;
-
     try {
       String requestURL =
           String.format(
@@ -68,9 +70,8 @@ public class AcademicBridgeService {
               academicBridgeAPIKey,
               academicBridgeAPISecret);
       String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("ACADEMIC BRIDGE - FETCH STUDENTS RESPONSE FROM REMOTE API: {}", results);
       response = mapper.readValue(results, GetStudentDetailsResponse.class);
-      log.info("ACADEMIC BRIDGE RESPONSE: {}", response);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -89,7 +90,6 @@ public class AcademicBridgeService {
   public AcademicBridgeResponse sendPaymentDetailsToAcademicBridge(
       SavePaymentRequest savePaymentRequest) {
     AcademicBridgeResponse response;
-
     try {
       String requestURL =
           String.format(
@@ -103,9 +103,9 @@ public class AcademicBridgeService {
               savePaymentRequest.getSenderPhoneNo(),
               savePaymentRequest.getReason());
       String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
-      ObjectMapper mapper = new ObjectMapper();
       response = mapper.readValue(results, AcademicBridgeResponse.class);
       log.info("ACADEMIC BRIDGE RESPONSE: {}", response);
+      System.out.println("ACADEMIC BRIDGE RESPONSE: {}" + response);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -123,6 +123,7 @@ public class AcademicBridgeService {
    */
   public AcademicBridgePaymentStatusResponse checkPaymentStatus(PaymentStatusRequest request) {
     AcademicBridgePaymentStatusResponse response;
+    log.info("ACADEMIC BRIDGE REQUEST: {}", request);
     try {
       String requestURL =
           String.format(

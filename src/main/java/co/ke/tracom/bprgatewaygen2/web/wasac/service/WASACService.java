@@ -2,11 +2,11 @@ package co.ke.tracom.bprgatewaygen2.web.wasac.service;
 
 import co.ke.tracom.bprgatewaygen2.core.tracomhttp.resthttp.RestHTTPService;
 import co.ke.tracom.bprgatewaygen2.core.util.AppConstants;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileResponse;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentRequest;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class WASACService {
+
+  private final CustomObjectMapper mapper = new CustomObjectMapper();
 
   private final RestHTTPService restHTTPService;
 
@@ -46,12 +48,10 @@ public class WASACService {
     try {
       String requestURL = WASACBaseURL + profileRequest.getCustomerId() + WASACProfileURL;
       String results = restHTTPService.sendGetRequest(requestURL);
-
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("WASAC SERVICE RESPONSE: {}", results);
       CustomerProfileResponse customerProfileResult =
           mapper.readValue(results, CustomerProfileResponse.class);
       customerProfileResult.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
-      log.info("WASAC SERVICE RESPONSE: {}", customerProfileResult);
     } catch (Exception e) {
       e.printStackTrace();
       logError(e);
@@ -66,12 +66,10 @@ public class WASACService {
     try {
       ResponseEntity<String> response =
           restHTTPService.postRequest(request, WASACSPaymentAdviseURL);
-
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("WASAC SERVICE RESPONSE: {}", response);
       WasacPaymentResponse paymentAdviseResponse =
           mapper.readValue(response.getBody(), WasacPaymentResponse.class);
       paymentAdviseResponse.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
-      log.info("WASAC SERVICE RESPONSE: {}", paymentAdviseResponse);
     } catch (Exception e) {
       logError(e);
       e.printStackTrace();

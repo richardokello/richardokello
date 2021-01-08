@@ -19,16 +19,16 @@ public class BillRequestHandler {
     CustomObjectMapper mapper = new CustomObjectMapper();
     /* Parse request string into bill menu request object */
     BillMenuRequest billMenuRequest = mapper.readValue(requestString, BillMenuRequest.class);
-    log.info("BILL MENU REQUEST OBJECT: {}", billMenuRequest);
+    log.info("BILL MENU REQUEST DATA: {}", requestString);
     String tnxType = billMenuRequest.getTxnType();
 
-    if (tnxType.equals("fetch-menu")) {
+    if (tnxType != null && tnxType.equals("fetch-menu")) {
       BillMenuResponse billMenuResponse = billMenusService.getAllMenus();
       Buffer outBuffer = Buffer.buffer();
       outBuffer.appendString(mapper.writeValueAsString(billMenuResponse));
       socket.write(outBuffer);
     } else {
-      log.info("BAD REQUEST OBJECT");
+      log.error("TCP SERVER - BAD REQUEST DATA FOR FETCHING MENU: {} ", requestString);
       throw new UnprocessableEntityException("Entity cannot be processed");
     }
   }

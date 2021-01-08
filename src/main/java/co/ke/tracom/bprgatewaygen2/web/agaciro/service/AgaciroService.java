@@ -6,8 +6,8 @@ import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.ValidateNIDRequest;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.nid.ValidateNIDResponse;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.paymentNotification.PaymentNotificationRequest;
 import co.ke.tracom.bprgatewaygen2.web.agaciro.data.paymentNotification.PaymentNotificationResponse;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.exceptions.custom.ExternalHTTPRequestException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +19,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AgaciroService {
 
+  private final CustomObjectMapper mapper = new CustomObjectMapper();
+
   private final RestHTTPService restHTTPService;
 
+  // Todo: update base URL for Agaciro service
   @Value("")
   private String agaciroBaseURL;
 
@@ -55,9 +58,8 @@ public class AgaciroService {
               getInstitutionsRequest.getUsername(),
               getInstitutionsRequest.getPassword());
       String results = restHTTPService.sendGetRequest(agaciroBaseURL + requestURL);
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("AGACIRO SERVICE RESPONSE FROM REMOTE API: {}", results);
       institutions = mapper.readValue(results, InstitutionsResponse.class);
-      log.info("AGACIRO SERVICE RESPONSE: {}", institutions);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -70,7 +72,7 @@ public class AgaciroService {
    * Returns details of an institution based on name
    *
    * @param getInstitutionByNameRequest
-   * @return
+   * @return details of institution that matches name
    */
   public InstitutionByNameResponse getInstitutionByName(
       InstitutionByNameRequest getInstitutionByNameRequest) {
@@ -84,9 +86,8 @@ public class AgaciroService {
               getInstitutionByNameRequest.getPassword(),
               getInstitutionByNameRequest.getInstitutionName());
       String results = restHTTPService.sendGetRequest(agaciroBaseURL + requestURL);
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("AGACIRO SERVICE RESPONSE: {}", results);
       institution = mapper.readValue(results, InstitutionByNameResponse.class);
-      log.info("AGACIRO SERVICE RESPONSE: {}", institution);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -114,9 +115,8 @@ public class AgaciroService {
               getInstitutionByCodeRequest.getPassword(),
               getInstitutionByCodeRequest.getInstitutionCode());
       String results = restHTTPService.sendGetRequest(requestURL);
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("AGACIRO SERVICE RESPONSE: {}", results);
       institution = mapper.readValue(results, InstitutionByCodeResponse.class);
-      log.info("AGACIRO SERVICE RESPONSE: {}", institution);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -130,7 +130,7 @@ public class AgaciroService {
    * Returns registered NID from NIDA
    *
    * @param validateNIDRequest username, password and Rwandan National ID
-   * @return ValidateNIDResponse
+   * @return response showing whether given NID is valid
    */
   public ValidateNIDResponse validateNID(ValidateNIDRequest validateNIDRequest) {
     ValidateNIDResponse response = null;
@@ -143,9 +143,8 @@ public class AgaciroService {
               validateNIDRequest.getPassword(),
               validateNIDRequest.getNid());
       String results = restHTTPService.sendGetRequest(agaciroBaseURL + requestURL);
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("AGACIRO SERVICE RESPONSE: {}", results);
       response = mapper.readValue(results, ValidateNIDResponse.class);
-      log.info("AGACIRO SERVICE RESPONSE: {}", response);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -167,9 +166,8 @@ public class AgaciroService {
       ResponseEntity<String> response =
           restHTTPService.postRequest(
               getPaymentNotificationRequest, agaciroBaseURL + paymentNotificationURL);
-      ObjectMapper mapper = new ObjectMapper();
+      log.info("AGACIRO SERVICE RESPONSE: {}", response);
       paymentNotification = mapper.readValue(response.getBody(), PaymentNotificationResponse.class);
-      log.info("AGACIRO SERVICE RESPONSE: {}", paymentNotification);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);

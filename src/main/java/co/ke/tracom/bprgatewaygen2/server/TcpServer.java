@@ -21,21 +21,34 @@ import lombok.extern.slf4j.Slf4j;
 public class TcpServer {
 
   private final NetServer server;
+  private final int port;
 
   public TcpServer(int port) {
+    this.port = port;
     Vertx vertx = Vertx.vertx();
     NetServerOptions options = new NetServerOptions().setPort(port).setHost("localhost");
     server = vertx.createNetServer(options);
   }
 
+  /**
+   * Retrieves BillMenuService bean from spring context
+   *
+   * @return BillMenuService bean
+   */
   private BillMenusService getBillmenuService() {
     return SpringContext.getBean(BillMenusService.class);
   }
 
+  /**
+   * Retrieves AcademicBridgeService bean from spring context
+   *
+   * @return AcademicBridgeService bean
+   */
   private AcademicBridgeService getAcademicBridgeService() {
     return SpringContext.getBean(AcademicBridgeService.class);
   }
 
+  /** */
   public void addRequestHandlers() {
     server.connectHandler(
         socket -> {
@@ -52,7 +65,6 @@ public class TcpServer {
                     case "menu":
                       BillRequestHandler.menu(requestString, getBillmenuService(), socket);
                       break;
-
                     case "academic-bridge":
                       BillRequestHandler.academicBridge(
                           requestString, getAcademicBridgeService(), socket);
@@ -83,12 +95,13 @@ public class TcpServer {
         });
   }
 
+  /** Sets up request handlers and starts the TCP server */
   public void start() {
     addRequestHandlers();
     server.listen(
         res -> {
           if (res.succeeded()) {
-            log.info("TCP server started successfully!");
+            log.info("TCP SERVER STARTED SUCCESSFULLY ON PORT: {}!", port);
           } else {
             log.error("TCP server failed to start!");
           }
