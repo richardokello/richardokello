@@ -57,19 +57,15 @@ public class UfsCustomerOutlet implements Serializable {
     @Filter
     @Searchable
     @ModifiableField
-    @Size(min = 1, max = 30)
     @Column(name = "OUTLET_NAME")
     private String outletName;
-    @Size(max = 15)
     @Filter
     @Searchable
     @ModifiableField
     @Column(name = "OUTLET_CODE")
     private String outletCode;
-    @Size(max = 30)
     @Column(name = "LATITUDE")
     private String latitude;
-    @Size(max = 30)
     @Column(name = "LONGITUDE")
     private String longitude;
     @Size(max = 4000)
