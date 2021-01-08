@@ -21,11 +21,12 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
     private final UfsCustomerOutletRepository customerOutletRepository;
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
+    private final WhitelistRepository whitelistRepository;
 
     public DashboardStatisticServiceTemplate(CustomerRepository customerRepository, UfsBankBranchesRepository bankBranchesRepository,
                                              UfsBankRegionRepository bankRegionRepository, TmsDeviceRepository tmsDeviceRepository,
                                              UserRepository userRepository, UfsCustomerOutletRepository customerOutletRepository,
-                                             UserTypeRepository userTypeRepository) {
+                                             UserTypeRepository userTypeRepository,WhitelistRepository whitelistRepository) {
         this.customerRepository = customerRepository;
         this.bankBranchesRepository = bankBranchesRepository;
         this.bankRegionRepository = bankRegionRepository;
@@ -33,6 +34,7 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
         this.userRepository = userRepository;
         this.customerOutletRepository = customerOutletRepository;
         this.userTypeRepository = userTypeRepository;
+        this.whitelistRepository = whitelistRepository;
     }
 
     private Long getTotalAgents(String intrash) {
@@ -53,8 +55,9 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
         return size.longValue();
     }
 
-    private Long getTotalAssignedDeviceAgents(String intrash) {
-        List<TmsDevice> resultList = tmsDeviceRepository.findByIntrash(intrash);
+    private Long getTotalAssignedDeviceAgents(Short assigned, String intrash) {
+//        List<TmsDevice> resultList = tmsDeviceRepository.findByIntrash(intrash);
+        List<TmsWhitelist> resultList = whitelistRepository.findByAssignedAndIntrash(assigned,intrash);
         Integer size = resultList.size();
         return size.longValue();
     }
@@ -88,7 +91,7 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
         single.add(new DashboardItemsWrapper("Total Merchants", getTotalAgents(AppConstants.NO), "/agency-webportal/merchants"));
         single.add(new DashboardItemsWrapper("Total Bank Branches", getTotalBankBranches(AppConstants.NO), "/agency-webportal/bank-branches"));
         single.add(new DashboardItemsWrapper("Total Bank Zones", getTotalBankRegions(AppConstants.NO), "/agency-webportal/bank-zones"));
-        single.add(new DashboardItemsWrapper("Merchants Assigned Device", getTotalAssignedDeviceAgents(AppConstants.NO), "/agency-webportal/device-management/assigned-devices-list"));
+        single.add(new DashboardItemsWrapper("Merchants Assigned Device", getTotalAssignedDeviceAgents((short) 1,AppConstants.NO), "/agency-webportal/device-management/assigned-devices-list"));
 //        single.add(new DashboardItemsWrapper("Total Outlets", getTotalOutlets(AppConstants.NO), "/agency-webportal/customer-outlets"));
         single.add(new DashboardItemsWrapper("Total Outlets", getTotalOutlets(AppConstants.NO), ""));
         //single.add(new DashboardItemsWrapper("Agent Supervisors", getTotalTypeUsers(AppConstants.USER_TYPE_AGENT_SUPERVISOR, AppConstants.NO), "/common-modules/users/agent-supervisors"));
