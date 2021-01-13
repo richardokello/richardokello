@@ -53,7 +53,7 @@ public class UfsCustomerOwners implements Serializable {
     @Column(name = "ID")
     private Long id;
     @Basic(optional = false)
-    @NotNull
+//    @NotNull
     @Filter
     @Searchable
     @ModifiableField
@@ -67,7 +67,7 @@ public class UfsCustomerOwners implements Serializable {
     @ModifiableField
     private Long directorDesignationId;
     @Basic(optional = false)
-    @NotNull
+//    @NotNull
     @Filter
     @Searchable
     @ModifiableField
