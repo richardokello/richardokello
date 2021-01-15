@@ -33,5 +33,10 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         return tmsDeviceRepository.findByDeviceIdAndIntrash(id, AppConstants.NO);
     }
 
+    @Override
+    public Integer findAllActiveDevices() {
+        return tmsDeviceRepository.findAllActiveDevices(AppConstants.STATUS_ACTIVE, AppConstants.NO);
+    }
+
 
 }

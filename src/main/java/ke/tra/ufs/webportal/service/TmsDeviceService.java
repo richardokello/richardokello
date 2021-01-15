@@ -13,5 +13,7 @@ public interface TmsDeviceService {
 
     public TmsDevice findByDeviceIdAndIntrash(BigDecimal id);
 
+    public Integer findAllActiveDevices();
+
 
 }

@@ -5,6 +5,7 @@ import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.entities.wrapper.DashboardItemsWrapper;
 import ke.tra.ufs.webportal.repository.*;
 import ke.tra.ufs.webportal.service.DashboardStatisticService;
+import ke.tra.ufs.webportal.service.TmsDeviceService;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import org.springframework.stereotype.Service;
 
@@ -17,24 +18,24 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
     private final CustomerRepository customerRepository;
     private final UfsBankBranchesRepository bankBranchesRepository;
     private final UfsBankRegionRepository bankRegionRepository;
-    private final TmsDeviceRepository tmsDeviceRepository;
     private final UfsCustomerOutletRepository customerOutletRepository;
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
     private final WhitelistRepository whitelistRepository;
+    private final TmsDeviceService tmsDeviceService;
 
     public DashboardStatisticServiceTemplate(CustomerRepository customerRepository, UfsBankBranchesRepository bankBranchesRepository,
-                                             UfsBankRegionRepository bankRegionRepository, TmsDeviceRepository tmsDeviceRepository,
+                                             UfsBankRegionRepository bankRegionRepository, TmsDeviceService tmsDeviceService,
                                              UserRepository userRepository, UfsCustomerOutletRepository customerOutletRepository,
                                              UserTypeRepository userTypeRepository,WhitelistRepository whitelistRepository) {
         this.customerRepository = customerRepository;
         this.bankBranchesRepository = bankBranchesRepository;
         this.bankRegionRepository = bankRegionRepository;
-        this.tmsDeviceRepository = tmsDeviceRepository;
         this.userRepository = userRepository;
         this.customerOutletRepository = customerOutletRepository;
         this.userTypeRepository = userTypeRepository;
         this.whitelistRepository = whitelistRepository;
+        this.tmsDeviceService = tmsDeviceService;
     }
 
     private Long getTotalAgents(String intrash) {
@@ -91,7 +92,7 @@ public class DashboardStatisticServiceTemplate implements DashboardStatisticServ
         single.add(new DashboardItemsWrapper("Total Merchants", getTotalAgents(AppConstants.NO), "/agency-webportal/merchants"));
         single.add(new DashboardItemsWrapper("Total Bank Branches", getTotalBankBranches(AppConstants.NO), "/agency-webportal/bank-branches"));
         single.add(new DashboardItemsWrapper("Total Bank Zones", getTotalBankRegions(AppConstants.NO), "/agency-webportal/bank-zones"));
-        single.add(new DashboardItemsWrapper("Merchants Assigned Device", getTotalAssignedDeviceAgents((short) 1,AppConstants.NO), "/agency-webportal/device-management/assigned-devices-list"));
+        single.add(new DashboardItemsWrapper("Merchants Assigned Device", tmsDeviceService.findAllActiveDevices().longValue(), "/agency-webportal/device-management/assigned-devices-list"));
 //        single.add(new DashboardItemsWrapper("Total Outlets", getTotalOutlets(AppConstants.NO), "/agency-webportal/customer-outlets"));
         single.add(new DashboardItemsWrapper("Total Outlets", getTotalOutlets(AppConstants.NO), ""));
         //single.add(new DashboardItemsWrapper("Agent Supervisors", getTotalTypeUsers(AppConstants.USER_TYPE_AGENT_SUPERVISOR, AppConstants.NO), "/common-modules/users/agent-supervisors"));

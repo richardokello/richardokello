@@ -1,6 +1,7 @@
 package ke.tra.ufs.webportal.repository;
 
 import ke.tra.ufs.webportal.entities.TmsDevice;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +22,14 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
     public TmsDevice findByDeviceIdAndIntrash(BigDecimal deviceId,String intrash);
 
     List<TmsDevice> findByOutletIdsInAndIntrash(List<BigDecimal> outletIds,String intrash);
+
+    /**
+     * @param status
+     * @param intrash
+     * @return
+     */
+    @Query("SELECT COUNT(*) FROM TmsDevice u WHERE u.status LIKE ?1% AND lower(u.intrash) = lower(?2) AND u.action!='Release'")
+    Integer findAllActiveDevices(String status, String intrash);
 
 
 }
