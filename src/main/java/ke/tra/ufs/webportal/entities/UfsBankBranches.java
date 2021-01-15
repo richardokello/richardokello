@@ -7,6 +7,7 @@ package ke.tra.ufs.webportal.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Searchable;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
@@ -42,12 +43,16 @@ public class UfsBankBranches implements Serializable {
 
     @Basic(optional = false)
     @NotNull
+    @Searchable
+    @Filter
     @ModifiableField
     @Size(min = 1, max = 20)
     @Column(name = "NAME")
     private String name;
     @Basic(optional = false)
     @NotNull
+    @Searchable
+    @Filter
     @ModifiableField
     @Size(min = 1, max = 20)
     @Column(name = "CODE")
