@@ -144,10 +144,13 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         //saving directors
         if (!customerOnboarding.getDirectors().isEmpty()) {
             for (BusinessDirectorsWrapper director : customerOnboarding.getDirectors()) {
-                UfsCustomerOwners customerOwners = ownersService.findByUsername(director.getUserName());
-                if (Objects.nonNull(customerOwners)) {
-                    errors.add(director.getUserName());
-                    continue;
+                if(director.getUserName() != null){
+                    UfsCustomerOwners customerOwners = ownersService.findByUsername(director.getUserName());
+                    if(Objects.nonNull(customerOwners)){
+                        errors.add(director.getUserName());
+                        continue;
+                    }
+
                 }
                 UfsCustomerOwners dir = new UfsCustomerOwners();
                 dir.setDirectorName(director.getDirectorName());
@@ -162,8 +165,10 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
                 loggerService.log("Created Record successfully ", UfsCustomerOwners.class.getSimpleName(), ufsCustomerOwners.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
 
+
+
             }
-            ;
+
         }
 
         //saving outlets
@@ -190,11 +195,14 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 if (!outlet.getContactPerson().isEmpty()) {
                     for (OutletContactPerson outletContactPerson : outlet.getContactPerson()) {
 
-                        UfsContactPerson contactPersonCheck = contactPersonService.findByUsername(outletContactPerson.getUserName());
-                        if (Objects.nonNull(contactPersonCheck)) {
-                            errors.add(outletContactPerson.getUserName());
-                            continue;
+                        if(outletContactPerson.getUserName() != null){
+                            UfsContactPerson contactPersonCheck = contactPersonService.findByUsername(outletContactPerson.getUserName());
+                            if (Objects.nonNull(contactPersonCheck)) {
+                                errors.add(outletContactPerson.getUserName());
+                                continue;
+                            }
                         }
+
                         UfsContactPerson person = new UfsContactPerson();
                         person.setName(outletContactPerson.getContactPersonName());
                         person.setIdNumber(outletContactPerson.getContactPersonIdNumber());
