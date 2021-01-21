@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ke.co.tra.ufs.tms.service.LoggerServiceLocal;
+import springfox.documentation.spring.web.json.Json;
 
 /**
  * @author Owori Juma
@@ -200,11 +201,20 @@ public class OnboardingResource {
         }
 
         List<String> tids = new ArrayList<>();
+        List<String> tidMidError = new ArrayList<>();
         /*Saving TIDs And MIDs*/
         if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
             onboardWrapper.getTmsDeviceTidsMids().forEach(obj -> {
                 TmsDeviceTidsMids tmsDeviceTidMids = new TmsDeviceTidsMids();
                 tmsDeviceTidMids.setDeviceIds(savedTmsDevice.getDeviceId().longValue());
+
+                //check where TID and MID exists
+                if(deviceService.checkIfTidMidExists(obj.getTid(), obj.getMid())){
+                    tidMidError.add("TID: "+obj.getTid()+ " MID: "+obj.getMid());
+                    loggerService.logCreate("Creating new Device failed due to the provided"
+                            + "TID/MID that already Exists (Device: " + savedTmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), savedTmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
+                }
+
                 tmsDeviceTidMids.setTid(obj.getTid());
                 tids.add(obj.getTid());
                 tmsDeviceTidMids.setMid(obj.getMid());
@@ -212,6 +222,13 @@ public class OnboardingResource {
                 tmsDeviceTidMids.setSwitchIds(obj.getSwitchIds());
                 deviceService.saveDeviceTids(tmsDeviceTidMids);
             });
+        }
+
+        if(tidMidError.size() > 0){
+            response.setMessage("Creating new Device failed due to the provided TID or MID that already Exists"+
+                    new ObjectMapper().writeValueAsString(tidMidError));
+            response.setCode(HttpStatus.CONFLICT.value());
+            return new ResponseEntity(response,HttpStatus.CONFLICT);
         }
 
         //save the tids
@@ -264,29 +281,9 @@ public class OnboardingResource {
         }
 
 
-
-
-
         if (onboardWrapper.getAppId() != null || onboardWrapper.getAgentMerchantId() != null) {
             createSchedule(onboardWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
         }
-/*
-
-        if (onboardWrapper.getAgentMerchantId() != null) {
-            DeviceCustomerDetails dbDeprt = deviceService.findByAgentMerchantId(onboardWrapper.getAgentMerchantId());
-            if (dbDeprt != null) {
-                TmsDeviceParam deviceParam = new TmsDeviceParam();
-                deviceParam.setDeviceId(tmsDevice);
-                deviceParam.setDeviceCustomerId(dbDeprt);
-                deviceParam.setValues(dbDeprt.getFormValues());
-                deviceParamService.saveDeviceParam(deviceParam);
-
-
-                //Save TID's and device Owners Name
-                tmsDevice.setDeviceOwnerName(dbDeprt.getAgentName());
-                deviceService.saveDevice(tmsDevice);
-            }
-        }*/
 
         response.setData(tmsDevice);
         loggerService.logCreate("Creating new Device", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
@@ -354,17 +351,32 @@ public class OnboardingResource {
             });
         }
 
+        List<String> tidMidError = new ArrayList<>();
         if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids())) {
             tidMidRepository.deleteAllByDeviceId(tmsDevice);
             onboardWrapper.getTmsDeviceTidsMids().forEach(obj -> {
                 TmsDeviceTidsMids tmsDeviceTidMids = new TmsDeviceTidsMids();
                 tmsDeviceTidMids.setDeviceIds(onboardWrapper.getDeviceId().longValue());
+
+                //check where TID and MID exists
+                if(deviceService.checkIfTidMidExists(obj.getTid(), obj.getMid())){
+                    tidMidError.add("TID: "+obj.getTid()+ " MID: "+obj.getMid());
+                    loggerService.logCreate("Creating new Device failed due to the provided"
+                            + "TID/MID that already Exists (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
+                }
                 tmsDeviceTidMids.setTid(obj.getTid());
                 tmsDeviceTidMids.setMid(obj.getMid());
                 tmsDeviceTidMids.setCurrencyIds(obj.getCurrencyIds());
                 tmsDeviceTidMids.setSwitchIds(obj.getSwitchIds());
                 deviceService.saveDeviceTids(tmsDeviceTidMids);
             });
+        }
+
+        if(tidMidError.size() > 0){
+            response.setMessage("Creating new Device failed due to the provided TID or MID that already Exists"+
+                    new ObjectMapper().writeValueAsString(tidMidError));
+            response.setCode(HttpStatus.CONFLICT.value());
+            return new ResponseEntity(response,HttpStatus.CONFLICT);
         }
 
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
@@ -480,6 +492,7 @@ public class OnboardingResource {
             }
         }
     }
+
 
     private void transferAndCopyFiles(OnboardWrapper onboardWrapper, TmsDevice tmsDevice, TmsDeviceTask deviceTask) throws IOException {
         String rootPath = configService.fetchSysConfigById(new BigDecimal(24)).getValue();

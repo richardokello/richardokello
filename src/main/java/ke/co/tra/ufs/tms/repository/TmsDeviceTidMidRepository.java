@@ -2,6 +2,7 @@ package ke.co.tra.ufs.tms.repository;
 
 import ke.co.tra.ufs.tms.entities.TmsDevice;
 import ke.co.tra.ufs.tms.entities.TmsDeviceTidsMids;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +14,8 @@ public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsM
     List<TmsDeviceTidsMids> findAllByDeviceIds(Long id);
 
     void deleteAllByDeviceId(TmsDevice tmsDevice);
+
+    @Query("SELECT COUNT(*) FROM TmsDeviceTidsMids t WHERE t.tid = ?1 OR t.mid = ?2")
+    Integer getTmsDeviceTidsMids(String tid, String mid);
 
 }

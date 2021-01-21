@@ -868,6 +868,12 @@ public class DeviceServiceTemplate implements DeviceService {
         return contactPersonRepository.findByCustomerOutletIdAndIntrash(customerOutletId, AppConstants.NO);
     }
 
+    @Override
+    public boolean checkIfTidMidExists(String tid, String mid) {
+        int tidMidCount  = tmsDeviceTidRepository.getTmsDeviceTidsMids(tid,mid);
+        return tidMidCount > 0;
+    }
+
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {
         Type typeOfObjectsList = new TypeToken<ArrayList<BigDecimal>>() {
         }.getType();

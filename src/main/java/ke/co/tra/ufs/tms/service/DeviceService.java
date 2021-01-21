@@ -458,4 +458,12 @@ public interface DeviceService {
      */
     List<UfsContactPerson> getContactPeopleByOutletId(Long customerOutletId);
 
+    /**
+     * find by checkIfTidMidExists
+     * @param tid
+     * @param mid
+     * @return
+     */
+    boolean checkIfTidMidExists(String tid, String mid);
+
 }
