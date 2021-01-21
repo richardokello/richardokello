@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="ke.tracom_ufs_jar_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>ke.tracom.ufs.entities.UfsRole</class>
+    <class>ke.tracom.ufs.entities.UfsUser</class>
+    <class>ke.tracom.ufs.entities.UfsSysConfig</class>
+    <class>ke.tracom.ufs.entities.UfsOrganizationUnits</class>
+    <class>ke.tracom.ufs.entities.UfsAuthentication</class>
+    <class>ke.tracom.ufs.entities.UfsUserType</class>
+    <class>ke.tracom.ufs.entities.UfsEntity</class>
+    <class>ke.tracom.ufs.entities.UfsPasswordHistory</class>
+    <class>ke.tracom.ufs.entities.UfsWorkgroupRole</class>
+    <class>ke.tracom.ufs.entities.UfsEntityPermission</class>
+    <class>ke.tracom.ufs.entities.UfsOtpCategory</class>
+    <class>ke.tracom.ufs.entities.UfsGender</class>
+    <class>ke.tracom.ufs.entities.UfsRolePermission</class>
+    <class>ke.tracom.ufs.entities.UfsOtp</class>
+    <class>ke.tracom.ufs.entities.UfsOrganizationHierarchy</class>
+    <class>ke.tracom.ufs.entities.UfsUserWorkgroup</class>
+    <class>ke.tracom.ufs.entities.OauthAccessToken</class>
+    <class>ke.tracom.ufs.entities.UfsContactType</class>
+    <class>ke.tracom.ufs.entities.UfsAuditLog</class>
+    <class>ke.tracom.ufs.entities.UfsWorkgroup</class>
+    <class>ke.tracom.ufs.entities.OauthClientDetails</class>
+    <class>ke.tracom.ufs.entities.UfsEdittedRecord</class>
+    <class>ke.tracom.ufs.entities.OauthClientToken</class>
+    <class>ke.tracom.ufs.entities.UfsModule</class>
+    <class>ke.tracom.ufs.entities.UfsAuthenticationType</class>
+    <class>ke.tracom.ufs.entities.UfsContact</class>
+    <class>ke.tracom.ufs.entities.UfsDepartment</class>
+    <class>ke.tracom.ufs.entities.UfsCurrency</class>
+    <class>ke.tracom.ufs.entities.UfsBankRegion</class>
+    <class>ke.tracom.ufs.entities.UfsBusinessUnits</class>
+    <class>ke.tracom.ufs.entities.UfsRegionsBatch</class>
+    <class>ke.tracom.ufs.entities.UfsGeographicalRegion</class>
+    <class>ke.tracom.ufs.entities.UfsNotificationTemplate</class>
+    <class>ke.tracom.ufs.entities.UfsSmsNotificationTemplate</class>
+    <class>ke.tracom.ufs.entities.UfsEmailNotificationTempl</class>
+    <class>ke.tracom.ufs.entities.NotificationSmsSend</class>
+    <class>ke.tracom.ufs.entities.NotificationEmailSend</class>
+    <class>ke.tracom.ufs.entities.UfsCountyUserMap</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.1.172:1521:trcm"/>
+      <property name="javax.persistence.jdbc.user" value="UFS_SMART_SUITE"/>
+      <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+      <property name="javax.persistence.jdbc.password" value="pass123"/>
+    </properties>
+  </persistence-unit>
+</persistence>
