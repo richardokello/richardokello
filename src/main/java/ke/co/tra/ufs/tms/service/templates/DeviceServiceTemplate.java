@@ -249,7 +249,10 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     public TmsDevice getDevicebySerial(String serialNo) {
-        return deviceRepository.findBySerialNoAndIntrash(serialNo, AppConstants.NO);
+        List<String> actions = new ArrayList<>();
+        actions.add(AppConstants.ACTIVITY_DECOMMISSION);
+        actions.add(AppConstants.ACTIVITY_RELEASE);
+        return deviceRepository.findAllBySerialNoAndIntrash(serialNo, AppConstants.NO, actions);
     }
 
     @Override

@@ -27,6 +27,14 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
      * @param intrash
      * @return
      */
+    @Query("SELECT u FROM TmsDevice u WHERE u.serialNo = ?1 AND lower(u.intrash) = lower(?2) "
+            + "AND u.action NOT IN ?3")
+    public TmsDevice findAllBySerialNoAndIntrash(String serialNo, String intrash, List<String> action);
+    /**
+     * @param serialNo
+     * @param intrash
+     * @return
+     */
     public TmsDevice findBySerialNoAndIntrash(String serialNo, String intrash);
 
     /**
