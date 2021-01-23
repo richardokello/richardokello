@@ -15,6 +15,7 @@ import ke.tra.ufs.webportal.repository.AuthenticationRepository;
 import ke.tra.ufs.webportal.repository.CustomerRepository;
 import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
+import ke.tra.ufs.webportal.utils.CodeGenerator;
 import ke.tra.ufs.webportal.utils.UniqueStringGenerator;
 import ke.tra.ufs.webportal.wrappers.AgentTerminationWrapper;
 import ke.tra.ufs.webportal.wrappers.LogExtras;
@@ -84,7 +85,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             loggerService.log("Creating new customer category failed due to validation errors",
                     UfsCustomer.class.getSimpleName(), null, AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Creating new customer category failed due to validation errors");
             response.setMessage("Validation error occured");
-            response.setCode(400);
+            response.setCode(HttpStatus.BAD_REQUEST.value());
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
@@ -93,6 +94,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         if (Objects.nonNull(customerOnboarding.getBusinessLicenseNumber())) {
             if (customerRepository.findByBusinessLicenceNumberAndIntrash(customerOnboarding.getBusinessLicenseNumber(), AppConstants.INTRASH_NO).isPresent()) {
                 response.setMessage("Business Licence Already Exists");
+                response.setCode(HttpStatus.BAD_REQUEST.value());
                 return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
@@ -101,6 +103,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         if (Objects.nonNull(customerOnboarding.getBusinessName())) {
             if (customerRepository.findByBusinessNameAndIntrash(customerOnboarding.getBusinessName(), AppConstants.INTRASH_NO).isPresent()) {
                 response.setMessage("Business Name Already Exists");
+                response.setCode(HttpStatus.BAD_REQUEST.value());
                 return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
@@ -109,6 +112,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         if (Objects.nonNull(customerOnboarding.getLocalRegistrationNumber())) {
             if (customerRepository.findByLocalRegistrationNumberAndIntrash(customerOnboarding.getLocalRegistrationNumber(), AppConstants.INTRASH_NO).isPresent()) {
                 response.setMessage("Local Registration Already Exists");
+                response.setCode(HttpStatus.BAD_REQUEST.value());
                 return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
@@ -144,29 +148,54 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         //saving directors
         if (!customerOnboarding.getDirectors().isEmpty()) {
             for (BusinessDirectorsWrapper director : customerOnboarding.getDirectors()) {
-                if(director.getUserName() != null){
+                int c = 0;
+                if (director.getUserName() == null || director.getUserName().length() == 0) {
+                    director.setUserName(null);
+                } else {
+                    c += 1;
+                }
+                if (director.getUserName() != null) {
                     UfsCustomerOwners customerOwners = ownersService.findByUsername(director.getUserName());
-                    if(Objects.nonNull(customerOwners)){
+                    if (Objects.nonNull(customerOwners)) {
                         errors.add(director.getUserName());
                         continue;
                     }
+                }
+
+                if (director.getDirectorName() != null && director.getDirectorName().length() != 0) {
+                    c += 1;
+                }
+                if (director.getDirectorEmailAddress() != null && director.getDirectorEmailAddress().length() != 0) {
+                    c += 1;
+                }
+                if (director.getDirectorDesignationId() != null) {
+                    c += 1;
+                }
+                if (director.getDirectorPrimaryContactNumber() != null && director.getDirectorPrimaryContactNumber().length() != 0) {
+                    c += 1;
+                }
+                if (director.getDirectorSecondaryContactNumber() != null && director.getDirectorSecondaryContactNumber().length() != 0) {
+                    c += 1;
+                }
+                if (director.getDirectorIdNumber() != null && director.getDirectorIdNumber().length() != 0) {
+                    c += 1;
+                }
+
+                if (c > 0) {
+                    UfsCustomerOwners dir = new UfsCustomerOwners();
+                    dir.setDirectorName(director.getDirectorName());
+                    dir.setCustomerIds(BigDecimal.valueOf(customer.getId()));
+                    dir.setDirectorEmailAddress(director.getDirectorEmailAddress());
+                    dir.setDirectorDesignationId(director.getDirectorDesignationId());
+                    dir.setDirectorPrimaryContactNumber(director.getDirectorPrimaryContactNumber());
+                    dir.setDirectorSecondaryContactNumber(director.getDirectorSecondaryContactNumber());
+                    dir.setDirectorIdNumber(director.getDirectorIdNumber());
+                    dir.setUserName(director.getUserName());
+                    UfsCustomerOwners ufsCustomerOwners = ownersService.saveOwner(dir);
+
+                    loggerService.log("Created Record successfully ", UfsCustomerOwners.class.getSimpleName(), ufsCustomerOwners.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
 
                 }
-                UfsCustomerOwners dir = new UfsCustomerOwners();
-                dir.setDirectorName(director.getDirectorName());
-                dir.setCustomerIds(BigDecimal.valueOf(customer.getId()));
-                dir.setDirectorEmailAddress(director.getDirectorEmailAddress());
-                dir.setDirectorDesignationId(director.getDirectorDesignationId());
-                dir.setDirectorPrimaryContactNumber(director.getDirectorPrimaryContactNumber());
-                dir.setDirectorSecondaryContactNumber(director.getDirectorSecondaryContactNumber());
-                dir.setDirectorIdNumber(director.getDirectorIdNumber());
-                dir.setUserName(director.getUserName());
-                UfsCustomerOwners ufsCustomerOwners = ownersService.saveOwner(dir);
-
-                loggerService.log("Created Record successfully ", UfsCustomerOwners.class.getSimpleName(), ufsCustomerOwners.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
-
-
-
             }
 
         }
@@ -179,11 +208,11 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 custOutlet.setBankBranchIds(outlet.getBankBranchId());
                 custOutlet.setLongitude(outlet.getLongitude());
                 custOutlet.setLatitude(outlet.getLatitude());
-                if (outlet.getOutletCode() != null) {
+                if (outlet.getOutletCode() != null && outlet.getOutletCode().length() != 0) {
                     custOutlet.setOutletCode(outlet.getOutletCode());
                 } else {
-                    UniqueStringGenerator usg = UniqueStringGenerator.getInstance("OUTLET");
-                    custOutlet.setOutletCode(usg.getRandomCharacterRRN());
+                    String code = CodeGenerator.generateOutletCode();
+                    custOutlet.setOutletCode(code);
                 }
                 custOutlet.setOutletName(outlet.getOutletName());
                 custOutlet.setOperatingHours(outlet.getOperatingHours());
@@ -194,8 +223,16 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 //save contact person
                 if (!outlet.getContactPerson().isEmpty()) {
                     for (OutletContactPerson outletContactPerson : outlet.getContactPerson()) {
+                        int count = 0;
+                        if (outletContactPerson.getUserName() == null || outletContactPerson.getUserName().length() == 0) {
+                            outletContactPerson.setUserName(null);
+                        } else {
+                            count += 1;
+                        }
 
-                        if(outletContactPerson.getUserName() != null){
+
+                        if (outletContactPerson.getUserName() != null) {
+                            System.out.println("CONTACT PERSON USERNAME++++++");
                             UfsContactPerson contactPersonCheck = contactPersonService.findByUsername(outletContactPerson.getUserName());
                             if (Objects.nonNull(contactPersonCheck)) {
                                 errors.add(outletContactPerson.getUserName());
@@ -203,20 +240,37 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                             }
                         }
 
-                        UfsContactPerson person = new UfsContactPerson();
-                        person.setName(outletContactPerson.getContactPersonName());
-                        person.setIdNumber(outletContactPerson.getContactPersonIdNumber());
-                        person.setPosRole(outletContactPerson.getPosRole());
-                        person.setEmail(outletContactPerson.getContactPersonEmail());
-                        person.setPhoneNumber(outletContactPerson.getContactPersonTelephone());
-                        person.setCustomerOutletId(custOutlet.getId());
-                        person.setUserName(outletContactPerson.getUserName());
-                        UfsContactPerson ufsContactPerson = contactPersonService.saveContactPerson(person);
 
-                        loggerService.log("Created Record successfully ", UfsContactPerson.class.getSimpleName(), ufsContactPerson.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
+                        if (outletContactPerson.getContactPersonName() != null && outletContactPerson.getContactPersonName().length() != 0) {
+                            count += 1;
+                        }
+                        if (outletContactPerson.getContactPersonIdNumber() != null && outletContactPerson.getContactPersonIdNumber().length() != 0) {
+                            count += 1;
+                        }
+                        if (outletContactPerson.getPosRole() != null && outletContactPerson.getPosRole().length() != 0) {
+                            count += 1;
+                        }
+                        if (outletContactPerson.getContactPersonEmail() != null && outletContactPerson.getContactPersonEmail().length() != 0) {
+                            count += 1;
+                        }
+                        if (outletContactPerson.getContactPersonTelephone() != null && outletContactPerson.getContactPersonTelephone().length() != 0) {
+                            count += 1;
+                        }
 
+                        if (count > 0) {
+                            UfsContactPerson person = new UfsContactPerson();
+                            person.setName(outletContactPerson.getContactPersonName());
+                            person.setIdNumber(outletContactPerson.getContactPersonIdNumber());
+                            person.setPosRole(outletContactPerson.getPosRole());
+                            person.setEmail(outletContactPerson.getContactPersonEmail());
+                            person.setPhoneNumber(outletContactPerson.getContactPersonTelephone());
+                            person.setCustomerOutletId(custOutlet.getId());
+                            person.setUserName(outletContactPerson.getUserName());
+                            UfsContactPerson ufsContactPerson = contactPersonService.saveContactPerson(person);
+
+                            loggerService.log("Created Record successfully ", UfsContactPerson.class.getSimpleName(), ufsContactPerson.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
+                        }
                     }
-                    ;
                 }
             });
 

@@ -160,7 +160,7 @@ public class UfsCustomer implements Serializable {
     @Column(name = "EMAIL_ADDRESS")
     private String businessEmailAddress;
     @JoinColumn(name = "CUSTOMER_TYPE_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = true)
+    @ManyToOne
     private UfsCustomerType customerType;
     @ModifiableField
     @Column(name = "CUSTOMER_TYPE_ID")
