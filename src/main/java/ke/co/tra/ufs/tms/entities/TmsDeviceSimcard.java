@@ -60,16 +60,12 @@ public class TmsDeviceSimcard implements Serializable {
 
     @GeneratedValue(generator = "TMS_DEVICE_SIMCARD_SEQ")
     @Basic(optional = false)
-    @Column(name = "ID")//TMS_DEVICE_SIMCARD_SEQ
+    @Column(name = "ID")
     private BigDecimal id;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
     @Column(name = "MSISDN")
     private String msisdn;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
     @Column(name = "SERIAL_NO")
     private String serialNo;
     @Column(name = "INTRASH",insertable = false)

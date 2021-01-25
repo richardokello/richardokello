@@ -332,10 +332,18 @@ public class OnboardingResource {
         TmsDevice tmsDevice = deviceService.getDevice(onboardWrapper.getDeviceId()).get();
 
         if (tmsDevice == null) {
-            loggerService.logUpdate("Failed to Update Device (Device id: " + tmsDevice.getDeviceId() + "). device doesn't exist",
+            loggerService.logCreate("Failed to Update Device (Device id: " + tmsDevice.getDeviceId() + "). device doesn't exist",
                     SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_FAILED);
             response.setCode(HttpStatus.NOT_FOUND.value());
             response.setMessage("Sorry failed to locate Device with the specified id");
+            return new ResponseEntity(response, HttpStatus.NOT_FOUND);
+        }
+
+        if (tmsDevice.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
+            loggerService.logCreate("Failed to Update Device (Device id: " + tmsDevice.getDeviceId() + "). Has Unapproved Actions",
+                    SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_FAILED);
+            response.setCode(HttpStatus.NOT_FOUND.value());
+            response.setMessage("Failed to Update Device. Record Has Unapproved Actions");
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
 
@@ -351,32 +359,17 @@ public class OnboardingResource {
             });
         }
 
-        List<String> tidMidError = new ArrayList<>();
         if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids())) {
             tidMidRepository.deleteAllByDeviceId(tmsDevice);
             onboardWrapper.getTmsDeviceTidsMids().forEach(obj -> {
                 TmsDeviceTidsMids tmsDeviceTidMids = new TmsDeviceTidsMids();
                 tmsDeviceTidMids.setDeviceIds(onboardWrapper.getDeviceId().longValue());
-
-                //check where TID and MID exists
-                if(deviceService.checkIfTidMidExists(obj.getTid(), obj.getMid())){
-                    tidMidError.add("TID: "+obj.getTid()+ " MID: "+obj.getMid());
-                    loggerService.logCreate("Creating new Device failed due to the provided"
-                            + "TID/MID that already Exists (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
-                }
                 tmsDeviceTidMids.setTid(obj.getTid());
                 tmsDeviceTidMids.setMid(obj.getMid());
                 tmsDeviceTidMids.setCurrencyIds(obj.getCurrencyIds());
                 tmsDeviceTidMids.setSwitchIds(obj.getSwitchIds());
                 deviceService.saveDeviceTids(tmsDeviceTidMids);
             });
-        }
-
-        if(tidMidError.size() > 0){
-            response.setMessage("Creating new Device failed due to the provided TID or MID that already Exists"+
-                    new ObjectMapper().writeValueAsString(tidMidError));
-            response.setCode(HttpStatus.CONFLICT.value());
-            return new ResponseEntity(response,HttpStatus.CONFLICT);
         }
 
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
