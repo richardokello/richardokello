@@ -208,11 +208,12 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 custOutlet.setBankBranchIds(outlet.getBankBranchId());
                 custOutlet.setLongitude(outlet.getLongitude());
                 custOutlet.setLatitude(outlet.getLatitude());
-                if (outlet.getOutletCode() != null && outlet.getOutletCode().length() != 0) {
-                    custOutlet.setOutletCode(outlet.getOutletCode());
-                } else {
+                if (outlet.getOutletCode().equalsIgnoreCase("") || outlet.getOutletCode() == null) {
+
                     String code = CodeGenerator.generateOutletCode();
                     custOutlet.setOutletCode(code);
+                } else {
+                    custOutlet.setOutletCode(outlet.getOutletCode());
                 }
                 custOutlet.setOutletName(outlet.getOutletName());
                 custOutlet.setOperatingHours(outlet.getOperatingHours());
