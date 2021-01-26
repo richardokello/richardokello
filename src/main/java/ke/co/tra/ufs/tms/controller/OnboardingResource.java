@@ -141,6 +141,18 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
+        if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
+            for(TmsDeviceTidsMids tidmid: onboardWrapper.getTmsDeviceTidsMids()){
+                //check where TID and MID exists
+                if(deviceService.checkIfTidMidExists(tidmid.getTid(), tidmid.getMid())){
+                    String message = "Creating new Device failed due to the provided"
+                            + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                    loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+                    throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
+                }
+            }
+        }
+
         TmsDevice tmsDevice = new TmsDevice();
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
         tmsDevice.setPartNumber(onboardWrapper.getPartNumber());
@@ -207,13 +219,6 @@ public class OnboardingResource {
             onboardWrapper.getTmsDeviceTidsMids().forEach(obj -> {
                 TmsDeviceTidsMids tmsDeviceTidMids = new TmsDeviceTidsMids();
                 tmsDeviceTidMids.setDeviceIds(savedTmsDevice.getDeviceId().longValue());
-
-                //check where TID and MID exists
-                if(deviceService.checkIfTidMidExists(obj.getTid(), obj.getMid())){
-                    tidMidError.add("TID: "+obj.getTid()+ " MID: "+obj.getMid());
-                    loggerService.logCreate("Creating new Device failed due to the provided"
-                            + "TID/MID that already Exists (Device: " + savedTmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), savedTmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
-                }
 
                 tmsDeviceTidMids.setTid(obj.getTid());
                 tids.add(obj.getTid());
