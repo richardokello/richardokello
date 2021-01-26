@@ -1,10 +1,5 @@
 package ke.co.tra.ufs.tms.service;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
 import ke.co.tra.ufs.tms.entities.*;
 import ke.co.tra.ufs.tms.entities.wrappers.AssignDeviceWrapper;
 import ke.co.tra.ufs.tms.entities.wrappers.WhitelistWrapper;
@@ -13,6 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * @author Cornelius M
  */
@@ -20,6 +20,7 @@ public interface DeviceService {
 
     /**
      * find by deviceMake
+     *
      * @param deviceMake
      * @return
      */
@@ -27,6 +28,7 @@ public interface DeviceService {
 
     /**
      * find by type and intrash
+     *
      * @param type
      * @return
      */
@@ -49,9 +51,9 @@ public interface DeviceService {
     public UfsDeviceMake saveMake(UfsDeviceMake make);
 
     /**
-            * @param model
+     * @param model
      * @return
-             */
+     */
     public UfsDeviceModel saveModel(UfsDeviceModel model);
 
     /**
@@ -87,13 +89,11 @@ public interface DeviceService {
     List<TmsWhitelist> updateWhitelistBySerialSync(List<String> serials);
 
     /**
-     *
      * @param serialNo
      */
     public void updateWhitelistBySerialSync(String serialNo);
 
     /**
-     *
      * @param serialNo
      */
     public void updateReleaseWhitelistBySerialSync(String serialNo);
@@ -243,7 +243,7 @@ public interface DeviceService {
      */
     public void processWhitelistUpload(TmsWhitelistBatch batch, SysConfigService configService, SharedMethods sharedMethods,
                                        LoggerServiceLocal loggerService, byte[] file, String remoteAddress,
-                                       String userAgent,Long userId, WhitelistWrapper payload);
+                                       String userAgent, Long userId, WhitelistWrapper payload);
 
     /**
      * Filter whitelist
@@ -332,7 +332,7 @@ public interface DeviceService {
      * @param remoteAddr
      * @param abbreviate
      */
-    public void processWhitelistUploadXlxs(TmsWhitelistBatch batch, SysConfigService configService, SharedMethods sharedMethods, LoggerServiceLocal loggerService, MultipartFile file, String remoteAddr, String abbreviate,Long userId, WhitelistWrapper payload);
+    public void processWhitelistUploadXlxs(TmsWhitelistBatch batch, SysConfigService configService, SharedMethods sharedMethods, LoggerServiceLocal loggerService, MultipartFile file, String remoteAddr, String abbreviate, Long userId, WhitelistWrapper payload);
 
     /**
      * @param deviceParaId
@@ -446,11 +446,10 @@ public interface DeviceService {
     public TmsDevice getDeviceById(BigDecimal deviceId);
 
     /**
-     *
      * @param customerId
      * @return
      */
-    Page<TmsDevice> getDevicesByCustomerId(BigDecimal customerId,Pageable pg);
+    Page<TmsDevice> getDevicesByCustomerId(BigDecimal customerId, Pageable pg);
 
     /**
      * @param customerOutletId
@@ -460,10 +459,13 @@ public interface DeviceService {
 
     /**
      * find by checkIfTidMidExists
+     *
      * @param tid
      * @param mid
      * @return
      */
     boolean checkIfTidMidExists(String tid, String mid);
+
+    boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds);
 
 }

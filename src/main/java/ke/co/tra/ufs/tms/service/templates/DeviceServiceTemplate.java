@@ -874,6 +874,12 @@ public class DeviceServiceTemplate implements DeviceService {
         return tidMidCount > 0;
     }
 
+    @Override
+    public boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds) {
+        int tidMidCount  = tmsDeviceTidRepository.getTmsDeviceTidsMidsByDeviceIds(tid,mid,deviceIds);
+        return tidMidCount > 0;
+    }
+
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {
         Type typeOfObjectsList = new TypeToken<ArrayList<BigDecimal>>() {
         }.getType();
