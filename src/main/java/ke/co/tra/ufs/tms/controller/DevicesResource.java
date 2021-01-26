@@ -346,7 +346,7 @@ public class DevicesResource {
 
         //set Whitelisted device to unassigned
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
-        tidMidRepository.deleteAllByDeviceId(entity);
+        deviceService.deleteAllByDeviceId(entity.getSerialNo());
         loggerService.logApprove("Done approving device (Serial no: " + entity.getSerialNo() + ") decommission.",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
                 AppConstants.STATUS_COMPLETED, notes);
@@ -363,7 +363,7 @@ public class DevicesResource {
         //set Whitelisted device to unassigned
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
 
-        tidMidRepository.deleteAllByDeviceId(entity);
+        deviceService.deleteAllByDeviceId(entity.getSerialNo());
         loggerService.logApprove("Done approving device (Serial no: " + entity.getSerialNo() + ") decommission.",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
                 AppConstants.STATUS_COMPLETED, notes);
