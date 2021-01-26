@@ -9,6 +9,7 @@ import ke.co.tra.ufs.tms.entities.wrappers.ReleaseDeviceAction;
 import ke.co.tra.ufs.tms.entities.wrappers.filters.DeviceCustomerFilter;
 import ke.co.tra.ufs.tms.entities.wrappers.filters.DevicesFilter;
 import ke.co.tra.ufs.tms.repository.SupportRepository;
+import ke.co.tra.ufs.tms.repository.TmsDeviceTidMidRepository;
 import ke.co.tra.ufs.tms.service.*;
 import ke.co.tra.ufs.tms.service.templates.PosUserServiceTemplate;
 import ke.co.tra.ufs.tms.utils.AppConstants;
@@ -64,11 +65,12 @@ public class DevicesResource {
     private final PasswordEncoder encoder;
     private final SysConfigService configService;
     private final NotifyService notifyService;
+    private final TmsDeviceTidMidRepository tidMidRepository;
 
     public DevicesResource(DeviceService deviceService, PosUserServiceTemplate userServiceTemplate, LoggerServiceLocal loggerService, SupportRepository supportRepo,
                            SchedulerService schedulerService, ProductService productService, SupportService supportService, SharedMethods sharedMethods, TmsDeviceParamService deviceParamService, RestTemplateClient restTemplateClient, ObjectMapper mapper,
                            UfsTerminalHistoryService terminalHistoryService, PosUserService posUserService, PasswordEncoder encoder,
-                           SysConfigService configService,NotifyService notifyService) {
+                           SysConfigService configService, NotifyService notifyService, TmsDeviceTidMidRepository tidMidRepository) {
         this.deviceService = deviceService;
         this.userServiceTemplate = userServiceTemplate;
         this.loggerService = loggerService;
@@ -85,6 +87,7 @@ public class DevicesResource {
         this.encoder = encoder;
         this.configService = configService;
         this.notifyService = notifyService;
+        this.tidMidRepository = tidMidRepository;
     }
 
     @ApiOperation(value = "Fetch Devices")
@@ -341,7 +344,7 @@ public class DevicesResource {
 
         //set Whitelisted device to unassigned
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
-
+        tidMidRepository.deleteAllByDeviceId(entity);
         loggerService.logApprove("Done approving device (Serial no: " + entity.getSerialNo() + ") decommission.",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
                 AppConstants.STATUS_COMPLETED, notes);
@@ -358,6 +361,7 @@ public class DevicesResource {
         //set Whitelisted device to unassigned
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
 
+        tidMidRepository.deleteAllByDeviceId(entity);
         loggerService.logApprove("Done approving device (Serial no: " + entity.getSerialNo() + ") decommission.",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
                 AppConstants.STATUS_COMPLETED, notes);
@@ -376,7 +380,7 @@ public class DevicesResource {
 
         //set Whitelisted device to unassigned
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
-
+        tidMidRepository.deleteAllByDeviceId(entity);
         loggerService.logApprove("Done approving device (" + entity.getSerialNo() + ") release.",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
                 AppConstants.STATUS_COMPLETED, notes);
