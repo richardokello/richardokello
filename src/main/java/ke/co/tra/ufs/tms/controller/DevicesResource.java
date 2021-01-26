@@ -375,12 +375,12 @@ public class DevicesResource {
      * @return
      */
     private void processApproveRelease(TmsDevice entity, String notes) throws ExpectationFailed {
+        tidMidRepository.deleteAllByDeviceId(entity);
         supportService.delete(this.supportService.fetchByEntityAndEntityId(TmsDevice.class.getSimpleName(), entity.getDeviceId().toString()));
         this.terminalHistoryService.saveHistory(new UfsTerminalHistory(entity.getSerialNo(), AppConstants.ACTIVITY_RELEASE, "Terminal Approval Release Successfully", loggerService.getUser(), AppConstants.STATUS_APPROVED,loggerService.getFullName()));
 
         //set Whitelisted device to unassigned
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
-        tidMidRepository.deleteAllByDeviceId(entity);
         loggerService.logApprove("Done approving device (" + entity.getSerialNo() + ") release.",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
                 AppConstants.STATUS_COMPLETED, notes);
