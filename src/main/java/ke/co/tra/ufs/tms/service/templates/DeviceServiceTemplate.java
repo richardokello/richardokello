@@ -880,6 +880,12 @@ public class DeviceServiceTemplate implements DeviceService {
         return tidMidCount > 0;
     }
 
+    @Override
+    public void deleteAllByDeviceId(String tmsDevice) {
+        TmsDevice ent = getDevicebySerial(tmsDevice);
+        tmsDeviceTidRepository.deleteAllByDeviceId(ent);
+    }
+
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {
         Type typeOfObjectsList = new TypeToken<ArrayList<BigDecimal>>() {
         }.getType();

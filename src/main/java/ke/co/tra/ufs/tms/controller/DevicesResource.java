@@ -22,6 +22,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -201,6 +202,7 @@ public class DevicesResource {
                     dbMake.setActionStatus(AppConstants.STATUS_APPROVED);
                 } else if (dbMake.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_RELEASE)
                         && dbMake.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
+
                     this.processApproveRelease(dbMake, action.getNotes());
                     dbMake.setStatus(AppConstants.STATUS_INACTIVE);
                     dbMake.setActionStatus(AppConstants.STATUS_APPROVED);
@@ -375,10 +377,14 @@ public class DevicesResource {
      * @return
      */
     private void processApproveRelease(TmsDevice entity, String notes) throws ExpectationFailed {
-        tidMidRepository.deleteAllByDeviceId(entity);
-        supportService.delete(this.supportService.fetchByEntityAndEntityId(TmsDevice.class.getSimpleName(), entity.getDeviceId().toString()));
+        try {
+            supportService.delete(this.supportService.fetchByEntityAndEntityId(TmsDevice.class.getSimpleName(), entity.getDeviceId().toString()));
+        }catch(InvalidDataAccessApiUsageException ex){
+
+        }
         this.terminalHistoryService.saveHistory(new UfsTerminalHistory(entity.getSerialNo(), AppConstants.ACTIVITY_RELEASE, "Terminal Approval Release Successfully", loggerService.getUser(), AppConstants.STATUS_APPROVED,loggerService.getFullName()));
 
+        deviceService.deleteAllByDeviceId(entity.getSerialNo());
         //set Whitelisted device to unassigned
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
         loggerService.logApprove("Done approving device (" + entity.getSerialNo() + ") release.",

@@ -468,4 +468,6 @@ public interface DeviceService {
 
     boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds);
 
+    void deleteAllByDeviceId(String tmsDevice);
+
 }
