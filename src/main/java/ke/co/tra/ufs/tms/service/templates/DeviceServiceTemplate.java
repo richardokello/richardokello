@@ -882,11 +882,11 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     public void deleteAllByDeviceId(String serial) {
-        TmsDevice ent = deviceRepository.findBySerialNoAndIntrash(serial, AppConstants.NO);
-        if(ent==null){
+        List<TmsDevice> ent = deviceRepository.findAllBySerialNoAndIntrash(serial, AppConstants.NO);
+        if(ent.size()==0){
             return;
         }
-        tmsDeviceTidRepository.deleteAllByDeviceId(ent);
+        tmsDeviceTidRepository.deleteAllByDeviceId(ent.stream().map(x->x.getDeviceId().longValue()).collect(Collectors.toList()));
     }
 
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {
