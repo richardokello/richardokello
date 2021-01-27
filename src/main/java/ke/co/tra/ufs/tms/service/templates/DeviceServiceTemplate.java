@@ -881,9 +881,22 @@ public class DeviceServiceTemplate implements DeviceService {
     }
 
     @Override
-    public void deleteAllByDeviceId(String tmsDevice) {
-        TmsDevice ent = getDevicebySerial(tmsDevice);
+    public void deleteAllByDeviceId(String serial) {
+        System.out.println("Serioool Number===>"+serial);
+        TmsDevice ent = deviceRepository.findBySerialNoAndIntrash(serial, AppConstants.NO);
+        if(ent==null){
+            System.out.println("Device not found");
+            return;
+        }
         tmsDeviceTidRepository.deleteAllByDeviceId(ent);
+//        System.out.println("ID found===>"+ent.getDeviceId());
+//        List<TmsDeviceTidsMids> tidmids= tmsDeviceTidRepository.findAllByDeviceIds(ent.getDeviceId().longValue());
+//
+//        System.out.println("TIDS Sizes===>"+tidmids.size());
+////        tmsDeviceTidRepository.deleteAllByDeviceId(ent);
+//        tidmids.forEach(tid->{
+//            tmsDeviceTidRepository.deleteById(tid.getId());
+//        });
     }
 
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {

@@ -2,10 +2,12 @@ package ke.co.tra.ufs.tms.repository;
 
 import ke.co.tra.ufs.tms.entities.TmsDevice;
 import ke.co.tra.ufs.tms.entities.TmsDeviceTidsMids;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -13,6 +15,9 @@ public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsM
 
     List<TmsDeviceTidsMids> findAllByDeviceIds(Long id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "delete from TmsDeviceTidsMids u where u.deviceId = ?1")
     void deleteAllByDeviceId(TmsDevice tmsDevice);
 
     @Query("SELECT COUNT(t.id) FROM TmsDeviceTidsMids t WHERE t.tid = ?1 OR t.mid = ?2")
