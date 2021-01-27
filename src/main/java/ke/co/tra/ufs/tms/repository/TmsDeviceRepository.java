@@ -37,6 +37,9 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
      */
     public TmsDevice findBySerialNoAndIntrash(String serialNo, String intrash);
 
+
+    public List<TmsDevice> findAllBySerialNoAndIntrash(String serialNo, String intrash);
+
     /**
      * @param action
      * @param actionStatus

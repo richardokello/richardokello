@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -19,6 +20,11 @@ public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsM
     @Transactional
     @Query(value = "delete from TmsDeviceTidsMids u where u.deviceId = ?1")
     void deleteAllByDeviceId(TmsDevice tmsDevice);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from TmsDeviceTidsMids u where u.deviceIds IN (?1)")
+    void deleteAllByDeviceId(List<Long> tmsDevice);
 
     @Query("SELECT COUNT(t.id) FROM TmsDeviceTidsMids t WHERE t.tid = ?1 OR t.mid = ?2")
     Integer getTmsDeviceTidsMids(String tid, String mid);
