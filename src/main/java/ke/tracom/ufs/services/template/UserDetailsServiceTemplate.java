@@ -45,14 +45,12 @@ public class UserDetailsServiceTemplate implements UserDetailsService {
         }
         Set<GrantedAuthority> authorities = new HashSet<>();
         auth.getUser().getUfsUserWorkgroupList().forEach(workgroup -> {
-            if ((workgroup.getIntrash() == null || workgroup.getIntrash().equals(AppConstants.INTRASH_NO))
-                    && (workgroup.getWorkgroup().getActionStatus().equals(AppConstants.STATUS_APPROVED)
-                    || workgroup.getWorkgroup().getActionStatus().equals(AppConstants.STATUS_REJECTED))
+            if ((workgroup.getIntrash() == null || workgroup.getIntrash().equals(AppConstants.INTRASH_NO)) &&
+                    (workgroup.getWorkgroup().getActionStatus().equals(AppConstants.STATUS_APPROVED) || workgroup.getWorkgroup().getActionStatus().equals(AppConstants.STATUS_REJECTED))
                     && (workgroup.getWorkgroup().getIntrash() == null || workgroup.getWorkgroup().getIntrash().equals(AppConstants.INTRASH_NO))) {
                 workgroup.getWorkgroup().getUfsWorkgroupRoleList().forEach(groupRole -> {
-                    if ((groupRole.getIntrash() == null || groupRole.getIntrash().equals(AppConstants.INTRASH_NO))
-                            && (groupRole.getRole().getIntrash() == null || groupRole.getRole().getIntrash().equals(AppConstants.INTRASH_NO))
-                             ) {
+                    if ((groupRole.getIntrash() == null || groupRole.getIntrash().equals(AppConstants.INTRASH_NO)) &&
+                            (groupRole.getRole().getIntrash() == null || groupRole.getRole().getIntrash().equals(AppConstants.INTRASH_NO))) {
                         groupRole.getRole().getUfsRolePermissionList().forEach(perm -> {
                             authorities.add(new SimpleGrantedAuthority(perm.getPermission().getCaption()));
                         });
