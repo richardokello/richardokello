@@ -37,6 +37,7 @@ public class UfsWorkgroup implements Serializable {
 
     @Basic(optional = false)
     @NotNull
+    @ModifiableField
     @Unique
     @Size(min = 1, max = 50)
     @Column(name = "GROUP_NAME")
@@ -45,6 +46,7 @@ public class UfsWorkgroup implements Serializable {
     private String groupName;
     @Size(max = 100)
     @Searchable
+    @ModifiableField
     @Column(name = "DESCRIPTION")
     private String description;
     @Size(max = 15)
