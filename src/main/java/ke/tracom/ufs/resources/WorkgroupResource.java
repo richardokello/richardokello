@@ -131,20 +131,26 @@ public class WorkgroupResource extends ChasisResource<UfsWorkgroup, Long, UfsEdi
 
                         existingIds.forEach(num -> {
                             //Checking if existing roleIds array exists in the new roleIds array if yes add to isPresent array if no add to isDelete array
-                            if (newIds.contains(num)) {
-                                isPresent.add(num);
+                            if(newIds != null){
+                                if (newIds.contains(num)) {
+                                    isPresent.add(num);
+                                }
+                                if (!newIds.contains(num)) {
+                                    toDelete.add(num);
+                                }
                             }
-                            if (!newIds.contains(num)) {
-                                toDelete.add(num);
-                            }
+
                         });
 
+
                         //add the new roleIds to toCreate array if its not in isPresent array and not present in toDelete array
-                        newIds.forEach(num -> {
-                            if (!isPresent.contains(num) && !toDelete.contains(num)) {
-                                toCreate.add(num);
-                            }
-                        });
+                        if(newIds != null){
+                            newIds.forEach(num -> {
+                                if (!isPresent.contains(num) && !toDelete.contains(num)) {
+                                    toCreate.add(num);
+                                }
+                            });
+                        }
 
                         //delete the roleWorkgroups if the toDelete array is not null
                         if (!toDelete.isEmpty()) {
