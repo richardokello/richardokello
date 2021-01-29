@@ -1,14 +1,15 @@
 package ke.tra.ufs.webportal.resources;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import ke.axle.chassis.ChasisResource;
 import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
-import ke.tra.ufs.webportal.entities.*;
+import ke.tra.ufs.webportal.entities.UfsContactPerson;
+import ke.tra.ufs.webportal.entities.UfsCustomerOutlet;
+import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
+import ke.tra.ufs.webportal.entities.UfsPosUser;
 import ke.tra.ufs.webportal.entities.wrapper.contactPersonDeviceWrapper;
 import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
@@ -30,7 +31,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value = "/contact-person")
-public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Long, UfsEdittedRecord> {
+public class UfsContactPersonResource extends ChasisResource<UfsContactPerson, Long, UfsEdittedRecord> {
 
     private final ContactPersonService contactPersonService;
     private final UfsCustomerOutletService customerOutletService;
@@ -40,8 +41,8 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
     private final NotifyService notifyService;
     private final TmsDeviceService tmsDeviceService;
 
-    public UfsContactPersonResource(LoggerService loggerService, EntityManager entityManager,ContactPersonService contactPersonService,PosUserService posUserService,
-                                    SysConfigService configService,PasswordEncoder encoder,NotifyService notifyService,TmsDeviceService tmsDeviceService,UfsCustomerOutletService customerOutletService ) {
+    public UfsContactPersonResource(LoggerService loggerService, EntityManager entityManager, ContactPersonService contactPersonService, PosUserService posUserService,
+                                    SysConfigService configService, PasswordEncoder encoder, NotifyService notifyService, TmsDeviceService tmsDeviceService, UfsCustomerOutletService customerOutletService) {
         super(loggerService, entityManager);
         this.contactPersonService = contactPersonService;
         this.posUserService = posUserService;
@@ -73,14 +74,14 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
 
         //check outlet by outletId
         UfsCustomerOutlet customerOutlet = customerOutletService.findById(ufsContactPerson.getCustomerOutletId());
-        if(Objects.nonNull(customerOutlet)){
+        if (Objects.nonNull(customerOutlet)) {
             outletName = customerOutlet.getOutletName();
             merchantName = customerOutlet.getCustomerId().getBusinessName();
 
         }
 
         String serialNumber = tmsDeviceService.findByDeviceIdAndIntrash(ufsContactPerson.getDeviceId()).getSerialNo();
-        UfsPosUser posUser = posUserService.findByContactPersonIdAndDeviceIdAndSerialNumber(ufsContactPerson.getId(), ufsContactPerson.getDeviceId(),serialNumber);
+        UfsPosUser posUser = posUserService.findByContactPersonIdAndDeviceIdAndSerialNumber(ufsContactPerson.getId(), ufsContactPerson.getDeviceId(), serialNumber);
 
         //generate random pin
         String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
@@ -97,7 +98,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
             ufsPosUser.setPhoneNumber(ufsContactPerson.getPhoneNumber());
             ufsPosUser.setIdNumber(ufsContactPerson.getIdNumber());
             ufsPosUser.setSerialNumber(serialNumber);
-            ufsPosUser.setFirstTimeUser((short)0);
+            ufsPosUser.setFirstTimeUser((short) 0);
             ufsPosUser.setMerchantName(merchantName);
             ufsPosUser.setOutletName(outletName);
 
@@ -111,21 +112,21 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
             posUserService.savePosUser(ufsPosUser);
 
             loggerService.log("Contact Person Created  Successfully",
-                    UfsPosUser.class.getSimpleName(), ufsPosUser.getPosUserId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Contact Person Created Successfully" );
+                    UfsPosUser.class.getSimpleName(), ufsPosUser.getPosUserId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, "Contact Person Created Successfully");
 
         }
 
-          response.setCode(201);
+        response.setCode(201);
         response.setData(ufsContactPerson);
         response.setMessage("Contact Person Created Successfully.");
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/{customerId}/all" , method = RequestMethod.GET)
+    @RequestMapping(value = "/{customerId}/all", method = RequestMethod.GET)
     @Transactional
     @ApiOperation(value = "Contact Person", notes = "Get All Contact Person By Customer Id.")
     public ResponseWrapper<Object> getContactPersonByCustomerId(Pageable pg, @PathVariable("customerId") BigDecimal customerId) {
-        ResponseWrapper response =  new ResponseWrapper<>();
+        ResponseWrapper response = new ResponseWrapper<>();
 
         List<UfsContactPerson> contactPersonList = this.contactPersonService.getAllContactPersonByCustomerId(customerId);
 
@@ -149,64 +150,64 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
         }
 
         //approve/delete also contact person in the  Pos User Table
-        Arrays.stream(actions.getIds()).forEach(id->{
+        Arrays.stream(actions.getIds()).forEach(id -> {
 
-                Optional<UfsContactPerson> ufsContactPerson = this.contactPersonService.findContactPersonById(id);
-                if(ufsContactPerson.isPresent()){
-                    if(ufsContactPerson.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)){
-                        List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
-                        if(!posUsers.isEmpty()){
-                            posUsers.forEach(posUser->{
+            Optional<UfsContactPerson> ufsContactPerson = this.contactPersonService.findContactPersonById(id);
+            if (ufsContactPerson.isPresent()) {
+                if (ufsContactPerson.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && ufsContactPerson.get().getActionStatus().equals(AppConstants.STATUS_UNAPPROVED)) {
+                    List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
+                    if (!posUsers.isEmpty()) {
+                        posUsers.forEach(posUser -> {
 
-                                UfsPosUser savedUser = posUser;
+                            UfsPosUser savedUser = posUser;
 
-                                //generate random pin
-                                String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
-                                log.info("The generated pin is: " + randomPin);
+                            //generate random pin
+                            String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
+                            log.info("The generated pin is: " + randomPin);
 
-                                posUser.setActionStatus(AppConstants.STATUS_APPROVED);
-                                posUser.setPin(encoder.encode(randomPin));
-                                savedUser = posUserService.savePosUser(posUser);
+                            posUser.setActionStatus(AppConstants.STATUS_APPROVED);
+                            posUser.setPin(encoder.encode(randomPin));
+                            savedUser = posUserService.savePosUser(posUser);
 
-                                String message = "Your username is " + savedUser.getUsername() + ". Use password :" + randomPin + " to login to POS terminal";
-                                if (!ufsContactPerson.get().getEmail().isEmpty()) {
-                                    notifyService.sendEmail(ufsContactPerson.get().getEmail(), "Login Credentials", message);
-                                    loggerService.log("Sent login credentials for " + ufsContactPerson.get().getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
-                                            AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
+                            String message = "Your username is " + savedUser.getUsername() + ". Use password :" + randomPin + " to login to POS terminal";
+                            if (!ufsContactPerson.get().getEmail().isEmpty()) {
+                                notifyService.sendEmail(ufsContactPerson.get().getEmail(), "Login Credentials", message);
+                                loggerService.log("Sent login credentials for " + ufsContactPerson.get().getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
+                                        AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "Sent login credentials");
+
+                            } else {
+                                if (!ufsContactPerson.get().getPhoneNumber().isEmpty()) {
+                                    // send sms
+                                    posUserService.sendSmsMessage(ufsContactPerson.get().getPhoneNumber(), message);
+                                    loggerService.log("Sent login credentials for " + ufsContactPerson.get().getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
+                                            AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "Sent login credentials");
 
                                 } else {
-                                    if (!ufsContactPerson.get().getPhoneNumber().isEmpty()) {
-                                        // send sms
-                                        posUserService.sendSmsMessage(ufsContactPerson.get().getPhoneNumber(), message);
-                                        loggerService.log("Sent login credentials for " + ufsContactPerson.get().getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
-                                                AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED,"Sent login credentials");
 
-                                    } else {
+                                    loggerService.log("Failed to send login credentials for " + ufsContactPerson.get().getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
+                                            AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_FAILED_STRING, "No valid email or phone number.");
 
-                                        loggerService.log("Failed to send login credentials for " + ufsContactPerson.get().getName(),UfsPosUser.class.getName(),savedUser.getPosUserId(),
-                                                AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_FAILED_STRING,"No valid email or phone number.");
-
-                                    }
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
+                }
 
-                    if(ufsContactPerson.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE)){
-                        List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
-                        if(!posUsers.isEmpty()){
-                            posUsers.forEach(posUser->{
-                                posUser.setActionStatus(AppConstants.STATUS_APPROVED);
-                                posUser.setIntrash(AppConstants.YES);
-                                posUser.setAction(AppConstants.ACTIVITY_DELETE);
-                                posUserService.savePosUser(posUser);
+                if (ufsContactPerson.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE)) {
+                    List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
+                    if (!posUsers.isEmpty()) {
+                        posUsers.forEach(posUser -> {
+                            posUser.setActionStatus(AppConstants.STATUS_APPROVED);
+                            posUser.setIntrash(AppConstants.YES);
+                            posUser.setAction(AppConstants.ACTIVITY_DELETE);
+                            posUserService.savePosUser(posUser);
 
-                            });
-                        }
-
+                        });
                     }
 
                 }
+
+            }
 
         });
 
@@ -218,8 +219,8 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
     @Transactional
     @RequestMapping(value = "/assign-device", method = RequestMethod.POST)
     @ApiOperation(value = "Contact Person", notes = "Assign contact person to a specific device")
-    public ResponseEntity<ResponseWrapper> contactPersonDeviceAssign(@Valid @RequestBody contactPersonDeviceWrapper personDeviceWrapper){
-        ResponseWrapper response =  new ResponseWrapper<>();
+    public ResponseEntity<ResponseWrapper> contactPersonDeviceAssign(@Valid @RequestBody contactPersonDeviceWrapper personDeviceWrapper) {
+        ResponseWrapper response = new ResponseWrapper<>();
 
         if(personDeviceWrapper.getContactPersonId() == null){
             loggerService.log("Contact Person Not Selected",
@@ -241,7 +242,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
         UfsContactPerson contactPerson = contactPersonService.findContactPersonByIdAndIntrash(personDeviceWrapper.getContactPersonId());
 
         String serialNumber = tmsDeviceService.findByDeviceIdAndIntrash(personDeviceWrapper.getDeviceId()).getSerialNo();
-        UfsPosUser posUser = posUserService.findByContactPersonIdAndDeviceIdAndSerialNumber(personDeviceWrapper.getContactPersonId(), personDeviceWrapper.getDeviceId(),serialNumber);
+        UfsPosUser posUser = posUserService.findByContactPersonIdAndDeviceIdAndSerialNumber(personDeviceWrapper.getContactPersonId(), personDeviceWrapper.getDeviceId(), serialNumber);
 
         //generate random pin
         String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
@@ -270,14 +271,14 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
             }
             posUserService.savePosUser(ufsPosUser);
             loggerService.log("Contact Person Assigned Device Successfully",
-                    UfsPosUser.class.getSimpleName(), ufsPosUser.getPosUserId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED,"Contact Person Assigned Device Successfully" );
+                    UfsPosUser.class.getSimpleName(), ufsPosUser.getPosUserId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, "Contact Person Assigned Device Successfully");
             response.setCode(200);
             response.setMessage("Contact Person Assigned Device Successfully");
             return ResponseEntity.status(HttpStatus.OK).body(response);
 
-        }else{
+        } else {
             loggerService.log("Contact Person Already Assigned Device",
-                    UfsPosUser.class.getSimpleName(), null, ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED,"Contact Person Already Assigned Device" );
+                    UfsPosUser.class.getSimpleName(), null, ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Contact Person Already Assigned Device");
             response.setCode(HttpStatus.CONFLICT.value());
             response.setMessage("Contact Person Already Assigned Device");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);

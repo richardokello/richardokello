@@ -77,4 +77,9 @@ public class PosUserServiceTemplate implements PosUserService {
         return ufsPosUserRepository.findByContactPersonIdAndIntrash(contactPersonId,AppConstants.NO);
     }
 
+    @Override
+    public UfsPosUser findByDeviceIdAndFirstTime(BigDecimal tmsDeviceId, short firstTimeUser) {
+        return ufsPosUserRepository.findByTmsDeviceIdAndFirstTimeUserAndIntrash(tmsDeviceId,firstTimeUser,AppConstants.NO);
+    }
+
 }

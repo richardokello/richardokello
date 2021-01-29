@@ -7,7 +7,6 @@
 package ke.tra.ufs.webportal.repository;
 
 
-import ke.tra.ufs.webportal.entities.TmsDevice;
 import ke.tra.ufs.webportal.entities.TmsWhitelist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

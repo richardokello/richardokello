@@ -19,6 +19,7 @@ import ke.tra.ufs.webportal.utils.CodeGenerator;
 import ke.tra.ufs.webportal.utils.UniqueStringGenerator;
 import ke.tra.ufs.webportal.wrappers.AgentTerminationWrapper;
 import ke.tra.ufs.webportal.wrappers.LogExtras;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -357,6 +358,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             if (loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_UPDATE) ||
                     loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_CREATE) ||
                     loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_ACTIVATION) ||
+                    loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION) ||
                     loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_DELETE)
 
             ) {
@@ -367,8 +369,11 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             }
 
             if (Objects.nonNull(customer)) {
-                if ((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                        (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
+                String action = customer.getAction();
+                String actionStatus= customer.getActionStatus();
+                System.out.println("Customers Action==>"+action+"   and actionStatus==>"+actionStatus);
+                if ((action.equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
+                        (action.equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
                 ) {
 
                     customer.setActionStatus(AppConstants.STATUS_APPROVED);
@@ -379,7 +384,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 }
 
                 //terminating customer
-                if ((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
+                if ((action.equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
                     customer.setStatus(AppConstants.STATUS_INACTIVE);
                     customer.setActionStatus(AppConstants.STATUS_APPROVED);
                     this.customerService.saveCustomer(customer);
@@ -387,9 +392,67 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                             UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
 
                 }
+
+                System.out.println("Customers Action==>"+action+"   and actionStatus==>"+actionStatus);
+
+                if(action.equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
+                    System.out.println("Approving customer owner");
+                    //approving customer owner
+                    List<UfsCustomerOwners> customerOwners = this.ownersService.findOwnersByCustomerIds(new BigDecimal(id));
+                    if (!customerOwners.isEmpty()) {
+                        for (UfsCustomerOwners customerOwner : customerOwners) {
+                            if ((customerOwner.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customerOwner.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
+                                    (customerOwner.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customerOwner.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
+                            ) {
+                                customerOwner.setActionStatus(AppConstants.STATUS_APPROVED);
+                                this.ownersService.saveOwner(customerOwner);
+                                loggerService.log("Successfully Approved Customer Owner",
+                                        UfsCustomerOwners.class.getSimpleName(), customerOwner.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+
+                                if (customerOwner.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) && customerOwner.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
+                                    customerOwner.setActionStatus(AppConstants.STATUS_APPROVED);
+                                    customerOwner.setIntrash(AppConstants.INTRASH_YES);
+                                    this.ownersService.saveOwner(customerOwner);
+
+                                    loggerService.log("Successfully Approved Customer Owner Deletion",
+                                            UfsCustomerOwners.class.getSimpleName(), customerOwner.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+                                }
+                            }
+                        }
+                    }
+
+                    System.out.println("Approving customer outlet");
+                    //approving customer outlet
+                    List<UfsCustomerOutlet> customerOutlets = this.customerService.findOutletsByCustomerIds(new BigDecimal(id));
+                    if (!customerOutlets.isEmpty()) {
+                        for (UfsCustomerOutlet customerOutlet : customerOutlets) {
+                            if ((customerOutlet.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customerOutlet.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
+                                    (customerOutlet.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customerOutlet.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
+                            ) {
+                                customerOutlet.setActionStatus(AppConstants.STATUS_APPROVED);
+                                this.customerService.saveOutlet(customerOutlet);
+                                loggerService.log("Successfully Approved Customer Outlet",
+                                        UfsCustomerOutlet.class.getSimpleName(), customerOutlet.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+
+                                if (customerOutlet.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) && customerOutlet.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
+                                    customerOutlet.setActionStatus(AppConstants.STATUS_APPROVED);
+                                    customerOutlet.setIntrash(AppConstants.INTRASH_YES);
+                                    this.customerService.saveOutlet(customerOutlet);
+
+                                    loggerService.log("Successfully Approved Customer Outlet Deletion",
+                                            UfsCustomerOutlet.class.getSimpleName(), customerOutlet.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+                                }
+                            }
+                        }
+
+                    }
+
+                    deviceService.activateDevicesByOutlets(customerOutlets, actions.getNotes());
+
+                    deviceService.approveContactPersons(id, actions.getNotes());
+                }
                 //updating customer
-                if ((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
-                ) {
+                if (action.equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
                     try {
                         UfsCustomer entity = supportRepo.mergeChanges(id, customer);
                         customer.setBusinessName(entity.getBusinessName());
@@ -427,56 +490,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                                 UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
                     }
 
-                    //approving customer owner
-                    List<UfsCustomerOwners> customerOwners = this.ownersService.findOwnersByCustomerIds(new BigDecimal(id));
-                    if (!customerOwners.isEmpty()) {
-                        for (UfsCustomerOwners customerOwner : customerOwners) {
-                            if ((customerOwner.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customerOwner.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                                    (customerOwner.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customerOwner.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
-                            ) {
-                                customerOwner.setActionStatus(AppConstants.STATUS_APPROVED);
-                                this.ownersService.saveOwner(customerOwner);
-                                loggerService.log("Successfully Approved Customer Owner",
-                                        UfsCustomerOwners.class.getSimpleName(), customerOwner.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
-
-                                if (customerOwner.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) && customerOwner.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
-                                    customerOwner.setActionStatus(AppConstants.STATUS_APPROVED);
-                                    customerOwner.setIntrash(AppConstants.INTRASH_YES);
-                                    this.ownersService.saveOwner(customerOwner);
-
-                                    loggerService.log("Successfully Approved Customer Owner Deletion",
-                                            UfsCustomerOwners.class.getSimpleName(), customerOwner.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
-                                }
-                            }
-                        }
-                    }
-
-
-                    //approving customer outlet
-                    List<UfsCustomerOutlet> customerOutlets = this.customerService.findOutletsByCustomerIds(new BigDecimal(id));
-                    if (!customerOutlets.isEmpty()) {
-                        for (UfsCustomerOutlet customerOutlet : customerOutlets) {
-                            if ((customerOutlet.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customerOutlet.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
-                                    (customerOutlet.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customerOutlet.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
-                            ) {
-                                customerOutlet.setActionStatus(AppConstants.STATUS_APPROVED);
-                                this.customerService.saveOutlet(customerOutlet);
-                                loggerService.log("Successfully Approved Customer Outlet",
-                                        UfsCustomerOutlet.class.getSimpleName(), customerOutlet.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
-
-                                if (customerOutlet.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) && customerOutlet.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
-                                    customerOutlet.setActionStatus(AppConstants.STATUS_APPROVED);
-                                    customerOutlet.setIntrash(AppConstants.INTRASH_YES);
-                                    this.customerService.saveOutlet(customerOutlet);
-
-                                    loggerService.log("Successfully Approved Customer Outlet Deletion",
-                                            UfsCustomerOutlet.class.getSimpleName(), customerOutlet.getId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
-                                }
-                            }
-                        }
-
-                    }
-
                 } else {
 
                     loggerService.log("Failed To Approve Customer",
@@ -501,7 +514,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         response.setMessage("Customer Approved Successfully");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
 
     @Override
     @Transactional
