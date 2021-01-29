@@ -221,6 +221,23 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson,Lo
     public ResponseEntity<ResponseWrapper> contactPersonDeviceAssign(@Valid @RequestBody contactPersonDeviceWrapper personDeviceWrapper){
         ResponseWrapper response =  new ResponseWrapper<>();
 
+        if(personDeviceWrapper.getContactPersonId() == null){
+            loggerService.log("Contact Person Not Selected",
+                    UfsPosUser.class.getSimpleName(), null, ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED,"Contact Person Already Assigned Device" );
+            response.setCode(HttpStatus.CONFLICT.value());
+            response.setMessage("Contact Person Not Selected");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+
+        if(personDeviceWrapper.getDeviceId() == null){
+            loggerService.log("Device Not Selected",
+                    UfsPosUser.class.getSimpleName(), null, ke.axle.chassis.utils.AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED,"Contact Person Already Assigned Device" );
+            response.setCode(HttpStatus.CONFLICT.value());
+            response.setMessage("Select Device To Assign To Contact Person");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+
+
         UfsContactPerson contactPerson = contactPersonService.findContactPersonByIdAndIntrash(personDeviceWrapper.getContactPersonId());
 
         String serialNumber = tmsDeviceService.findByDeviceIdAndIntrash(personDeviceWrapper.getDeviceId()).getSerialNo();
