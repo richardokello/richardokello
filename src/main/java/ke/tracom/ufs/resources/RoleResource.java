@@ -101,9 +101,12 @@ public class RoleResource extends ChasisResource<UfsRole, Long, UfsEdittedRecord
         List<UfsRolePermission> rolePermissions = new ArrayList<>();
         UfsRole finalEntity = entity;
 
-        entity.getPermissions().forEach(p -> {
-            rolePermissions.add(new UfsRolePermission(p, finalEntity.getRoleId(), AppConstants.NO));
-        });
+        if(entity.getPermissions() != null){
+            entity.getPermissions().forEach(p -> {
+                rolePermissions.add(new UfsRolePermission(p, finalEntity.getRoleId(), AppConstants.NO));
+            });
+        }
+
         this.permRepository.saveAll(rolePermissions);
     }
 

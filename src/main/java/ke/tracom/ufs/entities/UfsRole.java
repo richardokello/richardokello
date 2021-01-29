@@ -57,11 +57,13 @@ public class UfsRole implements Serializable {
     @Unique
     @Size(min = 1, max = 40)
     @Searchable
+    @ModifiableField
     @Column(name = "ROLE_NAME")
     @EntityName
     private String roleName;
     @Size(max = 100)
     @Searchable
+    @ModifiableField
     @Column(name = "DESCRIPTION")
     private String description;
     @Basic(optional = false)
