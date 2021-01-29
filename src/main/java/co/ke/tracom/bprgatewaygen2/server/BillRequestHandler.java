@@ -20,10 +20,11 @@ public class BillRequestHandler {
     /* Parse request string into bill menu request object */
     BillMenuRequest billMenuRequest = mapper.readValue(requestString, BillMenuRequest.class);
     log.info("BILL MENU REQUEST DATA: {}", requestString);
-    String tnxType = billMenuRequest.getTxnType();
+    String tnxType = billMenuRequest.getTnxType();
 
     if (tnxType != null && tnxType.equals("fetch-menu")) {
       BillMenuResponse billMenuResponse = billMenusService.getAllMenus();
+      log.info("BILL MENU REQUEST DATA: {}", billMenuResponse.toString());
       Buffer outBuffer = Buffer.buffer();
       outBuffer.appendString(mapper.writeValueAsString(billMenuResponse));
       socket.write(outBuffer);
@@ -35,5 +36,7 @@ public class BillRequestHandler {
 
   public static void academicBridge(
       String requestString, AcademicBridgeService academicBridgeService, NetSocket socket)
-      throws JsonProcessingException {}
+      throws JsonProcessingException {
+
+  }
 }

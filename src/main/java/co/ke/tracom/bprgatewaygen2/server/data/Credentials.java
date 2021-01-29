@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TcpRequest {
+public class Credentials {
   private String username;
   private String password;
   private String serialNumber;
   private String tid;
-  private String txnType;
-  private String bill;
 }

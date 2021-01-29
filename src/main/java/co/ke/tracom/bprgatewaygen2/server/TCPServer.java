@@ -1,6 +1,6 @@
 package co.ke.tracom.bprgatewaygen2.server;
 
-import co.ke.tracom.bprgatewaygen2.server.data.TcpRequest;
+import co.ke.tracom.bprgatewaygen2.server.data.GenericRequest;
 import co.ke.tracom.bprgatewaygen2.server.data.TcpResponse;
 import co.ke.tracom.bprgatewaygen2.web.academicbridge.services.AcademicBridgeService;
 import co.ke.tracom.bprgatewaygen2.web.billMenus.service.BillMenusService;
@@ -18,15 +18,15 @@ import lombok.extern.slf4j.Slf4j;
  * This server handles TCP requests for any given bill and dispatches them to an appropriate handler
  */
 @Slf4j
-public class TcpServer {
+public class TCPServer {
 
   private final NetServer server;
   private final int port;
 
-  public TcpServer(int port) {
+  public TCPServer(int port) {
     this.port = port;
     Vertx vertx = Vertx.vertx();
-    NetServerOptions options = new NetServerOptions().setPort(port).setHost("localhost");
+    NetServerOptions options = new NetServerOptions().setPort(port);
     server = vertx.createNetServer(options);
   }
 
@@ -35,7 +35,7 @@ public class TcpServer {
    *
    * @return BillMenuService bean
    */
-  private BillMenusService getBillmenuService() {
+  private BillMenusService fetchBillsMenuService() {
     return SpringContext.getBean(BillMenusService.class);
   }
 
@@ -56,18 +56,18 @@ public class TcpServer {
               buffer -> {
                 CustomObjectMapper mapper = new CustomObjectMapper();
                 try {
-                  String requestString = buffer.toString();
-                  TcpRequest req = mapper.readValue(requestString, TcpRequest.class);
-                  log.info("GENERIC REQUEST OBJECT: {}", req);
-                  String billType = req.getBill();
+                  String requestPayload = buffer.toString().trim();
+                  GenericRequest genericRequest = mapper.readValue(requestPayload, GenericRequest.class);
+                  log.info("GENERIC REQUEST OBJECT: {}", genericRequest);
+                  String transactionType = genericRequest.getTnxType();
 
-                  switch (billType) {
-                    case "menu":
-                      BillRequestHandler.menu(requestString, getBillmenuService(), socket);
+                  switch (transactionType) {
+                    case "fetch-menu":
+                      BillRequestHandler.menu(requestPayload, fetchBillsMenuService(), socket);
                       break;
                     case "academic-bridge":
                       BillRequestHandler.academicBridge(
-                          requestString, getAcademicBridgeService(), socket);
+                          requestPayload, getAcademicBridgeService(), socket);
                       break;
                     default:
                       throw new UnprocessableEntityException("Entity cannot be processed");

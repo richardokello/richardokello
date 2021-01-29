@@ -31,13 +31,6 @@
               "order": 1
             },
             {
-              "label": "Enter bank reference number",
-              "type": "alphanumeric",
-              "length": 12,
-              "validated": true,
-              "order": 2
-            },
-            {
               "label": "Enter amount",
               "type": "numeric",
               "length": "12",
@@ -46,7 +39,7 @@
             },
             {
               "label": "Enter sender name",
-              "type": "numeric",
+              "type": "alphanumeric",
               "length": 12,
               "validated": false,
               "order": 4
