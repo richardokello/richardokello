@@ -17,7 +17,6 @@ import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tracom.ufs.entities.UfsEdittedRecord;
-import ke.tracom.ufs.entities.UfsRole;
 import ke.tracom.ufs.entities.UfsWorkgroup;
 import ke.tracom.ufs.entities.UfsWorkgroupRole;
 import ke.tracom.ufs.repositories.UfsWorkgroupRoleRepository;
@@ -55,7 +54,7 @@ public class WorkgroupResource extends ChasisResource<UfsWorkgroup, Long, UfsEdi
     private final WorkGroupService workGroupService;
     private final LogExtras logExtras;
 
-    public WorkgroupResource(LoggerService loggerService, EntityManager entityManager,WorkGroupService workGroupService,LogExtras logExtras) {
+    public WorkgroupResource(LoggerService loggerService, EntityManager entityManager, WorkGroupService workGroupService, LogExtras logExtras) {
         super(loggerService, entityManager);
         this.workGroupService = workGroupService;
         this.logExtras = logExtras;
@@ -131,11 +130,13 @@ public class WorkgroupResource extends ChasisResource<UfsWorkgroup, Long, UfsEdi
 
                         existingIds.forEach(num -> {
                             //Checking if existing roleIds array exists in the new roleIds array if yes add to isPresent array if no add to isDelete array
-                            if (newIds.contains(num)) {
-                                isPresent.add(num);
-                            }
-                            if (!newIds.contains(num)) {
-                                toDelete.add(num);
+                            if (newIds != null) {
+                                if (newIds.contains(num)) {
+                                    isPresent.add(num);
+                                }
+                                if (!newIds.contains(num)) {
+                                    toDelete.add(num);
+                                }
                             }
                         });
 
@@ -182,26 +183,26 @@ public class WorkgroupResource extends ChasisResource<UfsWorkgroup, Long, UfsEdi
 
     @ApiOperation(value = "Deleting A Workgroup")
     @RequestMapping(value = "/delete-action", method = RequestMethod.POST)
-    @ApiResponses({@ApiResponse(code = 207,message = "Some records could not be processed successfully" )})
+    @ApiResponses({@ApiResponse(code = 207, message = "Some records could not be processed successfully")})
     @Transactional
     public ResponseEntity<ResponseWrapper> deleteWorkgroup(@Valid @RequestBody ActionWrapper<Long> actions) {
         ResponseWrapper response = new ResponseWrapper();
         List<String> errors = new ErrorList();
 
-        for(Long id:actions.getIds()){
+        for (Long id : actions.getIds()) {
             UfsWorkgroup workgroup = workGroupService.findWorkgroupById(id);
-            if(Objects.isNull(workgroup)){
+            if (Objects.isNull(workgroup)) {
                 this.loggerService.log("Failed to delete workgroup.Record has unapproved actions", UfsWorkgroup.class.getSimpleName(), null, "Deletion", "Failed", "");
                 errors.add("Workgroup with id " + id + " doesn't exist");
-            }else if(!workgroup.getActionStatus().isEmpty() && workgroup.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
+            } else if (!workgroup.getActionStatus().isEmpty() && workgroup.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
                 this.loggerService.log("Failed to delete workgroup. Record has unapproved actions", UfsWorkgroup.class.getSimpleName(), id, "Deletion", "Failed", "");
                 errors.add("Record has unapproved actions");
 
-            }else{
+            } else {
                 workgroup.setAction(AppConstants.ACTIVITY_DELETE);
                 workgroup.setActionStatus(AppConstants.STATUS_UNAPPROVED);
                 workGroupService.saveWorkgroup(workgroup);
-                this.loggerService.log(workgroup.getGroupName()+" Deleted Successfully by "+logExtras.getFullName(), UfsWorkgroup.class.getSimpleName(), id, "Deletion", "Completed", "");
+                this.loggerService.log(workgroup.getGroupName() + " Deleted Successfully by " + logExtras.getFullName(), UfsWorkgroup.class.getSimpleName(), id, "Deletion", "Completed", "");
             }
 
         }
