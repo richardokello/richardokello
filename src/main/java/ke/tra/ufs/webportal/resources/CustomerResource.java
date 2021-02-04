@@ -355,11 +355,11 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         Arrays.stream(actions.getIds()).forEach(id -> {
             UfsCustomer customer = this.customerService.findByCustomerId(id);
 
-            if (loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_UPDATE) ||
-                    loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_CREATE) ||
-                    loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_ACTIVATION) ||
-                    loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION) ||
-                    loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_DELETE)
+            if ((customer.getAction().equals(AppConstants.ACTIVITY_UPDATE)&&loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_UPDATE)) ||
+                    (customer.getAction().equals(AppConstants.ACTIVITY_CREATE)&&loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_CREATE)) ||
+                    (customer.getAction().equals(AppConstants.ACTIVITY_ACTIVATION)&&loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_ACTIVATION)) ||
+                    (customer.getAction().equals(AppConstants.ACTIVITY_TERMINATION)&&loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION) )||
+                    (customer.getAction().equals(AppConstants.ACTIVITY_DELETE)&& loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_DELETE))
 
             ) {
                 loggerService.log("Failed to approve customer. Maker can't approve their own record",
@@ -371,7 +371,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             if (Objects.nonNull(customer)) {
                 String action = customer.getAction();
                 String actionStatus= customer.getActionStatus();
-                System.out.println("Customers Action==>"+action+"   and actionStatus==>"+actionStatus);
                 if ((action.equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
                         (action.equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
                 ) {
