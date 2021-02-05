@@ -285,6 +285,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         } else {
             response.setCode(201);
             response.setMessage("Customer Onboarded successfully");
+            response.setData(customer);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
