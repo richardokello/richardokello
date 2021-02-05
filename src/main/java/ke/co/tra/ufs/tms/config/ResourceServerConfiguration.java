@@ -124,7 +124,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
 
                 // device
-                .antMatchers(HttpMethod.POST, "/onboarding").hasAuthority("CREATE_ASSIGNED_DEVICE")
+                .antMatchers(HttpMethod.POST, "/onboarding","/onbording/assign-merchant-device").hasAuthority("CREATE_ASSIGNED_DEVICE")
                 .antMatchers(HttpMethod.GET, "/devices", "/devices/{\\id}", "/device/whitelist/serial/{\\serial}").hasAnyAuthority( "VIEW_ASSIGNED_DEVICE", "UPDATE_ASSIGNED_DEVICE", "VIEW_RELEASE", "VIEW_DECOMMISSION", "VIEW_ACTIVATED_DEVICE", "CREATE_DEVICE_TASK", "DELETE_DEVICE_TASK", "APPROVE_ASSIGNED_DEVICE", "CREATE_ASSIGNED_DEVICE", "VIEW_DEVICE_HISTORY")
                 .antMatchers(HttpMethod.POST, "/onboarding/update-device").hasAuthority(  "UPDATE_ASSIGNED_DEVICE")
                 .antMatchers(HttpMethod.PUT, "/devices/approve-actions", "/devices/decline-actions").hasAuthority("APPROVE_ASSIGNED_DEVICE")

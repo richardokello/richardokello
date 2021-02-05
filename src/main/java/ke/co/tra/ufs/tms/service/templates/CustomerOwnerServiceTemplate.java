@@ -8,6 +8,9 @@ import ke.co.tra.ufs.tms.utils.AppConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Service
 public class CustomerOwnerServiceTemplate implements CustomerOwnerService {
 
@@ -21,5 +24,10 @@ public class CustomerOwnerServiceTemplate implements CustomerOwnerService {
     @Transactional
     public UfsCustomerOwners findByCustomerOwnerId(Long customerOwnerId) {
         return customerOwnerRepository.findByIdAndIntrash(customerOwnerId, AppConstants.NO);
+    }
+
+    @Override
+    public List<UfsCustomerOwners> findByCustomerId(Long customerId) {
+        return customerOwnerRepository.findAllByCustomerIdsAndIntrash(new BigDecimal(customerId), AppConstants.NO);
     }
 }

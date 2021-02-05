@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @Transactional
@@ -27,6 +28,11 @@ public class CustomerOutletServiceTemplate implements CustomerOutletService {
     @Override
     public UfsCustomerOutlet findByOutletId(Long id) {
         return ufsCustomerOutletRepository.findByIdAndIntrash(id, AppConstants.NO);
+    }
+
+    @Override
+    public List<UfsCustomerOutlet> findOutletsByCustomerIdsAndIntrash(BigDecimal customerId, String intrash) {
+        return ufsCustomerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerId, intrash);
     }
 
 }
