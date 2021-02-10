@@ -466,7 +466,11 @@ public interface DeviceService {
      */
     boolean checkIfTidMidExists(String tid, String mid);
 
+    boolean checkIfTidExists(String tid);
+
     boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds);
+
+    boolean checkIfTidExistsByDeviceIds(String tid, Long deviceIds);
 
     void deleteAllByDeviceId(String tmsDevice);
 

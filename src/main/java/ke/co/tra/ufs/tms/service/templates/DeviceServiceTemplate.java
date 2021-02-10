@@ -875,9 +875,19 @@ public class DeviceServiceTemplate implements DeviceService {
     }
 
     @Override
+    public boolean checkIfTidExists(String tid) {
+        return tmsDeviceTidRepository.getTmsDeviceTids(tid)>0;
+    }
+
+    @Override
     public boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds) {
         int tidMidCount  = tmsDeviceTidRepository.getTmsDeviceTidsMidsByDeviceIds(tid,mid,deviceIds);
         return tidMidCount > 0;
+    }
+
+    @Override
+    public boolean checkIfTidExistsByDeviceIds(String tid, Long deviceIds) {
+        return tmsDeviceTidRepository.getTmsDeviceTidsByDeviceIds(tid,deviceIds)>0;
     }
 
     @Override

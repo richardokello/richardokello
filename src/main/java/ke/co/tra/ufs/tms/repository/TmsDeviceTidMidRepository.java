@@ -32,4 +32,10 @@ public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsM
     @Query("SELECT COUNT(t.id) FROM TmsDeviceTidsMids t WHERE (t.tid = ?1 OR t.mid = ?2) and t.deviceIds NOT IN (?3)")
     Integer getTmsDeviceTidsMidsByDeviceIds(String tid, String mid, Long deviceIds);
 
+    @Query("SELECT COUNT(t.id) FROM TmsDeviceTidsMids t WHERE t.tid = ?1")
+    Integer getTmsDeviceTids(String tid);
+
+    @Query("SELECT COUNT(t.id) FROM TmsDeviceTidsMids t WHERE t.tid = ?1 and t.deviceIds NOT IN (?3)")
+    Integer getTmsDeviceTidsByDeviceIds(String tid, Long deviceIds);
+
 }

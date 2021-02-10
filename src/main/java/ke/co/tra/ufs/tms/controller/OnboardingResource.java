@@ -134,7 +134,7 @@ public class OnboardingResource {
         if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
             for (TmsDeviceTidsMids tidmid : onboardWrapper.getTmsDeviceTidsMids()) {
                 //check where TID and MID exists
-                if (deviceService.checkIfTidMidExists(tidmid.getTid(), tidmid.getMid())) {
+                if (deviceService.checkIfTidExists(tidmid.getTid())) {
                     String message = "Creating new Device failed due to the provided"
                             + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
                     loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
@@ -325,7 +325,7 @@ public class OnboardingResource {
         if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
             for (TmsDeviceTidsMids tidmid : onboardWrapper.getTmsDeviceTidsMids()) {
                 //check where TID and MID exists
-                if (deviceService.checkIfTidMidExists(tidmid.getTid(), tidmid.getMid())) {
+                if (deviceService.checkIfTidExists(tidmid.getTid())) {
                     String message = "Creating new Device failed due to the provided"
                             + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
                     loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
@@ -552,7 +552,7 @@ public class OnboardingResource {
         if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
             for (TmsDeviceTidsMids tidmid : onboardWrapper.getTmsDeviceTidsMids()) {
                 //check where TID and MID exists
-                if (deviceService.checkIfTidMidExistsByDeviceIds(tidmid.getTid(), tidmid.getMid(), tidmid.getDeviceIds())) {
+                if (deviceService.checkIfTidExistsByDeviceIds(tidmid.getTid(),  tidmid.getDeviceIds())) {
                     String message = "Updating Device failed due to the provided"
                             + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") and matched to another device";
                     loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
