@@ -78,6 +78,17 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
 
     @Override
     @Async
+    public void activateDevicesByOutletsIds(List<Long> customerOutlets, String notes) {
+        List<TmsDevice> devices = findByOutletIds(customerOutlets.stream().map(BigDecimal::new).collect(Collectors.toList()));
+        for (TmsDevice device : devices) {
+            if (device.getAction().equals(AppConstants.ACTIVITY_CREATE) && device.getActionStatus().equals(AppConstants.STATUS_UNAPPROVED)) {
+                processApproveNew(device, notes);
+            }
+        }
+    }
+
+    @Override
+    @Async
     public void approveContactPersons(Long customerId, String notes) {
         System.out.println("Approving contact persons");
         List<UfsContactPerson> contactPerson = this.contactPersonService.getAllContactPersonByCustomerId(BigDecimal.valueOf(customerId));
@@ -123,6 +134,27 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
             }
         }
 
+    }
+
+    @Override
+    @Async
+    public void updateDeviceOwnerByOutletId(List<Long> customerOutlets, String customerOwnerName) {
+        List<TmsDevice> devices = findByOutletIds(customerOutlets.stream().map(BigDecimal::new).collect(Collectors.toList()));
+        for (TmsDevice device : devices) {
+            device.setCustomerOwnerName(customerOwnerName);
+            device.setDeviceFieldName(customerOwnerName);
+            tmsDeviceRepository.save(device);
+        }
+    }
+
+    @Override
+    @Async
+    public void updateContactPersonsDetails(UfsCustomer entity) {
+        List<UfsContactPerson> contactPerson = this.contactPersonService.getAllContactPersonByCustomerId(new BigDecimal(entity.getId()));
+        for (UfsContactPerson cntper : contactPerson) {
+            cntper.setPhoneNumber(entity.getBusinessPrimaryContactNo());
+            contactPersonService.saveContactPerson(cntper);
+        }
     }
 
 

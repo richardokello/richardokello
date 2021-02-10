@@ -372,6 +372,12 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             if (Objects.nonNull(customer)) {
                 String action = customer.getAction();
                 String actionStatus= customer.getActionStatus();
+                //approving customer owner
+                List<UfsCustomerOwners> customerOwners = this.ownersService.findOwnersByCustomerIds(new BigDecimal(id));
+                //approving customer outlet
+                List<UfsCustomerOutlet> customerOutlets = this.customerService.findOutletsByCustomerIds(new BigDecimal(id));
+
+
                 if ((action.equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
                         (action.equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
                 ) {
@@ -380,7 +386,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                     this.customerService.saveCustomer(customer);
                     loggerService.log("Successfully Approved Customer",
                             UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
-
                 }
 
                 //terminating customer
@@ -397,8 +402,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
                 if(action.equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
                     System.out.println("Approving customer owner");
-                    //approving customer owner
-                    List<UfsCustomerOwners> customerOwners = this.ownersService.findOwnersByCustomerIds(new BigDecimal(id));
                     if (!customerOwners.isEmpty()) {
                         for (UfsCustomerOwners customerOwner : customerOwners) {
                             if ((customerOwner.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customerOwner.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
@@ -422,8 +425,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                     }
 
                     System.out.println("Approving customer outlet");
-                    //approving customer outlet
-                    List<UfsCustomerOutlet> customerOutlets = this.customerService.findOutletsByCustomerIds(new BigDecimal(id));
                     if (!customerOutlets.isEmpty()) {
                         for (UfsCustomerOutlet customerOutlet : customerOutlets) {
                             if ((customerOutlet.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customerOutlet.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
@@ -474,9 +475,17 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                         loggerService.log("Successfully Approved Customer Update",
                                 UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                        // update device owner name
+                        List<Long> outletids = customerOutlets.stream().map(UfsCustomerOutlet::getId).collect(Collectors.toList());
+                        deviceService.updateDeviceOwnerByOutletId(outletids, entity.getBusinessName());
+
+
+                        //update director contact, Contact person details
+                        deviceService.updateContactPersonsDetails(entity);
+
+
+
+                    } catch (IOException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
 
