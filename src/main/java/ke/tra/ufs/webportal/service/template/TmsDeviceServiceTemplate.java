@@ -101,7 +101,6 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
                     posUsers.forEach(posUser -> {
 
                         UfsPosUser savedUser = posUser;
-
                         //generate random pin
                         String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(ke.tra.ufs.webportal.utils.AppConstants.ENTITY_POS_CONFIGURATION, ke.tra.ufs.webportal.utils.AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
 

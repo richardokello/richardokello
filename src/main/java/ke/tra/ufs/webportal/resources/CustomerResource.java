@@ -445,7 +445,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                                 }
                             }
                         }
-
                     }
 
                     deviceService.activateDevicesByOutlets(customerOutlets, actions.getNotes());
@@ -479,9 +478,10 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                         List<Long> outletids = customerOutlets.stream().map(UfsCustomerOutlet::getId).collect(Collectors.toList());
                         deviceService.updateDeviceOwnerByOutletId(outletids, entity.getBusinessName());
 
-
                         //update director contact, Contact person details
                         deviceService.updateContactPersonsDetails(entity);
+
+
 
 
 

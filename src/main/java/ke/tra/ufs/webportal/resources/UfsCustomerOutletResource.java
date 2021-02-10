@@ -10,6 +10,7 @@ import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.service.TmsDeviceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +34,7 @@ public class UfsCustomerOutletResource extends ChasisResource<UfsCustomerOutlet,
 
     @Override
     @Transactional
-    public ResponseEntity<ResponseWrapper> approveActions(@Valid ActionWrapper<Long> actions) throws ExpectationFailed {
+    public ResponseEntity<ResponseWrapper> approveActions(@RequestBody @Valid ActionWrapper<Long> actions) throws ExpectationFailed {
         ResponseEntity<ResponseWrapper> resp = super.approveActions(actions);
 
         // approve devices by outlet Ids
