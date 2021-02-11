@@ -5,6 +5,7 @@ import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.utils.SharedMethods;
 import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.repository.TmsDeviceRepository;
+import ke.tra.ufs.webportal.repository.TmsDeviceTidRepository;
 import ke.tra.ufs.webportal.repository.WhitelistRepository;
 import ke.tra.ufs.webportal.service.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -28,8 +29,9 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     private final NotifyService notifyService;
     private final WhitelistRepository whitelistRepo;
     private final ContactPersonService contactPersonService;
+    private final TmsDeviceTidRepository tmsDeviceTidRepository;
 
-    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService) {
+    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository) {
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.loggerService = loggerService;
         this.posUserService = posUserService;
@@ -38,6 +40,7 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         this.notifyService = notifyService;
         this.whitelistRepo = whitelistRepo;
         this.contactPersonService = contactPersonService;
+        this.tmsDeviceTidRepository = tmsDeviceTidRepository;
     }
 
     @Override
@@ -48,6 +51,11 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     @Override
     public List<TmsDevice> findByOutletIds(List<BigDecimal> outletIds) {
         return tmsDeviceRepository.findByOutletIdsInAndIntrash(outletIds, AppConstants.NO);
+    }
+
+    @Override
+    public List<TmsDeviceTids> findByDeviceIds(Long deviceIds) {
+        return tmsDeviceTidRepository.findAllByDeviceIds(deviceIds);
     }
 
     @Override

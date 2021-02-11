@@ -188,6 +188,12 @@ public class UfsCustomer implements Serializable {
     @Column(name = "CREATED_BY")
     @Filter
     private String createdBy;
+    @Size(max = 40)
+    @ModifiableField
+    @Filter
+    @Searchable
+    @Column(name = "MID")
+    private String mid;
 
     public UfsCustomer() {
     }
@@ -448,6 +454,14 @@ public class UfsCustomer implements Serializable {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getMid() {
+        return mid;
+    }
+
+    public void setMid(String mid) {
+        this.mid = mid;
     }
 
     @Override

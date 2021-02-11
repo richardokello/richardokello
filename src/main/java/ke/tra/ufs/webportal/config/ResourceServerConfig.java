@@ -239,6 +239,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/trained-agents/trained-agents-template.csv").hasAuthority("VIEW_TRAINED_AGENT")
                 .antMatchers(HttpMethod.GET, "/account-opening-details").hasAuthority("VIEW_ACCOUNT_OPENED")
                 .antMatchers(HttpMethod.GET, "/account-opening-details/{id}").hasAuthority("VIEW_ACCOUNT_OPENED")
+
+                // customers
+
+
                 .antMatchers("/**").fullyAuthenticated()
                 .and()
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)

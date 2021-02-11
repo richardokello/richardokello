@@ -11,8 +11,6 @@ import java.util.List;
 
 @Data
 public class CustomerOnboardingWrapper {
-
-    /*Customer Bio Information*/
     @NotNull
     private BigDecimal customerTypeId;
     @NotNull
@@ -28,21 +26,11 @@ public class CustomerOnboardingWrapper {
     private String address;
     private Long commercialActivityId;
     private BigDecimal estateId;
-
-    /*Business Location*/
     @NotNull
     private String businessPrimaryContactNo;
     private String businessSecondaryContactNo;
     private String businessEmailAddress;
-
-    /*Business Directors*/
     private List<BusinessDirectorsWrapper> directors;
-
-    /*Business Outlets Information*/
     private List<OutletsInformationWrapper> outletsInfo;
-
-
-
-
-
+    private String mid;
 }
