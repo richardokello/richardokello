@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import ke.axle.chassis.annotations.Searchable;

@@ -571,7 +571,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                     List<TmsDevice> devices = (outletIds.size() > 0) ? deviceService.findByOutletIds(outletIds) : new ArrayList<>();
                     if (devices.size() > 0) {
                         TmsDevice device = devices.get(0);
-                        List<TmsDeviceTids> tmsDeviceTids = deviceService.findByDeviceIds(device.getDeviceId().longValue());
+                        List<TmsDeviceTidCurrency> tmsDeviceTids = deviceService.findByDeviceIds(device);
                         if (tmsDeviceTids.size() > 0) {
                             if (tmsDeviceTids.get(0).getMid() != null) {
                                 String mid = tmsDeviceTids.get(0).getMid();

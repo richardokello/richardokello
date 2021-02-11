@@ -1,9 +1,6 @@
 package ke.tra.ufs.webportal.service;
 
-import ke.tra.ufs.webportal.entities.TmsDevice;
-import ke.tra.ufs.webportal.entities.TmsDeviceTids;
-import ke.tra.ufs.webportal.entities.UfsCustomer;
-import ke.tra.ufs.webportal.entities.UfsCustomerOutlet;
+import ke.tra.ufs.webportal.entities.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,6 +12,8 @@ public interface TmsDeviceService {
     List<TmsDevice> findByOutletIds(List<BigDecimal> outletIds);
 
     List<TmsDeviceTids> findByDeviceIds(Long deviceIds);
+
+    List<TmsDeviceTidCurrency> findByDeviceIds(TmsDevice deviceIds);
 
     public TmsDevice findByDeviceIdAndIntrash(BigDecimal id);
 

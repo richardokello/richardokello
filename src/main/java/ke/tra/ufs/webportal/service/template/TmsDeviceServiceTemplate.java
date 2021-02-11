@@ -5,6 +5,7 @@ import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.utils.SharedMethods;
 import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.repository.TmsDeviceRepository;
+import ke.tra.ufs.webportal.repository.TmsDeviceTidCurrencyRepository;
 import ke.tra.ufs.webportal.repository.TmsDeviceTidRepository;
 import ke.tra.ufs.webportal.repository.WhitelistRepository;
 import ke.tra.ufs.webportal.service.*;
@@ -30,8 +31,9 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     private final WhitelistRepository whitelistRepo;
     private final ContactPersonService contactPersonService;
     private final TmsDeviceTidRepository tmsDeviceTidRepository;
+    private final TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository;
 
-    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository) {
+    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository, TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository) {
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.loggerService = loggerService;
         this.posUserService = posUserService;
@@ -41,6 +43,7 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         this.whitelistRepo = whitelistRepo;
         this.contactPersonService = contactPersonService;
         this.tmsDeviceTidRepository = tmsDeviceTidRepository;
+        this.tmsDeviceTidCurrencyRepository = tmsDeviceTidCurrencyRepository;
     }
 
     @Override
@@ -56,6 +59,11 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     @Override
     public List<TmsDeviceTids> findByDeviceIds(Long deviceIds) {
         return tmsDeviceTidRepository.findAllByDeviceIds(deviceIds);
+    }
+
+    @Override
+    public List<TmsDeviceTidCurrency> findByDeviceIds(TmsDevice deviceIds) {
+        return tmsDeviceTidCurrencyRepository.findAllByDeviceId(deviceIds);
     }
 
     @Override
