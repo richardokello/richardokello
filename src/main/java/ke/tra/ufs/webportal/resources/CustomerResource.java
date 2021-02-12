@@ -373,7 +373,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     @Override
     @Transactional
     public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
-
         ResponseWrapper response = new ResponseWrapper<>();
         List<Long> errors = new ArrayList<>();
         Arrays.stream(actions.getIds()).forEach(id -> {
