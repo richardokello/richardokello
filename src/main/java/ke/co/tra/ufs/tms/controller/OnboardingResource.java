@@ -314,6 +314,15 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
 
+        if(customer.getMid()==null){
+            String message =  "Creating new Device failed because the customer has no MID attached to his profile, Kindly update customers MID the retry";
+            loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+            response.setCode(400);
+            response.setMessage(message);
+            response.setData(SharedMethods.getFieldMapErrors(validation));
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }
+
         if (validation.hasErrors()) {
             loggerService.logCreate("Creating new Device failed due to validation errors", SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
             response.setCode(400);
@@ -406,7 +415,11 @@ public class OnboardingResource {
 
                 tmsDeviceTidMids.setTid(obj.getTid());
                 tids.add(obj.getTid());
-                tmsDeviceTidMids.setMid(obj.getMid());
+                if(obj.getMid()!=null) {
+                    tmsDeviceTidMids.setMid(obj.getMid());
+                }else{
+                    tmsDeviceTidMids.setMid(customer.getMid());
+                }
                 tmsDeviceTidMids.setCurrencyIds(obj.getCurrencyIds());
                 tmsDeviceTidMids.setSwitchIds(obj.getSwitchIds());
                 deviceService.saveDeviceTids(tmsDeviceTidMids);
@@ -414,7 +427,7 @@ public class OnboardingResource {
         }
 
         if (tidMidError.size() > 0) {
-            response.setMessage("Creating new Device failed due to the provided TID or MID that already Exists" +
+            response.setMessage("Creating new Device failed due to the provided TID that already Exists" +
                     new ObjectMapper().writeValueAsString(tidMidError));
             response.setCode(HttpStatus.CONFLICT.value());
             return new ResponseEntity(response, HttpStatus.CONFLICT);
@@ -581,7 +594,9 @@ public class OnboardingResource {
                 TmsDeviceTidsMids tmsDeviceTidMids = new TmsDeviceTidsMids();
                 tmsDeviceTidMids.setDeviceIds(onboardWrapper.getDeviceId().longValue());
                 tmsDeviceTidMids.setTid(obj.getTid());
-                tmsDeviceTidMids.setMid(obj.getMid());
+                if(obj.getMid()!=null) {
+                    tmsDeviceTidMids.setMid(obj.getMid());
+                }
                 tmsDeviceTidMids.setCurrencyIds(obj.getCurrencyIds());
                 tmsDeviceTidMids.setSwitchIds(obj.getSwitchIds());
                 deviceService.saveDeviceTids(tmsDeviceTidMids);
@@ -617,7 +632,6 @@ public class OnboardingResource {
         }
         tmsDevice.setCustomerOwnerName(onboardWrapper.getCustomerOwnerName());
 
-        tmsDevice.setStatus(AppConstants.STATUS_INACTIVE);
         tmsDevice.setAction(AppConstants.ACTIVITY_UPDATE);
         tmsDevice.setActionStatus(AppConstants.STATUS_UNAPPROVED);
         tmsDevice.setIntrash(AppConstants.NO);

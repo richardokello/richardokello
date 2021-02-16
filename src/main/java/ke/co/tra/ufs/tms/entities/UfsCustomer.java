@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.Searchable;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -167,6 +168,13 @@ public class UfsCustomer implements Serializable {
     @Column(name = "ESTATE_ID")
     @ModifiableField
     private BigDecimal estateId;
+
+    @Size(max = 40)
+    @ModifiableField
+    @Filter
+    @Searchable
+    @Column(name = "MID")
+    private String mid;
 
     public UfsCustomer() {
     }
@@ -410,6 +418,14 @@ public class UfsCustomer implements Serializable {
 
     public void setEstateId(BigDecimal estateId) {
         this.estateId = estateId;
+    }
+
+    public String getMid() {
+        return mid;
+    }
+
+    public void setMid(String mid) {
+        this.mid = mid;
     }
 
     @Override
