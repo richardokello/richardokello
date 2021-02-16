@@ -29,6 +29,7 @@ import ke.tracom.ufs.utils.PasswordGenerator;
 import ke.tracom.ufs.utils.exceptions.DataExistsException;
 import ke.tracom.ufs.wrappers.LogExtras;
 import ke.tracom.ufs.wrappers.OauthResponse;
+import lombok.extern.apachecommons.CommonsLog;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +64,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping(value = "/user")
+@CommonsLog
 public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord> {
 
     @Value("${client_id}")
@@ -185,7 +187,6 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
     @Transactional
     public ResponseEntity<ResponseWrapper<UfsUser>> create(@Valid @RequestBody UfsUser ufsUser) {
 
-        /*Checking if the email exists*/
         if (urepo.findByusernameIgnoreCase(ufsUser.getEmail()) != null) {
             try {
                 throw new DataExistsException(ufsUser.getEmail() + " Already Exists");
@@ -195,12 +196,12 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
         }
 
         ufsUser.setStatus(AppConstants.STATUS_EXPIRED);
-        /*Creating the user*/
+
         ResponseEntity<ResponseWrapper<UfsUser>> response = super.create(ufsUser);
 
         password = gen.generateRandomPassword();
 
-        /*Saving the user Authentication Details*/
+
         UfsAuthentication ufsAuthentication = new UfsAuthentication();
         ufsAuthentication.setUserId(ufsUser.getUserId());
         ufsAuthentication.setUsername(ufsUser.getEmail());
@@ -209,7 +210,7 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
         ufsAuthentication.setAuthenticationTypeId(authTypeRepo.findByAuthenticationType(AppConstants.AUTH_TYPE_PASSWORD).getTypeId());
         urepo.saveAuthentication(ufsAuthentication);
 
-        /*Saving User Workgroup Ids*/
+
         if (response.getStatusCode().equals(HttpStatus.CREATED)) {
             List<UfsUserWorkgroup> usrworkgroups = new ArrayList<>();
             ufsUser.getWorkgroupIds().stream().forEach(id -> {

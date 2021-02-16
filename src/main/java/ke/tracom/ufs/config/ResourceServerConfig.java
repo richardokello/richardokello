@@ -72,6 +72,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/workgroup/delete-action").hasAuthority("DELETE_WORKGROUP")
                 .antMatchers(HttpMethod.DELETE, "/workgroup").hasAuthority("DELETE_WORKGROUP")
                 .antMatchers(HttpMethod.GET, "/workgroup/deleted").hasAuthority("VIEW_WORKGROUP")
+
                 .antMatchers(HttpMethod.POST, "/user").hasAuthority("CREATE_USERS")
                 .antMatchers(HttpMethod.GET, "/user/{userId}/changes").hasAuthority("VIEW_USERS")
                 .antMatchers(HttpMethod.GET, "/user/{userId}").hasAuthority("VIEW_USERS")

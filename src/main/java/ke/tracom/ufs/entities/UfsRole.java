@@ -75,16 +75,19 @@ public class UfsRole implements Serializable {
     @Filter
     @Searchable
     @Column(name = "ACTION")
+    @ModifiableField
     private String action;
     @Size(max = 15)
     @Filter
     @Searchable
     @Column(name = "ACTION_STATUS")
+    @ModifiableField
     private String actionStatus;
     @Size(max = 3)
     @Filter
     @Searchable
     @Column(name = "INTRASH")
+    @ModifiableField
     private String intrash;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "role")
