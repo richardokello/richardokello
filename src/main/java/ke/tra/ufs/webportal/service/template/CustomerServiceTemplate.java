@@ -1,31 +1,37 @@
 package ke.tra.ufs.webportal.service.template;
 
-import ke.tra.ufs.webportal.entities.UfsCustomer;
-import ke.tra.ufs.webportal.entities.UfsCustomerOutlet;
-import ke.tra.ufs.webportal.entities.UfsCustomerOwners;
+import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.repository.CustomerRepository;
 import ke.tra.ufs.webportal.repository.UfsCustomerOutletRepository;
 import ke.tra.ufs.webportal.repository.UfsCustomerOwnerRepository;
 import ke.tra.ufs.webportal.service.CustomerService;
+import ke.tra.ufs.webportal.service.TmsDeviceService;
 import ke.tra.ufs.webportal.utils.AppConstants;
+import lombok.extern.apachecommons.CommonsLog;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
+@CommonsLog
 public class CustomerServiceTemplate implements CustomerService {
 
-    private  final CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
     private final UfsCustomerOwnerRepository customerOwnerRepository;
     private final UfsCustomerOutletRepository customerOutletRepository;
+    private final TmsDeviceService deviceService;
 
-    public CustomerServiceTemplate(CustomerRepository customerRepository,UfsCustomerOwnerRepository customerOwnerRepository,
-                                   UfsCustomerOutletRepository customerOutletRepository) {
+    public CustomerServiceTemplate(CustomerRepository customerRepository, UfsCustomerOwnerRepository customerOwnerRepository,
+                                   UfsCustomerOutletRepository customerOutletRepository, TmsDeviceService deviceService) {
         this.customerRepository = customerRepository;
         this.customerOwnerRepository = customerOwnerRepository;
         this.customerOutletRepository = customerOutletRepository;
+        this.deviceService = deviceService;
     }
 
     @Override
@@ -40,8 +46,8 @@ public class CustomerServiceTemplate implements CustomerService {
 
 
     @Override
-    public List<UfsCustomer> getAllTerminatedAgents(String action,String actionStatus) {
-        return this.customerRepository.findByActionAndActionStatus(action,actionStatus);
+    public List<UfsCustomer> getAllTerminatedAgents(String action, String actionStatus) {
+        return this.customerRepository.findByActionAndActionStatus(action, actionStatus);
     }
 
     @Override
@@ -67,5 +73,33 @@ public class CustomerServiceTemplate implements CustomerService {
     @Override
     public void saveOutlet(UfsCustomerOutlet customerOutlet) {
         customerOutletRepository.save(customerOutlet);
+    }
+
+    @Override
+    @Async
+    public void updateCustomersMids() {
+        List<UfsCustomer> customers = customerRepository.findAllByMidIsNull();
+        log.error("Customers SIze====>" + customers.size());
+        customers.parallelStream().forEach(this::updateCustomerMidPerId);
+    }
+
+    @Override
+    public void updateCustomerMidPerId(UfsCustomer customer) {
+        Long id = customer.getId();
+        //approving customer outlet
+        List<UfsCustomerOutlet> customerOutlets = findOutletsByCustomerIds(new BigDecimal(id));
+        List<BigDecimal> outletIds = (customerOutlets.size() > 0) ? customerOutlets.stream().map(x -> new BigDecimal(x.getId())).collect(Collectors.toList()) : new ArrayList<>();
+        List<TmsDevice> devices = (outletIds.size() > 0) ? deviceService.findByOutletIds(outletIds) : new ArrayList<>();
+        if (devices.size() > 0) {
+            TmsDevice device = devices.get(0);
+            List<TmsDeviceTidCurrency> tmsDeviceTids = deviceService.findByDeviceIds(device);
+            if (tmsDeviceTids.size() > 0) {
+                if (tmsDeviceTids.get(0).getMid() != null) {
+                    String mid = tmsDeviceTids.get(0).getMid();
+                    customer.setMid(mid);
+                    saveCustomer(customer);
+                }
+            }
+        }
     }
 }

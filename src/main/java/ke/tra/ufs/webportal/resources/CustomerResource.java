@@ -571,22 +571,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             UfsCustomer customer = this.customerService.findByCustomerId(id);
             if (customer != null) {
                 if (customer.getMid() == null) {
-                    //approving customer outlet
-                    List<UfsCustomerOutlet> customerOutlets = this.customerService.findOutletsByCustomerIds(new BigDecimal(id));
-                    List<BigDecimal> outletIds = (customerOutlets.size() > 0) ? customerOutlets.stream().map(x -> new BigDecimal(x.getId())).collect(Collectors.toList()) : new ArrayList<>();
-                    List<TmsDevice> devices = (outletIds.size() > 0) ? deviceService.findByOutletIds(outletIds) : new ArrayList<>();
-                    if (devices.size() > 0) {
-                        TmsDevice device = devices.get(0);
-                        List<TmsDeviceTidCurrency> tmsDeviceTids = deviceService.findByDeviceIds(device);
-                        if (tmsDeviceTids.size() > 0) {
-                            if (tmsDeviceTids.get(0).getMid() != null) {
-                                String mid = tmsDeviceTids.get(0).getMid();
-                                customer.setMid(mid);
-                                this.customerService.saveCustomer(customer);
-                            }
-                        }
-                    }
-
+                    this.customerService.updateCustomerMidPerId(customer);
                 }
             }
 

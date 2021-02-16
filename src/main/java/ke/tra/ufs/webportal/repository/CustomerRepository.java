@@ -23,4 +23,6 @@ public interface CustomerRepository extends CrudRepository<UfsCustomer, Long> {
     Optional<UfsCustomer> findByBusinessLicenceNumberAndIntrash(String businessLicenceNumber, String intrash);
 
     Optional<UfsCustomer> findByLocalRegistrationNumberAndIntrash(String localRegistrationNumber, String intrash);
+
+    List<UfsCustomer> findAllByMidIsNull();
 }
