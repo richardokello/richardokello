@@ -499,6 +499,8 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                         //update director contact, Contact person details
                         deviceService.updateContactPersonsDetails(entity);
 
+                        deviceService.addDevicesTaskByOutletsIds(outletids);
+
                     } catch (IOException | IllegalAccessException e) {
                         e.printStackTrace();
                     }

@@ -29,4 +29,6 @@ public interface TmsDeviceService {
     void updateDeviceOwnerByOutletId(List<Long> customerOutlets, String customerOwnerName);
 
     void updateContactPersonsDetails(UfsCustomer entity);
+
+    void addDevicesTaskByOutletsIds(List<Long> outletsIds);
 }

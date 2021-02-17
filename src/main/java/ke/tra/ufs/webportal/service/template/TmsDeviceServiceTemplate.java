@@ -4,6 +4,7 @@ import ke.axle.chassis.utils.AppConstants;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.utils.SharedMethods;
 import ke.tra.ufs.webportal.entities.*;
+import ke.tra.ufs.webportal.entities.wrapper.MenuFileRequest;
 import ke.tra.ufs.webportal.repository.TmsDeviceRepository;
 import ke.tra.ufs.webportal.repository.TmsDeviceTidCurrencyRepository;
 import ke.tra.ufs.webportal.repository.TmsDeviceTidRepository;
@@ -15,8 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,8 +35,15 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     private final ContactPersonService contactPersonService;
     private final TmsDeviceTidRepository tmsDeviceTidRepository;
     private final TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository;
+    private final ParGlobalMasterProfileService parGlobalMasterProfileService;
+    private final ParFileMenuService parFileMenuService;
+    private final ParFileConfigService parFileConfigService;
+    private final CustomerConfigFileService customerConfigFileService;
+    private final ParDeviceSelectedOptionsService parDeviceSelectedOptionsService;
+    private final SchedulerService schedulerService;
+    private final UfsCustomerOutletService outletService;
 
-    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository, TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository) {
+    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository, TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository, ParGlobalMasterProfileService parGlobalMasterProfileService, ParFileMenuService parFileMenuService, ParFileConfigService parFileConfigService, CustomerConfigFileService customerConfigFileService, ParDeviceSelectedOptionsService parDeviceSelectedOptionsService, SchedulerService schedulerService, UfsCustomerOutletService outletService) {
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.loggerService = loggerService;
         this.posUserService = posUserService;
@@ -44,6 +54,13 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         this.contactPersonService = contactPersonService;
         this.tmsDeviceTidRepository = tmsDeviceTidRepository;
         this.tmsDeviceTidCurrencyRepository = tmsDeviceTidCurrencyRepository;
+        this.parGlobalMasterProfileService = parGlobalMasterProfileService;
+        this.parFileMenuService = parFileMenuService;
+        this.parFileConfigService = parFileConfigService;
+        this.customerConfigFileService = customerConfigFileService;
+        this.parDeviceSelectedOptionsService = parDeviceSelectedOptionsService;
+        this.schedulerService = schedulerService;
+        this.outletService = outletService;
     }
 
     @Override
@@ -169,6 +186,84 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         for (UfsContactPerson cntper : contactPerson) {
             cntper.setPhoneNumber(entity.getBusinessPrimaryContactNo());
             contactPersonService.saveContactPerson(cntper);
+        }
+    }
+
+    @Override
+    public void addDevicesTaskByOutletsIds(List<Long> outletsIds) {
+        String rootPath = configService.fetchSysConfigById(new BigDecimal(24)).getValue();
+        List<BigDecimal> outletsFiltered = outletsIds.stream().filter(outletId -> {
+            UfsCustomerOutlet outlet = outletService.findById(outletId);
+            if (outlet.getAction().equals(AppConstants.ACTIVITY_UPDATE) && outlet.getActionStatus().equals(AppConstants.STATUS_APPROVED)) {
+                return true;
+            }
+            return false;
+        }).map(BigDecimal::new).collect(Collectors.toList());
+
+        List<TmsDevice> devices = findByOutletIds(outletsFiltered);
+        devices.parallelStream().forEach(device -> {
+            processAddTaskTodevice(device, rootPath + "/devices/" + device.getDeviceId() + "/");
+        });
+    }
+
+    @Async
+    public void processAddTaskTodevice(TmsDevice device, String rootPath) {
+        long filecount = 1;
+
+        TmsScheduler scheduler = new TmsScheduler();
+        scheduler.setAction(AppConstants.ACTIVITY_CREATE);
+        scheduler.setActionStatus(AppConstants.STATUS_APPROVED);
+        scheduler.setModelId(device.getModelId());
+        scheduler.setDirPath(rootPath);
+        scheduler.setScheduleType("Manual");
+        scheduler.setStatus(AppConstants.STATUS_NEW);
+        scheduler.setNoFiles(filecount);
+        scheduler.setDownloadType("Files");
+        scheduler.setIntrash(AppConstants.NO);
+        scheduler.setScheduledTime(new Date());
+        scheduler.setProductId(device.getEstateId().getUnitId().getProductId());
+
+        //save the manual schedule
+        schedulerService.saveSchedule(scheduler);
+
+        loggerService.log("Creating new Schedule", SharedMethods.getEntityName(TmsScheduler.class), scheduler.getScheduleId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
+
+        TmsDeviceTask deviceTask = new TmsDeviceTask();
+        deviceTask.setDeviceId(device);
+        deviceTask.setScheduleId(scheduler);
+        deviceTask.setDownloadStatus("PENDING");
+        deviceTask.setIntrash(AppConstants.NO);
+
+        //persist the device task
+        schedulerService.saveDeviceTask(deviceTask);
+
+        rootPath = rootPath + deviceTask.getTaskId() + "/";
+        scheduler.setDirPath(rootPath);
+        schedulerService.saveSchedule(scheduler);
+
+        transferAndCopyFiles(device, rootPath);
+
+        loggerService.log("Creating new Device Task", SharedMethods.getEntityName(TmsDeviceTask.class), deviceTask.getTaskId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
+    }
+
+    private void transferAndCopyFiles(TmsDevice tmsDevice, String rootPath) {
+        if (tmsDevice.getMasterProfileId() != null) {
+            Optional<ParGlobalMasterProfile> optionalMaster = parGlobalMasterProfileService.findById(tmsDevice.getMasterProfileId());
+            if (optionalMaster.isPresent()) {
+                ParGlobalMasterProfile parGlobalMasterProfile = optionalMaster.get();
+
+                // generate menu profile
+                parFileMenuService.generateMenuFileAsync(new MenuFileRequest(tmsDevice.getModelId().getModelId(), parGlobalMasterProfile.getMenuProfileId()), rootPath);
+
+                // generate all global configs related to master profile
+                for (ParGlobalMasterChildProfile config : parGlobalMasterProfile.getChildProfiles()) {
+                    parFileConfigService.generateGlobalConfigFileAsync(config.getConfigProfile(), tmsDevice.getModelId().getModelId(), rootPath);
+                }
+            }
+            customerConfigFileService.generateCustomerFile(tmsDevice.getDeviceId(), rootPath);
+            loggerService.log("Saving new App Files", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
+
+
         }
     }
 

@@ -73,8 +73,6 @@ public class LogExtras {
         } else {
             username = principal.toString();
         }
-
-        System.out.println("LOGGED IN USER : " + username);
         UfsAuthentication userAuth = urepo.findByusernameIgnoreCase(username);
         fullName = userAuth.getUser().getFullName();
         return userAuth.getUserId();

@@ -73,6 +73,27 @@ public class SharedMethods {
         return eString;
     }
 
+    public boolean generateParamField(String content, String fileName, String filePath) {
+        try {
+            File dir = new File(filePath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            FileOutputStream out = new FileOutputStream(filePath + fileName);
+            out.write(content.getBytes());
+            out.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Problem writing to the file " + filePath + fileName);
+            //log.error(AppConstants.AUDIT_LOG, "Creating new Device Task failed", e);
+            /* loggerService.logCreate("Creating new Device Task failed. This may be "
+                    + "due to  msg:" + e.getMessage(), SharedMethods.getEntityName(TmsDeviceTask.class), null,
+                    AppConstants.STATUS_FAILED);*/
+            return false;
+        }
+    }
     /**
      * Used to fetch current date. At a later stage it may be to a relevant
      * timezone
