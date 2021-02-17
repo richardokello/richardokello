@@ -53,7 +53,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers(HttpMethod.POST, "/users/register").permitAll()
                 .antMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                         "/swagger-resources/**", "/v2/api-docs/**", "/images/**", "/spring-security-rest/api/swagger-ui.html").permitAll()
 
@@ -95,17 +94,17 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
 
                 // business unit
-//                .antMatchers(HttpMethod.GET, "/business-units", "/business-units/{\\id}", "/business-units/product/{id}").hasAuthority("VIEW_BUSINESS_UNIT")
-//                .antMatchers(HttpMethod.PUT, "/business-units/approve-actions", "/business-units/decline-actions").hasAuthority("APPROVE_BUSINESS_UNIT")
-//                .antMatchers(HttpMethod.GET, "/business-units/unititems/{\\id}", "/business-units/unititems/device/{\\id}").hasAuthority("VIEW_BUSINESS_UNIT_ITEM")
-//                .antMatchers(HttpMethod.PUT, "/business-units/unititems").hasAuthority("UPDATE_BUSINESS_UNIT_ITEM")
-//                .antMatchers(HttpMethod.POST, "/business-units/unititems").hasAuthority("CREATE_BUSINESS_UNIT_ITEM")
-//                .antMatchers(HttpMethod.GET, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("VIEW_BUSINESS_UNIT_ITEM")
-//                .antMatchers(HttpMethod.PUT, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("UPDATE_BUSINESS_UNIT_ITEM")
-//                .antMatchers(HttpMethod.POST, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("CREATE_BUSINESS_UNIT_ITEM")
-//                .antMatchers(HttpMethod.PUT, "/business-units/unititems/approve").hasAuthority("APPROVE_BUSINESS_UNIT_ITEM")
-//                .antMatchers(HttpMethod.PUT, "/business-units/unititems/decline").hasAuthority("DECLINE_BUSINESS_UNIT_ITEM")
-//                .antMatchers(HttpMethod.PUT, "/business-units/unititems/delete").hasAuthority("DELETE_BUSINESS_UNIT_ITEM")
+                .antMatchers(HttpMethod.GET, "/business-units", "/business-units/{\\id}", "/business-units/product/{id}").hasAuthority("VIEW_BUSINESS_UNIT")
+                .antMatchers(HttpMethod.PUT, "/business-units/approve-actions", "/business-units/decline-actions").hasAuthority("APPROVE_BUSINESS_UNIT")
+                .antMatchers(HttpMethod.GET, "/business-units/unititems/{\\id}", "/business-units/unititems/device/{\\id}").hasAuthority("VIEW_BUSINESS_UNIT_ITEM")
+                .antMatchers(HttpMethod.PUT, "/business-units/unititems").hasAuthority("UPDATE_BUSINESS_UNIT_ITEM")
+                .antMatchers(HttpMethod.POST, "/business-units/unititems").hasAuthority("CREATE_BUSINESS_UNIT_ITEM")
+                .antMatchers(HttpMethod.GET, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("VIEW_BUSINESS_UNIT_ITEM")
+                .antMatchers(HttpMethod.PUT, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("UPDATE_BUSINESS_UNIT_ITEM")
+                .antMatchers(HttpMethod.POST, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("CREATE_BUSINESS_UNIT_ITEM")
+                .antMatchers(HttpMethod.PUT, "/business-units/unititems/approve").hasAuthority("APPROVE_BUSINESS_UNIT_ITEM")
+                .antMatchers(HttpMethod.PUT, "/business-units/unititems/decline").hasAuthority("DECLINE_BUSINESS_UNIT_ITEM")
+                .antMatchers(HttpMethod.PUT, "/business-units/unititems/delete").hasAuthority("DELETE_BUSINESS_UNIT_ITEM")
 
                 // departments
                 .antMatchers(HttpMethod.POST, "/departments").hasAuthority("CREATE_DEPARTMENTS")
@@ -139,7 +138,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 // device heartbeats
                 .antMatchers(HttpMethod.GET, "/heart-beat").hasAuthority("VIEW_DEVICE_HEARTBEAT")
 
-                //.antMatchers(HttpMethod.GET, "/posparam", "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}", "/devices/merchant", "/devices/merchant/{\\agentMerchantId}").hasAuthority("ADD_DEVICES")
+                .antMatchers(HttpMethod.GET, "/posparam", "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}", "/devices/merchant", "/devices/merchant/{\\agentMerchantId}").hasAuthority("ADD_DEVICES")
 
                 // schedule
                 .antMatchers(HttpMethod.POST, "/schedule").hasAuthority("CREATE_SCHEDULE")
@@ -246,8 +245,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .addFilterAfter(otpFilter, BasicAuthenticationFilter.class)
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)
                 .addFilterAfter(responseFilter, OTPFilter.class)
-                .cors().configurationSource(corsConfig())
-                .and()
+//                .cors().configurationSource(corsConfig())
+//                .and()
                 .logout()
                 .logoutUrl("/oauth/logout")
                 .logoutSuccessHandler(logoutSuccessHandler)
@@ -257,6 +256,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         ;
     }
 
+    /*
     @Bean
     CorsConfigurationSource corsConfig() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -273,5 +273,5 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         corsConfig.addAllowedOrigin("*");
         source.registerCorsConfiguration("/**", corsConfig);
         return source;
-    }
+    }*/
 }
