@@ -299,14 +299,14 @@ public class OnboardingResource {
     @RequestMapping(method = RequestMethod.POST, value = "/assign-merchant-device")
     @Transactional
     public ResponseEntity<ResponseWrapper> createDeviceForMerchant(@ApiParam(value = "Ignore status and deviceId it will be used when fetching Devices")
-                                                        @RequestBody @Valid MerchantDeviceOnboard onboardWrapper, BindingResult validation) throws NotFoundException, AlreadyExists, IOException {
+                                                                   @RequestBody @Valid MerchantDeviceOnboard onboardWrapper, BindingResult validation) throws NotFoundException, AlreadyExists, IOException {
         ResponseWrapper response = new ResponseWrapper();
         String outletName = null;
         String merchantName = null;
 
         UfsCustomer customer = customerService.findById(onboardWrapper.getCustomerId()).orElse(null);
-        if(customer==null){
-            String message =  "Creating new Device failed due to No Customer found with ID:"+onboardWrapper.getCustomerId();
+        if (customer == null) {
+            String message = "Creating new Device failed due to No Customer found with ID:" + onboardWrapper.getCustomerId();
             loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
             response.setCode(404);
             response.setMessage(message);
@@ -314,8 +314,8 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
 
-        if(customer.getMid()==null){
-            String message =  "Creating new Device failed because the customer has no MID attached to his profile, Kindly update customers MID the retry";
+        if (customer.getMid() == null) {
+            String message = "Creating new Device failed because the customer has no MID attached to his profile, Kindly update customers MID the retry";
             loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
             response.setCode(400);
             response.setMessage(message);
@@ -355,13 +355,17 @@ public class OnboardingResource {
         }
         tmsDevice.setSerialNo(onboardWrapper.getSerialNo());
 
-        List<UfsCustomerOutlet> ufsCustomerOutlets = customerOutletService.findOutletsByCustomerIdsAndIntrash(new BigDecimal(customer.getId()), AppConstants.NO);
 
-        Long outletId =  null;
-        if(ufsCustomerOutlets.size()>0){
-            outletId = ufsCustomerOutlets.get(0).getId();
+        Long outletId = null;
+
+        if (onboardWrapper.getOutletIds() != null) {
+            outletId = onboardWrapper.getOutletIds();
+        } else {
+            List<UfsCustomerOutlet> ufsCustomerOutlets = customerOutletService.findOutletsByCustomerIdsAndIntrash(new BigDecimal(customer.getId()), AppConstants.NO);
+            if (ufsCustomerOutlets.size() > 0) {
+                outletId = ufsCustomerOutlets.get(0).getId();
+            }
         }
-
 
         if (outletId != null) {
             outletName = customerOutletService.findByOutletId(outletId).getOutletName();
@@ -415,9 +419,9 @@ public class OnboardingResource {
 
                 tmsDeviceTidMids.setTid(obj.getTid());
                 tids.add(obj.getTid());
-                if(obj.getMid()!=null) {
+                if (obj.getMid() != null) {
                     tmsDeviceTidMids.setMid(obj.getMid());
-                }else{
+                } else {
                     tmsDeviceTidMids.setMid(customer.getMid());
                 }
                 tmsDeviceTidMids.setCurrencyIds(obj.getCurrencyIds());
@@ -442,8 +446,8 @@ public class OnboardingResource {
 
         List<UfsCustomerOwners> ufsCustomerOwnerz = customerOwnerService.findByCustomerId(customer.getId());
 
-        Long ownerId =  null;
-        if(ufsCustomerOwnerz.size()>0){
+        Long ownerId = null;
+        if (ufsCustomerOwnerz.size() > 0) {
             ownerId = ufsCustomerOwnerz.get(0).getId();
         }
 
@@ -455,11 +459,11 @@ public class OnboardingResource {
         } else if (customerOwners.getUserName() != null) {
             UfsPosUser posUserExisting = posUserService.findByCustomerOwnersIdAndDeviceId(ownerId, savedTmsDevice.getDeviceId());
             if (Objects.nonNull(posUserExisting)) {
-                throw new AlreadyExists("User Already Exists For That Device", HttpStatus.MULTI_STATUS);
+                loggerService.logCreate("Failed to create user for device with serial no :" + onboardWrapper.getSerialNo(), SharedMethods.getEntityName(UfsPosUser.class), posUserExisting.getPosUserId(), AppConstants.STATUS_FAILED);
             } else {
                 //generate random pin
                 String randomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION, AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
-                log.info("The generated pin is: " + randomPin);
+                log.error("The generated pin is: " + randomPin);
 
                 //create the user
                 UfsPosUser posUser = new UfsPosUser();
@@ -504,9 +508,6 @@ public class OnboardingResource {
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
-
-
-
     private void saveAllSelectedOptions(BigDecimal deviceId, List<BigDecimal> deviceOptionsIds) {
         // save device options
         if (Objects.nonNull(deviceOptionsIds) && deviceOptionsIds.size() > 0) {
@@ -531,7 +532,7 @@ public class OnboardingResource {
     @RequestMapping(method = RequestMethod.POST, value = "/update-device")
     @Transactional
     public ResponseEntity<ResponseWrapper> updateDevice(@ApiParam(value = "Ignore status and mnoId it will be used when fetching MNOs")
-                                                        @Valid @RequestBody OnboardWrapper onboardWrapper, BindingResult validation) throws IOException,AlreadyExists {
+                                                        @Valid @RequestBody OnboardWrapper onboardWrapper, BindingResult validation) throws IOException, AlreadyExists {
 
         ResponseWrapper response = new ResponseWrapper();
         String outletName;
@@ -565,7 +566,7 @@ public class OnboardingResource {
         if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
             for (TmsDeviceTidsMids tidmid : onboardWrapper.getTmsDeviceTidsMids()) {
                 //check where TID and MID exists
-                if (deviceService.checkIfTidExistsByDeviceIds(tidmid.getTid(),  tidmid.getDeviceIds())) {
+                if (deviceService.checkIfTidExistsByDeviceIds(tidmid.getTid(), tidmid.getDeviceIds())) {
                     String message = "Updating Device failed due to the provided"
                             + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") and matched to another device";
                     loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
@@ -594,7 +595,7 @@ public class OnboardingResource {
                 TmsDeviceTidsMids tmsDeviceTidMids = new TmsDeviceTidsMids();
                 tmsDeviceTidMids.setDeviceIds(onboardWrapper.getDeviceId().longValue());
                 tmsDeviceTidMids.setTid(obj.getTid());
-                if(obj.getMid()!=null) {
+                if (obj.getMid() != null) {
                     tmsDeviceTidMids.setMid(obj.getMid());
                 }
                 tmsDeviceTidMids.setCurrencyIds(obj.getCurrencyIds());

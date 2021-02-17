@@ -10,4 +10,5 @@ import javax.validation.constraints.NotNull;
 public class MerchantDeviceOnboard extends DevicesWrapper {
     @NotNull
     Long customerId;
+    Long outletIds;
 }

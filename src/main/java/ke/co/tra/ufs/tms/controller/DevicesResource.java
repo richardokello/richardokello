@@ -342,7 +342,7 @@ public class DevicesResource {
      */
     private void processApproveDecommission(TmsDevice entity, String notes) throws ExpectationFailed {
         //entity.setIntrash(AppConstants.YES);
-        this.terminalHistoryService.saveHistory(new UfsTerminalHistory(entity.getSerialNo(), AppConstants.ACTIVITY_DECOMMISSION, "Terminal Approval Decommissioned Successfully", loggerService.getUser(), AppConstants.STATUS_APPROVED,loggerService.getFullName()));
+        this.terminalHistoryService.saveHistory(new UfsTerminalHistory(entity.getSerialNo(), AppConstants.ACTIVITY_DECOMMISSION, "Terminal Approval Decommissioned Successfully", loggerService.getUser(), AppConstants.STATUS_APPROVED, loggerService.getFullName()));
 
         //set Whitelisted device to unassigned
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
@@ -379,10 +379,10 @@ public class DevicesResource {
     private void processApproveRelease(TmsDevice entity, String notes) throws ExpectationFailed {
         try {
             supportService.delete(this.supportService.fetchByEntityAndEntityId(TmsDevice.class.getSimpleName(), entity.getDeviceId().toString()));
-        }catch(InvalidDataAccessApiUsageException ex){
+        } catch (InvalidDataAccessApiUsageException ex) {
 
         }
-        this.terminalHistoryService.saveHistory(new UfsTerminalHistory(entity.getSerialNo(), AppConstants.ACTIVITY_RELEASE, "Terminal Approval Release Successfully", loggerService.getUser(), AppConstants.STATUS_APPROVED,loggerService.getFullName()));
+        this.terminalHistoryService.saveHistory(new UfsTerminalHistory(entity.getSerialNo(), AppConstants.ACTIVITY_RELEASE, "Terminal Approval Release Successfully", loggerService.getUser(), AppConstants.STATUS_APPROVED, loggerService.getFullName()));
 
         deviceService.deleteAllByDeviceId(entity.getSerialNo());
         //set Whitelisted device to unassigned
@@ -427,7 +427,7 @@ public class DevicesResource {
             device.setActionStatus(AppConstants.STATUS_UNAPPROVED);
             device.setAction(AppConstants.ACTIVITY_RELEASE);
             deviceService.saveDevice(device);
-            this.terminalHistoryService.saveHistory(new UfsTerminalHistory(device.getSerialNo(), AppConstants.ACTIVITY_RELEASE, "Terminal Released Successfully", loggerService.getUser(), AppConstants.STATUS_UNAPPROVED,loggerService.getFullName()));
+            this.terminalHistoryService.saveHistory(new UfsTerminalHistory(device.getSerialNo(), AppConstants.ACTIVITY_RELEASE, "Terminal Released Successfully", loggerService.getUser(), AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
 
             loggerService.logCreateRelease("Done releasing device (Serial Number: " + device.getSerialNo() + ")",
                     TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_COMPLETED);
@@ -462,13 +462,14 @@ public class DevicesResource {
                 } else if (device.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_RELEASE)
                         && (device.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
                     this.processDeclineRelease(device, action.getNotes());
-                } //                else if (dbMake.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)
-                //                        && dbMake.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {//process new record
-                //                    this.processDeclineNew(dbMake, action.getNotes());
-                //                } else if (dbMake.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE)
-                //                        && dbMake.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {//process updated record
-                //                    this.processDeclineChanges(dbMake, action.getNotes());
-                else if (device.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DECOMMISSION)
+                } else if (device.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)
+                        && device.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {//process new record
+                    device.setStatus(AppConstants.SCAPI_ACC_STATUS_INACTIVE);
+                    this.processDeclineNew(device, action.getNotes());
+                } else if (device.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE)
+                        && device.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {//process updated record
+                    this.processDeclineChanges(device, action.getNotes());
+                } else if (device.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DECOMMISSION)
                         && device.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
                     this.processDeclineDecommission(device, action.getNotes());
                 } else if (device.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_TASK)
@@ -494,6 +495,20 @@ public class DevicesResource {
             response.setMessage(AppConstants.CHECKER_GENERAL_ERROR);
             return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
         }
+    }
+
+    private void processDeclineNew(TmsDevice device, String notes) {
+        loggerService.log("Declined new Device with Serial :"+device.getSerialNo(),
+                device.getClass().getSimpleName(), device.getDeviceId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED);
+    }
+
+    private void processDeclineChanges(TmsDevice entity, String notes) {
+        UfsModifiedRecord mRecord = this.supportService.fetchByEntityAndEntityId(TmsDevice.class.getSimpleName(), entity.getDeviceId().toString());
+        entity.setStatus(mRecord.getValues());
+        supportService.delete(mRecord);
+        loggerService.logApprove("Done declining device (" + entity.getSerialNo() + ") Changes.",
+                SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
+                AppConstants.STATUS_COMPLETED, notes);
     }
 
     private void processDeclineRelease(TmsDevice entity, String notes) throws ExpectationFailed {
@@ -536,7 +551,7 @@ public class DevicesResource {
             } else {
                 device.setAction(AppConstants.ACTIVITY_DECOMMISSION);
                 device.setActionStatus(AppConstants.STATUS_UNAPPROVED);
-                this.terminalHistoryService.saveHistory(new UfsTerminalHistory(device.getSerialNo(), AppConstants.ACTIVITY_DECOMMISSION, "Terminal Decommissioned Successfully", loggerService.getUser(), AppConstants.STATUS_UNAPPROVED,loggerService.getFullName()));
+                this.terminalHistoryService.saveHistory(new UfsTerminalHistory(device.getSerialNo(), AppConstants.ACTIVITY_DECOMMISSION, "Terminal Decommissioned Successfully", loggerService.getUser(), AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
 
                 loggerService.logCreateDecommision("Deleted device (Serial No. " + device.getSerialNo() + ") successfully", TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_COMPLETED);
             }
