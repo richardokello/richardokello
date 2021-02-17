@@ -47,13 +47,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .requestMatchers(CorsUtils::isCorsRequest).permitAll()
                 //                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers(HttpMethod.POST, "/change-password", "/reset-password/forgot-password", "/reset-password", "/gender", "/user-id","/user/login-field-agent").permitAll()
+                .antMatchers(HttpMethod.POST, "/change-password", "/reset-password/forgot-password", "/reset-password", "/gender", "/user-id", "/user/login-field-agent").permitAll()
                 .antMatchers("/gender", "/user-loggedin").permitAll()
                 .antMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                         "/swagger-resources/**", "/v2/api-docs/**", "/images/**",
-                        "/spring-security-rest/api/swagger-ui.html", "/encrypt","/user/me").permitAll()
+                        "/spring-security-rest/api/swagger-ui.html", "/encrypt", "/user/me").permitAll()
                 .antMatchers(HttpMethod.POST, "/role").hasAuthority("CREATE_ROLES")
                 .antMatchers(HttpMethod.GET, "/role/{roleId}/changes").hasAuthority("VIEW_ROLE")
                 .antMatchers(HttpMethod.GET, "/role/{roleId}").hasAuthority("VIEW_ROLE")
@@ -78,7 +77,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/user/{userId}").hasAuthority("VIEW_USERS")
                 .antMatchers(HttpMethod.GET, "/user").hasAuthority("VIEW_USERS")
                 .antMatchers(HttpMethod.PUT, "/user").hasAuthority("UPDATE_USERS")
-                .antMatchers(HttpMethod.PUT, "/user/approve-actions", "/user/decline-actions", "/user/approve-action-lock","/user/decline-action-lock").hasAuthority("APPROVE_USERS")
+                .antMatchers(HttpMethod.PUT, "/user/approve-actions", "/user/decline-actions", "/user/approve-action-lock", "/user/decline-action-lock").hasAuthority("APPROVE_USERS")
                 .antMatchers(HttpMethod.POST, "/user/delete-action").hasAuthority("DELETE_USERS")
                 .antMatchers(HttpMethod.DELETE, "/user").hasAuthority("DELETE_USERS")
                 .antMatchers(HttpMethod.GET, "/user/deleted").hasAuthority("VIEW_USERS")
@@ -141,9 +140,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .addFilterAfter(otpFilter, BasicAuthenticationFilter.class)
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)
                 .addFilterAfter(responseFilter, OTPFilter.class)
-                .cors()
-                .configurationSource(corsConfig())
-                .and()
+//                .cors()
+//                .configurationSource(corsConfig())
+//                .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler);
         //                .and().addFilterBefore(new WebSecurityCorsFilter(), ChannelProcessingFilter.class);
@@ -151,22 +150,22 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     }
 
 
-    @Bean
-    CorsConfigurationSource corsConfig() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.applyPermitDefaultValues();
-        corsConfig.addAllowedHeader("Access-Control-Allow-Origin");
-        corsConfig.addExposedHeader("Access-Control-Allow-Origin");
-        corsConfig.addAllowedMethod(HttpMethod.GET);
-        corsConfig.addAllowedMethod(HttpMethod.POST);
-        corsConfig.addAllowedMethod(HttpMethod.PUT);
-        corsConfig.addAllowedMethod(HttpMethod.OPTIONS);
-        corsConfig.addAllowedMethod(HttpMethod.DELETE);
-        corsConfig.addAllowedMethod(HttpMethod.HEAD);
-        corsConfig.addAllowedOrigin("*");
-        source.registerCorsConfiguration("/**", corsConfig);
-        return source;
-    }
+//    @Bean
+//    CorsConfigurationSource corsConfig() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration corsConfig = new CorsConfiguration();
+//        corsConfig.applyPermitDefaultValues();
+//        corsConfig.addAllowedHeader("Access-Control-Allow-Origin");
+//        corsConfig.addExposedHeader("Access-Control-Allow-Origin");
+//        corsConfig.addAllowedMethod(HttpMethod.GET);
+//        corsConfig.addAllowedMethod(HttpMethod.POST);
+//        corsConfig.addAllowedMethod(HttpMethod.PUT);
+//        corsConfig.addAllowedMethod(HttpMethod.OPTIONS);
+//        corsConfig.addAllowedMethod(HttpMethod.DELETE);
+//        corsConfig.addAllowedMethod(HttpMethod.HEAD);
+//        corsConfig.addAllowedOrigin("*");
+//        source.registerCorsConfiguration("/**", corsConfig);
+//        return source;
+//    }
 }
 
