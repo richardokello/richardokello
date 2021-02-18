@@ -245,8 +245,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .addFilterAfter(otpFilter, BasicAuthenticationFilter.class)
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)
                 .addFilterAfter(responseFilter, OTPFilter.class)
-//                .cors().configurationSource(corsConfig())
-//                .and()
+                .cors().configurationSource(corsConfig())
+                .and()
                 .logout()
                 .logoutUrl("/oauth/logout")
                 .logoutSuccessHandler(logoutSuccessHandler)
@@ -256,7 +256,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         ;
     }
 
-    /*
+
     @Bean
     CorsConfigurationSource corsConfig() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -273,5 +273,5 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         corsConfig.addAllowedOrigin("*");
         source.registerCorsConfiguration("/**", corsConfig);
         return source;
-    }*/
+    }
 }
