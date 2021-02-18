@@ -94,17 +94,17 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
 
                 // business unit
-                .antMatchers(HttpMethod.GET, "/business-units", "/business-units/{\\id}", "/business-units/product/{id}").hasAuthority("VIEW_BUSINESS_UNIT")
-                .antMatchers(HttpMethod.PUT, "/business-units/approve-actions", "/business-units/decline-actions").hasAuthority("APPROVE_BUSINESS_UNIT")
-                .antMatchers(HttpMethod.GET, "/business-units/unititems/{\\id}", "/business-units/unititems/device/{\\id}").hasAuthority("VIEW_BUSINESS_UNIT_ITEM")
-                .antMatchers(HttpMethod.PUT, "/business-units/unititems").hasAuthority("UPDATE_BUSINESS_UNIT_ITEM")
-                .antMatchers(HttpMethod.POST, "/business-units/unititems").hasAuthority("CREATE_BUSINESS_UNIT_ITEM")
-                .antMatchers(HttpMethod.GET, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("VIEW_BUSINESS_UNIT_ITEM")
-                .antMatchers(HttpMethod.PUT, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("UPDATE_BUSINESS_UNIT_ITEM")
-                .antMatchers(HttpMethod.POST, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("CREATE_BUSINESS_UNIT_ITEM")
-                .antMatchers(HttpMethod.PUT, "/business-units/unititems/approve").hasAuthority("APPROVE_BUSINESS_UNIT_ITEM")
-                .antMatchers(HttpMethod.PUT, "/business-units/unititems/decline").hasAuthority("DECLINE_BUSINESS_UNIT_ITEM")
-                .antMatchers(HttpMethod.PUT, "/business-units/unititems/delete").hasAuthority("DELETE_BUSINESS_UNIT_ITEM")
+//                .antMatchers(HttpMethod.GET, "/business-units", "/business-units/{\\id}", "/business-units/product/{id}").hasAuthority("VIEW_BUSINESS_UNIT")
+//                .antMatchers(HttpMethod.PUT, "/business-units/approve-actions", "/business-units/decline-actions").hasAuthority("APPROVE_BUSINESS_UNIT")
+//                .antMatchers(HttpMethod.GET, "/business-units/unititems/{\\id}", "/business-units/unititems/device/{\\id}").hasAuthority("VIEW_BUSINESS_UNIT_ITEM")
+//                .antMatchers(HttpMethod.PUT, "/business-units/unititems").hasAuthority("UPDATE_BUSINESS_UNIT_ITEM")
+//                .antMatchers(HttpMethod.POST, "/business-units/unititems").hasAuthority("CREATE_BUSINESS_UNIT_ITEM")
+//                .antMatchers(HttpMethod.GET, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("VIEW_BUSINESS_UNIT_ITEM")
+//                .antMatchers(HttpMethod.PUT, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("UPDATE_BUSINESS_UNIT_ITEM")
+//                .antMatchers(HttpMethod.POST, "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}").hasAuthority("CREATE_BUSINESS_UNIT_ITEM")
+//                .antMatchers(HttpMethod.PUT, "/business-units/unititems/approve").hasAuthority("APPROVE_BUSINESS_UNIT_ITEM")
+//                .antMatchers(HttpMethod.PUT, "/business-units/unititems/decline").hasAuthority("DECLINE_BUSINESS_UNIT_ITEM")
+//                .antMatchers(HttpMethod.PUT, "/business-units/unititems/delete").hasAuthority("DELETE_BUSINESS_UNIT_ITEM")
 
                 // departments
                 .antMatchers(HttpMethod.POST, "/departments").hasAuthority("CREATE_DEPARTMENTS")
