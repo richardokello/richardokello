@@ -138,7 +138,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 // device heartbeats
                 .antMatchers(HttpMethod.GET, "/heart-beat").hasAuthority("VIEW_DEVICE_HEARTBEAT")
 
-                .antMatchers(HttpMethod.GET, "/posparam", "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}", "/devices/merchant", "/devices/merchant/{\\agentMerchantId}").hasAuthority("ADD_DEVICES")
+                .antMatchers(HttpMethod.GET, "/posparam", "/business-units/unititems/parents", "/business-units/unititems/parents/{\\id}", "/business-units/unititems/product/{\\id}", "/devices/merchant", "/devices/merchant/{\\agentMerchantId}").hasAuthority("CREATE_ASSIGNED_DEVICE")
 
                 // schedule
                 .antMatchers(HttpMethod.POST, "/schedule").hasAuthority("CREATE_SCHEDULE")
