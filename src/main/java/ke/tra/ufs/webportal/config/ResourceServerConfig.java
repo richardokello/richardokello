@@ -241,7 +241,13 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/account-opening-details/{id}").hasAuthority("VIEW_ACCOUNT_OPENED")
 
                 // customers
-
+                .antMatchers(HttpMethod.POST, "/customers", "/customers/onboard").hasAuthority("CREATE_MERCHANTS")
+                .antMatchers(HttpMethod.GET, "/customers/{id}/changes", "/customers/{id}", "/customers", "/customers/terminated-agents","/customers/deleted").hasAuthority("VIEW_MERCHANTS")
+                .antMatchers(HttpMethod.PUT, "/customers","/customers/update-mid").hasAuthority("UPDATE_MERCHANTS")
+                .antMatchers(HttpMethod.PUT, "/customers/approve-actions").hasAuthority("APPROVE_MERCHANTS")
+                .antMatchers(HttpMethod.PUT, "/customers/decline-actions").hasAuthority("DECLINE_MERCHANTS")
+                .antMatchers(HttpMethod.PUT, "/customers/terminate").hasAuthority("TERMINATE_MERCHANTS")
+                .antMatchers(HttpMethod.DELETE, "/customers").hasAuthority("DELETE_MERCHANTS")
 
                 .antMatchers("/**").fullyAuthenticated()
                 .and()
