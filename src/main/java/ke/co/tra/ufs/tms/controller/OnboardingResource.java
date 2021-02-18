@@ -375,7 +375,8 @@ public class OnboardingResource {
             tmsDevice.setDeviceFieldName(outletName);
             tmsDevice.setBankBranchIds(customerOutletService.findByOutletId(outletId).getBankBranchIds());
         }
-        tmsDevice.setCustomerOwnerName(customer.getBusinessName());
+
+        tmsDevice.setCustomerOwnerName((outletName!=null)?outletName : customer.getBusinessName());
 
         tmsDevice.setStatus(AppConstants.STATUS_ACTIVE);
         try {

@@ -107,12 +107,10 @@ public class PosUserController{
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 
         }
-
         response.setData(posUser);
         response.setCode(HttpStatus.OK.value());
         response.setMessage("success");
         return ResponseEntity.ok(response);
-
     }
 
     @ApiOperation(value = "Fetch Pos User by ID")
