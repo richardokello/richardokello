@@ -10,5 +10,7 @@ public interface CustomerOutletService {
     public UfsCustomerOutlet findByCustomerIds(BigDecimal customerId);
 
     public UfsCustomerOutlet findByOutletId(Long id);
+
+
     List<UfsCustomerOutlet> findOutletsByCustomerIdsAndIntrash(BigDecimal customerId, String intrash);
 }

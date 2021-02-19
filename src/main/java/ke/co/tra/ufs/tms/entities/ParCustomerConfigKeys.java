@@ -6,6 +6,7 @@ import ke.axle.chassis.annotations.Searchable;
 import ke.co.tra.ufs.tms.entities.enums.CustomerParamEntities;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;

@@ -786,7 +786,7 @@ public class OnboardingResource {
                         parFileConfigService.generateGlobalConfigFileAsync(config.getConfigProfile(), onboardWrapper.getModelId(), rootPath);
                     }
                 }
-                customerConfigFileService.generateCustomerFile(onboardWrapper.getDeviceId(), rootPath);
+                customerConfigFileService.generateCustomerFile(tmsDevice.getDeviceId(), rootPath);
                 loggerService.logCreate("Saving new App Files", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
 
             }
