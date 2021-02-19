@@ -5,7 +5,6 @@ import ke.co.tra.ufs.tms.entities.ParMenuProfile;
 import ke.co.tra.ufs.tms.entities.wrappers.MenuFileRequest;
 import ke.co.tra.ufs.tms.repository.ParMenuIndexingRepository;
 import ke.co.tra.ufs.tms.repository.ParMenuProfileRepository;
-import ke.co.tra.ufs.tms.repository.UfsSysConfigRepository;
 import ke.co.tra.ufs.tms.service.FileExtensionRepository;
 import ke.co.tra.ufs.tms.service.ParFileMenuService;
 import ke.co.tra.ufs.tms.utils.AppConstants;
@@ -41,8 +40,9 @@ public class ParFileMenuServiceTemplate extends ParFileService implements ParFil
 //    }
 
     @Async
+    @Override
     public void generateMenuFileAsync(MenuFileRequest fileRequest, String filePath) {
-        log.error("Menu file request"+filePath);
+        log.error("Menu file request" + filePath);
         // get menu profile
         Optional<ParMenuProfile> profile = menuProfileRepository.findByIdAndActionStatusAndIntrash(fileRequest.getMenuProfile(), "Approved", "NO");
         // should log if it does not exist

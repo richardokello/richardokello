@@ -8,6 +8,7 @@ import ke.co.tra.ufs.tms.service.FileExtensionRepository;
 import ke.co.tra.ufs.tms.utils.SharedMethods;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -40,6 +41,7 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
     }
 
     @Override
+    @Async
     public void generateCustomerFile(BigDecimal deviceId, String filePath) {
         TmsDevice tmsDevice = tmsDeviceRepository.findByDeviceIdAndIntrash(deviceId, "NO");
         if (tmsDevice == null) {
