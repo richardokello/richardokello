@@ -70,6 +70,7 @@ public class OnboardingResource {
     private final TmsDeviceTidMidRepository tidMidRepository;
     private final UfsTerminalHistoryService terminalHistoryService;
     private final MNOService mnoService;
+    private final ContactPersonService contactPersonService;
 
     public OnboardingResource(LoggerServiceLocal loggerService, DeviceService deviceService, BusinessUnitService businessUnitService,
                               TmsDeviceParamService deviceParamService, SysConfigService configService, SharedMethods sharedMethods, AppManagementService appManagementService,
@@ -79,7 +80,7 @@ public class OnboardingResource {
                               PosUserService posUserService, PasswordEncoder encoder, ParGlobalMasterProfileService parGlobalMasterProfileService, ParFileMenuService parFileMenuService,
                               ParFileConfigService parFileConfigService, CustomerConfigFileService customerConfigFileService, ParDeviceSelectedOptionsService parDeviceSelectedOptionsService,
                               NotificationService notificationService, TmsDeviceSimcardRepository deviceSimcardRepository, TmsDeviceTidMidRepository tidMidRepository, UfsTerminalHistoryService terminalHistoryService,
-                              MNOService mnoService) {
+                              MNOService mnoService, ContactPersonService contactPersonService) {
         this.loggerService = loggerService;
         this.deviceService = deviceService;
         this.businessUnitService = businessUnitService;
@@ -106,6 +107,7 @@ public class OnboardingResource {
         this.tidMidRepository = tidMidRepository;
         this.terminalHistoryService = terminalHistoryService;
         this.mnoService = mnoService;
+        this.contactPersonService = contactPersonService;
     }
 
     @ApiOperation(value = "Create Device", notes = "used to create a device within the system")
@@ -336,7 +338,7 @@ public class OnboardingResource {
                 //check where TID and MID exists
                 if (deviceService.checkIfTidExists(tidmid.getTid())) {
                     String message = "Creating new Device failed due to the provided"
-                            + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                            + "TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
                     loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
                     throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
                 }
@@ -376,7 +378,7 @@ public class OnboardingResource {
             tmsDevice.setBankBranchIds(customerOutletService.findByOutletId(outletId).getBankBranchIds());
         }
 
-        tmsDevice.setCustomerOwnerName((outletName!=null)?outletName : customer.getBusinessName());
+        tmsDevice.setCustomerOwnerName((outletName != null) ? outletName : customer.getBusinessName());
 
         tmsDevice.setStatus(AppConstants.STATUS_ACTIVE);
         try {
@@ -452,6 +454,12 @@ public class OnboardingResource {
             ownerId = ufsCustomerOwnerz.get(0).getId();
         }
 
+        List<UfsContactPerson> contactPersons = contactPersonService.getAllContactPersonByCustomerId(new BigDecimal(customer.getId()));
+        Long contactPersonId = null;
+        if (contactPersons.size() > 0) {
+            contactPersonId = contactPersons.get(0).getId();
+        }
+
         /*Create First Time Pos User*/
         UfsCustomerOwners customerOwners = customerOwnerService.findByCustomerOwnerId(ownerId);
 
@@ -478,6 +486,9 @@ public class OnboardingResource {
                 posUser.setPhoneNumber(customerOwners.getDirectorPrimaryContactNumber());
                 posUser.setIdNumber(customerOwners.getDirectorIdNumber());
                 posUser.setSerialNumber(onboardWrapper.getSerialNo());
+                if (contactPersonId != null) {
+                    posUser.setContactPersonId(contactPersonId);
+                }
                 posUser.setFirstTimeUser((short) 1);
                 posUser.setMerchantName(merchantName);
                 posUser.setOutletName(outletName);
