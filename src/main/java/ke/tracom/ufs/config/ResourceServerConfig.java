@@ -140,9 +140,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .addFilterAfter(otpFilter, BasicAuthenticationFilter.class)
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)
                 .addFilterAfter(responseFilter, OTPFilter.class)
-                .cors()
-                .configurationSource(corsConfig())
-                .and()
+//                .cors()
+//                .configurationSource(corsConfig())
+//                .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler);
         //                .and().addFilterBefore(new WebSecurityCorsFilter(), ChannelProcessingFilter.class);
@@ -150,22 +150,22 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     }
 
 
-    @Bean
-    CorsConfigurationSource corsConfig() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.applyPermitDefaultValues();
-        corsConfig.addAllowedHeader("Access-Control-Allow-Origin");
-        corsConfig.addExposedHeader("Access-Control-Allow-Origin");
-        corsConfig.addAllowedMethod(HttpMethod.GET);
-        corsConfig.addAllowedMethod(HttpMethod.POST);
-        corsConfig.addAllowedMethod(HttpMethod.PUT);
-        corsConfig.addAllowedMethod(HttpMethod.OPTIONS);
-        corsConfig.addAllowedMethod(HttpMethod.DELETE);
-        corsConfig.addAllowedMethod(HttpMethod.HEAD);
-        corsConfig.addAllowedOrigin("*");
-        source.registerCorsConfiguration("/**", corsConfig);
-        return source;
-    }
+//    @Bean
+//    CorsConfigurationSource corsConfig() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration corsConfig = new CorsConfiguration();
+//        corsConfig.applyPermitDefaultValues();
+//        corsConfig.addAllowedHeader("Access-Control-Allow-Origin");
+//        corsConfig.addExposedHeader("Access-Control-Allow-Origin");
+//        corsConfig.addAllowedMethod(HttpMethod.GET);
+//        corsConfig.addAllowedMethod(HttpMethod.POST);
+//        corsConfig.addAllowedMethod(HttpMethod.PUT);
+//        corsConfig.addAllowedMethod(HttpMethod.OPTIONS);
+//        corsConfig.addAllowedMethod(HttpMethod.DELETE);
+//        corsConfig.addAllowedMethod(HttpMethod.HEAD);
+//        corsConfig.addAllowedOrigin("*");
+//        source.registerCorsConfiguration("/**", corsConfig);
+//        return source;
+//    }
 }
 
