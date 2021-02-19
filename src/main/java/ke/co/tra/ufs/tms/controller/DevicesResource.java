@@ -158,9 +158,10 @@ public class DevicesResource {
     @RequestMapping(value = "/{customerId}/devices", method = RequestMethod.GET)
     @Transactional
     @ApiOperation(value = "Devices", notes = "Get All Devices By Customer Id.")
-    public ResponseEntity<ResponseWrapper<Page<TmsDeviceHeartbeat>>> getDevicesByCustomerId(Pageable pg, @PathVariable("customerId") BigDecimal customerId) {
+    public ResponseEntity<ResponseWrapper<Page<TmsDeviceHeartbeat>>> getDevicesByCustomerId(Pageable pg, @PathVariable("customerId") BigDecimal customerId, @ApiParam(value = "Entity filters and search parameters") DevicesFilter filter) {
         ResponseWrapper response = new ResponseWrapper<>();
-        response.setData(this.deviceService.getDevicesByCustomerId(customerId, pg));
+//        response.setData(this.deviceService.getDevicesByCustomerId(customerId, pg));
+        response.setData(deviceService.getDevicesByCustomerId(customerId, filter.getAction(), filter.getActionStatus(), filter.getFrom(), filter.getTo(), filter.getNeedle(), filter.getStatus(), pg));
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
@@ -498,7 +499,7 @@ public class DevicesResource {
     }
 
     private void processDeclineNew(TmsDevice device, String notes) {
-        loggerService.log("Declined new Device with Serial :"+device.getSerialNo(),
+        loggerService.log("Declined new Device with Serial :" + device.getSerialNo(),
                 device.getClass().getSimpleName(), device.getDeviceId(), ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED);
     }
 

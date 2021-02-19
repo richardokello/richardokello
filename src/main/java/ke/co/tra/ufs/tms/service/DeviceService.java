@@ -124,6 +124,10 @@ public interface DeviceService {
      */
     public Page<TmsDevice> getDevices(String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg);
 
+
+
+    public Page<TmsDevice> getDevicesByCustomerId(BigDecimal customerId,String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg);
+
     /**
      * Fetch device make by make id
      *

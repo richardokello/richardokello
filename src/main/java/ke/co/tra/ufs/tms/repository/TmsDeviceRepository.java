@@ -5,17 +5,17 @@
  */
 package ke.co.tra.ufs.tms.repository;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import ke.co.tra.ufs.tms.entities.TmsEstateItem;
 import ke.co.tra.ufs.tms.entities.TmsDevice;
+import ke.co.tra.ufs.tms.entities.TmsEstateItem;
 import ke.co.tra.ufs.tms.entities.UfsDeviceModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Owori Juma
@@ -30,6 +30,7 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
     @Query("SELECT u FROM TmsDevice u WHERE u.serialNo = ?1 AND lower(u.intrash) = lower(?2) "
             + "AND u.action NOT IN ?3")
     public TmsDevice findAllBySerialNoAndIntrash(String serialNo, String intrash, List<String> action);
+
     /**
      * @param serialNo
      * @param intrash
@@ -55,6 +56,23 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
             + "AND u.serialNo LIKE %?3%  AND u.creationDate BETWEEN ?4 and ?5 AND lower(u.intrash) = lower(?6) AND u.status LIKE ?7%")
     Page<TmsDevice> findAll(String action, String actionStatus, String needle, Date from, Date to, String intrash, String status, Pageable pg);
 
+
+    /**
+     * @param action
+     * @param actionStatus
+     * @param needle
+     * @param from
+     * @param to
+     * @param intrash
+     * @param status
+     * @param outletIds
+     * @param pg
+     * @return
+     */
+    @Query("SELECT u FROM #{#entityName} u WHERE u.action LIKE ?1% AND u.actionStatus LIKE ?2% "
+            + "AND u.serialNo LIKE %?3%  AND u.creationDate BETWEEN ?4 and ?5 AND lower(u.intrash) = lower(?6) AND u.status LIKE ?7% AND u.outletIds IN (?8)")
+    Page<TmsDevice> findAllbyOutletIds(String action, String actionStatus, String needle, Date from, Date to, String intrash, String status, List<BigDecimal> outletIds, Pageable pg);
+
     /**
      * @param estateId
      * @return
@@ -74,7 +92,7 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
      * @param intrash
      * @return
      */
-    @Query("SELECT COUNT(*) FROM TmsDevice u WHERE u.status LIKE ?1% AND lower(u.intrash) = lower(?2) AND u.action!='Release'")
+    @Query("SELECT COUNT(u.deviceId) FROM TmsDevice u WHERE u.status LIKE ?1% AND lower(u.intrash) = lower(?2) AND u.action!='Release'")
     Integer findAllActiveDevices(String status, String intrash);
 
     /**
@@ -93,7 +111,6 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
     List<TmsDevice> findByModelIdAndEstateIdAndIntrash(UfsDeviceModel modelId, TmsEstateItem unitItemId, String intrash);
 
     /**
-     *
      * @param id
      * @return
      */
@@ -104,14 +121,13 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
      * @param intrash
      * @return
      */
-    public TmsDevice findByDeviceIdAndIntrash(BigDecimal deviceId,String intrash);
+    public TmsDevice findByDeviceIdAndIntrash(BigDecimal deviceId, String intrash);
 
     /**
-     *
      * @param outletIds
      * @param intrash
      * @return
      */
-    Page<TmsDevice> findByOutletIdsIsInAndIntrash(List<BigDecimal> outletIds,String intrash,Pageable pg);
+    Page<TmsDevice> findByOutletIdsIsInAndIntrash(List<BigDecimal> outletIds, String intrash, Pageable pg);
 
 }

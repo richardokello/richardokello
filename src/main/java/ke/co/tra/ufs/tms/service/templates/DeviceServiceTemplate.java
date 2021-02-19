@@ -2,6 +2,27 @@ package ke.co.tra.ufs.tms.service.templates;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import ke.co.tra.ufs.tms.entities.*;
+import ke.co.tra.ufs.tms.entities.wrappers.*;
+import ke.co.tra.ufs.tms.repository.*;
+import ke.co.tra.ufs.tms.service.DeviceService;
+import ke.co.tra.ufs.tms.service.LoggerServiceLocal;
+import ke.co.tra.ufs.tms.service.SysConfigService;
+import ke.co.tra.ufs.tms.service.UfsTerminalHistoryService;
+import ke.co.tra.ufs.tms.utils.AppConstants;
+import ke.co.tra.ufs.tms.utils.SharedMethods;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -10,28 +31,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import ke.co.tra.ufs.tms.entities.*;
-import ke.co.tra.ufs.tms.entities.wrappers.*;
-import ke.co.tra.ufs.tms.repository.*;
-import ke.co.tra.ufs.tms.service.UfsTerminalHistoryService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ke.co.tra.ufs.tms.service.DeviceService;
-import ke.co.tra.ufs.tms.service.SysConfigService;
-import ke.co.tra.ufs.tms.utils.AppConstants;
-import ke.co.tra.ufs.tms.utils.SharedMethods;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.validation.DirectFieldBindingResult;
-import org.springframework.validation.Validator;
-import ke.co.tra.ufs.tms.service.LoggerServiceLocal;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Owori Juma
@@ -121,12 +120,12 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     public List<UfsDeviceMake> findAllByDeviceMake(String deviceMake) {
-        return makeRepository.findAllByVendorNameAndIntrash(deviceMake,AppConstants.NO);
+        return makeRepository.findAllByVendorNameAndIntrash(deviceMake, AppConstants.NO);
     }
 
     @Override
     public List<UfsDeviceType> findByTypeAndIntrash(String type) {
-        return deviceTypeRepository.findAllByTypeAndIntrash(type,AppConstants.NO);
+        return deviceTypeRepository.findAllByTypeAndIntrash(type, AppConstants.NO);
     }
 
     @Override
@@ -171,7 +170,7 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     public TmsWhitelist getWhitelistById(BigDecimal id) {
-        return this.whitelistRepo.findByIdAndIntrash(id,AppConstants.NO);
+        return this.whitelistRepo.findByIdAndIntrash(id, AppConstants.NO);
     }
 
     @Override
@@ -186,7 +185,7 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     @Async
-    public void processWhitelistUpload(TmsWhitelistBatch batch, SysConfigService configService, SharedMethods sharedMethods, LoggerServiceLocal loggerService, byte[] file, String ipAddress, String userAgent,Long userId, WhitelistWrapper payload) {
+    public void processWhitelistUpload(TmsWhitelistBatch batch, SysConfigService configService, SharedMethods sharedMethods, LoggerServiceLocal loggerService, byte[] file, String ipAddress, String userAgent, Long userId, WhitelistWrapper payload) {
         try {
             List<WhitelistDetails> entities = sharedMethods.convertCsv(WhitelistDetails.class, file);
             long failed = 0;
@@ -202,7 +201,7 @@ public class DeviceServiceTemplate implements DeviceService {
                                     + entity.getSerialNo() + ") failed. Encountered validation "
                                     + "errors (Errors: " + SharedMethods.getFieldErrorsString(valid)
                                     + ")", SharedMethods.getEntityName(TmsWhitelist.class), null,
-                            AppConstants.STATUS_FAILED,userId, ipAddress, userAgent);
+                            AppConstants.STATUS_FAILED, userId, ipAddress, userAgent);
                     failed++;
                     continue;
                 }
@@ -212,23 +211,23 @@ public class DeviceServiceTemplate implements DeviceService {
                     loggerService.logCreate("Whitelisting a device (Serial number:  "
                                     + entity.getSerialNo() + ") failed. Serial number exists",
                             SharedMethods.getEntityName(TmsWhitelist.class), null,
-                            AppConstants.STATUS_FAILED,userId, ipAddress, userAgent);
+                            AppConstants.STATUS_FAILED, userId, ipAddress, userAgent);
                     failed++;
                     continue;
                 }
 
-                      device = new TmsWhitelist(entity.getSerialNo(),
+                device = new TmsWhitelist(entity.getSerialNo(),
                         batch.getModel().getModelId(), AppConstants.ACTIVITY_CREATE,
                         AppConstants.ACTION_STATUS_UNCONFIRMED, AppConstants.NO);
                 device.setBatch(batch);
 
                 device = whitelistRepo.save(device);
-                this.terminalHistoryService.saveHistory(new UfsTerminalHistory(entity.getSerialNo(), AppConstants.ACTIVITY_CREATE, "Terminal Whitelisted Successfully", userId, AppConstants.STATUS_UNAPPROVED,loggerService.getFullName()));
+                this.terminalHistoryService.saveHistory(new UfsTerminalHistory(entity.getSerialNo(), AppConstants.ACTIVITY_CREATE, "Terminal Whitelisted Successfully", userId, AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
 
                 loggerService.logCreate("Whitelisted device (Serial number:  "
                                 + entity.getSerialNo() + ") successfully",
                         SharedMethods.getEntityName(TmsWhitelist.class), device.getId(),
-                        AppConstants.STATUS_COMPLETED,userId, ipAddress, userAgent);
+                        AppConstants.STATUS_COMPLETED, userId, ipAddress, userAgent);
                 success++;
             }
             batch.setProcessingStatus(AppConstants.STATUS_COMPLETED);
@@ -236,7 +235,7 @@ public class DeviceServiceTemplate implements DeviceService {
             log.error(AppConstants.AUDIT_LOG, "Processing Device Whitelist upload failed", ex);
             loggerService.logCreate("Processing Device Whitelist failed. This may be "
                             + "due to wrong file format / file content msg:" + ex.getMessage(), SharedMethods.getEntityName(TmsWhitelist.class), null,
-                    AppConstants.STATUS_FAILED,userId, ipAddress, userAgent);
+                    AppConstants.STATUS_FAILED, userId, ipAddress, userAgent);
             batch.setProcessingStatus(AppConstants.STATUS_FAILED);
         }
         this.batchRepo.save(batch);
@@ -277,6 +276,13 @@ public class DeviceServiceTemplate implements DeviceService {
     @Override
     public Page<TmsDevice> getDevices(String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg) {
         return deviceRepository.findAll(action, actionStatus, needle, from, to, AppConstants.NO, status, pg);
+    }
+
+    @Override
+    public Page<TmsDevice> getDevicesByCustomerId(BigDecimal customerId, String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg) {
+        List<UfsCustomerOutlet> customerOutlets = customerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerId, AppConstants.NO);
+        List<BigDecimal> outletIds = customerOutlets.stream().map(outlet -> BigDecimal.valueOf(outlet.getId())).collect(Collectors.toList());
+        return deviceRepository.findAllbyOutletIds(action, actionStatus, needle, from, to, AppConstants.NO, status, outletIds, pg);
     }
 
     @Override
@@ -387,7 +393,7 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     @Async
-    public void processWhitelistUploadXlxs(TmsWhitelistBatch batch, SysConfigService configService, SharedMethods sharedMethods, LoggerServiceLocal loggerService, MultipartFile file, String ipAddress, String userAgent,Long userId, WhitelistWrapper payload) {
+    public void processWhitelistUploadXlxs(TmsWhitelistBatch batch, SysConfigService configService, SharedMethods sharedMethods, LoggerServiceLocal loggerService, MultipartFile file, String ipAddress, String userAgent, Long userId, WhitelistWrapper payload) {
         log.error("Processing Uploading =======> xls");
         try {
             List<WhitelistDetails> entities = sharedMethods.convertXls(WhitelistDetails.class, sharedMethods.convert(file));
@@ -415,7 +421,7 @@ public class DeviceServiceTemplate implements DeviceService {
                     loggerService.logCreate("Whitelisting a device (Serial number:  "
                                     + entity.getSerialNo() + ") failed. Serial number exists",
                             SharedMethods.getEntityName(TmsWhitelist.class), null,
-                            AppConstants.STATUS_FAILED,userId, ipAddress, userAgent);
+                            AppConstants.STATUS_FAILED, userId, ipAddress, userAgent);
                     failed++;
                     continue;
                 }
@@ -425,11 +431,11 @@ public class DeviceServiceTemplate implements DeviceService {
                         AppConstants.ACTION_STATUS_UNCONFIRMED, AppConstants.NO);
                 device.setBatch(batch);
                 device = whitelistRepo.save(device);
-                this.terminalHistoryService.saveHistory(new UfsTerminalHistory(payload.getSerialNo(), AppConstants.ACTIVITY_CREATE, "Terminal Whitelisted Successfully", userId, AppConstants.STATUS_UNAPPROVED,loggerService.getFullName()));
+                this.terminalHistoryService.saveHistory(new UfsTerminalHistory(payload.getSerialNo(), AppConstants.ACTIVITY_CREATE, "Terminal Whitelisted Successfully", userId, AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
                 loggerService.logCreate("Whitelisted device (Serial number:  "
                                 + entity.getSerialNo() + ") successfully",
                         SharedMethods.getEntityName(TmsWhitelist.class), device.getId(),
-                        AppConstants.STATUS_COMPLETED,userId, ipAddress, userAgent);
+                        AppConstants.STATUS_COMPLETED, userId, ipAddress, userAgent);
                 success++;
             }
             batch.setProcessingStatus(AppConstants.STATUS_COMPLETED);
@@ -437,7 +443,7 @@ public class DeviceServiceTemplate implements DeviceService {
             log.error(AppConstants.AUDIT_LOG, "Processing Device Whitelist upload failed", ex);
             loggerService.logCreate("Processing Device Whitelist failed. This may be "
                             + "due to wrong file format / file content msg:" + ex.getMessage(), SharedMethods.getEntityName(TmsWhitelist.class), null,
-                    AppConstants.STATUS_FAILED,userId, ipAddress, userAgent);
+                    AppConstants.STATUS_FAILED, userId, ipAddress, userAgent);
             batch.setProcessingStatus(AppConstants.STATUS_FAILED);
         } catch (InvalidFormatException ex) {
             java.util.logging.Logger.getLogger(DeviceServiceTemplate.class.getName()).log(Level.SEVERE, null, ex);
@@ -496,7 +502,7 @@ public class DeviceServiceTemplate implements DeviceService {
                     tmsDevice = saveDevice(tmsDevice);
                     generateParameterFileSCB(tmsDevice, sharedMethods, loggerService);
 
-                    this.terminalHistoryService.saveHistory(new UfsTerminalHistory(onboardWrapper.getSerialNo(), AppConstants.ACTIVITY_CREATE, "Terminal Assigned Successfully", loggerService.getUser(), AppConstants.STATUS_UNAPPROVED,loggerService.getFullName()));
+                    this.terminalHistoryService.saveHistory(new UfsTerminalHistory(onboardWrapper.getSerialNo(), AppConstants.ACTIVITY_CREATE, "Terminal Assigned Successfully", loggerService.getUser(), AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
 
 
 //            loggerService.logCreate("Creating new Device", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
@@ -518,7 +524,7 @@ public class DeviceServiceTemplate implements DeviceService {
                 tmsDevice = saveDevice(tmsDevice);
                 generateParameterFileSCB(tmsDevice, sharedMethods, loggerService);
 
-                this.terminalHistoryService.saveHistory(new UfsTerminalHistory(onboardWrapper.getSerialNo(), AppConstants.ACTIVITY_CREATE, "Terminal Assigned Successfully", loggerService.getUser(), AppConstants.STATUS_UNAPPROVED,loggerService.getFullName()));
+                this.terminalHistoryService.saveHistory(new UfsTerminalHistory(onboardWrapper.getSerialNo(), AppConstants.ACTIVITY_CREATE, "Terminal Assigned Successfully", loggerService.getUser(), AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
 
 
 //            loggerService.logCreate("Creating new Device", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
@@ -870,33 +876,33 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     public boolean checkIfTidMidExists(String tid, String mid) {
-        int tidMidCount  = tmsDeviceTidRepository.getTmsDeviceTidsMids(tid,mid);
+        int tidMidCount = tmsDeviceTidRepository.getTmsDeviceTidsMids(tid, mid);
         return tidMidCount > 0;
     }
 
     @Override
     public boolean checkIfTidExists(String tid) {
-        return tmsDeviceTidRepository.getTmsDeviceTids(tid)>0;
+        return tmsDeviceTidRepository.getTmsDeviceTids(tid) > 0;
     }
 
     @Override
     public boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds) {
-        int tidMidCount  = tmsDeviceTidRepository.getTmsDeviceTidsMidsByDeviceIds(tid,mid,deviceIds);
+        int tidMidCount = tmsDeviceTidRepository.getTmsDeviceTidsMidsByDeviceIds(tid, mid, deviceIds);
         return tidMidCount > 0;
     }
 
     @Override
     public boolean checkIfTidExistsByDeviceIds(String tid, Long deviceIds) {
-        return tmsDeviceTidRepository.getTmsDeviceTidsByDeviceIds(tid,deviceIds)>0;
+        return tmsDeviceTidRepository.getTmsDeviceTidsByDeviceIds(tid, deviceIds) > 0;
     }
 
     @Override
     public void deleteAllByDeviceId(String serial) {
         List<TmsDevice> ent = deviceRepository.findAllBySerialNoAndIntrash(serial, AppConstants.NO);
-        if(ent.size()==0){
+        if (ent.size() == 0) {
             return;
         }
-        tmsDeviceTidRepository.deleteAllByDeviceId(ent.stream().map(x->x.getDeviceId().longValue()).collect(Collectors.toList()));
+        tmsDeviceTidRepository.deleteAllByDeviceId(ent.stream().map(x -> x.getDeviceId().longValue()).collect(Collectors.toList()));
     }
 
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {
