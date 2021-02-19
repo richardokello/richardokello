@@ -13,5 +13,7 @@ public interface UfsCustomerOutletService {
 
     UfsCustomerOutlet saveOutlet(UfsCustomerOutlet outlet);
 
+    public UfsCustomerOutlet findByOutletId(Long id);
+
     List<UfsCustomerOutlet> findByCustomerId(BigDecimal customerId, String intrash);
 }

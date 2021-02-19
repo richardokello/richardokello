@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ke.axle.chassis.utils.LoggerService;
 import ke.tra.ufs.webportal.entities.*;
-import ke.tra.ufs.webportal.repository.ParCustomerConfigIndicesRepository;
-import ke.tra.ufs.webportal.repository.ParDeviceOptionsIndicesRepository;
-import ke.tra.ufs.webportal.repository.TmsDeviceRepository;
+import ke.tra.ufs.webportal.repository.*;
 import ke.tra.ufs.webportal.service.CustomerConfigFileService;
 import ke.tra.ufs.webportal.service.FileExtensionRepository;
+import ke.tra.ufs.webportal.service.UfsCustomerOutletService;
 import ke.tra.ufs.webportal.utils.SharedMethods;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.data.domain.Sort;
@@ -24,22 +23,29 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
     private final TmsDeviceRepository tmsDeviceRepository;
     private final ParCustomerConfigIndicesRepository configIndicesRepository;
     private final ParDeviceOptionsIndicesRepository parDeviceOptionsIndicesRepository;
+    private final ParDeviceSelectedOptionsRepository parDeviceSelectedOptionsRepository;
+    private final UfsCustomerOutletService outletService;
+    private final TmsDeviceTidMidRepository tmsDeviceTidMidRepository;
+    private final CurrencyRepository currencyRepository;
+
 
     public CustomerConfigFileServiceTemplate(TmsDeviceRepository tmsDeviceRepository, FileExtensionRepository fileExtensionRepository, LoggerService loggerService,
                                              SharedMethods sharedMethods, ParCustomerConfigIndicesRepository configIndicesRepository,
-                                             ParDeviceOptionsIndicesRepository parDeviceOptionsIndicesRepository) {
+                                             ParDeviceOptionsIndicesRepository parDeviceOptionsIndicesRepository, ParDeviceSelectedOptionsRepository parDeviceSelectedOptionsRepository, UfsCustomerOutletService outletService, TmsDeviceTidMidRepository tmsDeviceTidMidRepository, CurrencyRepository currencyRepository) {
         super(fileExtensionRepository, loggerService, sharedMethods);
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.configIndicesRepository = configIndicesRepository;
         this.parDeviceOptionsIndicesRepository = parDeviceOptionsIndicesRepository;
+        this.parDeviceSelectedOptionsRepository = parDeviceSelectedOptionsRepository;
+        this.outletService = outletService;
+        this.tmsDeviceTidMidRepository = tmsDeviceTidMidRepository;
+        this.currencyRepository = currencyRepository;
     }
 
     @Override
     public void generateCustomerFile(BigDecimal deviceId, String filePath) {
-        log.error(">>>>>>>>>>>>>>>>>>>" + deviceId + ">>>>>>>>>>>>>>>>" + filePath);
         TmsDevice tmsDevice = tmsDeviceRepository.findByDeviceIdAndIntrash(deviceId, "NO");
         if (tmsDevice == null) {
-            // loggerService.log("", "", "", 1L, "", "", "");
             return;
         }
 
@@ -48,14 +54,9 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
         log.error(parentIndices.size());
 
         for (int i = 0; i < parentIndices.size(); i++) {
-            log.error("Parent Config Id =============>" + parentIndices.get(i).getId());
-            log.error("Parent Config Id =============>" + parentIndices.get(i).getConfigId());
-            log.error("Parent Config index =============>" + parentIndices.get(i).getConfigIndex());
-
             if (parentIndices.get(i).getConfig().getIsAllowed() == 1) {
                 result.add(getParamValueNew(parentIndices.get(i), tmsDevice) + ";");
             }
-            ;
         }
 
         log.error("results >>>>>>>>>>>>>>" + Arrays.asList(result));
@@ -64,27 +65,22 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
 
     private String getParamValueNew(ParCustomerConfigKeysIndices parentIndex, TmsDevice device) {
         try {
-            log.error("PARAMETER 1>>>>>>>>>>>>>>>>>>" + new ObjectMapper().writeValueAsString(parentIndex.getConfig().getEntityName()));
-            log.error("PARAMETER 1>>>>>>>>>>>>>>>>>>" + new ObjectMapper().writeValueAsString(parentIndex.getConfig().getKeyName()));
-            log.error("PARAMETER 1>>>>>>>>>>>>>>>>>>" + new ObjectMapper().writeValueAsString(device.getOutletId().getCustomerId()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        try {
+            UfsCustomerOutlet outlet = outletService.findByOutletId(device.getOutletIds().longValue());
+            UfsCustomer customer = outlet.getCustomerId();
             switch (parentIndex.getConfig().getEntityName()) {
                 case CUSTOMER:
-                    return getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomer.class, device.getOutletId().getCustomerId());
+                    return getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomer.class, customer);
                 case TID_MID:
                     // has children -- get children
                     StringBuilder stringBuilder = new StringBuilder();
-                    for (TmsDeviceTidsMids tidsMids : device.getDeviceTidsMidsList()) {
+                    List<TmsDeviceTidsMids> tidsMidsList = tmsDeviceTidMidRepository.findAllByDeviceIds(device.getDeviceId().longValue());
+                    for (TmsDeviceTidsMids tidsMids : tidsMidsList) {
                         // save the values in arraylist by their position
                         List<String> tidMidValues = new ArrayList<>();
 //                        List<ParCustomerConfigChildKeys> childKeys = new ArrayList<>(parentIndex.getConfig().getChildKeys()); when using sets
                         parentIndex.getConfig().getChildKeys().sort(Comparator.comparing(x -> x.getChildIndex().getConfigIndex()));
                         for (ParCustomerConfigChildKeys childKey : parentIndex.getConfig().getChildKeys()) {
-                            // process what is allowed
-                            if (childKey.getIsAllowed() == 1) {
+                            if (childKey.getIsAllowed() == 1) { // process what is allowed
                                 String result = getTIDChildParamValue(childKey, tidsMids);
                                 tidMidValues.add(result);
                             }
@@ -99,8 +95,8 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
                     // get device options
                     StringBuilder builder = new StringBuilder();
                     Set<BigDecimal> deviceOptionsSet = new HashSet<>();
-
-                    for (ParDeviceSelectedOptions deviceOption : device.getDeviceOptions()) {
+                    List<ParDeviceSelectedOptions> parDeviceSelectedOptions = parDeviceSelectedOptionsRepository.findAllByDeviceId(device.getDeviceId());
+                    for (ParDeviceSelectedOptions deviceOption : parDeviceSelectedOptions) {
                         deviceOptionsSet.add(deviceOption.getDeviceOptionId());
                     }
 
@@ -114,18 +110,18 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
                             }
                         }
                     }
-                    // removes last character ';' since the parent call is adding ';' for every parameter
+                    // removes lat character ';' since the parent call is adding ';' for every parameter
                     builder.deleteCharAt(builder.length() - 1);
                     return builder.toString();
                 case LOCATION:
-                    return getParamValue(parentIndex.getConfig().getKeyName(), UfsGeographicalRegion.class, device.getOutletId().getGeographicalRegionId());
+                    return getParamValue(parentIndex.getConfig().getKeyName(), UfsGeographicalRegion.class, outlet.getGeographicalRegionId());
                 case OUTLET:
-                    return getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomerOutlet.class, device.getOutletId());
+                    return getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomerOutlet.class, outlet);
                 default:
                     return "";
             }
         } catch (Exception ex) {
-            log.error("Parent Error >>>>>>>>>>>>> " + ex.getMessage());
+            System.out.println("Parent Error >>>>>>>>>>>>> " + ex.getMessage());
             return " ";
         }
     }
@@ -136,14 +132,11 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
         try {
             switch (childKey.getEntityName()) {
                 case TID_MID:
-                    log.error("TID NAME==============> " + childKey.getKeyName());
                     String tid = getParamValue(childKey.getKeyName(), TmsDeviceTidsMids.class, tidsMids);
                     return tid;
                 case CURRENCY:
-                    UfsCurrency ufsCurrency = tidsMids.getCurrencyId();
-                    log.error("currency code >>>> " + ufsCurrency.getCodeName() + "Decimals >>>  " + ufsCurrency.getDecimalValue() + " Expo >>> " + ufsCurrency.getNumericValue());
+                    UfsCurrency ufsCurrency = currencyRepository.findById(tidsMids.getCurrencyIds()).get();
                     String currency = getParamValue(childKey.getKeyName(), UfsCurrency.class, ufsCurrency);
-                    log.error("TID >>>>  " + childKey.getKeyName() + " >>>> index: " + childKey.getChildIndex().getConfigIndex() + " >>>>>>>> result:" + currency);
                     return currency;
             }
         } catch (Exception ex) {
