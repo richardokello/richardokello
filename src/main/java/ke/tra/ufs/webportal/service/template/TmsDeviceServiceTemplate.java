@@ -16,10 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -203,6 +200,35 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         List<TmsDevice> devices = findByOutletIds(outletsFiltered);
         devices.parallelStream().forEach(device -> {
             processAddTaskTodevice(device, rootPath + "/devices/" + device.getDeviceId() + "/");
+        });
+
+        updateDeviceDetails(outletsFiltered);
+    }
+
+    @Async
+    public void updateDeviceDetails(List<BigDecimal> outletsIds) {
+        outletsIds.parallelStream().forEach(outletId -> {
+            UfsCustomerOutlet outlet = outletService.findById(outletId.longValue());
+            UfsCustomer customer = outlet.getCustomerId();
+            List<BigDecimal> outletsFiltered = new ArrayList<>();
+            outletsFiltered.add(outletId);
+            List<TmsDevice> devices = findByOutletIds(outletsFiltered);
+            devices.parallelStream().forEach(device -> {
+                processUpdateDeviceDetails(device, customer);
+            });
+        });
+    }
+
+    private void processUpdateDeviceDetails(TmsDevice device, UfsCustomer customer) {
+        device.setCustomerOwnerName(customer.getBusinessName());
+        device.setDeviceFieldName(customer.getBusinessName());
+        tmsDeviceRepository.save(device);
+        List<TmsDeviceTids> tidsmids = findByDeviceIds(device.getDeviceId().longValue());
+        tidsmids.forEach(tid -> {
+            if (customer.getMid() != null) {
+                tid.setMid(customer.getMid());
+                tmsDeviceTidRepository.save(tid);
+            }
         });
     }
 
