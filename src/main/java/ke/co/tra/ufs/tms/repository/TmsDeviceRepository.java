@@ -130,4 +130,6 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
      */
     Page<TmsDevice> findByOutletIdsIsInAndIntrash(List<BigDecimal> outletIds, String intrash, Pageable pg);
 
+    List<TmsDevice> findByOutletIdsIsInAndIntrash(List<BigDecimal> outletIds, String intrash);
+
 }

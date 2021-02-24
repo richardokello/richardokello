@@ -125,8 +125,7 @@ public interface DeviceService {
     public Page<TmsDevice> getDevices(String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg);
 
 
-
-    public Page<TmsDevice> getDevicesByCustomerId(BigDecimal customerId,String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg);
+    public Page<TmsDevice> getDevicesByCustomerId(BigDecimal customerId, String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg);
 
     /**
      * Fetch device make by make id
@@ -476,6 +475,8 @@ public interface DeviceService {
 
     boolean checkIfTidExistsByDeviceIds(String tid, Long deviceIds);
 
-    void deleteAllByDeviceId(String tmsDevice);
+    void deleteAllByDeviceId(String serialNo);
+
+    void updateCustomerTidMid(String serialNo);
 
 }

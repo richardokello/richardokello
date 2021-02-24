@@ -673,7 +673,6 @@ public class OnboardingResource {
     @Transactional
     public ResponseEntity<ResponseWrapper> addDeviceTasks(
             @Valid AddTaskWrapper addTaskWrapper, BindingResult validation) {
-
         ResponseWrapper response = new ResponseWrapper();
         if (validation.hasErrors()) {
             loggerService.logCreate("Creating new task failed due to validation errors", SharedMethods.getEntityName(TmsDevice.class), addTaskWrapper.getDeviceId(), AppConstants.STATUS_FAILED);
@@ -710,27 +709,24 @@ public class OnboardingResource {
             if (dtk != null) {
                 TmsScheduler sched = dtk.getScheduleId();
                 if (sched.getScheduleType().equals(AppConstants.MANUAL_SCHEDULE) && dtk.getDownloadStatus().equals("PENDING")) {
-                    sched.setNoFiles(sched.getNoFiles() + 1l);
+                    sched.setNoFiles(sched.getNoFiles() + 1L);
                     schedulerService.saveSchedule(sched);
                     try {
                         transferAndCopyFilesTaskNew(addTaskWrapper, tmsDevice, dtk, sched.getDirPath());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                 } else {
                     createScheduleTask(addTaskWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
                 }
             } else {
                 createScheduleTask(addTaskWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
             }
-
         }
 
         response.setData(tmsDevice);
         loggerService.logCreateTask("Creating Device Task", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
         response.setCode(201);
-
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
@@ -978,16 +974,12 @@ public class OnboardingResource {
             // use master profile and device id to generate parameter file specific to device
             if (addTaskWrapper.getMasterProfileId() != null) {
                 Optional<ParGlobalMasterProfile> optionalMaster = parGlobalMasterProfileService.findById(addTaskWrapper.getMasterProfileId());
-
                 if (optionalMaster.isPresent()) {
                     ParGlobalMasterProfile parGlobalMasterProfile = optionalMaster.get();
                     // generate menu profile
                     parFileMenuService.generateMenuFileAsync(new MenuFileRequest(addTaskWrapper.getModelId(), parGlobalMasterProfile.getMenuProfileId()), rootPath);
-//                     generate all global configs related to master profile
                     for (ParGlobalMasterChildProfile config : parGlobalMasterProfile.getChildProfiles()) {
-
                         parFileConfigService.generateGlobalConfigFileAsync(config.getConfigProfile(), addTaskWrapper.getModelId(), rootPath);
-
                     }
                 }
             }
@@ -996,20 +988,6 @@ public class OnboardingResource {
             if (!addTaskWrapper.getDownloadType().equalsIgnoreCase("App Only")) {
                 customerConfigFileService.generateCustomerFile(addTaskWrapper.getDeviceId(), rootPath);
             }
-
-//            if (addTaskWrapper.getMenuProfileId() != null) {
-//                ParMenuProfile parMenuProfile = parMenuProfileService.findById(addTaskWrapper.getMenuProfileId()).get();
-//                if (parMenuProfile != null) {
-//                    deviceService.generateMenuParameterFile(tmsDevice, parMenuProfile, rootPath, sharedMethods, loggerService);
-//                }
-//            }
-//
-//            if (addTaskWrapper.getBinProfileId() != null) {
-//                ParBinProfile parBinProfile = parBinProfileService.findById(addTaskWrapper.getBinProfileId()).get();
-//                if (parBinProfile != null) {
-//                    deviceService.generateBinParameterFile(tmsDevice, parBinProfile, rootPath, sharedMethods, loggerService);
-//                }
-//            }
 
             loggerService.logCreate("Saving new App Files", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
 

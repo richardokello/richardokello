@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -78,6 +79,7 @@ public class DeviceServiceTemplate implements DeviceService {
     private final UfsContactPersonRepository contactPersonRepository;
     private final DeviceTypeRepository deviceTypeRepository;
     private final MakeRepository makeRepository;
+    private final UfsCustomerRepository customerRepository;
 
     public DeviceServiceTemplate(MakeRepository makeRepo, ModelRepository modelRepo, FTPLogsRepository fTPLogsRepository,
                                  DeviceTypeRepository typeRepo, WhitelistRepository whitelistRepo, DeviceSimcardRepository deviceSimcardRepository,
@@ -85,7 +87,7 @@ public class DeviceServiceTemplate implements DeviceService {
                                  TmsParamDefinitionRepository definitionRepository, TmsDeviceFileExtRepository deviceFileExtRepository,
                                  SchedulerRepository schedulerRepository, DeviceTaskRepository deviceTaskRepository, ConfigRepository configRepo, DeviceCustomerDetailsRepository customerDetailsRepository, CurrencyRepository currencyRepository, ParMenuProfileRepository parMenuProfileRepository, ParBinProfileRepository parBinProfileRepository
             , ParBinConfigRepository parBinConfigRepository, TmsDeviceTidMidRepository tmsDeviceTidRepository, TmsDeviceSimcardRepository tmsDeviceSimcardRepository, UfsCurrencyRepository ufsCurrencyRepository, BusinessUnitItemRepository businessUnitItemRepository, UfsTerminalHistoryService terminalHistoryService,
-                                 UfsCustomerOutletRepository customerOutletRepository, UfsContactPersonRepository contactPersonRepository, DeviceTypeRepository deviceTypeRepository, MakeRepository makeRepository) {
+                                 UfsCustomerOutletRepository customerOutletRepository, UfsContactPersonRepository contactPersonRepository, DeviceTypeRepository deviceTypeRepository, MakeRepository makeRepository, UfsCustomerRepository customerRepository) {
         this.makeRepo = makeRepo;
         this.modelRepo = modelRepo;
         this.typeRepo = typeRepo;
@@ -116,6 +118,7 @@ public class DeviceServiceTemplate implements DeviceService {
         this.contactPersonRepository = contactPersonRepository;
         this.deviceTypeRepository = deviceTypeRepository;
         this.makeRepository = makeRepository;
+        this.customerRepository = customerRepository;
     }
 
     @Override
@@ -482,8 +485,9 @@ public class DeviceServiceTemplate implements DeviceService {
 
             TmsWhitelist whitelist = whitelistRepo.findByserialNoAndIntrash(onboardWrapper.getSerialNo(), AppConstants.NO);
             TmsEstateItem estates = businessUnitItemRepository.findById(estate).orElse(null);
-            if (estates != null)
+            if (estates != null) {
                 tmsDevice.setEstateId(estates);
+            }
 
             TmsDevice dv = getDevicebySerial(onboardWrapper.getSerialNo());
             if (dv != null) {
@@ -869,6 +873,13 @@ public class DeviceServiceTemplate implements DeviceService {
         return deviceRepository.findByOutletIdsIsInAndIntrash(outletIds, AppConstants.NO, pg);
     }
 
+
+    public List<TmsDevice> getDevicesByCustomerId(BigDecimal customerId) {
+        List<UfsCustomerOutlet> customerOutlets = customerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerId, AppConstants.NO);
+        List<BigDecimal> outletIds = customerOutlets.stream().map(outlet -> BigDecimal.valueOf(outlet.getId())).collect(Collectors.toList());
+        return deviceRepository.findByOutletIdsIsInAndIntrash(outletIds, AppConstants.NO);
+    }
+
     @Override
     public List<UfsContactPerson> getContactPeopleByOutletId(Long customerOutletId) {
         return contactPersonRepository.findByCustomerOutletIdAndIntrash(customerOutletId, AppConstants.NO);
@@ -903,6 +914,17 @@ public class DeviceServiceTemplate implements DeviceService {
             return;
         }
         tmsDeviceTidRepository.deleteAllByDeviceId(ent.stream().map(x -> x.getDeviceId().longValue()).collect(Collectors.toList()));
+
+        ent.forEach(this::updateCustomersMid);
+    }
+
+    @Override
+    public void updateCustomerTidMid(String serialNo) {
+        List<TmsDevice> ent = deviceRepository.findAllBySerialNoAndIntrash(serialNo, AppConstants.NO);
+        if (ent.size() == 0) {
+            return;
+        }
+        ent.forEach(this::updateCustomersMid);
     }
 
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {
@@ -939,4 +961,21 @@ public class DeviceServiceTemplate implements DeviceService {
         return modelRepo.findByModelAndIntrash(modelName, AppConstants.NO);
     }
 
+    @Async
+    public void updateCustomersMid(TmsDevice deviceId) {
+        if (deviceId.getOutletIds() != null) {
+            UfsCustomerOutlet outlet = customerOutletRepository.findById(deviceId.getOutletIds().longValue()).get();
+            UfsCustomer customer = outlet.getCustomerId();
+            List<TmsDevice> devices = getDevicesByCustomerId(new BigDecimal(customer.getId()));
+            TreeSet<String> customerMidSet =  new TreeSet<>();
+            List<TmsDeviceTidsMids> tidsMids = tmsDeviceTidRepository.findAllByDeviceIdIn(devices.stream().map(x->x.getDeviceId().longValue()).collect(Collectors.toList()));
+            for (TmsDeviceTidsMids tidmid : tidsMids) {
+                if(tidmid.getMid()!=null) {
+                    customerMidSet.add(tidmid.getMid());
+                }
+            }
+            customer.setMid(String.join(";", customerMidSet));
+            customerRepository.save(customer);
+        }
+    }
 }

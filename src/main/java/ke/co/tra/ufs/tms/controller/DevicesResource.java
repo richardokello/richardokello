@@ -246,10 +246,6 @@ public class DevicesResource {
      * @return
      */
     private void processApproveNew(TmsDevice entity, String notes) throws ExpectationFailed {
-        if (entity.getMasterProfileId() != null) {
-
-        }
-
         //set Whitelisted device to assigned
         deviceService.updateWhitelistBySerialSync(entity.getSerialNo());
 
@@ -325,6 +321,7 @@ public class DevicesResource {
      * @return
      */
     private void processApproveUpdate(TmsDevice entity, String notes) throws ExpectationFailed {
+        deviceService.updateCustomerTidMid(entity.getSerialNo());
         loggerService.logApprove("Done approving Updating Device Serial (" + entity.getSerialNo() + ")",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(), AppConstants.STATUS_COMPLETED, notes);
     }

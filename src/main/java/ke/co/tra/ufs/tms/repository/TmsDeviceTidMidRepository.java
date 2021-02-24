@@ -8,7 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -37,5 +36,11 @@ public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsM
 
     @Query("SELECT COUNT(t.id) FROM TmsDeviceTidsMids t WHERE t.tid = ?1 and t.deviceIds NOT IN (?2)")
     Integer getTmsDeviceTidsByDeviceIds(String tid, Long deviceIds);
+
+    @Query("SELECT u from TmsDeviceTidsMids u where u.deviceId=?1")
+    List<TmsDeviceTidsMids> findAllByDeviceId(TmsDevice device);
+
+    @Query("SELECT u from TmsDeviceTidsMids u where u.deviceIds IN (?1)")
+    List<TmsDeviceTidsMids> findAllByDeviceIdIn(List<Long> device);
 
 }
