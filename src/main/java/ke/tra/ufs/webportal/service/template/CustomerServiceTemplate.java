@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -90,16 +92,17 @@ public class CustomerServiceTemplate implements CustomerService {
         List<UfsCustomerOutlet> customerOutlets = findOutletsByCustomerIds(new BigDecimal(id));
         List<BigDecimal> outletIds = (customerOutlets.size() > 0) ? customerOutlets.stream().map(x -> new BigDecimal(x.getId())).collect(Collectors.toList()) : new ArrayList<>();
         List<TmsDevice> devices = (outletIds.size() > 0) ? deviceService.findByOutletIds(outletIds) : new ArrayList<>();
-        if (devices.size() > 0) {
-            TmsDevice device = devices.get(0);
+
+        Set<String> mids = new HashSet<>();
+        for (TmsDevice device : devices) {
             List<TmsDeviceTidCurrency> tmsDeviceTids = deviceService.findByDeviceIds(device);
-            if (tmsDeviceTids.size() > 0) {
-                if (tmsDeviceTids.get(0).getMid() != null) {
-                    String mid = tmsDeviceTids.get(0).getMid();
-                    customer.setMid(mid);
-                    saveCustomer(customer);
+            for (TmsDeviceTidCurrency curr : tmsDeviceTids) {
+                if (curr.getMid() != null) {
+                    mids.add(curr.getMid());
                 }
             }
         }
+        customer.setMid(String.join(";", mids));
+        saveCustomer(customer);
     }
 }
