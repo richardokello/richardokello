@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -19,7 +20,7 @@ public class CustomerOwnerServiceTemplate implements CustomerOwnersService {
     private final UfsCustomerOwnerCrimeRepository customerOwnerCrimeRepository;
     private final UfsCustomerOwnerRepository ownerRepository;
 
-    public CustomerOwnerServiceTemplate(UfsCustomerOwnerCrimeRepository customerOwnerCrimeRepository,UfsCustomerOwnerRepository ownerRepository) {
+    public CustomerOwnerServiceTemplate(UfsCustomerOwnerCrimeRepository customerOwnerCrimeRepository, UfsCustomerOwnerRepository ownerRepository) {
         this.customerOwnerCrimeRepository = customerOwnerCrimeRepository;
         this.ownerRepository = ownerRepository;
     }
@@ -32,22 +33,31 @@ public class CustomerOwnerServiceTemplate implements CustomerOwnersService {
 
     @Override
     public UfsCustomerOwners findByCustomerIds(BigDecimal customerIds) {
-        return ownerRepository.findByCustomerIdsAndIntrash(customerIds,AppConstants.INTRASH_NO);
+        return ownerRepository.findByCustomerIdsAndIntrash(customerIds, AppConstants.INTRASH_NO);
     }
 
     @Override
     public UfsCustomerOwners findByUsername(String username) {
-        return ownerRepository.findByUserNameAndIntrash(username,AppConstants.INTRASH_NO);
+        return ownerRepository.findByUserNameAndIntrash(username, AppConstants.INTRASH_NO);
     }
 
     @Override
     public List<UfsCustomerOwners> findOwnersByCustomerIds(BigDecimal customerIds) {
-        return ownerRepository.findByIntrashAndCustomerIds(AppConstants.INTRASH_NO,customerIds);
+        return ownerRepository.findByIntrashAndCustomerIds(AppConstants.INTRASH_NO, customerIds);
     }
 
     @Override
     public UfsCustomerOwners saveOwner(UfsCustomerOwners customerOwners) {
         return ownerRepository.save(customerOwners);
+    }
+
+    @Override
+    public void deactivateByOwnersList(List<UfsCustomerOwners> customerOwners) {
+        List<UfsCustomerOwners> ownersList = customerOwners.stream().peek(x -> {
+            x.setActionStatus(AppConstants.STATUS_REJECTED);
+            x.setIntrash(AppConstants.YES);
+        }).collect(Collectors.toList());
+        ownerRepository.saveAll(ownersList);
     }
 
 

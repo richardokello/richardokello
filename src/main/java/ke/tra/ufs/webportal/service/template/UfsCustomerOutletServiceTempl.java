@@ -8,12 +8,13 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
 public class UfsCustomerOutletServiceTempl implements UfsCustomerOutletService {
 
-   private final UfsCustomerOutletRepository customerOutletRepository;
+    private final UfsCustomerOutletRepository customerOutletRepository;
 
     public UfsCustomerOutletServiceTempl(UfsCustomerOutletRepository customerOutletRepository) {
         this.customerOutletRepository = customerOutletRepository;
@@ -26,7 +27,7 @@ public class UfsCustomerOutletServiceTempl implements UfsCustomerOutletService {
 
     @Override
     public UfsCustomerOutlet findById(Long outletId) {
-        return customerOutletRepository.findByIdAndIntrash(outletId,AppConstants.NO);
+        return customerOutletRepository.findByIdAndIntrash(outletId, AppConstants.NO);
     }
 
     @Override
@@ -42,5 +43,14 @@ public class UfsCustomerOutletServiceTempl implements UfsCustomerOutletService {
     @Override
     public List<UfsCustomerOutlet> findByCustomerId(BigDecimal customerId, String intrash) {
         return customerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerId, intrash);
+    }
+
+    @Override
+    public void deleteByCustomerId(BigDecimal customerId) {
+        List<UfsCustomerOutlet> customerOutlets = customerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerId, AppConstants.NO);
+        List<UfsCustomerOutlet> customerOutletsUpdated = customerOutlets.parallelStream().peek(x -> {
+            x.setIntrash(AppConstants.NO);
+        }).collect(Collectors.toList());
+        customerOutletRepository.saveAll(customerOutletsUpdated);
     }
 }

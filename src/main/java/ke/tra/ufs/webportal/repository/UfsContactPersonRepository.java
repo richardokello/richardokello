@@ -8,12 +8,14 @@ import java.util.List;
 
 
 @Repository
-public interface UfsContactPersonRepository extends CrudRepository<UfsContactPerson,Long> {
+public interface UfsContactPersonRepository extends CrudRepository<UfsContactPerson, Long> {
 
-    List<UfsContactPerson> findByCustomerOutletIdIsInAndIntrash(List<Long> outletIds,String intrash);
+    List<UfsContactPerson> findByCustomerOutletIdIsInAndIntrash(List<Long> outletIds, String intrash);
 
-    UfsContactPerson findByUserNameAndIntrash(String username,String intrash);
+    List<UfsContactPerson> findByIdInAndIntrash(List<Long> id, String intrash);
 
-    UfsContactPerson findByIdAndIntrash(Long id,String intrash);
+    UfsContactPerson findByUserNameAndIntrash(String username, String intrash);
+
+    UfsContactPerson findByIdAndIntrash(Long id, String intrash);
 
 }

@@ -19,6 +19,7 @@ import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.utils.CodeGenerator;
 import ke.tra.ufs.webportal.wrappers.AgentTerminationWrapper;
 import ke.tra.ufs.webportal.wrappers.LogExtras;
+import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +40,7 @@ import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping(value = "/customers")
+@CommonsLog
 public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEdittedRecord> {
 
     private final CustomerService customerService;
@@ -494,7 +496,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
                         // update device owner name
                         List<Long> outletids = customerOutlets.stream().map(UfsCustomerOutlet::getId).collect(Collectors.toList());
-                        deviceService.updateDeviceOwnerByOutletId(outletids, entity.getBusinessName());
+                       // deviceService.updateDeviceOwnerByOutletId(outletids, entity.getBusinessName());
 
                         //update director contact, Contact person details
                         deviceService.updateContactPersonsDetails(entity);
@@ -550,17 +552,27 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         }
         Arrays.stream(actions.getIds()).forEach(id -> {
             UfsCustomer customer = this.customerService.findByCustomerId(id);
+            String action = customer.getAction();
+            String actionStatus = customer.getActionStatus();
 
             //terminating customer
-            if ((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
+            if ((action.equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
                 customer.setStatus(AppConstants.STATUS_ACTIVE_STRING);
                 customer.setActionStatus(AppConstants.STATUS_REJECTED);
                 this.customerService.saveCustomer(customer);
                 loggerService.log("Successfully Declined Customer Termination",
                         UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_APPROVE, AppConstants.STATUS_REJECTED, actions.getNotes());
-
             }
-
+            if (action.equals(AppConstants.ACTIVITY_CREATE) && actionStatus.equals(AppConstants.STATUS_REJECTED)) {
+                //approving customer owner
+                List<UfsCustomerOwners> customerOwners = this.ownersService.findOwnersByCustomerIds(new BigDecimal(id));
+                //approving customer outlet
+                List<UfsCustomerOutlet> customerOutlets = this.customerService.findOutletsByCustomerIds(new BigDecimal(id));
+                deviceService.deActivateDevicesByOutlets(customerOutlets, actions.getNotes());
+                ownersService.deactivateByOwnersList(customerOwners);
+                deviceService.delineContactPersons(id, actions.getNotes());
+                outletService.deleteByCustomerId(new BigDecimal(id));
+            }
         });
 
         return resp;

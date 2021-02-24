@@ -1,10 +1,11 @@
 package ke.tra.ufs.webportal.resources;
 
 import ke.axle.chassis.ChasisResource;
+import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.utils.LoggerService;
+import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.CustomerOwnersCrime;
-import ke.tra.ufs.webportal.entities.UfsContactPerson;
 import ke.tra.ufs.webportal.entities.UfsCustomerOwners;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.service.CustomerOwnersService;
@@ -17,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @RestController
@@ -62,5 +66,15 @@ public class CustomerOwnersResource extends ChasisResource<UfsCustomerOwners, Lo
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
+    @Override
+    public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
+        ResponseEntity<ResponseWrapper> resp = super.approveActions(actions);
+        if (!resp.getStatusCode().equals(HttpStatus.OK)) {
+            return resp;
+        }
 
+        List<Long> ownersList = Stream.of(actions.getIds()).collect(Collectors.toList());
+
+        return resp;
+    }
 }

@@ -24,7 +24,9 @@ public interface UfsPosUserRepository extends JpaRepository<UfsPosUser, BigDecim
 
     Optional<UfsPosUser> findFirstByTmsDeviceIdAndCustomerOwnersNotNull(BigDecimal deviceId);
 
-    List<UfsPosUser> findByContactPersonIdAndIntrash(Long contactPersonId,String intrash);
+    List<UfsPosUser> findByContactPersonIdAndIntrash(Long contactPersonId, String intrash);
 
-    UfsPosUser findByTmsDeviceIdAndFirstTimeUserAndIntrash(BigDecimal tmsDeviceId,Short FirstTimeUser,String intrash);
+    UfsPosUser findByTmsDeviceIdAndFirstTimeUserAndIntrash(BigDecimal tmsDeviceId, Short FirstTimeUser, String intrash);
+
+    List<UfsPosUser> findByCustomerOwnersIdInAndIntrash(List<Long> customerOwnersId, String intrash);
 }

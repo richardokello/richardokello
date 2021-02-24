@@ -16,4 +16,6 @@ public interface UfsCustomerOutletService {
     public UfsCustomerOutlet findByOutletId(Long id);
 
     List<UfsCustomerOutlet> findByCustomerId(BigDecimal customerId, String intrash);
+
+    void deleteByCustomerId(BigDecimal customerId);
 }

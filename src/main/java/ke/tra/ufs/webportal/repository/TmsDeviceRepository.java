@@ -25,6 +25,8 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
 
     List<TmsDevice> findByOutletIdsInAndIntrash(List<BigDecimal> outletIds,String intrash);
 
+    List<TmsDevice> findByDeviceIdInAndIntrash(List<BigDecimal> deviceId,String intrash);
+
     /**
      * @param status
      * @param intrash

@@ -5,10 +5,7 @@ import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.utils.SharedMethods;
 import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.entities.wrapper.MenuFileRequest;
-import ke.tra.ufs.webportal.repository.TmsDeviceRepository;
-import ke.tra.ufs.webportal.repository.TmsDeviceTidCurrencyRepository;
-import ke.tra.ufs.webportal.repository.TmsDeviceTidRepository;
-import ke.tra.ufs.webportal.repository.WhitelistRepository;
+import ke.tra.ufs.webportal.repository.*;
 import ke.tra.ufs.webportal.service.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -39,8 +36,11 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     private final ParDeviceSelectedOptionsService parDeviceSelectedOptionsService;
     private final SchedulerService schedulerService;
     private final UfsCustomerOutletService outletService;
+    private final UfsContactPersonRepository contactPersonRepository;
+    private final UfsCustomerOutletRepository customerOutletRepository;
+    private final UfsPosUserRepository ufsPosUserRepository;
 
-    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository, TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository, ParGlobalMasterProfileService parGlobalMasterProfileService, ParFileMenuService parFileMenuService, ParFileConfigService parFileConfigService, CustomerConfigFileService customerConfigFileService, ParDeviceSelectedOptionsService parDeviceSelectedOptionsService, SchedulerService schedulerService, UfsCustomerOutletService outletService) {
+    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository, TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository, ParGlobalMasterProfileService parGlobalMasterProfileService, ParFileMenuService parFileMenuService, ParFileConfigService parFileConfigService, CustomerConfigFileService customerConfigFileService, ParDeviceSelectedOptionsService parDeviceSelectedOptionsService, SchedulerService schedulerService, UfsCustomerOutletService outletService, UfsContactPersonRepository contactPersonRepository, UfsCustomerOutletRepository customerOutletRepository, UfsPosUserRepository ufsPosUserRepository) {
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.loggerService = loggerService;
         this.posUserService = posUserService;
@@ -58,6 +58,9 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         this.parDeviceSelectedOptionsService = parDeviceSelectedOptionsService;
         this.schedulerService = schedulerService;
         this.outletService = outletService;
+        this.contactPersonRepository = contactPersonRepository;
+        this.customerOutletRepository = customerOutletRepository;
+        this.ufsPosUserRepository = ufsPosUserRepository;
     }
 
     @Override
@@ -201,35 +204,56 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         devices.parallelStream().forEach(device -> {
             processAddTaskTodevice(device, rootPath + "/devices/" + device.getDeviceId() + "/");
         });
-
-        updateDeviceDetails(outletsFiltered);
     }
 
+    @Override
     @Async
-    public void updateDeviceDetails(List<BigDecimal> outletsIds) {
-        outletsIds.parallelStream().forEach(outletId -> {
-            UfsCustomerOutlet outlet = outletService.findById(outletId.longValue());
-            UfsCustomer customer = outlet.getCustomerId();
-            List<BigDecimal> outletsFiltered = new ArrayList<>();
-            outletsFiltered.add(outletId);
-            List<TmsDevice> devices = findByOutletIds(outletsFiltered);
-            devices.parallelStream().forEach(device -> {
-                processUpdateDeviceDetails(device, customer);
-            });
-        });
+    public void deActivateDevicesByOutlets(List<UfsCustomerOutlet> customerOutlets, String notes) {
+        List<BigDecimal> outletIds = customerOutlets.stream().map(x -> new BigDecimal(x.getId())).collect(Collectors.toList());
+        List<TmsDevice> devices = findByOutletIds(outletIds);
+
+        List<TmsDevice> updateDevices = devices.stream().peek(x -> {
+            x.setActionStatus(AppConstants.STATUS_DECLINED);
+            x.setStatus(AppConstants.STATUS_INACTIVE);
+            x.setIntrash(AppConstants.YES);
+        }).collect(Collectors.toList());
+
+        tmsDeviceRepository.saveAll(updateDevices);
+        tmsDeviceTidRepository.deleteAllByDeviceId(updateDevices.stream().map(x -> x.getDeviceId().longValue()).collect(Collectors.toList()));
+
     }
 
-    private void processUpdateDeviceDetails(TmsDevice device, UfsCustomer customer) {
-        device.setCustomerOwnerName(customer.getBusinessName());
-        device.setDeviceFieldName(customer.getBusinessName());
+    @Override
+    @Async
+    public void delineContactPersons(Long id, String notes) {
+        List<UfsContactPerson> contactPerson = this.contactPersonService.getAllContactPersonByCustomerId(BigDecimal.valueOf(id));
+        List<UfsContactPerson> contactPersonUpdate = contactPerson.stream().peek(x -> {
+            x.setActionStatus(AppConstants.STATUS_DECLINED);
+            x.setIntrash(AppConstants.YES);
+        }).collect(Collectors.toList());
+        contactPersonRepository.saveAll(contactPersonUpdate);
+    }
+
+    @Override
+    @Async
+    public void updateDeviceOwnersByContactPersons(List<Long> contactPersonId) {
+        List<UfsContactPerson> cntPerson = contactPersonRepository.findByIdInAndIntrash(contactPersonId, AppConstants.NO);
+        for (UfsContactPerson person : cntPerson) {
+            List<UfsPosUser> posUsers = ufsPosUserRepository.findByContactPersonIdAndIntrash(person.getId(), AppConstants.NO);
+            List<BigDecimal> devices = posUsers.stream().map(UfsPosUser::getTmsDeviceId).collect(Collectors.toList());
+            List<TmsDevice> deviceModel = tmsDeviceRepository.findByDeviceIdInAndIntrash(devices, AppConstants.NO);
+            deviceModel.forEach(dv -> {
+                processUpdateDeviceDetails(dv, person.getName());
+            });
+
+        }
+    }
+
+
+    private void processUpdateDeviceDetails(TmsDevice device, String customername) {
+        device.setCustomerOwnerName(customername);
+        device.setDeviceFieldName(customername);
         tmsDeviceRepository.save(device);
-        List<TmsDeviceTids> tidsmids = findByDeviceIds(device.getDeviceId().longValue());
-        tidsmids.forEach(tid -> {
-            if (customer.getMid() != null) {
-                tid.setMid(customer.getMid());
-                tmsDeviceTidRepository.save(tid);
-            }
-        });
     }
 
     @Async

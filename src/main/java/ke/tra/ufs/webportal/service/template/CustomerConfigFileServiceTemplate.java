@@ -1,7 +1,5 @@
 package ke.tra.ufs.webportal.service.template;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ke.axle.chassis.utils.LoggerService;
 import ke.tra.ufs.webportal.entities.*;
 import ke.tra.ufs.webportal.repository.*;
@@ -11,7 +9,6 @@ import ke.tra.ufs.webportal.service.UfsCustomerOutletService;
 import ke.tra.ufs.webportal.utils.SharedMethods;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -44,7 +41,6 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
     }
 
     @Override
-    @Async
     public void generateCustomerFile(BigDecimal deviceId, String filePath) {
         TmsDevice tmsDevice = tmsDeviceRepository.findByDeviceIdAndIntrash(deviceId, "NO");
         if (tmsDevice == null) {

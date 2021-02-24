@@ -18,4 +18,7 @@ public interface CustomerOwnersService {
 
     UfsCustomerOwners saveOwner(UfsCustomerOwners customerOwners);
 
+    void deactivateByOwnersList(List<UfsCustomerOwners> customerOwners);
+
+
 }

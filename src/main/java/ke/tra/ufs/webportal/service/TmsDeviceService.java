@@ -31,4 +31,10 @@ public interface TmsDeviceService {
     void updateContactPersonsDetails(UfsCustomer entity);
 
     void addDevicesTaskByOutletsIds(List<Long> outletsIds);
+
+    void deActivateDevicesByOutlets(List<UfsCustomerOutlet> customerOutlets, String notes);
+
+    void delineContactPersons(Long id, String notes);
+
+    void updateDeviceOwnersByContactPersons(List<Long> contactPersonId);
 }
