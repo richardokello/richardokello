@@ -580,7 +580,7 @@ public class OnboardingResource {
                 //check where TID and MID exists
                 if (deviceService.checkIfTidExistsByDeviceIds(tidmid.getTid(), tidmid.getDeviceIds())) {
                     String message = "Updating Device failed due to the provided"
-                            + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") and matched to another device";
+                            + "TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") and matched to another device";
                     loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
                     throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
                 }
@@ -655,6 +655,10 @@ public class OnboardingResource {
         // update device options
         parDeviceSelectedOptionsService.deleteAll(tmsDevice.getDeviceId());
         saveAllSelectedOptions(tmsDevice.getDeviceId(), onboardWrapper.getDeviceOptionsIds());
+
+        if (onboardWrapper.getMasterProfileId() != null) {
+            createSchedule(onboardWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
+        }
 
         response.setData(tmsDevice);
         loggerService.logUpdate("Updating Device", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
