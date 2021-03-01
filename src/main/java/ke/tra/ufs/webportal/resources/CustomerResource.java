@@ -105,14 +105,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 throw new GeneralBadRequest("Business Name Already Exists");
             }
         }
-
-        //check MID
-        if (Objects.nonNull(customerOnboarding.getMid())) {
-            if (customerRepository.findByMidAndIntrash(customerOnboarding.getMid(), AppConstants.INTRASH_NO).isPresent()) {
-                throw new GeneralBadRequest("MID Already Exists");
-            }
-        }
-
         // check Local registration number
         if (Objects.nonNull(customerOnboarding.getLocalRegistrationNumber())) {
             if (customerRepository.findByLocalRegistrationNumberAndIntrash(customerOnboarding.getLocalRegistrationNumber(), AppConstants.INTRASH_NO).isPresent()) {
