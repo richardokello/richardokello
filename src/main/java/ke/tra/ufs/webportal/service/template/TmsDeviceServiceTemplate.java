@@ -249,6 +249,11 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         }
     }
 
+    @Override
+    public Integer findByMidCount(String mid) {
+        return tmsDeviceTidCurrencyRepository.findByMid(mid);
+    }
+
 
     private void processUpdateDeviceDetails(TmsDevice device, String customername) {
         device.setCustomerOwnerName(customername);

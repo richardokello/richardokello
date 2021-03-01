@@ -105,4 +105,10 @@ public class CustomerServiceTemplate implements CustomerService {
         customer.setMid(String.join(";", mids));
         saveCustomer(customer);
     }
+
+    @Override
+    public boolean findIfMidIsActive(String mid, String intrashNo) {
+        Integer midCount =deviceService.findByMidCount(mid);
+        return midCount>0;
+    }
 }

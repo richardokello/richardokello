@@ -6,6 +6,7 @@ import ke.tra.ufs.webportal.entities.UfsCustomerOwners;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomerService {
 
@@ -28,4 +29,6 @@ public interface CustomerService {
     void updateCustomersMids();
 
     void updateCustomerMidPerId(UfsCustomer customer);
+
+    boolean findIfMidIsActive(String mid, String intrashNo);
 }

@@ -99,6 +99,12 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             }
         }
 
+        if(customerOnboarding.getMid()!=null){
+            if (customerService.findIfMidIsActive(customerOnboarding.getMid(), AppConstants.INTRASH_NO)) {
+                throw new GeneralBadRequest("MID already Exists");
+            }
+        }
+
         //check business name
         if (Objects.nonNull(customerOnboarding.getBusinessName())) {
             if (customerRepository.findByBusinessNameAndIntrash(customerOnboarding.getBusinessName(), AppConstants.INTRASH_NO).isPresent()) {

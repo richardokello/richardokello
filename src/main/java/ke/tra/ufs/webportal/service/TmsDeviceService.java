@@ -37,4 +37,6 @@ public interface TmsDeviceService {
     void delineContactPersons(Long id, String notes);
 
     void updateDeviceOwnersByContactPersons(List<Long> contactPersonId);
+
+    Integer findByMidCount(String mid);
 }
