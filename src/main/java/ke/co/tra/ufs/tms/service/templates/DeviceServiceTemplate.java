@@ -30,7 +30,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -927,6 +926,26 @@ public class DeviceServiceTemplate implements DeviceService {
         ent.forEach(this::updateCustomersMid);
     }
 
+    @Override
+    public boolean checkIfMidExistsOnOtherCustomer(String mid, BigDecimal outletIds) {
+        UfsCustomerOutlet outlet = customerOutletRepository.findById(outletIds.longValue()).get();
+        BigDecimal customerId = outlet.getCustomerIds();
+
+        List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMid(mid);
+        if (midQuery.size() < 1) {
+            return false;
+        }
+
+        List<TmsDevice> deviceIds = midQuery.stream().map(TmsDeviceTidsMids::getDeviceId).collect(Collectors.toList());
+        List<UfsCustomerOutlet> outlets = customerOutletRepository.findAllByIdIn(deviceIds.stream().map(x -> x.getOutletIds().longValue()).collect(Collectors.toList()));
+        Set<BigDecimal> customerIds = outlets.stream().map(UfsCustomerOutlet::getCustomerIds).collect(Collectors.toSet());
+        if(customerIds.size()>1){
+            return true;
+        }
+
+        return !customerIds.contains(customerId);
+    }
+
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {
         Type typeOfObjectsList = new TypeToken<ArrayList<BigDecimal>>() {
         }.getType();
@@ -967,10 +986,10 @@ public class DeviceServiceTemplate implements DeviceService {
             UfsCustomerOutlet outlet = customerOutletRepository.findById(deviceId.getOutletIds().longValue()).get();
             UfsCustomer customer = outlet.getCustomerId();
             List<TmsDevice> devices = getDevicesByCustomerId(new BigDecimal(customer.getId()));
-            TreeSet<String> customerMidSet =  new TreeSet<>();
-            List<TmsDeviceTidsMids> tidsMids = tmsDeviceTidRepository.findAllByDeviceIdIn(devices.stream().map(x->x.getDeviceId().longValue()).collect(Collectors.toList()));
+            TreeSet<String> customerMidSet = new TreeSet<>();
+            List<TmsDeviceTidsMids> tidsMids = tmsDeviceTidRepository.findAllByDeviceIdIn(devices.stream().map(x -> x.getDeviceId().longValue()).collect(Collectors.toList()));
             for (TmsDeviceTidsMids tidmid : tidsMids) {
-                if(tidmid.getMid()!=null) {
+                if (tidmid.getMid() != null) {
                     customerMidSet.add(tidmid.getMid());
                 }
             }

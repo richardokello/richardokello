@@ -479,4 +479,5 @@ public interface DeviceService {
 
     void updateCustomerTidMid(String serialNo);
 
+    boolean checkIfMidExistsOnOtherCustomer(String mid, BigDecimal outletIds);
 }

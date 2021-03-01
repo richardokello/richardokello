@@ -43,4 +43,7 @@ public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsM
     @Query("SELECT u from TmsDeviceTidsMids u where u.deviceIds IN (?1)")
     List<TmsDeviceTidsMids> findAllByDeviceIdIn(List<Long> device);
 
+    @Query("SELECT u from TmsDeviceTidsMids u where u.mid=?1")
+    List<TmsDeviceTidsMids> findAllByMid(String mid);
+
 }

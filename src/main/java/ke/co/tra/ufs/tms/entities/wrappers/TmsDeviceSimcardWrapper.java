@@ -7,12 +7,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TmsDeviceSimcardWrapper {
-
     private String simProvider;
-    private String simPhoneNumber;
     private String simSerialNumber;
-
-
-
-
 }

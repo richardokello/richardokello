@@ -138,12 +138,15 @@ public class OnboardingResource {
                 //check where TID and MID exists
                 if (deviceService.checkIfTidExists(tidmid.getTid())) {
                     String message = "Creating new Device failed due to the provided"
-                            + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                            + "TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
                     loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
                     throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
                 }
             }
         }
+
+        ValidateMid(onboardWrapper);
+
 
         TmsDevice tmsDevice = new TmsDevice();
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
@@ -200,7 +203,7 @@ public class OnboardingResource {
                 tmsDeviceSimcard.setSerialNo(obj.getSerialNo());
                 deviceService.saveTmsDeviceSimcard(tmsDeviceSimcard);
                 String mnoProvider = this.mnoService.findMno(obj.getMnoIds()).get().getMnoName();
-                deviceSims.add(new TmsDeviceSimcardWrapper(mnoProvider, obj.getMsisdn(), obj.getSerialNo()));
+                deviceSims.add(new TmsDeviceSimcardWrapper(mnoProvider, obj.getSerialNo()));
             });
         }
 
@@ -408,7 +411,7 @@ public class OnboardingResource {
                 tmsDeviceSimcard.setSerialNo(obj.getSerialNo());
                 deviceService.saveTmsDeviceSimcard(tmsDeviceSimcard);
                 String mnoProvider = this.mnoService.findMno(obj.getMnoIds()).get().getMnoName();
-                deviceSims.add(new TmsDeviceSimcardWrapper(mnoProvider, obj.getMsisdn(), obj.getSerialNo()));
+                deviceSims.add(new TmsDeviceSimcardWrapper(mnoProvider, obj.getSerialNo()));
             });
         }
 
@@ -587,6 +590,8 @@ public class OnboardingResource {
             }
         }
 
+        ValidateMid(onboardWrapper);
+
         if (Objects.nonNull(onboardWrapper.getTmsDeviceSimcards())) {
             deviceSimcardRepository.deleteAllByDeviceId(tmsDevice);
             onboardWrapper.getTmsDeviceSimcards().forEach(obj -> {
@@ -665,6 +670,21 @@ public class OnboardingResource {
         response.setCode(200);
 
         return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    private void ValidateMid(@RequestBody @ApiParam("Ignore status and mnoId it will be used when fetching MNOs") @Valid OnboardWrapper onboardWrapper) throws AlreadyExists {
+        if (Objects.nonNull(onboardWrapper.getOutletIds()) || onboardWrapper.getOutletIds() != null) {
+            if (onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
+                for (TmsDeviceTidsMids tidmid : onboardWrapper.getTmsDeviceTidsMids()) {
+                    if (deviceService.checkIfMidExistsOnOtherCustomer(tidmid.getMid(), onboardWrapper.getOutletIds())) {
+                        String message = "Creating new Device failed due to the provided"
+                                + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                        loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+                        throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
+                    }
+                }
+            }
+        }
     }
 
     @ApiOperation(value = "Add Device Tasks", notes = "used to add a device tasks")

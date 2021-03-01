@@ -8,13 +8,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
-public interface UfsCustomerOutletRepository extends CrudRepository<UfsCustomerOutlet,Long> {
+public interface UfsCustomerOutletRepository extends CrudRepository<UfsCustomerOutlet, Long> {
 
     public UfsCustomerOutlet findBycustomerIds(BigDecimal customerId);
 
-    public UfsCustomerOutlet findByIdAndIntrash(Long id,String intrash);
+    public UfsCustomerOutlet findByIdAndIntrash(Long id, String intrash);
 
-    public UfsCustomerOutlet findByCustomerIdsAndIntrash(BigDecimal customerId,String intrash);
+    public UfsCustomerOutlet findByCustomerIdsAndIntrash(BigDecimal customerId, String intrash);
 
     List<UfsCustomerOutlet> findOutletsByCustomerIdsAndIntrash(BigDecimal customerId, String intrash);
+
+    List<UfsCustomerOutlet> findAllByIdIn(List<Long> id);
 }
