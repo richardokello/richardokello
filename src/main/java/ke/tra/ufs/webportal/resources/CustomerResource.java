@@ -92,63 +92,44 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
-        //BusinessLicenceNumber check
-        if (Objects.nonNull(customerOnboarding.getBusinessLicenseNumber())) {
-            if (customerRepository.findByBusinessLicenceNumberAndIntrash(customerOnboarding.getBusinessLicenseNumber(), AppConstants.INTRASH_NO).isPresent()) {
-                throw new GeneralBadRequest("Business Licence Already Exists");
-            }
-        }
-
-        if(customerOnboarding.getMid()!=null){
+        if (customerOnboarding.getMid() != null) {
             if (customerService.findIfMidIsActive(customerOnboarding.getMid(), AppConstants.INTRASH_NO)) {
-                throw new GeneralBadRequest("MID already Exists");
+                loggerService.log("MID already Exists",
+                        UfsCustomer.class.getSimpleName(), null, AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Creating new customer category failed due to MID already Exists");
+                response.setMessage("MID already Exists");
+                response.setCode(HttpStatus.BAD_REQUEST.value());
+                response.setData(SharedMethods.getFieldMapErrors(validation));
+                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
 
         //check business name
-        if (Objects.nonNull(customerOnboarding.getBusinessName())) {
+        if (customerOnboarding.getBusinessName() != null) {
             if (customerRepository.findByBusinessNameAndIntrash(customerOnboarding.getBusinessName(), AppConstants.INTRASH_NO).isPresent()) {
-                throw new GeneralBadRequest("Business Name Already Exists");
-            }
-        }
-        // check Local registration number
-        if (Objects.nonNull(customerOnboarding.getLocalRegistrationNumber())) {
-            if (customerRepository.findByLocalRegistrationNumberAndIntrash(customerOnboarding.getLocalRegistrationNumber(), AppConstants.INTRASH_NO).isPresent()) {
-                throw new GeneralBadRequest("Local Registration Already Exists");
-            }
-        }
-
-        if (!customerOnboarding.getDirectors().isEmpty()) {
-            for (BusinessDirectorsWrapper director : customerOnboarding.getDirectors()) {
-                if (director.getUserName() != null) {
-                    UfsCustomerOwners customerOwners = ownersService.findByUsername(director.getUserName());
-                    if (Objects.nonNull(customerOwners)) {
-                        throw new GeneralBadRequest("Username Already in Use");
-                    }
-                }
+                loggerService.log("Business Name Already Exists",
+                        UfsCustomer.class.getSimpleName(), null, AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Creating new customer category failed due to Business Name Already Exists");
+                response.setMessage("Business Name Already Exists");
+                response.setCode(HttpStatus.BAD_REQUEST.value());
+                response.setData(SharedMethods.getFieldMapErrors(validation));
+                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
 
-        if (!customerOnboarding.getOutletsInfo().isEmpty()) {
-            for (OutletsInformationWrapper outlet : customerOnboarding.getOutletsInfo()) {
-                if (!outlet.getContactPerson().isEmpty()) {
-                    for (OutletContactPerson outletContactPerson : outlet.getContactPerson()) {
-                        if (outletContactPerson.getUserName() != null) {
-                            UfsContactPerson contactPersonCheck = contactPersonService.findByUsername(outletContactPerson.getUserName());
-                            if (Objects.nonNull(contactPersonCheck)) {
-                                throw new GeneralBadRequest("Username Already in Use");
-                            }
-                        }
-                    }
-                }
-            }
+        boolean isValidUsername = validateUsernames(customerOnboarding);
+        if (isValidUsername) {
+            loggerService.log("Username Already Exists",
+                    UfsCustomer.class.getSimpleName(), null, AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Creating new customer category failed due to Username Already Exists");
+            response.setMessage("Username Already Exists");
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setData(SharedMethods.getFieldMapErrors(validation));
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
+
 
         UfsAuthentication userAuth = urepo.findByusernameIgnoreCase(a.getName());
         String fullName = userAuth.getUser().getFullName();
 
         //Errors Occurred While Onboarding Customer
-        ArrayList<String> errors = new ArrayList<>();
 
         //saving customer Info
         UfsCustomer customer = new UfsCustomer();
@@ -181,13 +162,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                     director.setUserName(null);
                 } else {
                     c += 1;
-                }
-                if (director.getUserName() != null) {
-                    UfsCustomerOwners customerOwners = ownersService.findByUsername(director.getUserName());
-                    if (Objects.nonNull(customerOwners)) {
-                        errors.add(director.getUserName());
-                        continue;
-                    }
                 }
 
                 if (director.getDirectorName() != null && director.getDirectorName().length() != 0) {
@@ -230,7 +204,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
         //saving outlets
         if (!customerOnboarding.getOutletsInfo().isEmpty()) {
-            customerOnboarding.getOutletsInfo().stream().forEach(outlet -> {
+            customerOnboarding.getOutletsInfo().forEach(outlet -> {
                 UfsCustomerOutlet custOutlet = new UfsCustomerOutlet();
                 custOutlet.setCustomerIds(BigDecimal.valueOf(customer.getId()));
                 custOutlet.setBankBranchIds(outlet.getBankBranchId());
@@ -258,16 +232,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                         } else {
                             count += 1;
                         }
-
-
-                        if (outletContactPerson.getUserName() != null) {
-                            UfsContactPerson contactPersonCheck = contactPersonService.findByUsername(outletContactPerson.getUserName());
-                            if (Objects.nonNull(contactPersonCheck)) {
-                                errors.add(outletContactPerson.getUserName());
-                                continue;
-                            }
-                        }
-
 
                         if (outletContactPerson.getContactPersonName() != null && outletContactPerson.getContactPersonName().length() != 0) {
                             count += 1;
@@ -303,15 +267,38 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             });
 
         }
-        if (errors.size() > 0) {
-            throw new GeneralBadRequest("Agent Owner/Contact Person Username Already Exists:" + errors);
-        } else {
-            response.setCode(201);
-            response.setMessage("Customer Onboarded successfully");
-            response.setData(customer);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+        response.setCode(201);
+        response.setMessage("Customer Onboarded successfully");
+        response.setData(customer);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
+
+    private boolean validateUsernames(CustomerOnboardingWrapper customerOnboarding) {
+        final Set<String> usernames = new LinkedHashSet<>();
+
+        if (customerOnboarding.getDirectors() != null) {
+            customerOnboarding.getDirectors().forEach(director -> {
+                usernames.add(director.getUserName());
+            });
         }
 
+        List<UfsCustomerOwners> customerOwners = ownersService.findByUsernameIn(usernames);
+
+        if (customerOnboarding.getOutletsInfo() != null) {
+            for (OutletsInformationWrapper outlet : customerOnboarding.getOutletsInfo()) {
+                if (outlet.getContactPerson() != null) {
+                    outlet.getContactPerson().forEach(person -> {
+                        if (person.getUserName() != null) {
+                            usernames.add(person.getUserName());
+                        }
+                    });
+                }
+            }
+        }
+        List<UfsContactPerson> contactPeople = contactPersonService.findByUsernameIn(usernames);
+
+        return customerOwners.size() > 0 || contactPeople.size() > 0;
     }
 
 
@@ -494,7 +481,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
                         // update device owner name
                         List<Long> outletids = customerOutlets.stream().map(UfsCustomerOutlet::getId).collect(Collectors.toList());
-                       // deviceService.updateDeviceOwnerByOutletId(outletids, entity.getBusinessName());
+                        // deviceService.updateDeviceOwnerByOutletId(outletids, entity.getBusinessName());
 
                         //update director contact, Contact person details
                         deviceService.updateContactPersonsDetails(entity);

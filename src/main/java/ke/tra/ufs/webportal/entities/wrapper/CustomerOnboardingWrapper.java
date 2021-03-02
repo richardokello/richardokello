@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class CustomerOnboardingWrapper {
@@ -30,7 +30,7 @@ public class CustomerOnboardingWrapper {
     private String businessPrimaryContactNo;
     private String businessSecondaryContactNo;
     private String businessEmailAddress;
-    private List<BusinessDirectorsWrapper> directors;
-    private List<OutletsInformationWrapper> outletsInfo;
+    private Set<BusinessDirectorsWrapper> directors;
+    private Set<OutletsInformationWrapper> outletsInfo;
     private String mid;
 }

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +40,11 @@ public class CustomerOwnerServiceTemplate implements CustomerOwnersService {
     @Override
     public UfsCustomerOwners findByUsername(String username) {
         return ownerRepository.findByUserNameAndIntrash(username, AppConstants.INTRASH_NO);
+    }
+
+    @Override
+    public List<UfsCustomerOwners> findByUsernameIn(Set<String> username) {
+        return ownerRepository.findByUserNameInAndIntrash(username, AppConstants.INTRASH_NO);
     }
 
     @Override

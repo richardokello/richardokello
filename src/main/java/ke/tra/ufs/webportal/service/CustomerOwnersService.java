@@ -5,6 +5,7 @@ import ke.tra.ufs.webportal.entities.UfsCustomerOwners;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 public interface CustomerOwnersService {
 
@@ -13,6 +14,8 @@ public interface CustomerOwnersService {
     UfsCustomerOwners findByCustomerIds(BigDecimal customerIds);
 
     UfsCustomerOwners findByUsername(String username);
+
+    List<UfsCustomerOwners> findByUsernameIn(Set<String> username);
 
     List<UfsCustomerOwners> findOwnersByCustomerIds(BigDecimal customerIds);
 
