@@ -251,7 +251,7 @@ public class DevicesResource {
 
         loggerService.logApprove("Done approving new Device serial (" + entity.getSerialNo() + ")",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(), AppConstants.STATUS_COMPLETED, notes);
-
+        deviceService.updateCustomerTidMid(entity.getSerialNo());
         // send credentials for customer owner
         UfsPosUser posUser = posUserService.findByDeviceIdAndFirstTime(entity.getDeviceId(), (short) 1);
         if (Objects.nonNull(posUser)) {

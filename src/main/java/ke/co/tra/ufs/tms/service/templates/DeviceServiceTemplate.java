@@ -257,6 +257,15 @@ public class DeviceServiceTemplate implements DeviceService {
     }
 
     @Override
+    public boolean isDeviceOnBoarded(String serialNo) {
+        List<String> actions = new ArrayList<>();
+        actions.add(AppConstants.ACTIVITY_DECOMMISSION);
+        actions.add(AppConstants.ACTIVITY_RELEASE);
+        List<TmsDevice> devices = deviceRepository.findBySerialNoAndIntrash(serialNo, AppConstants.NO, actions);
+        return devices.size()>0;
+    }
+
+    @Override
     public Optional<TmsDevice> getDevice(BigDecimal deviceId) {
         return deviceRepository.findById(deviceId);
     }

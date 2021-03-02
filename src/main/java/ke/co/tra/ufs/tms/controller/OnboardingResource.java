@@ -341,7 +341,7 @@ public class OnboardingResource {
                 //check where TID and MID exists
                 if (deviceService.checkIfTidExists(tidmid.getTid())) {
                     String message = "Creating new Device failed due to the provided"
-                            + "TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                            + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
                     loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
                     throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
                 }
@@ -759,18 +759,15 @@ public class OnboardingResource {
         } else {
             if (deviceService.getWhitelist(tmsDevice.getSerialNo()) == null) {
                 loggerService.logCreate("Creating new Device failed due to the provided"
-                        + "Device Not white listed (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
+                        + " Device Not white listed (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
                 throw new GeneralBadRequest("Device Not white listed", HttpStatus.CONFLICT);
             }
 
-            TmsDevice dv = deviceService.getDevicebySerial(tmsDevice.getSerialNo());
-            if (dv != null) {
-
-                if (!dv.getStatus().equals("Inactive")) {
-                    loggerService.logCreate("Creating new Device failed due to the provided"
-                            + "Serial Number already Exists (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
-                    throw new GeneralBadRequest("Serial Number already Exists", HttpStatus.CONFLICT);
-                }
+            boolean dv = deviceService.isDeviceOnBoarded(tmsDevice.getSerialNo());
+            if (dv) {
+                loggerService.logCreate("Creating new Device failed due to the provided"
+                        + " Serial Number already Exists (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
+                throw new GeneralBadRequest("Serial Number already Exists", HttpStatus.CONFLICT);
             }
         }
     }

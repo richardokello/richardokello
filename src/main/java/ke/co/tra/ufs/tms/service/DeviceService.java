@@ -74,6 +74,9 @@ public interface DeviceService {
      */
     public TmsDevice getDevicebySerial(String serialNo);
 
+
+    public boolean isDeviceOnBoarded(String serialNo);
+
     /**
      * @param serialNo
      * @return
