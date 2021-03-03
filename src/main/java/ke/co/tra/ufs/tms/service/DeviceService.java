@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Cornelius M
@@ -482,5 +483,5 @@ public interface DeviceService {
 
     void updateCustomerTidMid(String serialNo);
 
-    boolean checkIfMidExistsOnOtherCustomer(String mid, BigDecimal outletIds);
+    boolean checkIfMidExistsOnOtherCustomer(Set<String> mid, BigDecimal outletIds);
 }

@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -18,12 +18,12 @@ public class DevicesWrapper {
     BigDecimal appId;
     @NotNull
     String serialNo;
-    List<TmsDeviceTidsMids> tmsDeviceTidsMids;
-    List<TmsDeviceSimcard> tmsDeviceSimcards;
+    Set<TmsDeviceTidsMids> tmsDeviceTidsMids;
+    Set<TmsDeviceSimcard> tmsDeviceSimcards;
     String customerOwnerName;
     String posRole;
     BigDecimal masterProfileId;
-    List<BigDecimal> deviceOptionsIds;
+    Set<BigDecimal> deviceOptionsIds;
     String values;
     MultipartFile[] file;
     BigDecimal productId;

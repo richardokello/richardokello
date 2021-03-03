@@ -258,10 +258,12 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     public boolean isDeviceOnBoarded(String serialNo) {
+        log.error("Devices Serial===>"+serialNo);
         List<String> actions = new ArrayList<>();
         actions.add(AppConstants.ACTIVITY_DECOMMISSION);
         actions.add(AppConstants.ACTIVITY_RELEASE);
         List<TmsDevice> devices = deviceRepository.findBySerialNoAndIntrash(serialNo, AppConstants.NO, actions);
+        log.error("Devices Found===>"+devices.size());
         return devices.size()>0;
     }
 
@@ -936,11 +938,11 @@ public class DeviceServiceTemplate implements DeviceService {
     }
 
     @Override
-    public boolean checkIfMidExistsOnOtherCustomer(String mid, BigDecimal outletIds) {
+    public boolean checkIfMidExistsOnOtherCustomer(Set<String> mid, BigDecimal outletIds) {
         UfsCustomerOutlet outlet = customerOutletRepository.findById(outletIds.longValue()).get();
         BigDecimal customerId = outlet.getCustomerIds();
 
-        List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMid(mid);
+        List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMidIn(mid);
         if (midQuery.size() < 1) {
             return false;
         }

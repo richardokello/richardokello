@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsMids, Long> {
@@ -45,5 +46,8 @@ public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsM
 
     @Query("SELECT u from TmsDeviceTidsMids u where u.mid=?1")
     List<TmsDeviceTidsMids> findAllByMid(String mid);
+
+    @Query("SELECT u from TmsDeviceTidsMids u where u.mid IN (?1)")
+    List<TmsDeviceTidsMids> findAllByMidIn(Set<String> mid);
 
 }
