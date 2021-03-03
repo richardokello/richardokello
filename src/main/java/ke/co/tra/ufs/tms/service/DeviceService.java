@@ -484,4 +484,8 @@ public interface DeviceService {
     void updateCustomerTidMid(String serialNo);
 
     boolean checkIfMidExistsOnOtherCustomer(Set<String> mid, BigDecimal outletIds);
+
+    boolean checkIfMidExistsWithMultipleCurrencies(Set<TmsDeviceTidsMids> tmsDeviceTidsMids, Set<String> mids);
+
+    boolean checkIfMidExistsOnOtherCustomerByCustomerId(Set<String> mids, Long customerId);
 }

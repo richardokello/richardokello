@@ -136,7 +136,7 @@ public class OnboardingResource {
         boolean isvalidMid = ValidateMid(onboardWrapper);
         if(isvalidMid){
             String message = "Creating new Device failed due to the provided"
-                    + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                    + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") or assigned to another currency";
             loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
             response.setCode(400);
             response.setMessage(message);
@@ -340,8 +340,8 @@ public class OnboardingResource {
         }
         boolean isvalidMid = ValidateMidAssignMerchant(onboardWrapper);
         if(isvalidMid){
-            String message = "Creating new Device failed due to the provided"
-                    + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+            String message = "Creating new Device failed due to the provided "
+                    + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") or assigned to another currency";
             loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
             response.setCode(400);
             response.setMessage(message);
@@ -496,7 +496,6 @@ public class OnboardingResource {
                 }
                 posUserService.savePosUser(posUser);
             }
-
         }
 
 
@@ -660,15 +659,23 @@ public class OnboardingResource {
     private boolean ValidateMid(OnboardWrapper onboardWrapper) {
         if (onboardWrapper.getOutletIds() != null) {
             Set<String> mids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getMid).collect(Collectors.toSet());
-            return deviceService.checkIfMidExistsOnOtherCustomer(mids, onboardWrapper.getOutletIds());
+            boolean exist = deviceService.checkIfMidExistsOnOtherCustomer(mids, onboardWrapper.getOutletIds());
+            if(!exist){
+                return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
+            }
+            return exist;
         }
         return false;
     }
 
     private boolean ValidateMidAssignMerchant(MerchantDeviceOnboard onboardWrapper) {
-        if (onboardWrapper.getOutletIds() != null) {
+        if (onboardWrapper.getTmsDeviceTidsMids() != null) {
             Set<String> mids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getMid).collect(Collectors.toSet());
-            return deviceService.checkIfMidExistsOnOtherCustomer(mids, new BigDecimal(onboardWrapper.getOutletIds()));
+            boolean exist = deviceService.checkIfMidExistsOnOtherCustomerByCustomerId(mids, onboardWrapper.getCustomerId());
+            if(!exist){
+                return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
+            }
+            return exist;
         }
         return false;
     }

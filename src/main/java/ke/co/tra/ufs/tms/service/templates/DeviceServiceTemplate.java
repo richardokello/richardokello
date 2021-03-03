@@ -258,13 +258,13 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     public boolean isDeviceOnBoarded(String serialNo) {
-        log.error("Devices Serial===>"+serialNo);
+        log.error("Devices Serial===>" + serialNo);
         List<String> actions = new ArrayList<>();
         actions.add(AppConstants.ACTIVITY_DECOMMISSION);
         actions.add(AppConstants.ACTIVITY_RELEASE);
         List<TmsDevice> devices = deviceRepository.findBySerialNoAndIntrash(serialNo, AppConstants.NO, actions);
-        log.error("Devices Found===>"+devices.size());
-        return devices.size()>0;
+        log.error("Devices Found===>" + devices.size());
+        return devices.size() > 0;
     }
 
     @Override
@@ -950,7 +950,40 @@ public class DeviceServiceTemplate implements DeviceService {
         List<TmsDevice> deviceIds = midQuery.stream().map(TmsDeviceTidsMids::getDeviceId).collect(Collectors.toList());
         List<UfsCustomerOutlet> outlets = customerOutletRepository.findAllByIdIn(deviceIds.stream().map(x -> x.getOutletIds().longValue()).collect(Collectors.toList()));
         Set<BigDecimal> customerIds = outlets.stream().map(UfsCustomerOutlet::getCustomerIds).collect(Collectors.toSet());
-        if(customerIds.size()>1){
+        if (customerIds.size() > 1) {
+            return true;
+        }
+
+        return !customerIds.contains(customerId);
+    }
+
+    @Override
+    public boolean checkIfMidExistsWithMultipleCurrencies(Set<TmsDeviceTidsMids> tidsMids, Set<String> mid) {
+        for (TmsDeviceTidsMids tm : tidsMids) {
+            List<BigDecimal> td = new ArrayList<>();
+            td.add(tm.getCurrencyIds());
+            List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMidAndCurrencyIdsIsNot(tm.getMid(), tm.getCurrencyIds());
+            if(midQuery.size()>0){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean checkIfMidExistsOnOtherCustomerByCustomerId(Set<String> mid, Long customer) {
+        BigDecimal customerId = new BigDecimal(customer);
+
+        List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMidIn(mid);
+        if (midQuery.size() < 1) {
+            return false;
+        }
+
+        List<TmsDevice> deviceIds = midQuery.stream().map(TmsDeviceTidsMids::getDeviceId).collect(Collectors.toList());
+        List<UfsCustomerOutlet> outlets = customerOutletRepository.findAllByIdIn(deviceIds.stream().map(x -> x.getOutletIds().longValue()).collect(Collectors.toList()));
+        Set<BigDecimal> customerIds = outlets.stream().map(UfsCustomerOutlet::getCustomerIds).collect(Collectors.toSet());
+        if (customerIds.size() > 1) {
             return true;
         }
 
