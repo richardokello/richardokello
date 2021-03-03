@@ -4,6 +4,7 @@ import ke.tra.ufs.webportal.entities.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 public interface TmsDeviceService {
 
@@ -39,4 +40,6 @@ public interface TmsDeviceService {
     void updateDeviceOwnersByContactPersons(List<Long> contactPersonId);
 
     Integer findByMidCount(String mid);
+
+    Integer findByListMidCount(Set<String> mid);
 }

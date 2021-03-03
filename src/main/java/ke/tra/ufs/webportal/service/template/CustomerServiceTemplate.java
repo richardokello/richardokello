@@ -12,11 +12,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -108,7 +106,18 @@ public class CustomerServiceTemplate implements CustomerService {
 
     @Override
     public boolean findIfMidIsActive(String mid, String intrashNo) {
-        Integer midCount =deviceService.findByMidCount(mid);
-        return midCount>0;
+        Set<String> mids = new LinkedHashSet<>();
+        if (mid.contains(";")) {
+            String[] md = mid.split(";");
+            Stream.of(md).forEach(m -> {
+                if (!m.isEmpty()) {
+                    mids.add(m);
+                }
+            });
+        } else {
+            mids.add(mid);
+        }
+        Integer midCount = deviceService.findByListMidCount(mids);
+        return midCount > 0;
     }
 }
