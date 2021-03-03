@@ -475,6 +475,8 @@ public interface DeviceService {
 
     boolean checkIfTidExists(String tid);
 
+    boolean checkIfTidExistsIn(Set<String> tid);
+
     boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds);
 
     boolean checkIfTidExistsByDeviceIds(String tid, Long deviceIds);

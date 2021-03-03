@@ -133,6 +133,20 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
+
+        if(onboardWrapper.getTmsDeviceTidsMids()!=null) {
+            Set<String> tids =onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
+            if(deviceService.checkIfTidExistsIn(tids)){
+                String message = "Creating new Device failed due to the provided"
+                        + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+                response.setCode(400);
+                response.setMessage(message);
+                response.setData(SharedMethods.getFieldMapErrors(validation));
+                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+            }
+        }
+
         boolean isvalidMid = ValidateMid(onboardWrapper);
         if(isvalidMid){
             String message = "Creating new Device failed due to the provided"
@@ -327,17 +341,16 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
-        if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
-            for (TmsDeviceTidsMids tidmid : onboardWrapper.getTmsDeviceTidsMids()) {
-                //check where TID and MID exists
-                if (deviceService.checkIfTidExists(tidmid.getTid())) {
-                    String message = "Creating new Device failed due to the provided"
-                            + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
-                    loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
-                    throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
-                }
+        if(onboardWrapper.getTmsDeviceTidsMids()!=null) {
+            Set<String> tids =onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
+            if(deviceService.checkIfTidExistsIn(tids)){
+                String message = "Creating new Device failed due to the provided"
+                        + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+                throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
             }
         }
+
         boolean isvalidMid = ValidateMidAssignMerchant(onboardWrapper);
         if(isvalidMid){
             String message = "Creating new Device failed due to the provided "
@@ -415,7 +428,6 @@ public class OnboardingResource {
         }
 
         List<String> tids = new ArrayList<>();
-        List<String> tidMidError = new ArrayList<>();
 
         if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
             onboardWrapper.getTmsDeviceTidsMids().forEach(obj -> {
@@ -565,9 +577,22 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
 
+        if(onboardWrapper.getTmsDeviceTidsMids()!=null) {
+            Set<String> tids =onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
+            if(deviceService.checkIfTidExistsIn(tids)){
+                String message = "Creating new Device failed due to the provided"
+                        + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+                response.setCode(400);
+                response.setMessage(message);
+                response.setData(SharedMethods.getFieldMapErrors(validation));
+                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+            }
+        }
+
        boolean validMid = ValidateMid(onboardWrapper);
         if(validMid){
-            String message = "Updating Device failed due to the provided"
+            String message = "Updating Device failed due to the provided "
                     + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") and Assigned to another merchant";
             loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
             response.setCode(400);
