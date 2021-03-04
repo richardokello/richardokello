@@ -479,6 +479,8 @@ public interface DeviceService {
 
     boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds);
 
+    boolean checkIfTidMidExistsByDeviceIdsIn(Set<String> tid,Long deviceIds);
+
     boolean checkIfTidExistsByDeviceIds(String tid, Long deviceIds);
 
     void deleteAllByDeviceId(String serialNo);

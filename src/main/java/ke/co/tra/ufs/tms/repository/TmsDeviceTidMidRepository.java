@@ -62,4 +62,6 @@ public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsM
     @Query("SELECT COUNT(u.id) from TmsDeviceTidsMids u where u.mid=?1 AND u.currencyIds <>?2")
     Integer countAllByMidAndCurrencyIdsIsNot(String mid, BigDecimal currencyIds);
 
+    @Query("SELECT COUNT(t.id) FROM TmsDeviceTidsMids t WHERE t.tid  IN (?1) and t.deviceIds NOT IN (?2)")
+    Integer getTmsDeviceTidsMidsByDeviceIdsIn(Set<String> tid, Long deviceIds);
 }

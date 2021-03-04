@@ -918,6 +918,12 @@ public class DeviceServiceTemplate implements DeviceService {
     }
 
     @Override
+    public boolean checkIfTidMidExistsByDeviceIdsIn(Set<String> tid, Long deviceIds) {
+        int tidMidCount = tmsDeviceTidRepository.getTmsDeviceTidsMidsByDeviceIdsIn(tid, deviceIds);
+        return tidMidCount > 0;
+    }
+
+    @Override
     public boolean checkIfTidExistsByDeviceIds(String tid, Long deviceIds) {
         return tmsDeviceTidRepository.getTmsDeviceTidsByDeviceIds(tid, deviceIds) > 0;
     }

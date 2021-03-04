@@ -579,7 +579,7 @@ public class OnboardingResource {
 
         if(onboardWrapper.getTmsDeviceTidsMids()!=null) {
             Set<String> tids =onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
-            if(deviceService.checkIfTidExistsIn(tids)){
+            if(deviceService.checkIfTidMidExistsByDeviceIdsIn(tids, tmsDevice.getDeviceId().longValue())){
                 String message = "Creating new Device failed due to the provided"
                         + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
                 loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
