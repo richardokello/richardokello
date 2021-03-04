@@ -146,8 +146,8 @@ public class OnboardingResource {
                 return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
-
-        boolean isvalidMid = ValidateMid(onboardWrapper);
+        TmsDevice tmsDevice = new TmsDevice();
+        boolean isvalidMid = ValidateMid(onboardWrapper, false, tmsDevice);
         if(isvalidMid){
             String message = "Creating new Device failed due to the provided"
                     + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") or assigned to another currency";
@@ -159,7 +159,7 @@ public class OnboardingResource {
         }
 
 
-        TmsDevice tmsDevice = new TmsDevice();
+
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
         tmsDevice.setPartNumber(onboardWrapper.getPartNumber());
         tmsDevice.setDeviceTypeId(onboardWrapper.getDeviceTypeId());
@@ -560,7 +560,6 @@ public class OnboardingResource {
         }
         TmsDevice tmsDevice = deviceService.getDevice(onboardWrapper.getDeviceId()).get();
 
-
         if (tmsDevice == null) {
             loggerService.logCreate("Failed to Update Device (Device id: " + tmsDevice.getDeviceId() + "). device doesn't exist",
                     SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_FAILED);
@@ -590,7 +589,7 @@ public class OnboardingResource {
             }
         }
 
-       boolean validMid = ValidateMid(onboardWrapper);
+       boolean validMid = ValidateMid(onboardWrapper, true, tmsDevice);
         if(validMid){
             String message = "Updating Device failed due to the provided "
                     + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") and Assigned to another merchant";
@@ -681,12 +680,16 @@ public class OnboardingResource {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-    private boolean ValidateMid(OnboardWrapper onboardWrapper) {
+    private boolean ValidateMid(OnboardWrapper onboardWrapper, boolean isUpdate, TmsDevice device) {
         if (onboardWrapper.getOutletIds() != null) {
             Set<String> mids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getMid).collect(Collectors.toSet());
             boolean exist = deviceService.checkIfMidExistsOnOtherCustomer(mids, onboardWrapper.getOutletIds());
             if(!exist){
-                return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
+                if(!isUpdate) {
+                    return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
+                }else{
+                    return deviceService.checkIfMidExistsWithMultipleCurrenciesWithDeviceId(onboardWrapper.getTmsDeviceTidsMids(), device.getDeviceId());
+                }
             }
             return exist;
         }

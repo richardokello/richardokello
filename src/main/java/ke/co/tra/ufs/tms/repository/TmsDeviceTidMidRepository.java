@@ -59,6 +59,10 @@ public interface TmsDeviceTidMidRepository extends CrudRepository<TmsDeviceTidsM
 
     @Query("SELECT u from TmsDeviceTidsMids u where u.mid = ?1 AND u.currencyIds <>?2")
     List<TmsDeviceTidsMids> findAllByMidAndCurrencyIdsIsNot(String mid, BigDecimal currencyIds);
+
+    @Query("SELECT u from TmsDeviceTidsMids u where u.mid = ?1 AND u.currencyIds <>?2 and u.deviceIds NOT IN (?3)")
+    List<TmsDeviceTidsMids> findAllByMidAndCurrencyIdsIsNotAndDeviceIds(String mid, BigDecimal currencyIds, Long deviceIds);
+
     @Query("SELECT COUNT(u.id) from TmsDeviceTidsMids u where u.mid=?1 AND u.currencyIds <>?2")
     Integer countAllByMidAndCurrencyIdsIsNot(String mid, BigDecimal currencyIds);
 

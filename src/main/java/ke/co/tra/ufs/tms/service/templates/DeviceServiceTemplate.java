@@ -964,7 +964,6 @@ public class DeviceServiceTemplate implements DeviceService {
         if (customerIds.size() > 1) {
             return true;
         }
-
         return !customerIds.contains(customerId);
     }
 
@@ -999,6 +998,19 @@ public class DeviceServiceTemplate implements DeviceService {
         }
 
         return !customerIds.contains(customerId);
+    }
+
+    @Override
+    public boolean checkIfMidExistsWithMultipleCurrenciesWithDeviceId(Set<TmsDeviceTidsMids> tmsDeviceTidsMids, BigDecimal deviceId) {
+        for (TmsDeviceTidsMids tm : tmsDeviceTidsMids) {
+            List<BigDecimal> td = new ArrayList<>();
+            td.add(tm.getCurrencyIds());
+            List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMidAndCurrencyIdsIsNotAndDeviceIds(tm.getMid(), tm.getCurrencyIds(), deviceId.longValue());
+            if(midQuery.size()>0){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {

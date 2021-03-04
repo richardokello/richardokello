@@ -492,4 +492,6 @@ public interface DeviceService {
     boolean checkIfMidExistsWithMultipleCurrencies(Set<TmsDeviceTidsMids> tmsDeviceTidsMids, Set<String> mids);
 
     boolean checkIfMidExistsOnOtherCustomerByCustomerId(Set<String> mids, Long customerId);
+
+    boolean checkIfMidExistsWithMultipleCurrenciesWithDeviceId(Set<TmsDeviceTidsMids> tmsDeviceTidsMids, BigDecimal deviceId);
 }
