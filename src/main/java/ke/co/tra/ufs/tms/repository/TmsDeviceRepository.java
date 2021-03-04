@@ -63,7 +63,7 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
      * @return
      */
     @Query("SELECT u FROM #{#entityName} u WHERE u.action LIKE ?1% AND u.actionStatus LIKE ?2% "
-            + "AND u.serialNo LIKE %?3%  AND u.creationDate BETWEEN ?4 and ?5 AND lower(u.intrash) = lower(?6) AND u.status LIKE ?7%")
+            + "AND (u.serialNo LIKE %?3% OR u.tid LIKE %?3% OR u.customerOwnerName LIKE %?3%)  AND u.creationDate BETWEEN ?4 and ?5 AND lower(u.intrash) = lower(?6) AND u.status LIKE ?7%")
     Page<TmsDevice> findAll(String action, String actionStatus, String needle, Date from, Date to, String intrash, String status, Pageable pg);
 
 
