@@ -13,7 +13,6 @@ import java.util.Set;
 public class CustomerOnboardingWrapper {
     @NotNull
     private BigDecimal customerTypeId;
-    @NotNull
     private BigInteger customerClassId;
     private Long businessTypeId;
     @NotNull
@@ -33,4 +32,6 @@ public class CustomerOnboardingWrapper {
     private Set<BusinessDirectorsWrapper> directors;
     private Set<OutletsInformationWrapper> outletsInfo;
     private String mid;
+    @NotNull
+    private BigDecimal mccIds;
 }

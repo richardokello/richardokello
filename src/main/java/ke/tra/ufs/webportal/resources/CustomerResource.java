@@ -136,10 +136,13 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setBusinessPrimaryContactNo(customerOnboarding.getBusinessPrimaryContactNo());
         customer.setDateIssued(customerOnboarding.getDateIssued());
         customer.setValidTo(customerOnboarding.getValidTo());
+        customer.setMccIds(customerOnboarding.getMccIds());
         customer.setBusinessLicenceNumber(customerOnboarding.getBusinessLicenseNumber());
         customer.setLocalRegistrationNumber(customerOnboarding.getLocalRegistrationNumber());
         customer.setBusinessName(customerOnboarding.getBusinessName());
-        customer.setCustomerClassId(customerOnboarding.getCustomerClassId());
+        if(customerOnboarding.getCustomerClassId()!=null) {
+            customer.setCustomerClassId(customerOnboarding.getCustomerClassId());
+        }
         customer.setAddress(customerOnboarding.getAddress());
         customer.setBusinessEmailAddress(customerOnboarding.getBusinessEmailAddress());
         customer.setPinNumber(customerOnboarding.getPinNumber());
@@ -470,7 +473,10 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                         customer.setValidTo(entity.getValidTo());
                         customer.setAddress(entity.getAddress());
                         customer.setCommercialActivityId(entity.getCommercialActivityId());
-                        customer.setCustomerClassId(entity.getCustomerClassId());
+                        if(entity.getCustomerClassId()!=null) {
+                            customer.setCustomerClassId(entity.getCustomerClassId());
+                        }
+                        customer.setMccIds(entity.getMccIds());
                         customer.setCustomerTypeId(entity.getCustomerTypeId());
                         customer.setEstateId(entity.getEstateId());
                         customer.setMid(entity.getMid());

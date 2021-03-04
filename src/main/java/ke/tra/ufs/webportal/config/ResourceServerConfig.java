@@ -145,7 +145,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/gls/approve-actions", "/gls/decline-actions").hasAuthority("APPROVE_GLS")
                 .antMatchers(HttpMethod.DELETE, "/gls").hasAuthority("DELETE_GLS")
                 .antMatchers(HttpMethod.GET, "/gls/deleted").hasAuthority("VIEW_GLS")
-                .antMatchers(HttpMethod.POST, "/mcc").hasAuthority("CREATE_MCC")
+                .antMatchers(HttpMethod.POST, "/mcc", "/mcc/upload").hasAuthority("CREATE_MCC")
                 .antMatchers(HttpMethod.GET, "/mcc/{id}/changes").hasAuthority("VIEW_MCC")
                 .antMatchers(HttpMethod.GET, "/mcc/{id}").hasAuthority("VIEW_MCC")
                 .antMatchers(HttpMethod.GET, "/mcc").hasAuthority("VIEW_MCC")

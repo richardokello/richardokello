@@ -195,6 +195,14 @@ public class UfsCustomer implements Serializable {
     @Column(name = "MID")
     private String mid;
 
+
+    @JoinColumn(name = "MCC", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne
+    private UfsMcc mccId;
+    @ModifiableField
+    @Column(name = "MCC")
+    private BigDecimal mccIds;
+
     public UfsCustomer() {
     }
 
@@ -489,4 +497,19 @@ public class UfsCustomer implements Serializable {
         return "ke.tra.ufs.webportal.entities.UfsCustomer[ id=" + id + " ]";
     }
 
+    public UfsMcc getMccId() {
+        return mccId;
+    }
+
+    public void setMccId(UfsMcc mccId) {
+        this.mccId = mccId;
+    }
+
+    public BigDecimal getMccIds() {
+        return mccIds;
+    }
+
+    public void setMccIds(BigDecimal mccIds) {
+        this.mccIds = mccIds;
+    }
 }

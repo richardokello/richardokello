@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import ke.axle.chassis.utils.LoggerService;
+import ke.tra.ufs.webportal.entities.wrapper.MccWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -305,6 +307,35 @@ public class SharedMethods {
                     }
                 });
                 System.out.println();
+            });
+        });
+        return ts;
+    }
+
+    public <T> Set<T> convertXlsMcc(Class<T> entity, File file) throws IOException, InvalidFormatException {
+        Set<T> ts = new HashSet<>();
+        Workbook workbook = WorkbookFactory.create(file);
+        DataFormatter dataFormatter = new DataFormatter();
+        workbook.forEach(sheet -> {
+            sheet.forEach(row -> {
+                String[] rowData = new String[2];
+                int count = 0;
+                for(Cell cell: row){
+                    String cellValue = dataFormatter.formatCellValue(cell);
+                    if (!cellValue.equals("MCC")&&count==0) {
+                        rowData[0] = cellValue;
+                    }
+                    if (!cellValue.equals("MCC Title")&&count==1) {
+                        rowData[1] = cellValue;
+                    }
+                    count++;
+                }
+                if(count>0){
+                    MccWrapper mcc =  new MccWrapper();
+                    mcc.setMcc(rowData[0]);
+                    mcc.setMccTitle(rowData[1]);
+                    ts.add((T) mcc);
+                }
             });
         });
         return ts;
