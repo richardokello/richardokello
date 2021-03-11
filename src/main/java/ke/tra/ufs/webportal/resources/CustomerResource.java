@@ -155,7 +155,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setCreatedBy(fullName);
         UfsCustomer ufsCustomer = customerService.saveCustomer(customer);
 
-        loggerService.log("Created Record successfully ", UfsCustomer.class.getSimpleName(), ufsCustomer.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
+        loggerService.log("Created Customer successfully ", UfsCustomer.class.getSimpleName(), ufsCustomer.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
 
         //saving directors
         if (!customerOnboarding.getDirectors().isEmpty()) {

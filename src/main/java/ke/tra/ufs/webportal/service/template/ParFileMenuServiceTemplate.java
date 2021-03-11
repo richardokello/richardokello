@@ -1,7 +1,6 @@
 package ke.tra.ufs.webportal.service.template;
 
 
-import ke.axle.chassis.utils.AppConstants;
 import ke.axle.chassis.utils.LoggerService;
 import ke.tra.ufs.webportal.entities.ParMenuIndices;
 import ke.tra.ufs.webportal.entities.ParMenuProfile;
@@ -13,7 +12,6 @@ import ke.tra.ufs.webportal.service.ParFileMenuService;
 import ke.tra.ufs.webportal.utils.SharedMethods;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -35,7 +33,6 @@ public class ParFileMenuServiceTemplate extends ParFileService implements ParFil
         this.loggerService = loggerService;
     }
 
-    @Async
     @Override
     public void generateMenuFileAsync(MenuFileRequest fileRequest, String filePath) {
         log.error("Menu file request" + filePath);
@@ -72,8 +69,7 @@ public class ParFileMenuServiceTemplate extends ParFileService implements ParFil
             }
             createFile(result, fileRequest.getDeviceModel(), "MENU", filePath);
         } else {
-            loggerService.log("Menu profile not found", "ParMenuProfile", fileRequest.getMenuProfile(),
-                    AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_FAILED, "");
+            log.error("Menu profile not found");
         }
     }
 }

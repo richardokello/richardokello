@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import ke.axle.chassis.ChasisResource;
-import ke.axle.chassis.exceptions.GeneralBadRequest;
 import ke.axle.chassis.utils.AppConstants;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.wrappers.ResponseWrapper;
@@ -16,15 +15,14 @@ import ke.tra.ufs.webportal.service.UfsMccService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -66,8 +64,7 @@ public class UfsMccResources extends ChasisResource<UfsMcc, BigDecimal, UfsEditt
         return super.create(ufsMcc);
     }
 
-
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     @ApiOperation(value = "Upload MCC", notes = "")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad Request as a result of validation errors")
@@ -75,11 +72,10 @@ public class UfsMccResources extends ChasisResource<UfsMcc, BigDecimal, UfsEditt
             @ApiResponse(code = 409, message = "Similar mcc exists")
     })
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ResponseEntity<ResponseWrapper> onboardCustomer(@Valid MccUploadWrapper payload, BindingResult validation) throws IOException, InvalidFormatException {
+    public ResponseEntity<ResponseWrapper> uploadMcc(@Valid MccUploadWrapper payload, BindingResult validation) throws IOException, InvalidFormatException {
         ResponseWrapper response = new ResponseWrapper();
         System.out.println("File uploaded --" + payload.getFile().getContentType());
-        if (!(payload.getFile().getContentType().equalsIgnoreCase("text/csv")
-                || payload.getFile().getContentType().equalsIgnoreCase("application/vnd.ms-excel")
+        if (!(payload.getFile().getContentType().equalsIgnoreCase("application/vnd.ms-excel")
                 || payload.getFile().getContentType().equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))) {
             response.setCode(400);
             response.setMessage("Unsupported file type. Expects a CSV or xls file");

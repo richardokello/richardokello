@@ -73,9 +73,10 @@ public class UfsMcc implements Serializable, Comparable<UfsMcc> {
         return getName() + " - " + getValue();
     }
 
-    public UfsMcc(String name, String value) {
+    public UfsMcc(String name, String value, String actionStatus) {
         this.name = name;
         this.value = value;
+        this.actionStatus = actionStatus;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package ke.tra.ufs.webportal.service.template;
 
-import ke.axle.chassis.utils.AppConstants;
 import ke.axle.chassis.utils.LoggerService;
 import ke.tra.ufs.webportal.entities.TmsDeviceFileExt;
 import ke.tra.ufs.webportal.service.FileExtensionRepository;
@@ -41,8 +40,7 @@ public class ParFileService {
             // todo use fileName
             sharedMethods.generateParamField(data, fileName + optional.get().getParamFileExt(), filePath);
         } else {
-            loggerService.log("Model type file extension not found", "TmsDeviceFileExt", modelType,
-                    "Generating menu param file", AppConstants.STATUS_FAILED, "Model Type file");
+            log.error("Model type file extension not found");
         }
     }
 }

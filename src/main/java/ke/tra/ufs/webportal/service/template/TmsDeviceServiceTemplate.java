@@ -266,7 +266,6 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         tmsDeviceRepository.save(device);
     }
 
-    @Async
     public void processAddTaskTodevice(TmsDevice device, String rootPath) {
         long filecount = 1;
 
@@ -286,7 +285,7 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         //save the manual schedule
         schedulerService.saveSchedule(scheduler);
 
-        loggerService.log("Creating new Schedule", SharedMethods.getEntityName(TmsScheduler.class), scheduler.getScheduleId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
+       // loggerService.log("Creating new Schedule", SharedMethods.getEntityName(TmsScheduler.class), scheduler.getScheduleId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
 
         TmsDeviceTask deviceTask = new TmsDeviceTask();
         deviceTask.setDeviceId(device);
@@ -303,7 +302,7 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
 
         transferAndCopyFiles(device, rootPath);
 
-        loggerService.log("Creating new Device Task", SharedMethods.getEntityName(TmsDeviceTask.class), deviceTask.getTaskId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
+        //loggerService.log("Creating new Device Task", SharedMethods.getEntityName(TmsDeviceTask.class), deviceTask.getTaskId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
     }
 
     private void transferAndCopyFiles(TmsDevice tmsDevice, String rootPath) {
@@ -321,7 +320,7 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
                 }
             }
             customerConfigFileService.generateCustomerFile(tmsDevice.getDeviceId(), rootPath);
-            loggerService.log("Saving new App Files", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
+            //loggerService.log("Saving new App Files", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
 
 
         }

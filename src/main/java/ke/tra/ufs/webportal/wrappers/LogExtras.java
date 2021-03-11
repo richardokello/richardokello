@@ -40,14 +40,8 @@ public class LogExtras {
 
 
     public String getIpAddress() {
-        String remoteAddr = "";
-        if (request != null) {
-            remoteAddr = request.getHeader("X-FORWARDED-FOR");
-            if (remoteAddr == null || "".equals(remoteAddr)) {
-                remoteAddr = request.getRemoteAddr();
-            }
-        }
-        return remoteAddr;
+        String ipAddress = request.getRemoteAddr();
+        return ipAddress;
     }
 
     public String getClientId() {

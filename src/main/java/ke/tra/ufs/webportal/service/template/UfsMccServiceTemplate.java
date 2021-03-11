@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -45,9 +44,9 @@ public class UfsMccServiceTemplate implements UfsMccService {
             }
 
             if (mcc.getMccTitle() == null || mcc.getMcc() == null) {
-                log.error("MCC=>" + mcc.getMccTitle() + "Code =>" + mcc.getMcc());
+                log.error("MCC=>" + mcc.getMccTitle() + ":Code =>" + mcc.getMcc());
             } else {
-                mccBatch.add(new UfsMcc(mcc.getMccTitle(), mcc.getMcc()));
+                mccBatch.add(new UfsMcc(mcc.getMccTitle(), mcc.getMcc(), AppConstants.STATUS_APPROVED));
             }
         }
         ufsMccRepository.saveAll(mccBatch);

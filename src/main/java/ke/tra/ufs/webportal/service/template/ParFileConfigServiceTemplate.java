@@ -52,11 +52,10 @@ public class ParFileConfigServiceTemplate extends ParFileService implements ParF
         } else {
             // log error - TODO log method not yet implemented - change
             System.out.println(">>>>>>>>>>>>>>>>>>>> Profile does not exist >>>>>>>>>>>>>>>>>>>>>");
-            loggerServiceVersion.log("Global profile does not exist", "ParGlobalConfigProfile", request.getProfile(), "Generate global config file", AppConstants.STATUS_FAILED, "");
+            log.error("Global profile does not exist");
         }
     }
 
-    @Async
     @Override
     public void generateGlobalConfigFileAsync(ParGlobalConfigProfile profile, BigDecimal modelType, String filePath) {
         // get all configs of type - sort by index in ascending order

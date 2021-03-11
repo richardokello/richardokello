@@ -69,7 +69,7 @@ public class ParGlobalMasterProfile {
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
 
-    @OneToMany(mappedBy = "masterProfile")
+    @OneToMany(mappedBy = "masterProfile", fetch = FetchType.EAGER)
     private List<ParGlobalMasterChildProfile> childProfiles;
 
     @Transient

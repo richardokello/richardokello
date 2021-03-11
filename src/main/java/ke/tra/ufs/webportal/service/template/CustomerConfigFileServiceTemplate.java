@@ -120,6 +120,7 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
             }
         } catch (Exception ex) {
             System.out.println("Parent Error >>>>>>>>>>>>> " + ex.getMessage());
+            log.error("Parent Error >>>>>>>>>>>>> " + ex.getMessage());
             return " ";
         }
     }

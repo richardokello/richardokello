@@ -188,7 +188,6 @@ public class UfsCustomer implements Serializable {
     @Column(name = "CREATED_BY")
     @Filter
     private String createdBy;
-    @Size(max = 40)
     @ModifiableField
     @Filter
     @Searchable
