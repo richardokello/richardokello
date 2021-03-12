@@ -57,7 +57,7 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
             }
         }
 
-        log.error("results >>>>>>>>>>>>>>" + Arrays.asList(result));
+        log.error("line 60 results >>>>>>>>>>>>>>" + Arrays.asList(result));
         createFile(result, tmsDevice.getModelId().getModelId(), "CUSTOMER", filePath);
     }
 
@@ -65,6 +65,8 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
         try {
             UfsCustomerOutlet outlet = outletService.findByOutletId(device.getOutletIds().longValue());
             UfsCustomer customer = outlet.getCustomerId();
+            log.error("Entity Name=>" + parentIndex.getConfig().getEntityName());
+
             switch (parentIndex.getConfig().getEntityName()) {
                 case CUSTOMER:
                     return getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomer.class, customer);
@@ -72,6 +74,7 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
                     // has children -- get children
                     StringBuilder stringBuilder = new StringBuilder();
                     List<TmsDeviceTidsMids> tidsMidsList = tmsDeviceTidMidRepository.findAllByDeviceIds(device.getDeviceId().longValue());
+                    log.error("TID getting Child=>" +tidsMidsList.size());
                     for (TmsDeviceTidsMids tidsMids : tidsMidsList) {
                         // save the values in arraylist by their position
                         List<String> tidMidValues = new ArrayList<>();
@@ -87,7 +90,9 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
                             stringBuilder.append(value).append(';');
                         }
                     }
-                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+                    if(stringBuilder.length()>0) {
+                        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+                    }
                     return stringBuilder.toString();
                 case DEVICE_OPTIONS:
                     // get device options
@@ -125,10 +130,9 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
         }
     }
 
-
-    // this is child should not have children -- with tid mid table you can only get currency object and itself
     private String getTIDChildParamValue(ParCustomerConfigChildKeys childKey, TmsDeviceTidsMids tidsMids) {
         try {
+            log.error("Child Param Value=>" + childKey.getEntityName());
             switch (childKey.getEntityName()) {
                 case TID_MID:
                     String tid = getParamValue(childKey.getKeyName(), TmsDeviceTidsMids.class, tidsMids);

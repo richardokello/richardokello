@@ -82,6 +82,12 @@ public class SharedMethods {
                 dir.mkdirs();
             }
 
+            //overwrite existing file
+            File exists = new File(filePath + fileName);
+            if (exists.exists()) {
+                deleteFile(exists);
+            }
+
             FileOutputStream out = new FileOutputStream(filePath + fileName);
             out.write(content.getBytes());
             out.close();
@@ -96,6 +102,7 @@ public class SharedMethods {
             return false;
         }
     }
+
     /**
      * Used to fetch current date. At a later stage it may be to a relevant
      * timezone
@@ -142,8 +149,13 @@ public class SharedMethods {
         }
 
         String fileUrl = uploadPath + generatedFileName;
-
         log.info("Path  " + fileUrl);
+
+        //overwrite existing file
+        File exists = new File(fileUrl);
+        if (exists.exists()) {
+            deleteFile(exists);
+        }
 
         BufferedOutputStream stream
                 = new BufferedOutputStream(new FileOutputStream(new File(fileUrl)));
@@ -320,18 +332,18 @@ public class SharedMethods {
             sheet.forEach(row -> {
                 String[] rowData = new String[2];
                 int count = 0;
-                for(Cell cell: row){
+                for (Cell cell : row) {
                     String cellValue = dataFormatter.formatCellValue(cell);
-                    if (!cellValue.equals("MCC")&&count==0) {
+                    if (!cellValue.equals("MCC") && count == 0) {
                         rowData[0] = cellValue;
                     }
-                    if (!cellValue.equals("MCC Title")&&count==1) {
+                    if (!cellValue.equals("MCC Title") && count == 1) {
                         rowData[1] = cellValue;
                     }
                     count++;
                 }
-                if(count>0){
-                    MccWrapper mcc =  new MccWrapper();
+                if (count > 0) {
+                    MccWrapper mcc = new MccWrapper();
                     mcc.setMcc(rowData[0]);
                     mcc.setMccTitle(rowData[1]);
                     ts.add((T) mcc);

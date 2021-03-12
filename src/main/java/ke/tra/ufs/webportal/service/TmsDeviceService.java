@@ -27,7 +27,7 @@ public interface TmsDeviceService {
 
     void approveContactPersons(Long customerId, String notes);
 
-    void updateDeviceOwnerByOutletId(List<Long> customerOutlets, String customerOwnerName);
+    void updateDeviceOwnerByOutletId(List<Long> customerOutlets);
 
     void updateContactPersonsDetails(UfsCustomer entity);
 

@@ -39,8 +39,9 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     private final UfsContactPersonRepository contactPersonRepository;
     private final UfsCustomerOutletRepository customerOutletRepository;
     private final UfsPosUserRepository ufsPosUserRepository;
+    private final DeviceTaskRepository deviceTaskRepository;
 
-    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository, TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository, ParGlobalMasterProfileService parGlobalMasterProfileService, ParFileMenuService parFileMenuService, ParFileConfigService parFileConfigService, CustomerConfigFileService customerConfigFileService, ParDeviceSelectedOptionsService parDeviceSelectedOptionsService, SchedulerService schedulerService, UfsCustomerOutletService outletService, UfsContactPersonRepository contactPersonRepository, UfsCustomerOutletRepository customerOutletRepository, UfsPosUserRepository ufsPosUserRepository) {
+    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository, TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository, ParGlobalMasterProfileService parGlobalMasterProfileService, ParFileMenuService parFileMenuService, ParFileConfigService parFileConfigService, CustomerConfigFileService customerConfigFileService, ParDeviceSelectedOptionsService parDeviceSelectedOptionsService, SchedulerService schedulerService, UfsCustomerOutletService outletService, UfsContactPersonRepository contactPersonRepository, UfsCustomerOutletRepository customerOutletRepository, UfsPosUserRepository ufsPosUserRepository, DeviceTaskRepository deviceTaskRepository) {
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.loggerService = loggerService;
         this.posUserService = posUserService;
@@ -61,6 +62,7 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         this.contactPersonRepository = contactPersonRepository;
         this.customerOutletRepository = customerOutletRepository;
         this.ufsPosUserRepository = ufsPosUserRepository;
+        this.deviceTaskRepository = deviceTaskRepository;
     }
 
     @Override
@@ -170,12 +172,14 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
 
     @Override
     @Async
-    public void updateDeviceOwnerByOutletId(List<Long> customerOutlets, String customerOwnerName) {
+    public void updateDeviceOwnerByOutletId(List<Long> customerOutlets) {
         List<TmsDevice> devices = findByOutletIds(customerOutlets.stream().map(BigDecimal::new).collect(Collectors.toList()));
         for (TmsDevice device : devices) {
-            device.setCustomerOwnerName(customerOwnerName);
-            device.setDeviceFieldName(customerOwnerName);
-            tmsDeviceRepository.save(device);
+            if (device.getOutletIds() != null) {
+                UfsCustomerOutlet outlet = customerOutletRepository.findById(device.getOutletIds().longValue()).get();
+                device.setDeviceFieldName(outlet.getOutletName());
+                tmsDeviceRepository.save(device);
+            }
         }
     }
 
@@ -202,9 +206,16 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
 
         List<TmsDevice> devices = findByOutletIds(outletsFiltered);
         devices.parallelStream().forEach(device -> {
-            processAddTaskTodevice(device, rootPath + "/devices/" + device.getDeviceId() + "/");
+            TmsDeviceTask dtk = findTopByDeviceIdOrderByTaskIdDesc(device);
+            if (dtk == null) {
+                processAddTaskTodevice(device, rootPath, "/devices/" + device.getDeviceId() + "/");
+            } else {
+                processAddTaskTodevice(device, rootPath, "/devices/" + device.getDeviceId() + "/", dtk);
+            }
         });
     }
+
+
 
     @Override
     @Async
@@ -266,14 +277,14 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         tmsDeviceRepository.save(device);
     }
 
-    public void processAddTaskTodevice(TmsDevice device, String rootPath) {
+    public void processAddTaskTodevice(TmsDevice device, String rootPath, String path) {
         long filecount = 1;
 
         TmsScheduler scheduler = new TmsScheduler();
         scheduler.setAction(AppConstants.ACTIVITY_CREATE);
         scheduler.setActionStatus(AppConstants.STATUS_APPROVED);
         scheduler.setModelId(device.getModelId());
-        scheduler.setDirPath(rootPath);
+        scheduler.setDirPath(path);
         scheduler.setScheduleType("Manual");
         scheduler.setStatus(AppConstants.STATUS_NEW);
         scheduler.setNoFiles(filecount);
@@ -285,7 +296,7 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         //save the manual schedule
         schedulerService.saveSchedule(scheduler);
 
-       // loggerService.log("Creating new Schedule", SharedMethods.getEntityName(TmsScheduler.class), scheduler.getScheduleId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
+        // loggerService.log("Creating new Schedule", SharedMethods.getEntityName(TmsScheduler.class), scheduler.getScheduleId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
 
         TmsDeviceTask deviceTask = new TmsDeviceTask();
         deviceTask.setDeviceId(device);
@@ -296,13 +307,15 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         //persist the device task
         schedulerService.saveDeviceTask(deviceTask);
 
-        rootPath = rootPath + deviceTask.getTaskId() + "/";
-        scheduler.setDirPath(rootPath);
+        rootPath = rootPath + path + deviceTask.getTaskId() + "/";
+        scheduler.setDirPath(path + deviceTask.getTaskId() + "/");
         schedulerService.saveSchedule(scheduler);
-
         transferAndCopyFiles(device, rootPath);
 
         //loggerService.log("Creating new Device Task", SharedMethods.getEntityName(TmsDeviceTask.class), deviceTask.getTaskId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
+    }
+
+    private void processAddTaskTodevice(TmsDevice device, String rootPath, String path, TmsDeviceTask dtk) {
     }
 
     private void transferAndCopyFiles(TmsDevice tmsDevice, String rootPath) {
@@ -326,6 +339,9 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         }
     }
 
+    public TmsDeviceTask findTopByDeviceIdOrderByTaskIdDesc(TmsDevice deviceId) {
+        return deviceTaskRepository.findTopByDeviceIdOrderByTaskIdDesc(deviceId);
+    }
 
     private void processApproveNew(TmsDevice entity, String notes) {
         entity.setActionStatus(AppConstants.STATUS_APPROVED);

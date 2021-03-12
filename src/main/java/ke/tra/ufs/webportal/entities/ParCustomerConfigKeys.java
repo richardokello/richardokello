@@ -71,7 +71,7 @@ public class ParCustomerConfigKeys implements Serializable {
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
     private List<ParCustomerConfigChildKeys> childKeys;
 
     @JsonIgnore

@@ -39,11 +39,13 @@ public class UfsCustomerOutletResource extends ChasisResource<UfsCustomerOutlet,
         ResponseEntity<ResponseWrapper> resp = super.approveActions(actions);
         if (!resp.getStatusCode().equals(HttpStatus.OK)) {
             return resp;
+        } else {
+            // approve devices by outlet Ids
+            List<Long> outletsIds = Arrays.stream(actions.getIds()).collect(Collectors.toList());
+            deviceService.activateDevicesByOutletsIds(outletsIds, actions.getNotes());
+            deviceService.addDevicesTaskByOutletsIds(outletsIds);
+            deviceService.updateDeviceOwnerByOutletId(outletsIds);
         }
-        // approve devices by outlet Ids
-        List<Long> outletsIds = Arrays.stream(actions.getIds()).collect(Collectors.toList());
-        deviceService.activateDevicesByOutletsIds(outletsIds, actions.getNotes());
-        deviceService.addDevicesTaskByOutletsIds(outletsIds);
         return resp;
     }
 }
