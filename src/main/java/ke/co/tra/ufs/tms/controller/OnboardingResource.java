@@ -134,9 +134,9 @@ public class OnboardingResource {
         }
 
 
-        if(onboardWrapper.getTmsDeviceTidsMids()!=null) {
-            Set<String> tids =onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
-            if(deviceService.checkIfTidExistsIn(tids)){
+        if (onboardWrapper.getTmsDeviceTidsMids() != null) {
+            Set<String> tids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
+            if (deviceService.checkIfTidExistsIn(tids)) {
                 String message = "Creating new Device failed due to the provided"
                         + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
                 loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
@@ -148,7 +148,7 @@ public class OnboardingResource {
         }
         TmsDevice tmsDevice = new TmsDevice();
         boolean isvalidMid = ValidateMid(onboardWrapper, false, tmsDevice);
-        if(isvalidMid){
+        if (isvalidMid) {
             String message = "Creating new Device failed due to the provided"
                     + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") or assigned to another currency";
             loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
@@ -157,7 +157,6 @@ public class OnboardingResource {
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
-
 
 
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
@@ -341,9 +340,9 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
-        if(onboardWrapper.getTmsDeviceTidsMids()!=null) {
-            Set<String> tids =onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
-            if(deviceService.checkIfTidExistsIn(tids)){
+        if (onboardWrapper.getTmsDeviceTidsMids() != null) {
+            Set<String> tids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
+            if (deviceService.checkIfTidExistsIn(tids)) {
                 String message = "Creating new Device failed due to the provided"
                         + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
                 loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
@@ -352,7 +351,7 @@ public class OnboardingResource {
         }
 
         boolean isvalidMid = ValidateMidAssignMerchant(onboardWrapper);
-        if(isvalidMid){
+        if (isvalidMid) {
             String message = "Creating new Device failed due to the provided "
                     + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") or assigned to another currency";
             loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
@@ -576,9 +575,9 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
 
-        if(onboardWrapper.getTmsDeviceTidsMids()!=null) {
-            Set<String> tids =onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
-            if(deviceService.checkIfTidMidExistsByDeviceIdsIn(tids, tmsDevice.getDeviceId().longValue())){
+        if (onboardWrapper.getTmsDeviceTidsMids() != null) {
+            Set<String> tids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
+            if (deviceService.checkIfTidMidExistsByDeviceIdsIn(tids, tmsDevice.getDeviceId().longValue())) {
                 String message = "Creating new Device failed due to the provided"
                         + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
                 loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
@@ -589,8 +588,8 @@ public class OnboardingResource {
             }
         }
 
-       boolean validMid = ValidateMid(onboardWrapper, true, tmsDevice);
-        if(validMid){
+        boolean validMid = ValidateMid(onboardWrapper, true, tmsDevice);
+        if (validMid) {
             String message = "Updating Device failed due to the provided "
                     + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") and Assigned to another merchant";
             loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
@@ -684,10 +683,10 @@ public class OnboardingResource {
         if (onboardWrapper.getOutletIds() != null) {
             Set<String> mids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getMid).collect(Collectors.toSet());
             boolean exist = deviceService.checkIfMidExistsOnOtherCustomer(mids, onboardWrapper.getOutletIds());
-            if(!exist){
-                if(!isUpdate) {
+            if (!exist) {
+                if (!isUpdate) {
                     return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
-                }else{
+                } else {
                     return deviceService.checkIfMidExistsWithMultipleCurrenciesWithDeviceId(onboardWrapper.getTmsDeviceTidsMids(), device.getDeviceId());
                 }
             }
@@ -700,7 +699,7 @@ public class OnboardingResource {
         if (onboardWrapper.getTmsDeviceTidsMids() != null) {
             Set<String> mids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getMid).collect(Collectors.toSet());
             boolean exist = deviceService.checkIfMidExistsOnOtherCustomerByCustomerId(mids, onboardWrapper.getCustomerId());
-            if(!exist){
+            if (!exist) {
                 return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
             }
             return exist;
@@ -799,10 +798,10 @@ public class OnboardingResource {
 
         try {
             rootPath = rootPath + "devices/" + tmsDevice.getDeviceId() + "/" + deviceTask.getTaskId() + "/";
-            File d = new File(rootPath);
+            /*File d = new File(rootPath);
             if (d.exists()) {
                 sharedMethods.deleteDirectory(rootPath);
-            }
+            }*/
 
             if (onboardWrapper.getFile() != null) {
                 for (MultipartFile mf : onboardWrapper.getFile()) {
@@ -953,11 +952,6 @@ public class OnboardingResource {
         String rootPath = configService.fetchSysConfigById(new BigDecimal(24)).getValue();
         try {
             rootPath = rootPath + "devices/" + tmsDevice.getDeviceId() + "/" + deviceTask.getTaskId() + "/";
-            File d = new File(rootPath);
-            if (d.exists()) {
-                sharedMethods.deleteDirectory(rootPath);
-            }
-
             if (addTaskWrapper.getFile() != null) {
                 for (MultipartFile mf : addTaskWrapper.getFile()) {
                     sharedMethods.store(mf, rootPath);
@@ -1003,11 +997,7 @@ public class OnboardingResource {
     private void transferAndCopyFilesTaskNew(AddTaskWrapper addTaskWrapper, TmsDevice tmsDevice, TmsDeviceTask deviceTask, String path) throws IOException {
         String rootPath = configService.fetchSysConfigById(new BigDecimal(24)).getValue();
         try {
-            rootPath = rootPath + path;
-            File d = new File(rootPath);
-            if (d.exists()) {
-                sharedMethods.deleteDirectory(rootPath);
-            }
+            rootPath = rootPath+path;
             if (addTaskWrapper.getFile() != null) {
                 for (MultipartFile mf : addTaskWrapper.getFile()) {
                     sharedMethods.store(mf, rootPath);

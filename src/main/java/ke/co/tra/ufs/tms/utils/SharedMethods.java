@@ -8,14 +8,29 @@ package ke.co.tra.ufs.tms.utils;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import ke.co.tra.ufs.tms.entities.wrappers.WhitelistDetails;
+import ke.co.tra.ufs.tms.service.LoggerServiceLocal;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+import javax.persistence.Id;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -28,39 +43,11 @@ import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
-import javax.persistence.Id;
-
-import ke.co.tra.ufs.tms.entities.UfsUser;
-import ke.co.tra.ufs.tms.entities.wrappers.WhitelistDetails;
-import ke.co.tra.ufs.tms.service.LoggerServiceLocal;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.web.multipart.MultipartFile;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  * @author Owori Juma
@@ -140,7 +127,14 @@ public class SharedMethods {
             directory.mkdirs();
         }
 
+
         String fileUrl = uploadPath + resource.getOriginalFilename();
+
+        //overwrite existing file
+        File exists = new File(fileUrl);
+        if (exists.exists()) {
+            deleteFile(exists);
+        }
 
         log.info("Path  " + fileUrl);
 
@@ -248,6 +242,14 @@ public class SharedMethods {
             if (!dir.exists()) {
                 dir.mkdirs();
             }
+
+
+            //overwrite existing file
+            File exists = new File(filePath + fileName);
+            if (exists.exists()) {
+                deleteFile(exists);
+            }
+
 
             FileOutputStream out = new FileOutputStream(filePath + fileName);
             out.write(content.getBytes());
