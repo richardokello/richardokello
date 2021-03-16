@@ -347,6 +347,35 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         }
     }
 
+    @RequestMapping(value = "/reactivate", method = RequestMethod.PUT)
+    @Transactional
+    @ApiOperation(value = "Reactivate Agent", notes = "Reactivate multiple agents.")
+    public ResponseEntity<ResponseWrapper<UfsCustomer>> reactivateAgent(@Valid @RequestBody ActionWrapper<Long> actions) {
+        ResponseWrapper response = new ResponseWrapper();
+
+        List<String> errors = new ArrayList<>();
+        Arrays.stream(actions.getIds()).forEach(id -> {
+            UfsCustomer customer = this.customerService.findByCustomerId(id);
+            customer.setAction(AppConstants.ACTIVITY_ACTIVATION);
+            customer.setActionStatus(AppConstants.STATUS_UNAPPROVED);
+            this.customerService.saveCustomer(customer);
+            loggerService.log("Successfully Reactivated Customer",
+                    UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_UPDATE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
+
+        });
+
+
+
+        if (errors.isEmpty()) {
+            return ResponseEntity.ok(response);
+        } else {
+            response.setCode(HttpStatus.MULTI_STATUS.value());
+            response.setData(errors);
+            response.setMessage(AppConstants.CHECKER_GENERAL_ERROR);
+            return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
+        }
+    }
+
     @Override
     @Transactional
     public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
