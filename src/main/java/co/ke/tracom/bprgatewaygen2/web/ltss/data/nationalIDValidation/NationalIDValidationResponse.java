@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class NationalIDValidationResponse {
-    private String identification;
-    private String name;
+
+  private String identification;
+  private String name;
 }

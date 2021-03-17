@@ -2,70 +2,82 @@ package co.ke.tracom.bprgatewaygen2.web.wasac.service;
 
 import co.ke.tracom.bprgatewaygen2.core.tracomhttp.resthttp.RestHTTPService;
 import co.ke.tracom.bprgatewaygen2.core.util.AppConstants;
+import co.ke.tracom.bprgatewaygen2.web.config.CustomObjectMapper;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgatewaygen2.web.wasac.data.customerprofile.CustomerProfileResponse;
-import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.PaymentRequest;
-import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.PaymentResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentRequest;
+import co.ke.tracom.bprgatewaygen2.web.wasac.data.payment.WasacPaymentResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
+@Service
+@Slf4j
 @RequiredArgsConstructor
 public class WASACService {
-    @Value("${wasac.customer-profile.request-base-url}")
-    private String WASACBaseURL;
-    @Value("${wasac.customer-profile.request-suffix-url}")
-    private String WASACSuffixURL;
-    @Value("${wasac.payment.advise-url}")
-    private String WASACSPaymentAdviseURL;
 
-    private final RestHTTPService restHTTPService;
+  private final CustomObjectMapper mapper = new CustomObjectMapper();
 
-    /**
-     * Fetch customer data given Customer ID from remote API.
-     * URL: https://dev.api.wasac.rw/<customerid>/profile
-     * <p>
-     * postname: client postname
-     * name: client name
-     * zone: zone(location)
-     * mobile: mobile phone number
-     * email: clients email
-     * phone: clients' fixed phone
-     * personnalid: National ID
-     * branch: WASAC branch
-     * balance: Due balance
-     * meterid: Water Meter Number
-     * customerid: Unique customer identifier
-     *
-     * @param profileRequest
-     */
-    public CustomerProfileResponse fetchCustomerProfile(CustomerProfileRequest profileRequest) {
-        CustomerProfileResponse profileResponse = new CustomerProfileResponse().setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value()  );
-        try {
-            String requestURL = WASACBaseURL + profileRequest.getCustomerId() + WASACSuffixURL;
-            String results = restHTTPService.sendGetRequest(requestURL);
+  private final RestHTTPService restHTTPService;
 
-            ObjectMapper mapper = new ObjectMapper();
-            CustomerProfileResponse customerProfileResult = mapper.readValue(results, CustomerProfileResponse.class);
-            customerProfileResult.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return profileResponse;
+  @Value("${wasac.customer-profile.request-base-url}")
+  private String WASACBaseURL;
+
+  @Value("${wasac.customer-profile.request-suffix-url}")
+  private String WASACProfileURL;
+
+  @Value("${wasac.payment.advise-url}")
+  private String WASACSPaymentAdviseURL;
+
+  /**
+   * Fetch customer data given Customer ID from remote API. URL:
+   * https://dev.api.wasac.rw/<customerid>/profile
+   *
+   * <p>postname: client postname name: client name zone: zone(location) mobile: mobile phone number
+   * email: clients email phone: clients' fixed phone personnalid: National ID branch: WASAC branch
+   * balance: Due balance meterid: Water Meter Number customerid: Unique customer identifier
+   *
+   * @param profileRequest
+   */
+  public CustomerProfileResponse fetchCustomerProfile(CustomerProfileRequest profileRequest) {
+    CustomerProfileResponse profileResponse =
+        new CustomerProfileResponse()
+            .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
+    try {
+      String requestURL = WASACBaseURL + profileRequest.getCustomerId() + WASACProfileURL;
+      String results = restHTTPService.sendGetRequest(requestURL);
+      log.info("WASAC SERVICE RESPONSE: {}", results);
+      CustomerProfileResponse customerProfileResult =
+          mapper.readValue(results, CustomerProfileResponse.class);
+      customerProfileResult.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
+    } catch (Exception e) {
+      e.printStackTrace();
+      logError(e);
     }
+    return profileResponse;
+  }
 
-    public PaymentResponse payWaterBill(PaymentRequest request) {
-        PaymentResponse paymentResponse = new PaymentResponse().setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
-        try {
-            ResponseEntity<String> response= restHTTPService.postRequest(request, WASACSPaymentAdviseURL);
-
-            ObjectMapper mapper = new ObjectMapper();
-            PaymentResponse paymentAdviseResponse = mapper.readValue(response.getBody(), PaymentResponse.class);
-            paymentAdviseResponse.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return paymentResponse;
+  public WasacPaymentResponse payWaterBill(WasacPaymentRequest request) {
+    WasacPaymentResponse paymentResponse =
+        new WasacPaymentResponse()
+            .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
+    try {
+      ResponseEntity<String> response =
+          restHTTPService.postRequest(request, WASACSPaymentAdviseURL);
+      log.info("WASAC SERVICE RESPONSE: {}", response);
+      WasacPaymentResponse paymentAdviseResponse =
+          mapper.readValue(response.getBody(), WasacPaymentResponse.class);
+      paymentAdviseResponse.setStatus(AppConstants.TRANSACTION_SUCCESS_STANDARD.value());
+    } catch (Exception e) {
+      logError(e);
+      e.printStackTrace();
     }
+    return paymentResponse;
+  }
+
+  private void logError(Exception ex) {
+    log.error("WASAC SERVICE: {}", ex.getMessage());
+  }
 }

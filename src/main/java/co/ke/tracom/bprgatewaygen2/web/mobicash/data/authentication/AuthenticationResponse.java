@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class AuthenticationResponse extends MobiCashResponse {
-    private String access_token;
+
+  private String access_token;
 }

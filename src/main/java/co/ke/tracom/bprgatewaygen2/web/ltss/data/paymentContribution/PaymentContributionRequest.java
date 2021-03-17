@@ -1,16 +1,30 @@
 package co.ke.tracom.bprgatewaygen2.web.ltss.data.paymentContribution;
 
 import co.ke.tracom.bprgatewaygen2.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 public class PaymentContributionRequest {
-    private NationalIDValidationRequest beneficiary;
-    private String amount;
-    private String description;
-    private String intermediary;
-    private String extReferenceNo;
-    private Date paymentDate;
+  @ApiModelProperty(name = "Beneficiary", value = "Payment beneficiary", required = true)
+  private NationalIDValidationRequest beneficiary;
+
+  private String amount;
+
+  @ApiModelProperty(name = "Description", value = "Reason for payment ", required = true)
+  private String description;
+
+  @ApiModelProperty(
+      name = "Intermediary",
+      value = "Payment Service Provider’s name (60)",
+      required = true)
+  private String intermediary;
+
+  @ApiModelProperty(
+      name = "extReferenceNo",
+      value = "The Payment Service Provider’s system Reference number for the transaction",
+      required = true)
+  private String extReferenceNo;
+
+  private String paymentDate;
 }

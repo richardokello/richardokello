@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class ValidateNIDRequest extends AgaciroRequest {
-    private String nid;
+
+  private String nid;
 }

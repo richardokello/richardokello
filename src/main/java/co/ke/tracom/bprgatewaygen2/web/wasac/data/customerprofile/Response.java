@@ -6,151 +6,160 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "postname",
-        "name",
-        "zone",
-        "mobile",
-        "email",
-        "phone",
-        "personnalid",
-        "branch",
-        "balance",
-        "meterid",
-        "customerid"
+  "postname",
+  "name",
+  "zone",
+  "mobile",
+  "email",
+  "phone",
+  "personnalid",
+  "branch",
+  "balance",
+  "meterid",
+  "customerid"
 })
 public class Response {
 
-    @JsonProperty("postname")
-    private String postname;
-    @JsonProperty("name")
-    private String name;
-    @JsonProperty("zone")
-    private String zone;
-    @JsonProperty("mobile")
-    private String mobile;
-    @JsonProperty("email")
-    private String email;
-    @JsonProperty("phone")
-    private String phone;
-    @JsonProperty("personnalid")
-    private Object personnalid;
-    @JsonProperty("branch")
-    private String branch;
-    @JsonProperty("balance")
-    private String balance;
-    @JsonProperty("meterid")
-    private String meterid;
-    @JsonProperty("customerid")
-    private String customerid;
+  @JsonProperty("postname")
+  private String postname;
 
-    @JsonProperty("postname")
-    public String getPostname() {
-        return postname;
-    }
+  @JsonProperty("name")
+  private String name;
 
-    @JsonProperty("postname")
-    public void setPostname(String postname) {
-        this.postname = postname;
-    }
+  @JsonProperty("zone")
+  private String zone;
 
-    @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
+  @JsonProperty("mobile")
+  private String mobile;
 
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
-    }
+  @JsonProperty("email")
+  private String email;
 
-    @JsonProperty("zone")
-    public String getZone() {
-        return zone;
-    }
+  @JsonProperty("phone")
+  private String phone;
 
-    @JsonProperty("zone")
-    public void setZone(String zone) {
-        this.zone = zone;
-    }
+  @JsonProperty("personnalid")
+  private Object personnalid;
 
-    @JsonProperty("mobile")
-    public String getMobile() {
-        return mobile;
-    }
+  @JsonProperty("branch")
+  private String branch;
 
-    @JsonProperty("mobile")
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
+  @JsonProperty("balance")
+  private String balance;
 
-    @JsonProperty("email")
-    public String getEmail() {
-        return email;
-    }
+  @JsonProperty("meterid")
+  private String meterid;
 
-    @JsonProperty("email")
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  @JsonProperty("customerid")
+  private String customerid;
 
-    @JsonProperty("phone")
-    public String getPhone() {
-        return phone;
-    }
+  @JsonProperty("postname")
+  public String getPostname() {
+    return postname;
+  }
 
-    @JsonProperty("phone")
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+  @JsonProperty("postname")
+  public void setPostname(String postname) {
+    this.postname = postname;
+  }
 
-    @JsonProperty("personnalid")
-    public Object getPersonnalid() {
-        return personnalid;
-    }
+  @JsonProperty("name")
+  public String getName() {
+    return name;
+  }
 
-    @JsonProperty("personnalid")
-    public void setPersonnalid(Object personnalid) {
-        this.personnalid = personnalid;
-    }
+  @JsonProperty("name")
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    @JsonProperty("branch")
-    public String getBranch() {
-        return branch;
-    }
+  @JsonProperty("zone")
+  public String getZone() {
+    return zone;
+  }
 
-    @JsonProperty("branch")
-    public void setBranch(String branch) {
-        this.branch = branch;
-    }
+  @JsonProperty("zone")
+  public void setZone(String zone) {
+    this.zone = zone;
+  }
 
-    @JsonProperty("balance")
-    public String getBalance() {
-        return balance;
-    }
+  @JsonProperty("mobile")
+  public String getMobile() {
+    return mobile;
+  }
 
-    @JsonProperty("balance")
-    public void setBalance(String balance) {
-        this.balance = balance;
-    }
+  @JsonProperty("mobile")
+  public void setMobile(String mobile) {
+    this.mobile = mobile;
+  }
 
-    @JsonProperty("meterid")
-    public String getMeterid() {
-        return meterid;
-    }
+  @JsonProperty("email")
+  public String getEmail() {
+    return email;
+  }
 
-    @JsonProperty("meterid")
-    public void setMeterid(String meterid) {
-        this.meterid = meterid;
-    }
+  @JsonProperty("email")
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    @JsonProperty("customerid")
-    public String getCustomerid() {
-        return customerid;
-    }
+  @JsonProperty("phone")
+  public String getPhone() {
+    return phone;
+  }
 
-    @JsonProperty("customerid")
-    public void setCustomerid(String customerid) {
-        this.customerid = customerid;
-    }
+  @JsonProperty("phone")
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
+  @JsonProperty("personnalid")
+  public Object getPersonnalid() {
+    return personnalid;
+  }
+
+  @JsonProperty("personnalid")
+  public void setPersonnalid(Object personnalid) {
+    this.personnalid = personnalid;
+  }
+
+  @JsonProperty("branch")
+  public String getBranch() {
+    return branch;
+  }
+
+  @JsonProperty("branch")
+  public void setBranch(String branch) {
+    this.branch = branch;
+  }
+
+  @JsonProperty("balance")
+  public String getBalance() {
+    return balance;
+  }
+
+  @JsonProperty("balance")
+  public void setBalance(String balance) {
+    this.balance = balance;
+  }
+
+  @JsonProperty("meterid")
+  public String getMeterid() {
+    return meterid;
+  }
+
+  @JsonProperty("meterid")
+  public void setMeterid(String meterid) {
+    this.meterid = meterid;
+  }
+
+  @JsonProperty("customerid")
+  public String getCustomerid() {
+    return customerid;
+  }
+
+  @JsonProperty("customerid")
+  public void setCustomerid(String customerid) {
+    this.customerid = customerid;
+  }
 }

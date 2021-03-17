@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 public class AgentDetailsResponse extends MobiCashResponse {
-    private String MobiCashAccountNumber;
-    private String MobiCashAccountName;
-    private String MobiCashMobilePhone;
+
+  private String MobiCashAccountNumber;
+  private String MobiCashAccountName;
+  private String MobiCashMobilePhone;
 }

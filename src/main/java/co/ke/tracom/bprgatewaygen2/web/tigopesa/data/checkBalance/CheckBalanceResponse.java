@@ -1,27 +1,20 @@
 package co.ke.tracom.bprgatewaygen2.web.tigopesa.data.checkBalance;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class CheckBalanceResponse {
-    private String errorCode;
-    private String errorMessage;
-    private String amount;
-    private String referenceId;
 
-    public String generateRequestXML () {
+  @JsonProperty("Result")
+  private String Result; // errorCode
 
-        String xmlMessage = "<TCSReply>\n" +
-                "<Result>%s</Result>\n" +
-                "<Message>%s</Message>\n" +
-                "<amount>%s</amount>\n" +
-                "<referenceId>%s</referenceId>\n" +
-                "</TCSReply>";
+  @JsonProperty("Message")
+  private String Message; // error Message
 
-        return String.format(xmlMessage,
-                this.getErrorCode(),
-                this.getErrorMessage(),
-                this.getAmount(),
-                this.getReferenceId());
-    }
+  @JsonProperty("referenceId")
+  private String referenceId;
+
+  @JsonProperty("amount")
+  private float amount;
 }
