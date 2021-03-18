@@ -968,7 +968,7 @@ public class DeviceServiceTemplate implements DeviceService {
     }
 
     @Override
-    public boolean checkIfMidExistsWithMultipleCurrencies(Set<TmsDeviceTidsMids> tidsMids, Set<String> mid) {
+    public boolean checkIfMidExistsWithMultipleCurrencies(List<TmsDeviceTidsMids> tidsMids, Set<String> mid) {
         for (TmsDeviceTidsMids tm : tidsMids) {
             List<BigDecimal> td = new ArrayList<>();
             td.add(tm.getCurrencyIds());
@@ -1001,7 +1001,7 @@ public class DeviceServiceTemplate implements DeviceService {
     }
 
     @Override
-    public boolean checkIfMidExistsWithMultipleCurrenciesWithDeviceId(Set<TmsDeviceTidsMids> tmsDeviceTidsMids, BigDecimal deviceId) {
+    public boolean checkIfMidExistsWithMultipleCurrenciesWithDeviceId(List<TmsDeviceTidsMids> tmsDeviceTidsMids, BigDecimal deviceId) {
         for (TmsDeviceTidsMids tm : tmsDeviceTidsMids) {
             List<BigDecimal> td = new ArrayList<>();
             td.add(tm.getCurrencyIds());

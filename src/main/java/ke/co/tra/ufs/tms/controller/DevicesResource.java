@@ -178,6 +178,12 @@ public class DevicesResource {
                             TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
                     errors.add("Device make with id " + id + " doesn't exist");
                     continue;
+                } else if (dbMake.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)
+                        && dbMake.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_APPROVED)) {
+                    loggerService.logApprove("Failed to approve device  (id " + id + "). Record has already been approved",
+                            TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
+                    errors.add("Failed to approve device  (id " + id + "). Record has already been approved");
+                    continue;
                 } else if (loggerService.isInitiator(TmsDevice.class.getSimpleName(), id, dbMake.getAction())) {
                     errors.add("Sorry maker can't approve their own record (" + dbMake.getSerialNo() + ")");
                     loggerService.logUpdate("Failed to approve device (" + dbMake.getSerialNo() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsDevice.class), id, AppConstants.STATUS_FAILED);

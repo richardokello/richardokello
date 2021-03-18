@@ -479,7 +479,7 @@ public interface DeviceService {
 
     boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds);
 
-    boolean checkIfTidMidExistsByDeviceIdsIn(Set<String> tid,Long deviceIds);
+    boolean checkIfTidMidExistsByDeviceIdsIn(Set<String> tid, Long deviceIds);
 
     boolean checkIfTidExistsByDeviceIds(String tid, Long deviceIds);
 
@@ -489,9 +489,9 @@ public interface DeviceService {
 
     boolean checkIfMidExistsOnOtherCustomer(Set<String> mid, BigDecimal outletIds);
 
-    boolean checkIfMidExistsWithMultipleCurrencies(Set<TmsDeviceTidsMids> tmsDeviceTidsMids, Set<String> mids);
+    boolean checkIfMidExistsWithMultipleCurrencies(List<TmsDeviceTidsMids> tmsDeviceTidsMids, Set<String> mids);
 
     boolean checkIfMidExistsOnOtherCustomerByCustomerId(Set<String> mids, Long customerId);
 
-    boolean checkIfMidExistsWithMultipleCurrenciesWithDeviceId(Set<TmsDeviceTidsMids> tmsDeviceTidsMids, BigDecimal deviceId);
+    boolean checkIfMidExistsWithMultipleCurrenciesWithDeviceId(List<TmsDeviceTidsMids> tmsDeviceTidsMids, BigDecimal deviceId);
 }
