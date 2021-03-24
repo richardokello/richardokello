@@ -7,6 +7,7 @@ package ke.tra.ufs.webportal.entities;
 
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
+import ke.axle.chassis.annotations.ModifiableQueryField;
 import ke.axle.chassis.annotations.Searchable;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -41,6 +42,7 @@ public class UfsMcc implements Serializable, Comparable<UfsMcc> {
     @Searchable
     @ModifiableField
     @Column(name = "NAME")
+    @ModifiableQueryField
     private String name;
     @Searchable
     @ModifiableField

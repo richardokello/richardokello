@@ -10,6 +10,7 @@ import ke.tra.ufs.webportal.entities.UfsContactPerson;
 import ke.tra.ufs.webportal.entities.UfsCustomerOutlet;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.entities.UfsPosUser;
+import ke.tra.ufs.webportal.entities.wrapper.PosUserWrapper;
 import ke.tra.ufs.webportal.entities.wrapper.contactPersonDeviceWrapper;
 import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
@@ -40,9 +41,10 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson, L
     private final PasswordEncoder encoder;
     private final NotifyService notifyService;
     private final TmsDeviceService tmsDeviceService;
+    private final PosUserIdGenerator posUserIdGenerator;
 
     public UfsContactPersonResource(LoggerService loggerService, EntityManager entityManager, ContactPersonService contactPersonService, PosUserService posUserService,
-                                    SysConfigService configService, PasswordEncoder encoder, NotifyService notifyService, TmsDeviceService tmsDeviceService, UfsCustomerOutletService customerOutletService) {
+                                    SysConfigService configService, PasswordEncoder encoder, NotifyService notifyService, TmsDeviceService tmsDeviceService, UfsCustomerOutletService customerOutletService, PosUserIdGenerator posUserIdGenerator) {
         super(loggerService, entityManager);
         this.contactPersonService = contactPersonService;
         this.posUserService = posUserService;
@@ -51,6 +53,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson, L
         this.notifyService = notifyService;
         this.tmsDeviceService = tmsDeviceService;
         this.customerOutletService = customerOutletService;
+        this.posUserIdGenerator = posUserIdGenerator;
     }
 
     @Override
@@ -59,14 +62,11 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson, L
         ResponseWrapper response = new ResponseWrapper();
         String outletName = null;
         String merchantName = null;
+        String[] usernames = ufsContactPerson.getName().split("\\s+");
 
-        //check if contact person user name already exists
-        UfsContactPerson contactPerson = contactPersonService.findByUsername(ufsContactPerson.getUserName());
-        if (Objects.nonNull(contactPerson)) {
-            response.setCode(417);
-            response.setMessage("Contact Person With That username Already Exists");
-            return new ResponseEntity(response, HttpStatus.FAILED_DEPENDENCY);
-        }
+        //generate username
+        String username = (usernames.length == 1) ? posUserIdGenerator.generateUsername(new PosUserWrapper(usernames[0])) : posUserIdGenerator.generateUsername(new PosUserWrapper(usernames[0], usernames[1]));
+        ufsContactPerson.setUserName(username);
         ResponseEntity<ResponseWrapper<UfsContactPerson>> creationResp = super.create(ufsContactPerson);
         if ((!creationResp.getStatusCode().equals(HttpStatus.CREATED)) || (ufsContactPerson.getDeviceId() == null)) {
             return creationResp;
@@ -89,7 +89,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson, L
         if (Objects.isNull(posUser)) {
             UfsPosUser ufsPosUser = new UfsPosUser();
             ufsPosUser.setPosRole(ufsContactPerson.getPosRole());
-            ufsPosUser.setUsername(ufsContactPerson.getUserName());
+            ufsPosUser.setUsername(username);
             ufsPosUser.setContactPersonId(ufsContactPerson.getId());
             ufsPosUser.setPin(encoder.encode(randomPin));
             ufsPosUser.setTmsDeviceId(ufsContactPerson.getDeviceId());

@@ -210,11 +210,18 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
             if (dtk == null) {
                 processAddTaskTodevice(device, rootPath, "/devices/" + device.getDeviceId() + "/");
             } else {
-                processAddTaskTodevice(device, rootPath, "/devices/" + device.getDeviceId() + "/", dtk);
+                TmsScheduler sched = dtk.getScheduleId();
+                if (sched.getScheduleType().equals("Manual") && dtk.getDownloadStatus().equals("PENDING")) {
+                    sched.setNoFiles(sched.getNoFiles() + 1L);
+                    schedulerService.saveSchedule(sched);
+                    processAddTaskTodeviceToPendingTask(device, rootPath, sched.getDirPath());
+                } else {
+                    processAddTaskTodevice(device, rootPath, "/devices/" + device.getDeviceId() + "/");
+                }
+
             }
         });
     }
-
 
 
     @Override
@@ -296,8 +303,6 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         //save the manual schedule
         schedulerService.saveSchedule(scheduler);
 
-        // loggerService.log("Creating new Schedule", SharedMethods.getEntityName(TmsScheduler.class), scheduler.getScheduleId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
-
         TmsDeviceTask deviceTask = new TmsDeviceTask();
         deviceTask.setDeviceId(device);
         deviceTask.setScheduleId(scheduler);
@@ -311,11 +316,11 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         scheduler.setDirPath(path + deviceTask.getTaskId() + "/");
         schedulerService.saveSchedule(scheduler);
         transferAndCopyFiles(device, rootPath);
-
-        //loggerService.log("Creating new Device Task", SharedMethods.getEntityName(TmsDeviceTask.class), deviceTask.getTaskId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
     }
 
-    private void processAddTaskTodevice(TmsDevice device, String rootPath, String path, TmsDeviceTask dtk) {
+    private void processAddTaskTodeviceToPendingTask(TmsDevice device, String rootPath, String path) {
+        rootPath = rootPath + path;
+        transferAndCopyFiles(device, rootPath);
     }
 
     private void transferAndCopyFiles(TmsDevice tmsDevice, String rootPath) {

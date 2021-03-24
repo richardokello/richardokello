@@ -25,9 +25,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ke.axle.chassis.annotations.Filter;
-import ke.axle.chassis.annotations.ModifiableField;
-import ke.axle.chassis.annotations.Searchable;
+import ke.axle.chassis.annotations.*;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -194,12 +192,13 @@ public class UfsCustomer implements Serializable {
     @Column(name = "MID")
     private String mid;
 
-
     @JoinColumn(name = "MCC", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne
     private UfsMcc mccId;
     @ModifiableField
     @Column(name = "MCC")
+    @ModifiableChildEntityField(entityName = UfsMcc.class)
+    @FieldNickName(name = "MCC")
     private BigDecimal mccIds;
 
     public UfsCustomer() {

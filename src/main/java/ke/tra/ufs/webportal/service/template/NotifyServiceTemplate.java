@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- *
  * @author eli.muraya
  */
 @Service
@@ -34,7 +33,6 @@ public class NotifyServiceTemplate implements NotifyService {
         log.info("Sending email notification to remote client (Email Address: {}, Title: {}, Message: {})", emailAddress, title, message);
         // TODO Auto-generated method stub
         commService.sendEmail(email);
-
     }
 
 }
