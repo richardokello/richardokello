@@ -239,6 +239,16 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/trained-agents/trained-agents-template.csv").hasAuthority("VIEW_TRAINED_AGENT")
                 .antMatchers(HttpMethod.GET, "/account-opening-details").hasAuthority("VIEW_ACCOUNT_OPENED")
                 .antMatchers(HttpMethod.GET, "/account-opening-details/{id}").hasAuthority("VIEW_ACCOUNT_OPENED")
+
+                // customers
+                .antMatchers(HttpMethod.POST, "/customers/onboard").hasAuthority("CREATE_CUSTOMER")
+                .antMatchers(HttpMethod.GET, "/customers/{id}/changes", "/customers/{id}", "/customers", "/customers/terminated-agents").hasAuthority("VIEW_CUSTOMER")
+                .antMatchers(HttpMethod.PUT, "/customers").hasAuthority("UPDATE_CUSTOMER")
+                .antMatchers(HttpMethod.PUT, "/customers/approve-actions").hasAuthority("APPROVE_CUSTOMER")
+                .antMatchers(HttpMethod.PUT, "/customers/reactivate").hasAuthority("REACTIVATE_CUSTOMER")
+                .antMatchers(HttpMethod.PUT, "/customers/terminate").hasAuthority("SUSPEND_CUSTOMER")
+                .antMatchers(HttpMethod.DELETE, "/customers").hasAuthority("DELETE_CUSTOMER")
+
                 .antMatchers("/**").fullyAuthenticated()
                 .and()
                 .addFilterBefore(authFilter, ExceptionTranslationFilter.class)
