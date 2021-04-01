@@ -544,6 +544,7 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
             authRepository.save(dbAuth);
 
             this.notifyService.sendEmail(dbAuth.getUsername(), "PASSWORD CHANGE REQUEST", "Use this  generate password to access your account: " + password + " If this wasn't you, kindly contact us on " + phoneNo);
+            this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(),  "Use this  generate password to access your account: " + password);
 
             response.setMessage("Password reset successfully. Check your email for new credentials");
             loggerService.log("Password reset successfully",
