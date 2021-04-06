@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -302,6 +303,23 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     @ApiOperation(value = "Terminate Agent", notes = "Terminate multiple agents.")
     public ResponseEntity<ResponseWrapper<UfsCustomer>> terminateAgent(@Valid @RequestBody AgentTerminationWrapper<Long> actions) {
         ResponseWrapper response = new ResponseWrapper();
+
+        List<BigDecimal> custIds = Stream.of(actions.getIds()).map(BigDecimal::new).collect(Collectors.toList());
+        List<UfsCustomerOutlet> custOutlets = this.outletService.findByCustomerIdIn(custIds, AppConstants.INTRASH_NO);
+        List<TmsDevice> devCustomer = this.deviceService.findByOutletIds(custOutlets.stream().map(x -> new BigDecimal(x.getId())).collect(Collectors.toList()));
+
+        for (TmsDevice tmsDevice : devCustomer) {
+            if (tmsDevice.getStatus().equals(AppConstants.STATUS_ACTIVE_STRING)) {
+                String message = "Device with " + tmsDevice.getSerialNo() + " Already Assigned To This Customer.Please UnAssign The Device First to Proceeed";
+                List<String> err = new ArrayList<>();
+                err.add(message);
+                response.setCode(HttpStatus.MULTI_STATUS.value());
+                response.setData(err);
+                response.setMessage(message);
+                return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
+            }
+        }
+
 
         List<String> errors = new ArrayList<>();
         Arrays.stream(actions.getIds()).forEach(id -> {

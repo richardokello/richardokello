@@ -178,7 +178,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson, L
                             } else {
                                 if (!ufsContactPerson.get().getPhoneNumber().isEmpty()) {
                                     // send sms
-                                    posUserService.sendSmsMessage(ufsContactPerson.get().getPhoneNumber(), message);
+                                    notifyService.sendSms(ufsContactPerson.get().getPhoneNumber(), message);
                                     loggerService.log("Sent login credentials for " + ufsContactPerson.get().getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                             AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "Sent login credentials");
 

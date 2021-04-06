@@ -35,4 +35,13 @@ public class NotifyServiceTemplate implements NotifyService {
         commService.sendEmail(email);
     }
 
+    @Override
+    public void sendSms(String phone, String message) {
+        EmailBody email = new EmailBody();
+        email.setMessage(message);
+        email.setSendTo(phone);
+        email.setMessageType(MessageType.SMS);
+        commService.sendSms(email);
+    }
+
 }

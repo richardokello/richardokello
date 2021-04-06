@@ -146,18 +146,18 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
                         String message = "Your username is " + savedUser.getUsername() + ". Use password :" + randomPin + " to login to POS terminal";
                         if (cntper.getEmail() != null) {
                             notifyService.sendEmail(cntper.getEmail(), "Login Credentials", message);
+                            notifyService.sendSms(cntper.getPhoneNumber(),  message);
                             loggerService.log("Sent login credentials for " + cntper.getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                     ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, ke.tra.ufs.webportal.utils.AppConstants.STATUS_COMPLETED, "Sent login credentials");
 
                         } else {
                             if (cntper.getPhoneNumber() != null) {
                                 // send sms
-                                posUserService.sendSmsMessage(cntper.getPhoneNumber(), message);
+                                notifyService.sendSms(cntper.getPhoneNumber(), message);
                                 loggerService.log("Sent login credentials for " + cntper.getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                         ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, ke.tra.ufs.webportal.utils.AppConstants.STATUS_COMPLETED, "Sent login credentials");
 
                             } else {
-
                                 loggerService.log("Failed to send login credentials for " + cntper.getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                         ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, ke.tra.ufs.webportal.utils.AppConstants.STATUS_FAILED_STRING, "No valid email or phone number.");
 
@@ -371,12 +371,13 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
 
                 if (customerOwner.getDirectorEmailAddress() != null) {
                     notifyService.sendEmail(customerOwner.getDirectorEmailAddress(), "Login Credentials", message);
+                    notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
                     loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                             posUser.getPosUserId(), ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, notes);
                 } else {
                     if (customerOwner.getDirectorPrimaryContactNumber() != null) {
                         // send sms
-                        posUserService.sendSmsMessage(customerOwner.getDirectorPrimaryContactNumber(), message);
+                        notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
                         loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                                 posUser.getPosUserId(), ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, notes);
                     } else {

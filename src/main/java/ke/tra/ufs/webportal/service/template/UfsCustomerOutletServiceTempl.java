@@ -46,6 +46,11 @@ public class UfsCustomerOutletServiceTempl implements UfsCustomerOutletService {
     }
 
     @Override
+    public List<UfsCustomerOutlet> findByCustomerIdIn(List<BigDecimal> customerId, String intrash) {
+        return customerOutletRepository.findOutletsByCustomerIdsInAndIntrash(customerId, intrash);
+    }
+
+    @Override
     public void deleteByCustomerId(BigDecimal customerId) {
         List<UfsCustomerOutlet> customerOutlets = customerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerId, AppConstants.NO);
         List<UfsCustomerOutlet> customerOutletsUpdated = customerOutlets.parallelStream().peek(x -> {

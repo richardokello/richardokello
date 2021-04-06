@@ -22,21 +22,29 @@ public class CommunicationService {
     public String baseUrl;
 
     public void sendEmail(EmailBody mail) {
-//           call send email code  here
         RestTemplate template = new RestTemplate();
         HttpEntity<EmailBody> request = new HttpEntity<>(mail);
-
-
         System.out.println(
                 "Sending email..." + mail.getMessage().toString());
         try {
-//        ResponseEntity<EmailBody> responses = template.postForObject(communicationUrl, mail, EmailBody.class);
             template.exchange(baseUrl + "ufs-communication-service/communication/send-email", HttpMethod.POST, request, EmailBody.class
             );
         } catch (HttpClientErrorException e) {
             System.out.println("Communication service is unreachable ...");
         }
-//        if sending email fails, queue and try again later
+
+    }
+
+    public void sendSms(EmailBody mail) {
+        RestTemplate template = new RestTemplate();
+        HttpEntity<EmailBody> request = new HttpEntity<>(mail);
+        System.out.println("Sending SMS..." + mail.getMessage().toString());
+        try {
+            template.exchange(baseUrl + "ufs-communication-service/communication/smpp/send-sms", HttpMethod.POST, request, EmailBody.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Communication service is unreachable ...");
+        }
 
     }
 }
