@@ -342,12 +342,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             }
 
             for (TmsDevice tmsDevice : deviceCustomer) {
-                if (!tmsDevice.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DECOMMISSION)) {
-                    errors.add("Device with " + tmsDevice.getSerialNo() + " Already Assigned To This Customer.Please UnAssign The Device First to Proceeed");
-                    loggerService.log("Customer Not Terminated",
-                            UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Device with " + tmsDevice.getSerialNo() + "Already Assigned To This Customer.Please UnAssign The Device First to Proceeed");
-                    continue;
-                }
                 customer.setAction(AppConstants.ACTIVITY_TERMINATION);
                 customer.setActionStatus(AppConstants.STATUS_UNAPPROVED);
                 customer.setTerminationReason(actions.getTerminationReason());
