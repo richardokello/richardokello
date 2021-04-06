@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 /**
- *
  * @author eli.muraya
  */
 @Service
@@ -32,7 +32,16 @@ public class NotifyServiceTemplate implements NotifyService {
         log.info("Sending email notification to remote client (Email Address: {}, Title: {}, Message: {})", emailAddress, title, message);
         // TODO Auto-generated method stub
         commService.sendEmail(email);
+    }
 
+    @Override
+    public void sendSms(String phone, String message) {
+        System.out.println("SENDING EMAIL=====================================>>>>>>");
+        EmailBody email = new EmailBody();
+        email.setMessage(message);
+        email.setSendTo(phone);
+        email.setMessageType(MessageType.SMS);
+        commService.sendSms(email);
     }
 
 }

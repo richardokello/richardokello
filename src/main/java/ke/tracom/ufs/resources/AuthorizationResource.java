@@ -224,12 +224,13 @@ public class AuthorizationResource {
         String code = customUserService.generateOTP(dbAuth.getUser(), UfsOtpCategory.AUTH_OTP);
         try {
             this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
-        }catch (Exception e){
+            this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(), "OTP: " + code);
+        } catch (Exception e) {
             String error = "OTP Resend failed due to smtp/mail server configurations";
             loggerService.log(error, UfsAuthentication.class.getSimpleName(), null, null,
                     AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, error);
             response.setMessage(error);
-            return new ResponseEntity(error+" "+e.getMessage(), HttpStatus.MULTI_STATUS);
+            return new ResponseEntity(error + " " + e.getMessage(), HttpStatus.MULTI_STATUS);
         }
         response.setMessage("OTP resent successfully");
         return new ResponseEntity(response, HttpStatus.OK);
@@ -251,13 +252,13 @@ public class AuthorizationResource {
             authRepository.save(dbAuth);
             try {
                 this.notifyService.sendEmail(dbAuth.getUsername(), "PASSWORD CHANGE REQUEST", "Use this  generate password to access your account: " + password + " If this wasn't you, kindly contact us on " + phoneNo);
-
-            }catch (Exception e){
+                this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(), "Use this  generate password to access your account: " + password);
+            } catch (Exception e) {
                 String error = "Password reset failed due to smtp/mail server configurations";
                 loggerService.log(error, UfsAuthentication.class.getSimpleName(), null, null,
                         AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, error);
                 response.setMessage(error);
-                return new ResponseEntity(error+" "+e.getMessage(), HttpStatus.MULTI_STATUS);
+                return new ResponseEntity(error + " " + e.getMessage(), HttpStatus.MULTI_STATUS);
             }
 
             response.setMessage("Password reset successfully. Check your email for new credentials");
