@@ -278,7 +278,6 @@ public class OnboardingResource {
                         posUser.setOtherName(name[1]);
                     }
                 }
-
                 posUserService.savePosUser(posUser);
             }
 

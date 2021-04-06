@@ -272,12 +272,13 @@ public class DevicesResource {
 
                 if (customerOwner.getDirectorEmailAddress() != null) {
                     notifyService.sendEmail(customerOwner.getDirectorEmailAddress(), "Login Credentials", message);
+                    notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
                     loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                             posUser.getPosUserId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED);
                 } else {
                     if (customerOwner.getDirectorPrimaryContactNumber() != null) {
                         // send sms
-                        posUserService.sendSmsMessage(customerOwner.getDirectorPrimaryContactNumber(), message);
+                        notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
                         loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                                 posUser.getPosUserId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED);
                     } else {
