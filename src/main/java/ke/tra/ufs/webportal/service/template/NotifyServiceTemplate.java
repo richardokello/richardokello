@@ -5,6 +5,7 @@ import ke.tra.ufs.webportal.service.NotifyService;
 import ke.tra.ufs.webportal.utils.CommunicationService;
 import ke.tra.ufs.webportal.utils.EmailBody;
 import ke.tra.ufs.webportal.utils.enums.MessageType;
+import lombok.extern.apachecommons.CommonsLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
  * @author eli.muraya
  */
 @Service
+@CommonsLog
 public class NotifyServiceTemplate implements NotifyService {
 
     @Autowired
@@ -37,6 +39,7 @@ public class NotifyServiceTemplate implements NotifyService {
 
     @Override
     public void sendSms(String phone, String message) {
+        log.error("Sending message {" + message + "} to :" + phone);
         EmailBody email = new EmailBody();
         email.setMessage(message);
         email.setSendTo(phone);

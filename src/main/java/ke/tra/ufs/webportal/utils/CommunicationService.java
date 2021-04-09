@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.utils;
 
+import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
  * @author emuraya
  */
 @Service
+@CommonsLog
 public class CommunicationService {
 
     @Value("${baseUrl}")
@@ -38,7 +40,7 @@ public class CommunicationService {
     public void sendSms(EmailBody mail) {
         RestTemplate template = new RestTemplate();
         HttpEntity<EmailBody> request = new HttpEntity<>(mail);
-        System.out.println("Sending SMS..." + mail.getMessage().toString());
+        log.error("Sending SMS..." + mail.getMessage().toString());
         try {
             template.exchange(baseUrl + "ufs-communication-service/communication/smpp/send-sms", HttpMethod.POST, request, EmailBody.class);
         } catch (Exception e) {

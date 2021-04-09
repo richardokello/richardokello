@@ -154,7 +154,7 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson, L
 
             Optional<UfsContactPerson> ufsContactPerson = this.contactPersonService.findContactPersonById(id);
             if (ufsContactPerson.isPresent()) {
-                if (ufsContactPerson.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && ufsContactPerson.get().getActionStatus().equals(AppConstants.STATUS_UNAPPROVED)) {
+                if (ufsContactPerson.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)) {
                     List<UfsPosUser> posUsers = this.posUserService.findByContactPersonId(id);
                     if (!posUsers.isEmpty()) {
                         posUsers.forEach(posUser -> {
@@ -170,13 +170,14 @@ public class UfsContactPersonResource extends ChasisResource<UfsContactPerson, L
                             savedUser = posUserService.savePosUser(posUser);
 
                             String message = "Your username is " + savedUser.getUsername() + ". Use password :" + randomPin + " to login to POS terminal";
-                            if (!ufsContactPerson.get().getEmail().isEmpty()) {
+                            if (ufsContactPerson.get().getEmail()!=null) {
                                 notifyService.sendEmail(ufsContactPerson.get().getEmail(), "Login Credentials", message);
+                                notifyService.sendSms(ufsContactPerson.get().getPhoneNumber(), message);
                                 loggerService.log("Sent login credentials for " + ufsContactPerson.get().getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                         AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "Sent login credentials");
 
                             } else {
-                                if (!ufsContactPerson.get().getPhoneNumber().isEmpty()) {
+                                if (ufsContactPerson.get().getPhoneNumber()!=null) {
                                     // send sms
                                     notifyService.sendSms(ufsContactPerson.get().getPhoneNumber(), message);
                                     loggerService.log("Sent login credentials for " + ufsContactPerson.get().getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),

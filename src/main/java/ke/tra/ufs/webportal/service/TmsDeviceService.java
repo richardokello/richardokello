@@ -20,7 +20,6 @@ public interface TmsDeviceService {
 
     public Integer findAllActiveDevices();
 
-
     void activateDevicesByOutlets(List<UfsCustomerOutlet> customerOutlets, String notes);
 
     void activateDevicesByOutletsIds(List<Long> customerOutlets, String notes);
