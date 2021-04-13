@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+
+import ke.co.tra.ufs.tms.entities.TmsDevice;
 import ke.co.tra.ufs.tms.entities.TmsEstateHierarchy;
 import ke.co.tra.ufs.tms.entities.TmsEstateItem;
 import ke.co.tra.ufs.tms.entities.UfsProduct;
@@ -141,15 +143,23 @@ public class BusinessUnitResource {
     @Transactional
     public ResponseEntity<ResponseWrapper> approveBusinessUnit(@RequestBody @Valid ActionWrapper<BigDecimal> action) {
         ResponseWrapper response = new ResponseWrapper();
-        ArrayList<BigDecimal> errors = new ArrayList<>();
+        ArrayList<String> errors = new ArrayList<>();
         for (BigDecimal id : action.getIds()) {
+
+            TmsEstateHierarchy businessUnit = businessUnitService.getUnit(id).get();
+
             loggerService.logApprove("Approving a Unit  (Id: " + id + ")",
                     SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_PENDING, action.getNotes());
-            TmsEstateHierarchy businessUnit = businessUnitService.getUnit(id).get();
             if (businessUnit == null) {
-                loggerService.logApprove("Failed to approve Unit (unit id: " + id + "). Unit doesn't exist",
+                String message = "Failed to approve Unit (unit id: " + id + "). Unit doesn't exist";
+                loggerService.logApprove(message,
                         SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_FAILED, action.getNotes());
-                errors.add(id);
+                errors.add(message);
+                continue;
+            }
+            if(loggerService.isInitiator(TmsEstateHierarchy.class.getSimpleName(), id, businessUnit.getAction())) {
+                errors.add("Sorry maker can't approve their own record (" + businessUnit.getUnitName() + ")");
+                loggerService.logUpdate("Failed to approve Estate hierarchy (" + businessUnit.getUnitName() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_FAILED);
                 continue;
             }
             businessUnit.setStatus(AppConstants.STATUS_ACTIVE);
@@ -180,15 +190,21 @@ public class BusinessUnitResource {
     @Transactional
     public ResponseEntity<ResponseWrapper> declineBusinessUnits(@RequestBody @Valid ActionWrapper<BigDecimal> action) {
         ResponseWrapper response = new ResponseWrapper();
-        ArrayList<BigDecimal> errors = new ArrayList<>();
+        ArrayList<String> errors = new ArrayList<>();
         for (BigDecimal id : action.getIds()) {
-            loggerService.logLock("Rejecting a Business Unit  (Id: " + id + ")",
+            loggerService.logLock("Rejecting a estate hierarchy  (Id: " + id + ")",
                     SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_PENDING, action.getNotes());
             TmsEstateHierarchy businessUnit = businessUnitService.getUnit(id).get();
             if (businessUnit == null) {
-                loggerService.logDeactivate("Failed to reject Business Unit (unit id: " + id + "). unit doesn't exist",
+                String message = "Failed to reject hierarchy (unit id: " + id + "). unit doesn't exist";
+                loggerService.logDeactivate(message,
                         SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_FAILED, action.getNotes());
-                errors.add(id);
+                errors.add(message);
+                continue;
+            }
+            if(loggerService.isInitiator(TmsEstateHierarchy.class.getSimpleName(), id, businessUnit.getAction())) {
+                errors.add("Sorry maker can't approve their own record (" + businessUnit.getUnitName() + ")");
+                loggerService.logUpdate("Failed to approve Estate hierarchy (" + businessUnit.getUnitName() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_FAILED);
                 continue;
             }
             businessUnit.setAction(AppConstants.ACTIVITY_CREATE);
@@ -434,7 +450,7 @@ public class BusinessUnitResource {
     @Transactional
     public ResponseEntity<ResponseWrapper> approveBusinessUnititem(@RequestBody @Valid ActionWrapper<BigDecimal> action) {
         ResponseWrapper response = new ResponseWrapper();
-        ArrayList<BigDecimal> errors = new ArrayList<>();
+        ArrayList<String> errors = new ArrayList<>();
         for (BigDecimal id : action.getIds()) {
             loggerService.logApprove("Approving a Unit item  (Id: " + id + ")",
                     SharedMethods.getEntityName(TmsEstateItem.class), id, AppConstants.STATUS_PENDING, action.getNotes());
@@ -442,7 +458,13 @@ public class BusinessUnitResource {
             if (businessUnitItem == null) {
                 loggerService.logApprove("Failed to approve Unit item (unit id: " + id + "). Unit doesn't exist",
                         SharedMethods.getEntityName(TmsEstateItem.class), id, AppConstants.STATUS_FAILED, action.getNotes());
-                errors.add(id);
+                errors.add("Failed to approve Unit item (unit id: " + id + "). Unit doesn't exist");
+                continue;
+            }
+
+            if(loggerService.isInitiator(TmsEstateItem.class.getSimpleName(), id, businessUnitItem.getAction())) {
+                errors.add("Sorry maker can't approve their own record (" + businessUnitItem.getName() + ")");
+                loggerService.logUpdate("Failed to approve Estate (" + businessUnitItem.getName() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsEstateItem.class), id, AppConstants.STATUS_FAILED);
                 continue;
             }
             businessUnitItem.setStatus(AppConstants.STATUS_ACTIVE);
@@ -477,15 +499,20 @@ public class BusinessUnitResource {
     @Transactional
     public ResponseEntity<ResponseWrapper> declineBusinessUnitsItems(@RequestBody @Valid ActionWrapper<BigDecimal> action) {
         ResponseWrapper response = new ResponseWrapper();
-        ArrayList<BigDecimal> errors = new ArrayList<>();
+        ArrayList<String> errors = new ArrayList<>();
         for (BigDecimal id : action.getIds()) {
             loggerService.logLock("Rejecting a Business Unit  (Id: " + id + ")",
-                    SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_PENDING, action.getNotes());
+                    SharedMethods.getEntityName(TmsEstateItem.class), id, AppConstants.STATUS_PENDING, action.getNotes());
             TmsEstateItem businessUnitItem = businessUnitService.getUnitItem(id).get();
             if (businessUnitItem == null) {
-                loggerService.logDeactivate("Failed to reject Business Unit item (unit id: " + id + "). unit item doesn't exist",
+                loggerService.logDeactivate("Failed to reject Estate (unit id: " + id + "). unit item doesn't exist",
                         SharedMethods.getEntityName(TmsEstateItem.class), id, AppConstants.STATUS_FAILED, action.getNotes());
-                errors.add(id);
+                errors.add("Failed to reject Business Unit item (unit id: " + id + "). unit item doesn't exist");
+                continue;
+            }
+            if(loggerService.isInitiator(TmsEstateItem.class.getSimpleName(), id, businessUnitItem.getAction())) {
+                errors.add("Sorry maker can't approve their own record (" + businessUnitItem.getName() + ")");
+                loggerService.logUpdate("Failed to approve Estate (" + businessUnitItem.getName() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsEstateItem.class), id, AppConstants.STATUS_FAILED);
                 continue;
             }
             businessUnitItem.setAction(AppConstants.ACTIVITY_CREATE);
