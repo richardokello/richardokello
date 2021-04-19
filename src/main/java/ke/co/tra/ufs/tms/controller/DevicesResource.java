@@ -178,6 +178,12 @@ public class DevicesResource {
                             TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
                     errors.add("Device make with id " + id + " doesn't exist");
                     continue;
+                } else if (dbMake.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)
+                        && dbMake.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_APPROVED)) {
+                    loggerService.logApprove("Failed to approve device  (id " + id + "). Record has already been approved",
+                            TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
+                    errors.add("Failed to approve device  (id " + id + "). Record has already been approved");
+                    continue;
                 } else if (loggerService.isInitiator(TmsDevice.class.getSimpleName(), id, dbMake.getAction())) {
                     errors.add("Sorry maker can't approve their own record (" + dbMake.getSerialNo() + ")");
                     loggerService.logUpdate("Failed to approve device (" + dbMake.getSerialNo() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsDevice.class), id, AppConstants.STATUS_FAILED);
@@ -246,16 +252,12 @@ public class DevicesResource {
      * @return
      */
     private void processApproveNew(TmsDevice entity, String notes) throws ExpectationFailed {
-        if (entity.getMasterProfileId() != null) {
-
-        }
-
         //set Whitelisted device to assigned
         deviceService.updateWhitelistBySerialSync(entity.getSerialNo());
 
         loggerService.logApprove("Done approving new Device serial (" + entity.getSerialNo() + ")",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(), AppConstants.STATUS_COMPLETED, notes);
-
+        deviceService.updateCustomerTidMid(entity.getSerialNo());
         // send credentials for customer owner
         UfsPosUser posUser = posUserService.findByDeviceIdAndFirstTime(entity.getDeviceId(), (short) 1);
         if (Objects.nonNull(posUser)) {
@@ -270,12 +272,13 @@ public class DevicesResource {
 
                 if (customerOwner.getDirectorEmailAddress() != null) {
                     notifyService.sendEmail(customerOwner.getDirectorEmailAddress(), "Login Credentials", message);
+                    notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
                     loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                             posUser.getPosUserId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED);
                 } else {
                     if (customerOwner.getDirectorPrimaryContactNumber() != null) {
                         // send sms
-                        posUserService.sendSmsMessage(customerOwner.getDirectorPrimaryContactNumber(), message);
+                        notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
                         loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                                 posUser.getPosUserId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED);
                     } else {
@@ -325,6 +328,7 @@ public class DevicesResource {
      * @return
      */
     private void processApproveUpdate(TmsDevice entity, String notes) throws ExpectationFailed {
+        deviceService.updateCustomerTidMid(entity.getSerialNo());
         loggerService.logApprove("Done approving Updating Device Serial (" + entity.getSerialNo() + ")",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(), AppConstants.STATUS_COMPLETED, notes);
     }

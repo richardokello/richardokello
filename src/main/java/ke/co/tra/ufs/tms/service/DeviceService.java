@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Cornelius M
@@ -74,6 +75,9 @@ public interface DeviceService {
      */
     public TmsDevice getDevicebySerial(String serialNo);
 
+
+    public boolean isDeviceOnBoarded(String serialNo);
+
     /**
      * @param serialNo
      * @return
@@ -125,8 +129,7 @@ public interface DeviceService {
     public Page<TmsDevice> getDevices(String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg);
 
 
-
-    public Page<TmsDevice> getDevicesByCustomerId(BigDecimal customerId,String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg);
+    public Page<TmsDevice> getDevicesByCustomerId(BigDecimal customerId, String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg);
 
     /**
      * Fetch device make by make id
@@ -472,10 +475,23 @@ public interface DeviceService {
 
     boolean checkIfTidExists(String tid);
 
+    boolean checkIfTidExistsIn(Set<String> tid);
+
     boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds);
+
+    boolean checkIfTidMidExistsByDeviceIdsIn(Set<String> tid, Long deviceIds);
 
     boolean checkIfTidExistsByDeviceIds(String tid, Long deviceIds);
 
-    void deleteAllByDeviceId(String tmsDevice);
+    void deleteAllByDeviceId(String serialNo);
 
+    void updateCustomerTidMid(String serialNo);
+
+    boolean checkIfMidExistsOnOtherCustomer(Set<String> mid, BigDecimal outletIds);
+
+    boolean checkIfMidExistsWithMultipleCurrencies(List<TmsDeviceTidsMids> tmsDeviceTidsMids, Set<String> mids);
+
+    boolean checkIfMidExistsOnOtherCustomerByCustomerId(Set<String> mids, Long customerId);
+
+    boolean checkIfMidExistsWithMultipleCurrenciesWithDeviceId(List<TmsDeviceTidsMids> tmsDeviceTidsMids, BigDecimal deviceId);
 }

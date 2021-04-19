@@ -11,15 +11,13 @@ import ke.axle.chassis.annotations.ModifiableField;
 import ke.axle.chassis.annotations.Searchable;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
- *
  * @author Kenny
  */
 @Entity
@@ -41,7 +39,7 @@ public class TmsDeviceTidsMids implements Serializable {
     @GeneratedValue(generator = "TMS_DEVICE_TIDS_SEQ")
     @Column(name = "ID")
     private Long id;
-    @JoinColumn(name = "DEVICE_ID", referencedColumnName = "DEVICE_ID",updatable = false,insertable = false)
+    @JoinColumn(name = "DEVICE_ID", referencedColumnName = "DEVICE_ID", updatable = false, insertable = false)
     @ManyToOne(optional = false)
     @JsonIgnore
     private TmsDevice deviceId;
@@ -61,14 +59,14 @@ public class TmsDeviceTidsMids implements Serializable {
     @Column(name = "MID")
     private String mid;
 
-    @JoinColumn(name = "SWITCH", referencedColumnName = "ID",insertable = false, updatable = false)
+    @JoinColumn(name = "SWITCH", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = true)
     private UfsSwitches switchId;
     @Column(name = "SWITCH")
     @Filter
     @ModifiableField
     private Long switchIds;
-    @JoinColumn(name = "CURRENCY", referencedColumnName = "ID",insertable = false, updatable = false)
+    @JoinColumn(name = "CURRENCY", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = true)
     private UfsCurrency currencyId;
     @Column(name = "CURRENCY")
@@ -200,5 +198,5 @@ public class TmsDeviceTidsMids implements Serializable {
     public String toString() {
         return "ke.co.tra.ufs.tms.entities.TmsDeviceTids[ id=" + id + " ]";
     }
-    
+
 }

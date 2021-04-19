@@ -78,6 +78,7 @@ public class DeviceServiceTemplate implements DeviceService {
     private final UfsContactPersonRepository contactPersonRepository;
     private final DeviceTypeRepository deviceTypeRepository;
     private final MakeRepository makeRepository;
+    private final UfsCustomerRepository customerRepository;
 
     public DeviceServiceTemplate(MakeRepository makeRepo, ModelRepository modelRepo, FTPLogsRepository fTPLogsRepository,
                                  DeviceTypeRepository typeRepo, WhitelistRepository whitelistRepo, DeviceSimcardRepository deviceSimcardRepository,
@@ -85,7 +86,7 @@ public class DeviceServiceTemplate implements DeviceService {
                                  TmsParamDefinitionRepository definitionRepository, TmsDeviceFileExtRepository deviceFileExtRepository,
                                  SchedulerRepository schedulerRepository, DeviceTaskRepository deviceTaskRepository, ConfigRepository configRepo, DeviceCustomerDetailsRepository customerDetailsRepository, CurrencyRepository currencyRepository, ParMenuProfileRepository parMenuProfileRepository, ParBinProfileRepository parBinProfileRepository
             , ParBinConfigRepository parBinConfigRepository, TmsDeviceTidMidRepository tmsDeviceTidRepository, TmsDeviceSimcardRepository tmsDeviceSimcardRepository, UfsCurrencyRepository ufsCurrencyRepository, BusinessUnitItemRepository businessUnitItemRepository, UfsTerminalHistoryService terminalHistoryService,
-                                 UfsCustomerOutletRepository customerOutletRepository, UfsContactPersonRepository contactPersonRepository, DeviceTypeRepository deviceTypeRepository, MakeRepository makeRepository) {
+                                 UfsCustomerOutletRepository customerOutletRepository, UfsContactPersonRepository contactPersonRepository, DeviceTypeRepository deviceTypeRepository, MakeRepository makeRepository, UfsCustomerRepository customerRepository) {
         this.makeRepo = makeRepo;
         this.modelRepo = modelRepo;
         this.typeRepo = typeRepo;
@@ -116,6 +117,7 @@ public class DeviceServiceTemplate implements DeviceService {
         this.contactPersonRepository = contactPersonRepository;
         this.deviceTypeRepository = deviceTypeRepository;
         this.makeRepository = makeRepository;
+        this.customerRepository = customerRepository;
     }
 
     @Override
@@ -252,6 +254,17 @@ public class DeviceServiceTemplate implements DeviceService {
         actions.add(AppConstants.ACTIVITY_DECOMMISSION);
         actions.add(AppConstants.ACTIVITY_RELEASE);
         return deviceRepository.findAllBySerialNoAndIntrash(serialNo, AppConstants.NO, actions);
+    }
+
+    @Override
+    public boolean isDeviceOnBoarded(String serialNo) {
+        log.error("Devices Serial===>" + serialNo);
+        List<String> actions = new ArrayList<>();
+        actions.add(AppConstants.ACTIVITY_DECOMMISSION);
+        actions.add(AppConstants.ACTIVITY_RELEASE);
+        List<TmsDevice> devices = deviceRepository.findBySerialNoAndIntrash(serialNo, AppConstants.NO, actions);
+        log.error("Devices Found===>" + devices.size());
+        return devices.size() > 0;
     }
 
     @Override
@@ -482,8 +495,9 @@ public class DeviceServiceTemplate implements DeviceService {
 
             TmsWhitelist whitelist = whitelistRepo.findByserialNoAndIntrash(onboardWrapper.getSerialNo(), AppConstants.NO);
             TmsEstateItem estates = businessUnitItemRepository.findById(estate).orElse(null);
-            if (estates != null)
+            if (estates != null) {
                 tmsDevice.setEstateId(estates);
+            }
 
             TmsDevice dv = getDevicebySerial(onboardWrapper.getSerialNo());
             if (dv != null) {
@@ -869,6 +883,13 @@ public class DeviceServiceTemplate implements DeviceService {
         return deviceRepository.findByOutletIdsIsInAndIntrash(outletIds, AppConstants.NO, pg);
     }
 
+
+    public List<TmsDevice> getDevicesByCustomerId(BigDecimal customerId) {
+        List<UfsCustomerOutlet> customerOutlets = customerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerId, AppConstants.NO);
+        List<BigDecimal> outletIds = customerOutlets.stream().map(outlet -> BigDecimal.valueOf(outlet.getId())).collect(Collectors.toList());
+        return deviceRepository.findByOutletIdsIsInAndIntrash(outletIds, AppConstants.NO);
+    }
+
     @Override
     public List<UfsContactPerson> getContactPeopleByOutletId(Long customerOutletId) {
         return contactPersonRepository.findByCustomerOutletIdAndIntrash(customerOutletId, AppConstants.NO);
@@ -886,8 +907,19 @@ public class DeviceServiceTemplate implements DeviceService {
     }
 
     @Override
+    public boolean checkIfTidExistsIn(Set<String> tid) {
+        return tmsDeviceTidRepository.getTmsDeviceTidsIn(tid) > 0;
+    }
+
+    @Override
     public boolean checkIfTidMidExistsByDeviceIds(String tid, String mid, Long deviceIds) {
         int tidMidCount = tmsDeviceTidRepository.getTmsDeviceTidsMidsByDeviceIds(tid, mid, deviceIds);
+        return tidMidCount > 0;
+    }
+
+    @Override
+    public boolean checkIfTidMidExistsByDeviceIdsIn(Set<String> tid, Long deviceIds) {
+        int tidMidCount = tmsDeviceTidRepository.getTmsDeviceTidsMidsByDeviceIdsIn(tid, deviceIds);
         return tidMidCount > 0;
     }
 
@@ -903,6 +935,82 @@ public class DeviceServiceTemplate implements DeviceService {
             return;
         }
         tmsDeviceTidRepository.deleteAllByDeviceId(ent.stream().map(x -> x.getDeviceId().longValue()).collect(Collectors.toList()));
+
+        ent.forEach(this::updateCustomersMid);
+    }
+
+    @Override
+    public void updateCustomerTidMid(String serialNo) {
+        List<TmsDevice> ent = deviceRepository.findAllBySerialNoAndIntrash(serialNo, AppConstants.NO);
+        if (ent.size() == 0) {
+            return;
+        }
+        ent.forEach(this::updateCustomersMid);
+    }
+
+    @Override
+    public boolean checkIfMidExistsOnOtherCustomer(Set<String> mid, BigDecimal outletIds) {
+        UfsCustomerOutlet outlet = customerOutletRepository.findById(outletIds.longValue()).get();
+        BigDecimal customerId = outlet.getCustomerIds();
+
+        List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMidIn(mid);
+        if (midQuery.size() < 1) {
+            return false;
+        }
+
+        List<TmsDevice> deviceIds = midQuery.stream().map(TmsDeviceTidsMids::getDeviceId).collect(Collectors.toList());
+        List<UfsCustomerOutlet> outlets = customerOutletRepository.findAllByIdIn(deviceIds.stream().map(x -> x.getOutletIds().longValue()).collect(Collectors.toList()));
+        Set<BigDecimal> customerIds = outlets.stream().map(UfsCustomerOutlet::getCustomerIds).collect(Collectors.toSet());
+        if (customerIds.size() > 1) {
+            return true;
+        }
+        return !customerIds.contains(customerId);
+    }
+
+    @Override
+    public boolean checkIfMidExistsWithMultipleCurrencies(List<TmsDeviceTidsMids> tidsMids, Set<String> mid) {
+        for (TmsDeviceTidsMids tm : tidsMids) {
+            List<BigDecimal> td = new ArrayList<>();
+            td.add(tm.getCurrencyIds());
+            List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMidAndCurrencyIdsIsNot(tm.getMid(), tm.getCurrencyIds());
+            if(midQuery.size()>0){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean checkIfMidExistsOnOtherCustomerByCustomerId(Set<String> mid, Long customer) {
+        BigDecimal customerId = new BigDecimal(customer);
+
+        List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMidIn(mid);
+        if (midQuery.size() < 1) {
+            return false;
+        }
+
+        List<TmsDevice> deviceIds = midQuery.stream().map(TmsDeviceTidsMids::getDeviceId).collect(Collectors.toList());
+        List<UfsCustomerOutlet> outlets = customerOutletRepository.findAllByIdIn(deviceIds.stream().map(x -> x.getOutletIds().longValue()).collect(Collectors.toList()));
+        Set<BigDecimal> customerIds = outlets.stream().map(UfsCustomerOutlet::getCustomerIds).collect(Collectors.toSet());
+        if (customerIds.size() > 1) {
+            return true;
+        }
+
+        return !customerIds.contains(customerId);
+    }
+
+    @Override
+    public boolean checkIfMidExistsWithMultipleCurrenciesWithDeviceId(List<TmsDeviceTidsMids> tmsDeviceTidsMids, BigDecimal deviceId) {
+        for (TmsDeviceTidsMids tm : tmsDeviceTidsMids) {
+            List<BigDecimal> td = new ArrayList<>();
+            td.add(tm.getCurrencyIds());
+            List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMidAndCurrencyIdsIsNotAndDeviceIds(tm.getMid(), tm.getCurrencyIds(), deviceId.longValue());
+            if(midQuery.size()>0){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void generateEquityBinParams(ParBinProfile parBinProfile, String rootPath, TmsDeviceFileExt deviceFileExt, SharedMethods sharedMethods, LoggerServiceLocal loggerService) {
@@ -939,4 +1047,21 @@ public class DeviceServiceTemplate implements DeviceService {
         return modelRepo.findByModelAndIntrash(modelName, AppConstants.NO);
     }
 
+    @Async
+    public void updateCustomersMid(TmsDevice deviceId) {
+        if (deviceId.getOutletIds() != null) {
+            UfsCustomerOutlet outlet = customerOutletRepository.findById(deviceId.getOutletIds().longValue()).get();
+            UfsCustomer customer = outlet.getCustomerId();
+            List<TmsDevice> devices = getDevicesByCustomerId(new BigDecimal(customer.getId()));
+            TreeSet<String> customerMidSet = new TreeSet<>();
+            List<TmsDeviceTidsMids> tidsMids = tmsDeviceTidRepository.findAllByDeviceIdIn(devices.stream().map(x -> x.getDeviceId().longValue()).collect(Collectors.toList()));
+            for (TmsDeviceTidsMids tidmid : tidsMids) {
+                if (tidmid.getMid() != null) {
+                    customerMidSet.add(tidmid.getMid());
+                }
+            }
+            customer.setMid(String.join(";", customerMidSet));
+            customerRepository.save(customer);
+        }
+    }
 }

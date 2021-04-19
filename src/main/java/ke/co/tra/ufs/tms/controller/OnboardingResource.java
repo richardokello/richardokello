@@ -133,19 +133,32 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
-        if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
-            for (TmsDeviceTidsMids tidmid : onboardWrapper.getTmsDeviceTidsMids()) {
-                //check where TID and MID exists
-                if (deviceService.checkIfTidExists(tidmid.getTid())) {
-                    String message = "Creating new Device failed due to the provided"
-                            + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
-                    loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
-                    throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
-                }
+
+        if (onboardWrapper.getTmsDeviceTidsMids() != null) {
+            Set<String> tids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
+            if (deviceService.checkIfTidExistsIn(tids)) {
+                String message = "Creating new Device failed due to the provided"
+                        + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+                response.setCode(400);
+                response.setMessage(message);
+                response.setData(SharedMethods.getFieldMapErrors(validation));
+                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
-
         TmsDevice tmsDevice = new TmsDevice();
+        boolean isvalidMid = ValidateMid(onboardWrapper, false, tmsDevice);
+        if (isvalidMid) {
+            String message = "Creating new Device failed due to the provided"
+                    + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") or assigned to another currency";
+            loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+            response.setCode(400);
+            response.setMessage(message);
+            response.setData(SharedMethods.getFieldMapErrors(validation));
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }
+
+
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
         tmsDevice.setPartNumber(onboardWrapper.getPartNumber());
         tmsDevice.setDeviceTypeId(onboardWrapper.getDeviceTypeId());
@@ -159,6 +172,14 @@ public class OnboardingResource {
             }
         }
         tmsDevice.setSerialNo(onboardWrapper.getSerialNo());
+        try {
+            this.validateDeviceAddons(tmsDevice, false);
+        } catch (GeneralBadRequest ex) {
+            response.setMessage(ex.getMessage());
+            response.setCode(ex.getHttpStatus().value());
+            return new ResponseEntity(response, ex.getHttpStatus());
+        }
+
         if (Objects.nonNull(onboardWrapper.getOutletIds()) || onboardWrapper.getOutletIds() != null) {
 
             outletName = customerOutletService.findByOutletId(onboardWrapper.getOutletIds().longValue()).getOutletName();
@@ -173,13 +194,6 @@ public class OnboardingResource {
             tmsDevice.setTenantIds(onboardWrapper.getTenantIds());
         }
         tmsDevice.setStatus(AppConstants.STATUS_ACTIVE);
-        try {
-            this.validateDeviceAddons(tmsDevice, false);
-        } catch (GeneralBadRequest ex) {
-            response.setMessage(ex.getMessage());
-            response.setCode(ex.getHttpStatus().value());
-            return new ResponseEntity(response, ex.getHttpStatus());
-        }
 
         tmsDevice.setReleaseDeviceCount(0);
         tmsDevice.setAction(AppConstants.ACTIVITY_CREATE);
@@ -200,7 +214,7 @@ public class OnboardingResource {
                 tmsDeviceSimcard.setSerialNo(obj.getSerialNo());
                 deviceService.saveTmsDeviceSimcard(tmsDeviceSimcard);
                 String mnoProvider = this.mnoService.findMno(obj.getMnoIds()).get().getMnoName();
-                deviceSims.add(new TmsDeviceSimcardWrapper(mnoProvider, obj.getMsisdn(), obj.getSerialNo()));
+                deviceSims.add(new TmsDeviceSimcardWrapper(mnoProvider, obj.getSerialNo()));
             });
         }
 
@@ -219,13 +233,6 @@ public class OnboardingResource {
                 tmsDeviceTidMids.setSwitchIds(obj.getSwitchIds());
                 deviceService.saveDeviceTids(tmsDeviceTidMids);
             });
-        }
-
-        if (tidMidError.size() > 0) {
-            response.setMessage("Creating new Device failed due to the provided TID or MID that already Exists" +
-                    new ObjectMapper().writeValueAsString(tidMidError));
-            response.setCode(HttpStatus.CONFLICT.value());
-            return new ResponseEntity(response, HttpStatus.CONFLICT);
         }
 
         //save the tids
@@ -271,7 +278,6 @@ public class OnboardingResource {
                         posUser.setOtherName(name[1]);
                     }
                 }
-
                 posUserService.savePosUser(posUser);
             }
 
@@ -333,18 +339,26 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
-        if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
-            for (TmsDeviceTidsMids tidmid : onboardWrapper.getTmsDeviceTidsMids()) {
-                //check where TID and MID exists
-                if (deviceService.checkIfTidExists(tidmid.getTid())) {
-                    String message = "Creating new Device failed due to the provided"
-                            + "TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
-                    loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
-                    throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
-                }
+        if (onboardWrapper.getTmsDeviceTidsMids() != null) {
+            Set<String> tids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
+            if (deviceService.checkIfTidExistsIn(tids)) {
+                String message = "Creating new Device failed due to the provided"
+                        + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+                throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
             }
         }
 
+        boolean isvalidMid = ValidateMidAssignMerchant(onboardWrapper);
+        if (isvalidMid) {
+            String message = "Creating new Device failed due to the provided "
+                    + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") or assigned to another currency";
+            loggerService.logCreate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+            response.setCode(400);
+            response.setMessage(message);
+            response.setData(SharedMethods.getFieldMapErrors(validation));
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }
         TmsDevice tmsDevice = new TmsDevice();
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
         tmsDevice.setMasterProfileId(onboardWrapper.getMasterProfileId());
@@ -357,9 +371,14 @@ public class OnboardingResource {
         }
         tmsDevice.setSerialNo(onboardWrapper.getSerialNo());
 
-
+        try {
+            this.validateDeviceAddons(tmsDevice, false);
+        } catch (GeneralBadRequest ex) {
+            response.setMessage(ex.getMessage());
+            response.setCode(ex.getHttpStatus().value());
+            return new ResponseEntity(response, ex.getHttpStatus());
+        }
         Long outletId = null;
-
         if (onboardWrapper.getOutletIds() != null) {
             outletId = onboardWrapper.getOutletIds();
         } else {
@@ -381,13 +400,7 @@ public class OnboardingResource {
         tmsDevice.setCustomerOwnerName((outletName != null) ? outletName : customer.getBusinessName());
 
         tmsDevice.setStatus(AppConstants.STATUS_ACTIVE);
-        try {
-            this.validateDeviceAddons(tmsDevice, false);
-        } catch (GeneralBadRequest ex) {
-            response.setMessage(ex.getMessage());
-            response.setCode(ex.getHttpStatus().value());
-            return new ResponseEntity(response, ex.getHttpStatus());
-        }
+
 
         tmsDevice.setReleaseDeviceCount(0);
         tmsDevice.setAction(AppConstants.ACTIVITY_CREATE);
@@ -398,7 +411,7 @@ public class OnboardingResource {
 
 
         List<TmsDeviceSimcardWrapper> deviceSims = new ArrayList<>();
-        /*Saving SimDetails*/
+
         if (Objects.nonNull(onboardWrapper.getTmsDeviceSimcards()) && onboardWrapper.getTmsDeviceSimcards().size() > 0) {
             onboardWrapper.getTmsDeviceSimcards().forEach(obj -> {
                 TmsDeviceSimcard tmsDeviceSimcard = new TmsDeviceSimcard();
@@ -408,13 +421,12 @@ public class OnboardingResource {
                 tmsDeviceSimcard.setSerialNo(obj.getSerialNo());
                 deviceService.saveTmsDeviceSimcard(tmsDeviceSimcard);
                 String mnoProvider = this.mnoService.findMno(obj.getMnoIds()).get().getMnoName();
-                deviceSims.add(new TmsDeviceSimcardWrapper(mnoProvider, obj.getMsisdn(), obj.getSerialNo()));
+                deviceSims.add(new TmsDeviceSimcardWrapper(mnoProvider, obj.getSerialNo()));
             });
         }
 
         List<String> tids = new ArrayList<>();
-        List<String> tidMidError = new ArrayList<>();
-        /*Saving TIDs And MIDs*/
+
         if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
             onboardWrapper.getTmsDeviceTidsMids().forEach(obj -> {
                 TmsDeviceTidsMids tmsDeviceTidMids = new TmsDeviceTidsMids();
@@ -432,14 +444,6 @@ public class OnboardingResource {
                 deviceService.saveDeviceTids(tmsDeviceTidMids);
             });
         }
-
-        if (tidMidError.size() > 0) {
-            response.setMessage("Creating new Device failed due to the provided TID that already Exists" +
-                    new ObjectMapper().writeValueAsString(tidMidError));
-            response.setCode(HttpStatus.CONFLICT.value());
-            return new ResponseEntity(response, HttpStatus.CONFLICT);
-        }
-
         //save the tids
         tmsDevice.setTid(String.join(";", tids));
         deviceService.saveDevice(tmsDevice);
@@ -460,7 +464,7 @@ public class OnboardingResource {
             contactPersonId = contactPersons.get(0).getId();
         }
 
-        /*Create First Time Pos User*/
+
         UfsCustomerOwners customerOwners = customerOwnerService.findByCustomerOwnerId(ownerId);
 
         if (Objects.isNull(customerOwners)) {
@@ -502,25 +506,21 @@ public class OnboardingResource {
                 }
                 posUserService.savePosUser(posUser);
             }
-
         }
 
 
         if (onboardWrapper.getAppId() != null || onboardWrapper.getMasterProfileId() != null) {
             createSchedule(onboardWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
         }
+        this.terminalHistoryService.saveHistory(new UfsTerminalHistory(tmsDevice.getSerialNo(), AppConstants.ACTIVITY_ASSIGN_DEVICE, "Terminal Assigned Successfully with TIDS:" + String.join(";", tids) + " And Device Sim Details: " + new ObjectMapper().writeValueAsString(deviceSims), loggerService.getUser(), AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
 
         response.setData(tmsDevice);
         loggerService.logCreate("Creating new Device", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
         response.setCode(201);
-
-        this.terminalHistoryService.saveHistory(new UfsTerminalHistory(tmsDevice.getSerialNo(), AppConstants.ACTIVITY_ASSIGN_DEVICE, "Terminal Assigned Successfully with TIDS:" + String.join(";", tids) + " And Device Sim Details: " + new ObjectMapper().writeValueAsString(deviceSims), loggerService.getUser(), AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
-
-
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
-    private void saveAllSelectedOptions(BigDecimal deviceId, List<BigDecimal> deviceOptionsIds) {
+    private void saveAllSelectedOptions(BigDecimal deviceId, Set<BigDecimal> deviceOptionsIds) {
         // save device options
         if (Objects.nonNull(deviceOptionsIds) && deviceOptionsIds.size() > 0) {
             List<ParDeviceSelectedOptions> selectedOptions = deviceOptionsIds.stream()
@@ -544,7 +544,7 @@ public class OnboardingResource {
     @RequestMapping(method = RequestMethod.POST, value = "/update-device")
     @Transactional
     public ResponseEntity<ResponseWrapper> updateDevice(@ApiParam(value = "Ignore status and mnoId it will be used when fetching MNOs")
-                                                        @Valid @RequestBody OnboardWrapper onboardWrapper, BindingResult validation) throws IOException, AlreadyExists {
+                                                        @Valid @RequestBody OnboardWrapper onboardWrapper, BindingResult validation) throws IOException {
 
         ResponseWrapper response = new ResponseWrapper();
         String outletName;
@@ -557,7 +557,6 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
         TmsDevice tmsDevice = deviceService.getDevice(onboardWrapper.getDeviceId()).get();
-
 
         if (tmsDevice == null) {
             loggerService.logCreate("Failed to Update Device (Device id: " + tmsDevice.getDeviceId() + "). device doesn't exist",
@@ -575,16 +574,28 @@ public class OnboardingResource {
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
 
-        if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
-            for (TmsDeviceTidsMids tidmid : onboardWrapper.getTmsDeviceTidsMids()) {
-                //check where TID and MID exists
-                if (deviceService.checkIfTidExistsByDeviceIds(tidmid.getTid(), tidmid.getDeviceIds())) {
-                    String message = "Updating Device failed due to the provided"
-                            + "TID/MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") and matched to another device";
-                    loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
-                    throw new AlreadyExists(message, HttpStatus.BAD_REQUEST);
-                }
+        if (onboardWrapper.getTmsDeviceTidsMids() != null) {
+            Set<String> tids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
+            if (deviceService.checkIfTidMidExistsByDeviceIdsIn(tids, tmsDevice.getDeviceId().longValue())) {
+                String message = "Creating new Device failed due to the provided"
+                        + " TID that already Exists (Device: " + onboardWrapper.getSerialNo() + ")";
+                loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+                response.setCode(400);
+                response.setMessage(message);
+                response.setData(SharedMethods.getFieldMapErrors(validation));
+                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
+        }
+
+        boolean validMid = ValidateMid(onboardWrapper, true, tmsDevice);
+        if (validMid) {
+            String message = "Updating Device failed due to the provided "
+                    + "MID that already Exists (Device: " + onboardWrapper.getSerialNo() + ") and Assigned to another merchant";
+            loggerService.logUpdate(message, SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
+            response.setCode(400);
+            response.setMessage(message);
+            response.setData(SharedMethods.getFieldMapErrors(validation));
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
         if (Objects.nonNull(onboardWrapper.getTmsDeviceSimcards())) {
@@ -656,11 +667,43 @@ public class OnboardingResource {
         parDeviceSelectedOptionsService.deleteAll(tmsDevice.getDeviceId());
         saveAllSelectedOptions(tmsDevice.getDeviceId(), onboardWrapper.getDeviceOptionsIds());
 
+        if (onboardWrapper.getMasterProfileId() != null) {
+            createSchedule(onboardWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
+        }
+
         response.setData(tmsDevice);
         loggerService.logUpdate("Updating Device", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
         response.setCode(200);
 
         return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    private boolean ValidateMid(OnboardWrapper onboardWrapper, boolean isUpdate, TmsDevice device) {
+        if (onboardWrapper.getOutletIds() != null) {
+            Set<String> mids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getMid).collect(Collectors.toSet());
+            boolean exist = deviceService.checkIfMidExistsOnOtherCustomer(mids, onboardWrapper.getOutletIds());
+            if (!exist) {
+                if (!isUpdate) {
+                    return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
+                } else {
+                    return deviceService.checkIfMidExistsWithMultipleCurrenciesWithDeviceId(onboardWrapper.getTmsDeviceTidsMids(), device.getDeviceId());
+                }
+            }
+            return exist;
+        }
+        return false;
+    }
+
+    private boolean ValidateMidAssignMerchant(MerchantDeviceOnboard onboardWrapper) {
+        if (onboardWrapper.getTmsDeviceTidsMids() != null) {
+            Set<String> mids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getMid).collect(Collectors.toSet());
+            boolean exist = deviceService.checkIfMidExistsOnOtherCustomerByCustomerId(mids, onboardWrapper.getCustomerId());
+            if (!exist) {
+                return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
+            }
+            return exist;
+        }
+        return false;
     }
 
     @ApiOperation(value = "Add Device Tasks", notes = "used to add a device tasks")
@@ -673,7 +716,6 @@ public class OnboardingResource {
     @Transactional
     public ResponseEntity<ResponseWrapper> addDeviceTasks(
             @Valid AddTaskWrapper addTaskWrapper, BindingResult validation) {
-
         ResponseWrapper response = new ResponseWrapper();
         if (validation.hasErrors()) {
             loggerService.logCreate("Creating new task failed due to validation errors", SharedMethods.getEntityName(TmsDevice.class), addTaskWrapper.getDeviceId(), AppConstants.STATUS_FAILED);
@@ -710,27 +752,24 @@ public class OnboardingResource {
             if (dtk != null) {
                 TmsScheduler sched = dtk.getScheduleId();
                 if (sched.getScheduleType().equals(AppConstants.MANUAL_SCHEDULE) && dtk.getDownloadStatus().equals("PENDING")) {
-                    sched.setNoFiles(sched.getNoFiles() + 1l);
+                    sched.setNoFiles(sched.getNoFiles() + 1L);
                     schedulerService.saveSchedule(sched);
                     try {
                         transferAndCopyFilesTaskNew(addTaskWrapper, tmsDevice, dtk, sched.getDirPath());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                 } else {
                     createScheduleTask(addTaskWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
                 }
             } else {
                 createScheduleTask(addTaskWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
             }
-
         }
 
         response.setData(tmsDevice);
         loggerService.logCreateTask("Creating Device Task", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
         response.setCode(201);
-
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
@@ -739,18 +778,15 @@ public class OnboardingResource {
         } else {
             if (deviceService.getWhitelist(tmsDevice.getSerialNo()) == null) {
                 loggerService.logCreate("Creating new Device failed due to the provided"
-                        + "Device Not white listed (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
+                        + " Device Not white listed (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
                 throw new GeneralBadRequest("Device Not white listed", HttpStatus.CONFLICT);
             }
 
-            TmsDevice dv = deviceService.getDevicebySerial(tmsDevice.getSerialNo());
-            if (dv != null) {
-
-                if (!dv.getStatus().equals("Inactive")) {
-                    loggerService.logCreate("Creating new Device failed due to the provided"
-                            + "Serial Number already Exists (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
-                    throw new GeneralBadRequest("Serial Number already Exists", HttpStatus.CONFLICT);
-                }
+            boolean dv = deviceService.isDeviceOnBoarded(tmsDevice.getSerialNo());
+            if (dv) {
+                loggerService.logCreate("Creating new Device failed due to the provided"
+                        + " Serial Number already Exists (Device: " + tmsDevice.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getSerialNo(), AppConstants.STATUS_FAILED);
+                throw new GeneralBadRequest("Serial Number already Exists", HttpStatus.CONFLICT);
             }
         }
     }
@@ -761,10 +797,10 @@ public class OnboardingResource {
 
         try {
             rootPath = rootPath + "devices/" + tmsDevice.getDeviceId() + "/" + deviceTask.getTaskId() + "/";
-            File d = new File(rootPath);
+            /*File d = new File(rootPath);
             if (d.exists()) {
                 sharedMethods.deleteDirectory(rootPath);
-            }
+            }*/
 
             if (onboardWrapper.getFile() != null) {
                 for (MultipartFile mf : onboardWrapper.getFile()) {
@@ -915,11 +951,6 @@ public class OnboardingResource {
         String rootPath = configService.fetchSysConfigById(new BigDecimal(24)).getValue();
         try {
             rootPath = rootPath + "devices/" + tmsDevice.getDeviceId() + "/" + deviceTask.getTaskId() + "/";
-            File d = new File(rootPath);
-            if (d.exists()) {
-                sharedMethods.deleteDirectory(rootPath);
-            }
-
             if (addTaskWrapper.getFile() != null) {
                 for (MultipartFile mf : addTaskWrapper.getFile()) {
                     sharedMethods.store(mf, rootPath);
@@ -965,11 +996,7 @@ public class OnboardingResource {
     private void transferAndCopyFilesTaskNew(AddTaskWrapper addTaskWrapper, TmsDevice tmsDevice, TmsDeviceTask deviceTask, String path) throws IOException {
         String rootPath = configService.fetchSysConfigById(new BigDecimal(24)).getValue();
         try {
-            rootPath = rootPath + path;
-            File d = new File(rootPath);
-            if (d.exists()) {
-                sharedMethods.deleteDirectory(rootPath);
-            }
+            rootPath = rootPath+path;
             if (addTaskWrapper.getFile() != null) {
                 for (MultipartFile mf : addTaskWrapper.getFile()) {
                     sharedMethods.store(mf, rootPath);
@@ -978,16 +1005,12 @@ public class OnboardingResource {
             // use master profile and device id to generate parameter file specific to device
             if (addTaskWrapper.getMasterProfileId() != null) {
                 Optional<ParGlobalMasterProfile> optionalMaster = parGlobalMasterProfileService.findById(addTaskWrapper.getMasterProfileId());
-
                 if (optionalMaster.isPresent()) {
                     ParGlobalMasterProfile parGlobalMasterProfile = optionalMaster.get();
                     // generate menu profile
                     parFileMenuService.generateMenuFileAsync(new MenuFileRequest(addTaskWrapper.getModelId(), parGlobalMasterProfile.getMenuProfileId()), rootPath);
-//                     generate all global configs related to master profile
                     for (ParGlobalMasterChildProfile config : parGlobalMasterProfile.getChildProfiles()) {
-
                         parFileConfigService.generateGlobalConfigFileAsync(config.getConfigProfile(), addTaskWrapper.getModelId(), rootPath);
-
                     }
                 }
             }
@@ -996,20 +1019,6 @@ public class OnboardingResource {
             if (!addTaskWrapper.getDownloadType().equalsIgnoreCase("App Only")) {
                 customerConfigFileService.generateCustomerFile(addTaskWrapper.getDeviceId(), rootPath);
             }
-
-//            if (addTaskWrapper.getMenuProfileId() != null) {
-//                ParMenuProfile parMenuProfile = parMenuProfileService.findById(addTaskWrapper.getMenuProfileId()).get();
-//                if (parMenuProfile != null) {
-//                    deviceService.generateMenuParameterFile(tmsDevice, parMenuProfile, rootPath, sharedMethods, loggerService);
-//                }
-//            }
-//
-//            if (addTaskWrapper.getBinProfileId() != null) {
-//                ParBinProfile parBinProfile = parBinProfileService.findById(addTaskWrapper.getBinProfileId()).get();
-//                if (parBinProfile != null) {
-//                    deviceService.generateBinParameterFile(tmsDevice, parBinProfile, rootPath, sharedMethods, loggerService);
-//                }
-//            }
 
             loggerService.logCreate("Saving new App Files", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
 

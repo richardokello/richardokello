@@ -168,8 +168,6 @@ public class UfsCustomer implements Serializable {
     @Column(name = "ESTATE_ID")
     @ModifiableField
     private BigDecimal estateId;
-
-    @Size(max = 40)
     @ModifiableField
     @Filter
     @Searchable

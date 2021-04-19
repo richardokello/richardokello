@@ -213,10 +213,11 @@ public class PosUserController{
                 if(Objects.nonNull(ufsPosUser.getContactPersonId())){
                     System.out.println("Contact Person Id>>>>"+ufsPosUser.getContactPersonId());
                     notifyService.sendEmail(ufsPosUser.getContactPerson().getEmail(), "POS LOGIN CREDENTIALS", message);
+                    notifyService.sendSms(ufsPosUser.getContactPerson().getPhoneNumber(), message);
                 }else if(Objects.nonNull(ufsPosUser.getCustomerOwnersId())){
                     System.out.println("Customer Owner Id>>>>"+ufsPosUser.getCustomerOwnersId());
                     notifyService.sendEmail(ufsPosUser.getCustomerOwners().getDirectorEmailAddress(), "POS LOGIN CREDENTIALS", message);
-
+                    notifyService.sendSms(ufsPosUser.getContactPerson().getPhoneNumber(), message);
                 }
 
             }else if(ufsPosUser.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_RESET_POS_PIN) &&
@@ -240,10 +241,11 @@ public class PosUserController{
                 if(Objects.nonNull(ufsPosUser.getContactPersonId())){
                     System.out.println("Contact Person Id>>>>"+ufsPosUser.getContactPersonId());
                     notifyService.sendEmail(ufsPosUser.getContactPerson().getEmail(), "Password Reset", message);
+                    notifyService.sendSms(ufsPosUser.getContactPerson().getPhoneNumber(), message);
                 }else if(Objects.nonNull(ufsPosUser.getCustomerOwnersId())){
                     System.out.println("Customer Owner Id>>>>"+ufsPosUser.getCustomerOwnersId());
                     notifyService.sendEmail(ufsPosUser.getCustomerOwners().getDirectorEmailAddress(), "Password Reset", message);
-
+                    notifyService.sendSms(ufsPosUser.getContactPerson().getPhoneNumber(), message);
                 }
             }else if(ufsPosUser.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DELETE) &&
                  ufsPosUser.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){

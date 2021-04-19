@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -56,7 +55,7 @@ public class ParGlobalMasterProfileResource extends ChasisResource<ParGlobalMast
     public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<BigDecimal> actions) throws ExpectationFailed {
         ResponseEntity<ResponseWrapper> resp = super.approveActions(actions);
 
-        if(!resp.getStatusCode().equals(HttpStatus.OK)){
+        if (!resp.getStatusCode().equals(HttpStatus.OK)) {
             return resp;
         }
 
@@ -64,7 +63,7 @@ public class ParGlobalMasterProfileResource extends ChasisResource<ParGlobalMast
             Optional<ParGlobalMasterProfile> t = parGlobalMasterProfileService.findById(id);
             if (t.isPresent()) {
                 if (t.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) &&
-                        t.get().getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
+                        t.get().getActionStatus().equalsIgnoreCase(AppConstants.STATUS_APPROVED)) {
                     try {
                         // get child profile from edited record
                         ParGlobalMasterProfile entity = supportRepo.mergeChanges(id, t.get());
@@ -92,8 +91,9 @@ public class ParGlobalMasterProfileResource extends ChasisResource<ParGlobalMast
                         if (newIds != null) {
 
                             newIds.forEach(item -> {
-                                if (!isPresent.contains(item) && !toDelete.contains(item))
+                                if (!isPresent.contains(item) && !toDelete.contains(item)) {
                                     toCreate.add(item);
+                                }
                             });
                         }
 

@@ -1,25 +1,17 @@
 package ke.co.tra.ufs.tms.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import ke.axle.chassis.annotations.Searchable;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Owori Juma
@@ -158,6 +150,8 @@ public class TmsDevice implements Serializable {
     private Integer releaseDeviceCount;
 
     @Column(name = "TID")
+    @Searchable
+    @ModifiableField
     private String tid;
 
 }
