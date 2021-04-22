@@ -149,14 +149,12 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
                             notifyService.sendSms(cntper.getPhoneNumber(),  message);
                             loggerService.log("Sent login credentials for " + cntper.getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                     ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, ke.tra.ufs.webportal.utils.AppConstants.STATUS_COMPLETED, "Sent login credentials");
-
                         } else {
                             if (cntper.getPhoneNumber() != null) {
                                 // send sms
                                 notifyService.sendSms(cntper.getPhoneNumber(), message);
                                 loggerService.log("Sent login credentials for " + cntper.getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                         ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, ke.tra.ufs.webportal.utils.AppConstants.STATUS_COMPLETED, "Sent login credentials");
-
                             } else {
                                 loggerService.log("Failed to send login credentials for " + cntper.getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                         ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, ke.tra.ufs.webportal.utils.AppConstants.STATUS_FAILED_STRING, "No valid email or phone number.");
