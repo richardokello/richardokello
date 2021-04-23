@@ -5,6 +5,7 @@ package ke.tra.ufs.webportal.resources;
  */
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import ke.axle.chassis.ChasisResource;
 import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.utils.LoggerService;
@@ -14,10 +15,13 @@ import ke.tra.ufs.webportal.entities.UfsBankBranches;
 import ke.tra.ufs.webportal.entities.UfsBankRegion;
 import ke.tra.ufs.webportal.entities.UfsCustomer;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
+import ke.tra.ufs.webportal.entities.filters.CommonFilter;
 import ke.tra.ufs.webportal.service.BankBranchesService;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.utils.exceptions.ItemNotFoundException;
 import ke.tra.ufs.webportal.utils.exceptions.UnapprovedActionsException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +60,17 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
             return new ResponseEntity(responseWrapper, HttpStatus.CONFLICT);
         }
         return super.create(ufsBankBranches);
+    }
+
+    @ApiOperation(value = "View AllBank Branches Excluding Suspended")
+    @RequestMapping(value = "/all" ,method = RequestMethod.GET)
+    @Transactional
+    public ResponseEntity<ResponseWrapper<Page<UfsBankBranches>>> fetch(Pageable pg,
+                                                                      @Valid @ApiParam(value = "Entity filters and search parameters") CommonFilter filter) {
+        ResponseWrapper<Page<UfsBankBranches>> response = new ResponseWrapper();
+        response.setData(bankBranchesService.getBankBranches(filter.getActionStatus(), filter.getNeedle(),filter.getFrom(),filter.getTo(), pg));
+        return new ResponseEntity(response, HttpStatus.OK);
+
     }
 
     @RequestMapping(value = "/suspend" , method = RequestMethod.PUT)

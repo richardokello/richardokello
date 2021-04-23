@@ -153,7 +153,6 @@ public class UfsBankBranches implements Serializable {
     }
 
 
-
 //    public UfsBankRegion getBankRegionId() {
 //        return bankRegionId;
 //    }
