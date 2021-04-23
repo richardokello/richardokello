@@ -2,8 +2,7 @@ FROM openjdk:8-jdk-alpine
 VOLUME /tmp
 EXPOSE 8001
 COPY target/webportal-0.0.1-SNAPSHOT.jar app.jar
-#ENV TZ=Africa/Nairobi
-ENV TZ=Africa/Lusaka
+ENV TZ=Africa/Nairobi
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 
