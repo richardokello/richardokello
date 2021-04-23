@@ -62,4 +62,5 @@ public interface PosUserService {
 
     List<UfsPosUser> findByContactPersonId(Long contactPersonId);
 
+    UfsPosUser findByDeviceIdAndFirstTime(BigDecimal deviceId, short i);
 }
