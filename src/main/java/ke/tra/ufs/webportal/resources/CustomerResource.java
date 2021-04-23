@@ -370,7 +370,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 if ((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
                         (customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
                 ) {
-
+                    customer.setStatus(AppConstants.STATUS_ACTIVE_STRING);
                     customer.setActionStatus(AppConstants.STATUS_APPROVED);
                     this.customerService.saveCustomer(customer);
                     loggerService.log("Successfully Approved Customer",
