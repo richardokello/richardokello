@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -298,6 +299,23 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     public ResponseEntity<ResponseWrapper<UfsCustomer>> terminateAgent(@Valid @RequestBody AgentTerminationWrapper<Long> actions) {
         ResponseWrapper response = new ResponseWrapper();
 
+        List<BigDecimal> custIds = Stream.of(actions.getIds()).map(BigDecimal::new).collect(Collectors.toList());
+        List<UfsCustomerOutlet> custOutlets = this.outletService.findByCustomerIdIn(custIds, AppConstants.INTRASH_NO);
+        List<TmsDevice> devCustomer = this.deviceService.findByOutletIds(custOutlets.stream().map(x -> new BigDecimal(x.getId())).collect(Collectors.toList()));
+
+        for (TmsDevice tmsDevice : devCustomer) {
+            if (tmsDevice.getStatus().equals(AppConstants.STATUS_ACTIVE_STRING)) {
+                String message = "Device with " + tmsDevice.getSerialNo() + " Already Assigned To This Customer.Please UnAssign The Device First to Proceeed";
+                List<String> err = new ArrayList<>();
+                err.add(message);
+                response.setCode(HttpStatus.MULTI_STATUS.value());
+                response.setData(err);
+                response.setMessage(message);
+                return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
+            }
+        }
+
+
         List<String> errors = new ArrayList<>();
         Arrays.stream(actions.getIds()).forEach(id -> {
             UfsCustomer customer = this.customerService.findByCustomerId(id);
@@ -319,12 +337,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             }
 
             for (TmsDevice tmsDevice : deviceCustomer) {
-                if (!tmsDevice.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_DECOMMISSION)) {
-                    errors.add("Device with " + tmsDevice.getSerialNo() + " Already Assigned To This Customer.Please UnAssign The Device First to Proceeed");
-                    loggerService.log("Customer Not Terminated",
-                            UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Device with " + tmsDevice.getSerialNo() + "Already Assigned To This Customer.Please UnAssign The Device First to Proceeed");
-                    continue;
-                }
                 customer.setAction(AppConstants.ACTIVITY_TERMINATION);
                 customer.setActionStatus(AppConstants.STATUS_UNAPPROVED);
                 customer.setTerminationReason(actions.getTerminationReason());

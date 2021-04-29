@@ -35,6 +35,11 @@ public class UfsCustomerOutletServiceTempl implements UfsCustomerOutletService {
     }
 
     @Override
+    public List<UfsCustomerOutlet> findByCustomerIdIn(List<BigDecimal> customerId, String intrash) {
+        return customerOutletRepository.findOutletsByCustomerIdsInAndIntrash(customerId, intrash);
+    }
+
+    @Override
     public List<UfsCustomerOutlet> findByCustomerId(BigDecimal customerId, String intrash) {
         return customerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerId, intrash);
     }
