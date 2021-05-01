@@ -1,0 +1,824 @@
+{
+  "billMenus": [
+    {
+      "name": "Academic Bridge",
+      "hasSubMenu": true,
+      "submenu": [
+        {
+          "name": "Check Payment Status",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Bank Reference Number",
+              "type": "alphanumeric",
+              "length": 12,
+              "validated": true,
+              "order": 1
+            }
+          ]
+        },
+        {
+          "name": "Make Payment",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Bill number",
+              "type": "alphanumeric",
+              "length": 12,
+              "validated": true,
+              "order": 1
+            },
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": "12",
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Sender name",
+              "type": "alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Sender phone number",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Narration",
+              "type": "alphanumeric",
+              "length": 160,
+              "validated": false,
+              "order": 6
+            }
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "name": "TigoPesa",
+      "hasSubMenu": true,
+      "submenu": [
+        {
+          "name": "Pay Bill",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter username",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter password",
+              "type": "string",
+              "length": 12,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "Enter MSISDN",
+              "type": " alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Enter amount",
+              "type": " numeric",
+              "length": 12,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Enter transaction ID",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Enter bill number",
+              "type": " numeric",
+              "length": 20,
+              "validated": false,
+              "order": 6
+            },
+            {
+              "label": "Enter company code",
+              "type": " numeric",
+              "length": 15,
+              "validated": false,
+              "order": 7
+            }
+          ]
+        },
+        {
+          "name": "Check Balance",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter username",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter password",
+              "type": "string",
+              "length": 12,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "Enter MSISDN",
+              "type": " alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Enter bill number",
+              "type": " numeric",
+              "length": 20,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Enter company code",
+              "type": " numeric",
+              "length": 15,
+              "validated": false,
+              "order": 5
+            }
+          ]
+        },
+        {
+          "name": "Check Transaction Status",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter username",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter password",
+              "type": "string",
+              "length": 12,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "Enter MSISDN",
+              "type": " alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Enter bill number",
+              "type": " numeric",
+              "length": 20,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Enter transaction ID",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Enter company code",
+              "type": " numeric",
+              "length": 15,
+              "validated": false,
+              "order": 6
+            }
+          ]
+        },
+        {
+          "name": "Credit Wallet",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter username",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter password",
+              "type": "string",
+              "length": 12,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "Enter MSISDN",
+              "type": " alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Enter amount",
+              "type": " numeric",
+              "length": 12,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Enter transaction ID",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Enter bank code",
+              "type": " numeric",
+              "length": 20,
+              "validated": false,
+              "order": 6
+            }
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "name": "WASAC",
+      "hasSubMenu": true,
+      "submenu": [
+        {
+          "name": "Get Customer Profile",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter customer ID",
+              "type": "string",
+              "length": 15,
+              "validated": true,
+              "order": 1
+            }
+          ]
+        },
+        {
+          "name": "Make Payment",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Customer ID",
+              "type": "numeric",
+              "length": 20,
+              "validated": true,
+              "order": 3
+            },
+            {
+              "label": "Account",
+              "type": "numeric",
+              "length": 20,
+              "validated": false,
+              "order": 6
+            },
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": 20,
+              "validated": false,
+              "order": 9
+            },
+            {
+              "label": "Description",
+              "type": "string",
+              "length": 160,
+              "validated": false,
+              "order": 10
+            }
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "name": "Agaciro",
+      "hasSubMenu": true,
+      "submenu": [
+        {
+          "name": "Get Institution(s)",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter username",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter password",
+              "type": "string",
+              "length": 12,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "Enter institution name (optional)",
+              "type": "string",
+              "length": 45,
+              "validated": true,
+              "order": 3
+            },
+            {
+              "label": "Enter institution code (optional)",
+              "type": "string",
+              "length": 45,
+              "validated": true,
+              "order": 4
+            }
+          ]
+        },
+        {
+          "name": "Validate NID",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter username",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter password",
+              "type": "string",
+              "length": 12,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "Enter NID",
+              "type": "string",
+              "length": 12,
+              "validated": true,
+              "order": 3
+            }
+          ]
+        },
+        {
+          "name": "Send Payment Notification",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter username",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter password",
+              "type": "string",
+              "length": 12,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "Enter contributor type (individual|company|unidentified)",
+              "type": "string",
+              "length": 20,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Enter amount",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Enter account number",
+              "type": "string",
+              "length": 20,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Enter operation code",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 6
+            },
+            {
+              "label": "Enter operation nature",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 7
+            },
+            {
+              "label": "Enter transaction date",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 8
+            },
+            {
+              "label": "Enter designation",
+              "type": "string",
+              "length": 45,
+              "validated": false,
+              "order": 9
+            },
+            {
+              "label": "Enter reason",
+              "type": "string",
+              "length": 160,
+              "validated": false,
+              "order": 10
+            },
+            {
+              "label": "Enter movement number",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 11
+            },
+            {
+              "label": "Enter institution code",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 12
+            },
+            {
+              "label": "Enter employee (true|false)",
+              "type": "boolean",
+              "length": 12,
+              "validated": false,
+              "order": 13
+            },
+            {
+              "label": "Enter NID (optional)",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 14
+            },
+            {
+              "label": "Enter phone number (optional)",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 15
+            },
+            {
+              "label": "Enter passport number (optional)",
+              "type": "string",
+              "length": 15,
+              "validated": false,
+              "order": 16
+            }
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "name": "LTSS",
+      "hasSubMenu": true,
+      "submenu": [
+        {
+          "name": "Validate National ID",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter national ID number",
+              "type": "numeric",
+              "length": 20,
+              "validated": true,
+              "order": 1
+            }
+          ]
+        },
+        {
+          "name": "Send Payment",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter beneficiary ID number",
+              "type": "numeric",
+              "length": 20,
+              "validated": true,
+              "order": 1
+            },
+            {
+              "label": "Enter amount",
+              "type": "numeric",
+              "length": 20,
+              "validated": false,
+              "order": 2
+            },
+            {
+              "label": "Enter description",
+              "type": "string",
+              "length": 120,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Enter intermediary",
+              "type": "string",
+              "length": 20,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Enter reference number",
+              "type": "alphanumeric",
+              "length": 30,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Enter payment Date (yyyy-mm-dd hh:mm:ss)",
+              "type": "string",
+              "length": 28,
+              "validated": false,
+              "order": 6
+            }
+          ]
+        },
+        {
+          "name": "Check Payment",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter reference number",
+              "type": "alphanumeric",
+              "length": 30,
+              "validated": true,
+              "order": 1
+            }
+          ]
+        },
+        {
+          "name": "Register Subscriber",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter ID number",
+              "type": "numeric",
+              "length": 20,
+              "validated": true,
+              "order": 1
+            },
+            {
+              "label": "Enter phone number",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 2
+            },
+            {
+              "label": "Enter occupation",
+              "type": "alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Enter frequency",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Enter amount",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 5
+            }
+
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "name": "MobiCash",
+      "hasSubMenu": true,
+      "submenu": [
+        {
+          "name": "Security Request",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter client code",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter client secret",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 2
+            },
+            {
+              "label": "Enter grant type",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Enter authorization",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 4
+            }
+          ]
+        },
+        {
+          "name": "Get Agent Details",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter client code",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter transaction ID",
+              "type": "alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 2
+            },
+            {
+              "label": "Enter account number",
+              "type": "numeric",
+              "length": 15,
+              "validated": false,
+              "order": 3
+            }
+          ]
+        },
+        {
+          "name": "Make Payment",
+          "hasSubMenu": false,
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Enter client code",
+              "type": "string",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Enter transaction ID",
+              "type": "alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 2
+            },
+            {
+              "label": "Enter account number",
+              "type": "numeric",
+              "length": 15,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Enter authorization",
+              "type": "string",
+              "length": 160,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Enter transaction date (YYYY-mm-dd hh:mm:ss)",
+              "type": "string",
+              "length": 24,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Enter bank reference number",
+              "type": "string",
+              "length": 24,
+              "validated": false,
+              "order": 6
+            },
+            {
+              "label": "Enter amount",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 7
+            },
+            {
+              "label": "Enter actual balance",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 8
+            },
+            {
+              "label": "Enter operation date (YYYY-mm-dd hh:mm:ss)",
+              "type": "string",
+              "length": 24,
+              "validated": false,
+              "order": 9
+            },
+            {
+              "label": "Enter transaction type",
+              "type": "string",
+              "length": 5,
+              "validated": false,
+              "order": 10
+            },
+            {
+              "label": "Enter transaction type identifier",
+              "type": "string",
+              "length": 5,
+              "validated": false,
+              "order": 11
+            },
+            {
+              "label": "Enter currency",
+              "type": "string",
+              "length": 10,
+              "validated": false,
+              "order": 12
+            },
+            {
+              "label": "Enter branch code",
+              "type": "alphanumeric",
+              "length": 10,
+              "validated": false,
+              "order": 13
+            },
+            {
+              "label": "Enter branch designation",
+              "type": "string",
+              "length": 20,
+              "validated": false,
+              "order": 14
+            },
+            {
+              "label": "Enter operation description",
+              "type": "string",
+              "length": 160,
+              "validated": false,
+              "order": 15
+            }
+          ]
+        }
+      ],
+      "fields": []
+    }
+  ]
+}

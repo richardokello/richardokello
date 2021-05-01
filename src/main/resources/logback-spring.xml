@@ -37,7 +37,7 @@
     </root>
 
     <!-- LOG "co.ke.tracom*" -->
-    <logger name="co.ke.tracom.bprgatewaygen2" level="info" additivity="false">
+    <logger name="co.ke.tracom.bprgateway" level="info" additivity="false">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>
