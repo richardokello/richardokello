@@ -22,5 +22,7 @@ public class OnboardWrapper extends DevicesWrapper {
     BigDecimal deviceTypeId;
     @NotNull
     Long customerOwnerId;
+    //used when assigning terminal to a hospital
+    String orgData;
 
 }
