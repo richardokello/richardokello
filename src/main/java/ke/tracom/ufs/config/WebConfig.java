@@ -5,16 +5,26 @@
  */
 package ke.tracom.ufs.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 
 /**
- *
  * @author eli
  */
-@Configuration
 @EnableWebMvc
-public class WebConfig extends WebMvcConfigurerAdapter implements WebMvcConfigurer {
+@Configuration
+@RequiredArgsConstructor
+public class WebConfig
+        extends WebMvcConfigurerAdapter{
+//        implements WebMvcConfigurer {
+
+//    private final TenantNameInterceptor tenantNameInterceptor;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -29,4 +39,17 @@ public class WebConfig extends WebMvcConfigurerAdapter implements WebMvcConfigur
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
         super.addResourceHandlers(registry);
     }
+
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        System.err.println("aDD INTERCEPTOR");
+//        registry.addInterceptor(tenantNameInterceptor);
+//
+//    }
+
+//    @Bean
+//    @Order(value = 1)
+//    public MappedInterceptor dbEditorTenantInterceptor() {
+//        return new MappedInterceptor(new String[]{"/**"}, tenantNameInterceptor);
+//    }
 }

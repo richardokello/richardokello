@@ -48,14 +48,14 @@ public class LoggerServiceTemplate implements LoggerService {
 
 
     private void sendLog(LogWrapper logs) {
-        try {
-            log.error("Data, =>" + new ObjectMapper().writeValueAsString(logs));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        executor.execute(() -> {
-            temp.postForEntity(url + "ufs-logger-service/api/v1/logger/log", logs, LogWrapper.class);
-        });
+//        try {
+//            log.error("Data, =>" + new ObjectMapper().writeValueAsString(logs));
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//        executor.execute(() -> {
+//            temp.postForEntity(url + "ufs-logger-service/api/v1/logger/log", logs, LogWrapper.class);
+//        });
     }
 
     @Override

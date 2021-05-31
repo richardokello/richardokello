@@ -77,8 +77,8 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
             String code = userService.generateOTP(dbAuth.getUser(), UfsOtpCategory.AUTH_OTP);
             System.out.println("OTP >>>>>>"+code);
 
-            this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
-            this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(),  "OTP: " + code);
+//            this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
+//            this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(),  "OTP: " + code);
 
             loggerService.log("Logged in successfully", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
                     AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Logged in successfully");
