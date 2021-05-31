@@ -1,0 +1,1 @@
+[{"tenant":"crdbtz","dataSourceClassName":"org.hibernate.dialect.Oracle10gDialect","url":"jdbc:oracle:thin:@41.215.130.247:5097:trcm","user":"UFS_CRDB_UAT","password":"pass123"},{"tenant":"crdbbi","dataSourceClassName":"org.hibernate.dialect.Oracle10gDialect","url":"jdbc:oracle:thin:@41.215.130.247:5097:trcm","user":"UFS_CRDB_BURUNDI_UAT","password":"pass123"}]
