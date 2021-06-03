@@ -156,6 +156,11 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         }
     }
 
+    @Override
+    public void saveDevice(TmsDevice device) {
+        tmsDeviceRepository.save(device);
+    }
+
 
     private void processApproveNew(TmsDevice entity, String notes) {
         entity.setActionStatus(AppConstants.STATUS_APPROVED);
