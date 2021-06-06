@@ -49,6 +49,10 @@ public class MultiTenantDynamicTenantAwareRoutingSource {
         dataSource.setUsername(configuration.getUser());
         dataSource.setPassword(configuration.getPassword());
 
+        if(configuration.getDefaultSource()){
+            ThreadLocalStorage.setTenantName(configuration.getTenant());
+        }
+
         return dataSource;
     }
 

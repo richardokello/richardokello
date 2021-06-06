@@ -76,7 +76,7 @@ public class UserServiceTemplate implements UserService {
     @Override
     public void authenticateOTP(String code, String userId, Integer expiry) throws NotFoundException, ExpectationFailed {
         List<UfsOtp> authOtp = otpRepo.findByuserIdAndOtpCategory(userId, UfsOtpCategory.AUTH_OTP);
-        if (authOtp.isEmpty()) {
+        if (authOtp.size() < 1) {
             UfsUser user = urepo.findByuserId(Long.valueOf(userId));
             if (Objects.nonNull(user)) {
                 if (user.getStatus() == AppConstants.STATUS_LOCKED) {
@@ -85,19 +85,20 @@ public class UserServiceTemplate implements UserService {
             } else {
                 throw new NotFoundException("Sorry invalid OTP Code");
             }
+        } else {
+            if (!this.passEncoder.matches(code, authOtp.get(0).getOtp())) {
+                throw new NotFoundException("Sorry invalid OTP Code");
+            }
+            //check if otp has expired
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(authOtp.get(0).getCreationDate());
+            calendar.add(Calendar.SECOND, expiry);
+            if (new Date().after(calendar.getTime())) {
+                throw new ExpectationFailed("Sorry OTP has already expired");
+            }
+            //clear the otp
+            otpRepo.delete(authOtp.get(0));
         }
-        if (!this.passEncoder.matches(code, authOtp.get(0).getOtp())) {
-            throw new NotFoundException("Sorry invalid OTP Code");
-        }
-        //check if otp has expired
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(authOtp.get(0).getCreationDate());
-        calendar.add(Calendar.SECOND, expiry);
-        if (new Date().after(calendar.getTime())) {
-            throw new ExpectationFailed("Sorry otp has already expired");
-        }
-        //clear the otp
-        otpRepo.delete(authOtp.get(0));
     }
 
     @Override
@@ -108,7 +109,7 @@ public class UserServiceTemplate implements UserService {
          * */
         UfsUser originalUser = userRepo.findByuserId(user.getUserId());
         if (user.getEmail().equals(originalUser.getEmail())) {
-//            continue editting
+//            continue editing
             originalUser.setFullName(user.getFullName());
             originalUser.setEmail(user.getEmail());
             originalUser.setPhoneNumber(user.getPhoneNumber());
@@ -189,18 +190,18 @@ public class UserServiceTemplate implements UserService {
     }
 
     @Override
-    public Page<UfsUser> fetchUsersExcludes(UfsUser user, String actionStatus, Date from, Date to, String needle,Short status, Pageable pg) {
-        return userRepo.findAllByStatus(actionStatus, from, to, needle.toLowerCase(),AppConstants.NO, user, status,pg);
+    public Page<UfsUser> fetchUsersExcludes(UfsUser user, String actionStatus, Date from, Date to, String needle, Short status, Pageable pg) {
+        return userRepo.findAllByStatus(actionStatus, from, to, needle.toLowerCase(), AppConstants.NO, user, status, pg);
     }
 
     @Override
-    public Page<UfsUser> fetchUsersAction(UfsUser user, String actionStatus, Date from, Date to, String needle,String action, Pageable pg) {
-        return userRepo.findAllByAction(actionStatus, from, to, needle.toLowerCase(),AppConstants.NO, user, action,pg);
+    public Page<UfsUser> fetchUsersAction(UfsUser user, String actionStatus, Date from, Date to, String needle, String action, Pageable pg) {
+        return userRepo.findAllByAction(actionStatus, from, to, needle.toLowerCase(), AppConstants.NO, user, action, pg);
     }
 
     @Override
-    public Page<UfsUser> fetchUsersUserType(UfsUser user, String actionStatus, Date from, Date to, String needle,BigDecimal userTypeId, Pageable pg) {
-        return userRepo.findAllByUserTypeId(actionStatus, from, to, needle.toLowerCase(),AppConstants.NO, user, userTypeId,pg);
+    public Page<UfsUser> fetchUsersUserType(UfsUser user, String actionStatus, Date from, Date to, String needle, BigDecimal userTypeId, Pageable pg) {
+        return userRepo.findAllByUserTypeId(actionStatus, from, to, needle.toLowerCase(), AppConstants.NO, user, userTypeId, pg);
     }
 
     @Override
