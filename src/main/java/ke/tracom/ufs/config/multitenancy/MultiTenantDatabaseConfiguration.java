@@ -1,4 +1,4 @@
-package ke.tracom.ufs.config;
+package ke.tracom.ufs.config.multitenancy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

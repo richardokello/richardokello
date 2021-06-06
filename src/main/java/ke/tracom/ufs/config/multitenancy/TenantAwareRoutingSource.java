@@ -1,4 +1,4 @@
-package ke.tracom.ufs.config;
+package ke.tracom.ufs.config.multitenancy;
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 

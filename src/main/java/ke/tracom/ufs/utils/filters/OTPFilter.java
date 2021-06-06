@@ -29,7 +29,6 @@ import java.io.IOException;
 /**
  * @author eli.muraya
  */
-//@Component
 public class OTPFilter extends OAuth2ClientAuthenticationProcessingFilter {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -40,9 +39,6 @@ public class OTPFilter extends OAuth2ClientAuthenticationProcessingFilter {
         this.tokenStore = tokenStore;
     }
 
-    //    @Override
-//    public void init(FilterConfig fc) throws ServletException {
-//    }
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         FilterInvocation fi = new FilterInvocation(request, response, chain);
