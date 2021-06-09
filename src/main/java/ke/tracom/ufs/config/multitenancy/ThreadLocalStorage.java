@@ -1,4 +1,4 @@
-package ke.tracom.ufs.config;
+package ke.tracom.ufs.config.multitenancy;
 
 public class ThreadLocalStorage {
 
@@ -9,8 +9,8 @@ public class ThreadLocalStorage {
     }
 
     public static String getTenantName() {
-        System.err.println( String.format("Fetching active tenant id [%s]",tenant.get()));
-        return tenant.get() == null? "crdbtz":tenant.get() ;
+        System.err.printf("Fetching active tenant id [%s]%n", tenant.get());
+        return tenant.get();
     }
 
 }

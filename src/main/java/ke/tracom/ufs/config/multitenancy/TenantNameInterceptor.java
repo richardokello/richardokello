@@ -1,4 +1,4 @@
-package ke.tracom.ufs.config;
+package ke.tracom.ufs.config.multitenancy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,8 +17,7 @@ public class TenantNameInterceptor extends HandlerInterceptorAdapter {
         // parse a JWT and extract the Tenant Name from the Claims in the Token. In the
         // example code we are just extracting a Header value:
         String tenantName = request.getHeader("X-TenantID");
-
-        System.err.println("Tenant Name: "+ tenantName);
+        System.err.println("Tenant Name: " + tenantName);
 
         // Always set the Tenant Name, so we avoid leaking Tenants between Threads even in the scenario, when no
         // Tenant is given. I do this because if somehow the afterCompletion Handler isn't called the Tenant Name

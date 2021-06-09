@@ -1,4 +1,4 @@
-package ke.tracom.ufs.config;
+package ke.tracom.ufs.config.multitenancy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,18 +12,22 @@ public class MultiTenantDatabaseConfiguration {
     private final String user;
     private final String dataSourceClassName;
     private final String password;
+    private final boolean defaultSource;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public MultiTenantDatabaseConfiguration(@JsonProperty("tenant") String tenant,
                                             @JsonProperty("url") String url,
                                             @JsonProperty("user") String user,
                                             @JsonProperty("dataSourceClassName") String dataSourceClassName,
-                                            @JsonProperty("password") String password) {
+                                            @JsonProperty("password") String password,
+                                            @JsonProperty("defaultSource") boolean defaultSource
+                                            ) {
         this.tenant = tenant;
         this.url = url;
         this.user = user;
         this.dataSourceClassName = dataSourceClassName;
         this.password = password;
+        this.defaultSource = defaultSource;
     }
 
     @JsonProperty("tenant")
@@ -49,6 +53,11 @@ public class MultiTenantDatabaseConfiguration {
     @JsonProperty("password")
     public String getPassword() {
         return password;
+    }
+
+    @JsonProperty("defaultSource")
+    public boolean getDefaultSource() {
+        return defaultSource;
     }
 
     @Override
