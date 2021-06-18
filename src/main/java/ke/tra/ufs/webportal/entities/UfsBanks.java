@@ -58,7 +58,6 @@ public class UfsBanks implements Serializable {
     @Column(name = "SETTLEMENT_ACCOUNT")
     private String settlementAccount;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "BANK_TYPE")
     private String bankType;

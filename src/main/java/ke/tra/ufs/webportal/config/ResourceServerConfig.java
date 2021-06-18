@@ -44,6 +44,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                         "/swagger-resources/**", "/v2/api-docs/**", "/images/**",
                         "/spring-security-rest/api/swagger-ui.html", "/encrypt").permitAll()
+                .antMatchers(HttpMethod.POST, "/banks").hasAuthority("CREATE_BANK")
+                .antMatchers(HttpMethod.GET, "/banks/{bankId}/changes").hasAuthority("VIEW_BANK")
+                .antMatchers(HttpMethod.GET, "/banks/{bankId}").hasAuthority("VIEW_BANK")
+                .antMatchers(HttpMethod.GET, "/banks").hasAuthority("VIEW_BANK")
+                .antMatchers(HttpMethod.PUT, "/banks").hasAuthority("UPDATE_BANK")
+                .antMatchers(HttpMethod.PUT, "/banks/approve-actions", "/banks/decline-actions").hasAuthority("APPROVE_BANK")
+                .antMatchers(HttpMethod.DELETE, "/banks").hasAuthority("DELETE_BANK")
+                .antMatchers(HttpMethod.GET, "/banks/deleted").hasAuthority("VIEW_BANK")
                 .antMatchers(HttpMethod.POST, "/bank-branches").hasAuthority("CREATE_BANK_BRANCH")
                 .antMatchers(HttpMethod.GET, "/bank-branches/{bankBranchId}/changes").hasAuthority("VIEW_BANK_BRANCHES")
                 .antMatchers(HttpMethod.GET, "/bank-branches/{bankBranchId}").hasAuthority("VIEW_BANK_BRANCHES")

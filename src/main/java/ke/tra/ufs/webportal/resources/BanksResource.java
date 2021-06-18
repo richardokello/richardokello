@@ -42,19 +42,22 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
     @Override
     public ResponseEntity<ResponseWrapper<UfsBanks>> create(@Valid @RequestBody UfsBanks ufsBanks) {
         ResponseEntity response = super.create(ufsBanks);
-        if ((!response.getStatusCode().equals(HttpStatus.CREATED)) || ufsBanks.getUfsBankBins().size() < 0 || Objects.isNull(ufsBanks.getUfsBankBins())) {
+        if ((!response.getStatusCode().equals(HttpStatus.CREATED))) {
             return response;
         }
 
-        List<UfsBankBins> bins = new ArrayList<>();
-        ufsBanks.getUfsBankBins().forEach(bin -> {
-            UfsBankBins bankBins = new UfsBankBins();
-            bankBins.setBinType(bin.getBinType());
-            bankBins.setBankIds(ufsBanks.getId());
-            bankBins.setValue(bin.getValue());
-            bins.add(bankBins);
-        });
-        bankService.saveAllBins(bins);
+        if(ufsBanks.getUfsBankBins() != null){
+            List<UfsBankBins> bins = new ArrayList<>();
+            ufsBanks.getUfsBankBins().forEach(bin -> {
+                UfsBankBins bankBins = new UfsBankBins();
+                bankBins.setBinType(bin.getBinType());
+                bankBins.setBankIds(ufsBanks.getId());
+                bankBins.setValue(bin.getValue());
+                bins.add(bankBins);
+            });
+            bankService.saveAllBins(bins);
+        }
+
         return response;
     }
 
