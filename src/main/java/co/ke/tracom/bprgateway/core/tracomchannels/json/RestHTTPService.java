@@ -28,6 +28,7 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
   private static final String USER_AGENT = "Mozilla/5.0";
   private final Logger logger = LoggerFactory.getLogger(RestHTTPService.class);
 
+
   public ResponseEntity<String> postRequest(Object request, String url) throws Exception {
     // Fetch Host
     /* Pack the URL for this request */
@@ -38,16 +39,6 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
 
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-    if (request instanceof MobiCashRequest) {
-      httpHeaders.set("Authorization", "Bearer " + ((MobiCashRequest) request).getAuthorization());
-    }
-
-    if (request instanceof AuthenticationRequest) {
-      httpHeaders.set(
-          "Authorization", "Bearer " + ((AuthenticationRequest) request).getAuthorization());
-    }
-
     HttpEntity<?> httpEntity =
         new HttpEntity<>(
             mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request), httpHeaders);
@@ -68,7 +59,7 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
     OkHttpClient client = new OkHttpClient();
 
     Request request = new Request.Builder()
-            .url("https://dev.api.wasac.rw/customer/202213074/profile")
+            .url(url)
             .get()
             .addHeader("cache-control", "no-cache")
             .build();
@@ -76,6 +67,8 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
     Response response = client.newCall(request).execute();
     return response.body().string();
   }
+
+
   public String sendGetRequest(String url) throws Exception {
 
     HttpURLConnection httpClient = (HttpURLConnection) new URL(url).openConnection();

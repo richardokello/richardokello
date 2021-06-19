@@ -1,5 +1,6 @@
 package co.ke.tracom.bprgateway.web.accountopening.dto.request;
 
+import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,4 +17,5 @@ public class AccountOpeningRequest {
     String firstName;
     String secondName;
     String lastName;
+    MerchantAuthInfo credentials;
 }

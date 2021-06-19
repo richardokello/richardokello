@@ -18,13 +18,7 @@ public class ValidationRequest {
   private String bill;
 
   @JsonProperty("tnxType")
-  private String tnxType;
-
-//  @JsonProperty("field")
-//  private String field;
-//
-//  @JsonProperty("value")
-//  private String value;
+  private String tnxType;  // valida
 
   @JsonProperty("credentials")
   private Credentials credentials;

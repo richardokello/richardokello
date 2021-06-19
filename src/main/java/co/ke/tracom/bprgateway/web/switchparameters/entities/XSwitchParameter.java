@@ -12,7 +12,9 @@ import javax.persistence.Table;
 @Table(name = "XSWITCH_PARAMETER")
 public class XSwitchParameter {
 
-  @Id private long tableindex;
+  @Id
+  @Column(name = "TABLE_INDEX")
+  private long tableindex;
 
   @Column(name = "PARAM_NAME")
   private String paramName;

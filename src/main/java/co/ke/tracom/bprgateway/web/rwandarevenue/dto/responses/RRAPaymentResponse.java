@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class RRAPaymentResponse {
-    String status;
-    String message;
-    double transactionCharges;
-    String T24Reference;
+    private String status;
+    private String message;
+    private RRAPaymentResponseData data;
 
 }

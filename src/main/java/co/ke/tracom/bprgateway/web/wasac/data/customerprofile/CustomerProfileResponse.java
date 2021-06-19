@@ -3,37 +3,28 @@ package co.ke.tracom.bprgateway.web.wasac.data.customerprofile;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"response"})
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomerProfileResponse {
 
-  private String status;
+    private String status;
 
-  @JsonProperty("response")
-  private Response response;
+    private String message;
 
-  @JsonProperty("response")
-  public Response getResponse() {
-    return response;
-  }
+    @JsonProperty("response")
+    private Response data;
 
-  @JsonProperty("response")
-  public void setResponse(Response response) {
-    this.response = response;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public CustomerProfileResponse setStatus(String status) {
-    this.status = status;
-    return this;
-  }
-
-  @Override
-  public String toString() {
-    return "CustomerProfileResponse{" + "status='" + status + '\'' + ", response=" + response + '}';
-  }
+    @Override
+    public String toString() {
+        return "CustomerProfileResponse{" + "status='" + status + '\'' + ", response=" + data + '}';
+    }
 }

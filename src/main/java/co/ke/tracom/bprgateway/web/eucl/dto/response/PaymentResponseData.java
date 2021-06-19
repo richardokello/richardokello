@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NIDValidationResponse {
-    String status;
-    String message;
-    MeterNoData data;
+public class PaymentResponseData {
+    String t24Reference;
+    String token;
+    String unitsInKW;
 }

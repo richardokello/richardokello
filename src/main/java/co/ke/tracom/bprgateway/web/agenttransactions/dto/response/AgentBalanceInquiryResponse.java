@@ -1,4 +1,4 @@
-package co.ke.tracom.bprgateway.web.eucl.dto.response;
+package co.ke.tracom.bprgateway.web.agenttransactions.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AccountOpeningResponse {
+public class AgentBalanceInquiryResponse {
     String status;
     String message;
+    String balance;
 }

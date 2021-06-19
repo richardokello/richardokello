@@ -1,5 +1,6 @@
 package co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests;
 
+import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RRATINValidationRequest {
-  String agentId;
-  String RRATIN;
+    private MerchantAuthInfo credentials;
+    private String RRATIN;
 }

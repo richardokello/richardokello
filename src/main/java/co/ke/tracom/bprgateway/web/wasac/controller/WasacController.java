@@ -30,8 +30,8 @@ public class WasacController {
       response = CustomerProfileResponse.class)
   @GetMapping("/customer/{customerId}")
   public ResponseEntity<?> getCustomerProfile(
-      @ApiParam(value = "Customer ID", required = true) @PathVariable String customerId) {
-    CustomerProfileRequest request =  CustomerProfileRequest.builder().customerId(customerId).build();
+          @RequestBody CustomerProfileRequest request) {
+
     log.info("WASAC REQUEST DATA - CUSTOMER REQUEST: {}", request);
     CustomerProfileResponse responseEntity = wasacService.fetchCustomerProfile(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
@@ -44,8 +44,6 @@ public class WasacController {
   public ResponseEntity<?> creditAccount(
       @ApiParam(value = "Payment details", required = true) @RequestBody
           WasacPaymentRequest request) {
-
-    HashMap<String, Object> d= new HashMap<>();
 
     log.info("WASAC REQUEST DATA - PAYMENT: {}", request);
     WasacPaymentResponse responseEntity = wasacService.payWaterBill(request);

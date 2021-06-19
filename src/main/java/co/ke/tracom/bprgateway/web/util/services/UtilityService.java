@@ -168,4 +168,18 @@ public class UtilityService {
     }
     return "";
   }
+
+  /**
+   * Customer are required to enter payment details. Some customers provide non-alphanumeric
+   * characters or empty input that causes the request to T24 to fail The function below ensures an
+   * alphanumeric value is returned
+   *
+   * @param paymentdetail1
+   * @param DefaultValue
+   * @return
+   */
+  public String sanitizePaymentDetails(String paymentdetail1, String DefaultValue) {
+    String paymentDetail = paymentdetail1.isEmpty() ? DefaultValue : paymentdetail1.trim();
+    return paymentDetail.replaceAll("\\P{Alnum}", " ");
+  }
 }

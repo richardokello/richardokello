@@ -82,7 +82,7 @@ public class BillRequestHandler {
         wasacService.fetchCustomerProfile(
             CustomerProfileRequest.builder().customerId(data.get(0).getValue()).build());
 
-    Response validationResponse = customerProfileResponse.getResponse();
+    Response validationResponse = customerProfileResponse.getData();
 
     if (customerProfileResponse
         .getStatus()
