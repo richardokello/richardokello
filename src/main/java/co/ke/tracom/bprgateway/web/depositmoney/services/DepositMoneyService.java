@@ -1,6 +1,7 @@
 package co.ke.tracom.bprgateway.web.depositmoney.services;
 
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
+import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
@@ -15,7 +16,12 @@ import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
@@ -30,20 +36,34 @@ public class DepositMoneyService {
     private final XSwitchParameterRepository xSwitchParameterRepository;
     private final AgentTransactionService agentTransactionService;
     private final BPRBranchService bprBranchService;
+    private final BaseServiceProcessor baseServiceProcessor;
+
+    @Value("${merchant.account.validation}")
+    private String agentValidation;
 
     public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest) {
-
         String transactionRRN = RRNGenerator.getInstance("CD").getRRN();
+        // Validate agent credentials
+        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials(), agentValidation);
+        if (optionalAuthenticateAgentResponse.isEmpty()) {
+            log.info(
+                    "Agent Float Deposit:[Failed] Missing agent information %n");
+            return DepositMoneyResult.builder()
+                    .status("117")
+                    .message("Missing agent information")
+                    .data(null)
+                    .build();
 
+        }
 
-        // TODO Fetch account validation details from back office and get agent details
-        String agentFloatAccount = "agentFloatAccount";
+        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
         String agentMerchantId = "PCMerchant";
         String chargeCreditPLAccount = "PL64200\\HOF";
         String customerAccount = depositMoneyRequest.getAccountNumber();
 
         // Todo check the payment details required
-        String firstDetails = "Payment details 1";
+        String firstDetails = depositMoneyRequest.getAccountName() + " " + depositMoneyRequest.getAccountNumber();
         firstDetails =
                 firstDetails.length() > 34 ? firstDetails.substring(0, 34) : firstDetails;
 
@@ -155,23 +175,22 @@ public class DepositMoneyService {
 
                 accountBranchId = tot24.getCocode();
                 if (!chargesAccountNumber.isEmpty()) {
-//                    sweepChargesToPL(
-//                            tid,
-//                            profitCentre,
-//                            accountBranchId,
-//                            chargeCreditPLAccount,
-//                            chargesAccountNumber,
-//                            formattedCharge,
-//                            incomingISOMsgRequest.getString(37),
-//                            tot24.getT24reference(),
-//                            incomingISOMsgRequest.getString(3),
-//                            db);
+                    sweepChargesToPL(
+                            tid,
+                            profitCentre,
+                            accountBranchId,
+                            chargeCreditPLAccount,
+                            chargesAccountNumber,
+                            formattedCharge,
+                            transactionRRN,
+                            tot24.getT24reference(),
+                            "440000");
                 }
 
                 tot24.setT24reference(tot24.getT24reference());
                 //TODO fix saving transaction to database
                 transactionService.saveCardLessTransactionToAllTransactionTable(
-                        tot24,  "AGENT DEPOSIT TO CUSTOMER");
+                        tot24, "AGENT DEPOSIT TO CUSTOMER");
 
                 DepositMoneyResultData data = DepositMoneyResultData.builder()
                         .t24Reference(transactionRRN)
@@ -207,6 +226,77 @@ public class DepositMoneyService {
                 .data(null).build();
 
     }
+
+    public void sweepChargesToPL(String tid, String profitCentre, String accountBranchId, String chargeDebit,
+                                 String chargeCreditPL, String chargeAmount, String depositTnxRRN, String T24reference,
+                                 String proCode) {
+
+        String depositChargeRRN = RRNGenerator.getInstance("DC").getRRN();
+        String channel = "Gateway";
+
+        String depositChargeOFS =
+                "0000AFUNDS.TRANSFER,"
+                        + "BPR.PL.SWEEP/I/PROCESS//0,"
+                        + ""
+                        + MASKED_T24_USERNAME
+                        + "/"
+                        + MASKED_T24_PASSWORD
+                        + "/"
+                        + accountBranchId
+                        + ",,"
+                        + "TRANSACTION.TYPE::=ACTD,"
+                        + "DEBIT.ACCT.NO::="
+                        + chargeDebit
+                        + ","
+                        + "DEBIT.AMOUNT::="
+                        + chargeAmount
+                        + ","
+                        + "CREDIT.ACCT.NO::="
+                        + chargeCreditPL
+                        + ","
+                        + "DEBIT.CURRENCY::=RWF,"
+                        + "PROFIT.CENTRE.CUST::="
+                        + profitCentre
+                        + ","
+                        + "ORDERING.CUST::='9999999',"
+                        + "TCM.REF::="
+                        + depositChargeRRN
+                        + ","
+                        + "DEBIT.THEIR.REF::='"
+                        + T24reference
+                        + "',"
+                        + "CREDIT.THEIR.REF::='"
+                        + T24reference
+                        + "'";
+
+        String tot24str = String.format("%04d", depositChargeOFS.length()) + depositChargeOFS;
+
+        // create a table or function to generate T24 messages
+        T24TXNQueue tot24 = new T24TXNQueue();
+        tot24.setRequestleg(tot24str);
+        tot24.setStarttime(System.currentTimeMillis());
+        tot24.setTxnchannel(channel);
+        tot24.setGatewayref(depositChargeRRN);
+        tot24.setPostedstatus("0");
+        tot24.setProcode(proCode);
+        tot24.setTid(tid);
+
+        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
+        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+        t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
+        //TODO check this
+        transactionService.updateT24TransactionDTO(tot24);
+
+        String t24ref = tot24.getT24reference() == null ? "NA" : tot24.getT24reference();
+        String t24ProcessingCode =
+                tot24.getT24responsecode() == null ? "NA" : tot24.getT24responsecode();
+        if (!t24ProcessingCode.equals("1")) {
+            log.info("Customer deposit charge transaction failed for [" + depositTnxRRN + "] Deposit charge RRN [" + depositChargeRRN + "] Reason: " + tot24.getT24failnarration());
+        } else {
+            log.info("Customer deposit charges for transaction [" + depositChargeRRN + "] processed successfully. T24 Reference No [" + t24ref + "]");
+        }
+    }
+
 
     private BPRBranches getBranchDetailsFromAccount(String account) {
         account = account.toUpperCase();
