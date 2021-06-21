@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class  ReceiveMoneyRequest {
     private String receiverMobileNo;
+    private String vCard;
     private String passCode;
     private double amount;
     private MerchantAuthInfo credentials;

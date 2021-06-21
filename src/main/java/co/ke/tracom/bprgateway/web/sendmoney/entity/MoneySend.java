@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "BPRMONEYSEND")
+@Table(name = "BPRSMSSCHEDULED")
 public class MoneySend {
 	@Id
 	@Basic(optional = false)

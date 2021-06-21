@@ -32,15 +32,6 @@ public class SendMoneyController {
   public ResponseEntity<?> sendMoneyTransaction(@Valid @RequestBody SendMoneyRequest request) {
     String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
     SendMoneyResponse response = sendMoneyService.processSendMoneyRequest(request,  transactionRRN);
-
-//    SendMoneyResponseData data = SendMoneyResponseData.builder()
-//            .T24Reference(RRNGenerator.getInstance("PC").getRRN())
-//            .charges(1500.55)
-//            .build();
-//
-
-
-
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
@@ -49,17 +40,10 @@ public class SendMoneyController {
 
   @ApiOperation(value = "Receive Money Transaction", response = SendMoneyResponse.class)
   @PostMapping(value = "/pc/customer/receive-money")
-  public ResponseEntity<?> receiveMoneyTransaction(@Valid @RequestBody ReceiveMoneyRequest receive) {
-    SendMoneyResponseData data = SendMoneyResponseData.builder()
-            .T24Reference(RRNGenerator.getInstance("PC").getRRN())
-            .charges(2000.55)
-            .build();
+  public ResponseEntity<?> receiveMoneyTransaction(@Valid @RequestBody ReceiveMoneyRequest request) {
 
-    SendMoneyResponse response = SendMoneyResponse.builder()
-            .status("00")
-            .message("Transaction processed successfully")
-            .data(data)
-            .build();
+    String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
+    SendMoneyResponse response = sendMoneyService.processReceiveMoneyRequest(request,  transactionRRN);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

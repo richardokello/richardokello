@@ -4,6 +4,13 @@ import co.ke.tracom.bprgateway.web.sendmoney.entity.MoneySend;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface MoneySendRepository extends CrudRepository<MoneySend, Long> {
+    Optional<MoneySend> findFirstByFulfilmentstatusAndMstokenAndCnoAndAmountOrderByMoneysendidAsc(
+            int fulfilmentStatus,
+            String mstoken,
+            String cno,
+            String amount);
 }

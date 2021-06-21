@@ -40,7 +40,9 @@ public class AccountValidationService {
             BankAccountValidationResponse bankAccountValidationResponse = t24MessageProcessor.parseT24ResponseForBankAccountValidation(responseOFSMessage);
 
             return BPRAccountValidationResponse.builder()
-                    .status(String.valueOf(bankAccountValidationResponse.getStatus()))
+                    .status(
+                            bankAccountValidationResponse.getStatus() == HttpStatus.SC_OK ? "00" : String.valueOf(bankAccountValidationResponse.getStatus())
+                    )
                     .message("Account validation successful")
                     .accountName(bankAccountValidationResponse.getAccountName())
                     .build();
