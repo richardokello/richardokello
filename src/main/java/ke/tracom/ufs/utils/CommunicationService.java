@@ -39,7 +39,7 @@ public class CommunicationService {
         HttpEntity<EmailBody> request = new HttpEntity<>(mail);
         System.out.println("Sending SMS..." + mail.getMessage().toString());
         try {
-            template.exchange(baseUrl + "ufs-communication-service/communication/smpp/send-sms", HttpMethod.POST, request, EmailBody.class);
+            template.exchange(baseUrl + "ufs-communication-service/communication/bonga/send-sms", HttpMethod.POST, request, EmailBody.class);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Communication service is unreachable ...");
