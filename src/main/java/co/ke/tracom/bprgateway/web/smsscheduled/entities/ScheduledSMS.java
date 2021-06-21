@@ -7,7 +7,6 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Data
-@Builder
 @Entity
 @Table(name = "BPRMONEYSEND")
 public class ScheduledSMS implements java.io.Serializable {

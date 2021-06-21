@@ -294,9 +294,11 @@ public class SendMoneyService {
                         int ti = 0;
                         while (SMScontent.length() > 0) {
 
-                            ScheduledSMS scheduledSMSTransaction = ScheduledSMS.builder()
-                                    .sentstatus(0).attempts(0)
-                                    .receiverphone(receiverMobile).txnref(transactionRRN).build();
+                            ScheduledSMS scheduledSMSTransaction = new ScheduledSMS();
+                            scheduledSMSTransaction.setSentstatus(0);
+                            scheduledSMSTransaction.setAttempts(0);
+                            scheduledSMSTransaction  .setReceiverphone(receiverMobile);
+                            scheduledSMSTransaction.setTxnref(transactionRRN);
 
                             if (SMScontent.length() <= 160) {
                                 scheduledSMSTransaction.setMessage(utilityService.encryptSensitiveData(SMScontent));
