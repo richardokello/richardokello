@@ -4,15 +4,16 @@ package ke.tracom.ufs.config;
 import ke.tracom.ufs.entities.UfsAuthentication;
 import ke.tracom.ufs.entities.UfsOtpCategory;
 import ke.tracom.ufs.entities.UfsUser;
+import ke.tracom.ufs.entities.wrapper.LicenseDetails;
 import ke.tracom.ufs.repositories.UserRepository;
 import ke.tracom.ufs.services.SysConfigService;
+import ke.tracom.ufs.services.template.LicenseDecryption;
 import ke.tracom.ufs.services.template.LoggerServiceTemplate;
 import ke.tracom.ufs.services.template.NotifyServiceTemplate;
 import ke.tracom.ufs.repositories.AuthenticationRepository;
 import ke.tracom.ufs.repositories.OTPRepository;
 import ke.tracom.ufs.services.CustomUserService;
 import ke.tracom.ufs.utils.AppConstants;
-import ke.tracom.ufs.utils.enums.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,7 +30,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @Transactional(noRollbackFor = {BadCredentialsException.class})
@@ -44,15 +48,17 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
     private final LoggerServiceTemplate loggerService;
     private final UserDetailsService userDetailsService;
     private final SysConfigService configService;
+    private final LicenseDecryption licenseDecryption;
 
     public AppAuthenticationProvider(@Qualifier("userDetailsServiceTemplate") UserDetailsService userDetailsService,
                                      AuthenticationRepository authRepository, PasswordEncoder passwordEncoder,
                                      UserRepository userRepository, OTPRepository otpRepository, @Qualifier("commonUserService") CustomUserService userService, NotifyServiceTemplate notifyService,
-                                     LoggerServiceTemplate loggerService, SysConfigService configService) {
+                                     LoggerServiceTemplate loggerService, SysConfigService configService, LicenseDecryption licenseDecryption) {
         super();
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
         this.configService = configService;
+        this.licenseDecryption = licenseDecryption;
         super.setUserDetailsService(userDetailsService);
         this.authRepository = authRepository;
         super.setPasswordEncoder(passwordEncoder);
@@ -65,6 +71,22 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication)
             throws AuthenticationException {
+        String licenseExpiredError = "Sorry UFS License Expired. Kindly purchase a new License";
+        String licenseKey = configService.fetchSysConfig(AppConstants.ENTITY_GLOBAL_INTEGRATION,AppConstants.PARAMETER_UFS_LICENSE_KEY).getValue();
+        log.warn("Custom license handler using default license ({}). Consider retrieving from the configuration", licenseKey);
+        Optional<LicenseDetails> licenseDetails = licenseDecryption.getLicenseDetails(licenseKey);
+        if(licenseDetails.isPresent()){
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            String todaysDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            try {
+                if(sdf.parse(todaysDate).after(sdf.parse(licenseDetails.get().getExpiryDate()))){
+                    throw new DisabledException(licenseExpiredError);
+                }
+            }catch (ParseException e){
+
+            }
+        }
+
         String lockedError = "Sorry account is locked";
         UfsAuthentication dbAuth = authRepository.findByusername(authentication.getName());
         try {
@@ -77,11 +99,11 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
             String code = userService.generateOTP(dbAuth.getUser(), UfsOtpCategory.AUTH_OTP);
             System.out.println("OTP >>>>>>"+code);
 
-            this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
-            this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(),  "OTP: " + code);
+            //this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
+            //this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(),  "OTP: " + code);
 
-            loggerService.log("Logged in successfully", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
-                    AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Logged in successfully");
+            //loggerService.log("Logged in successfully", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
+                    //AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Logged in successfully");
             return auth;
         } catch (BadCredentialsException e) {
             log.warn("Custom authorization handler using default attempts ({}). Consider retrieving from the configuration", 10);
