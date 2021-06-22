@@ -69,7 +69,6 @@ public class SendMoneyService {
                     .data(null)
                     .build();
         }
-
         AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
 
         BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(authenticateAgentResponse.getData().getAccountNumber());

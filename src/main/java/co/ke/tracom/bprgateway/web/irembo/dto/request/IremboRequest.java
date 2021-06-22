@@ -1,4 +1,4 @@
-package co.ke.tracom.bprgateway.web.irembo.dto.response;
+package co.ke.tracom.bprgateway.web.irembo.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class IremboPaymentResponseData {
-    String t24Reference;
-    String charges;
+public class IremboRequest {
+    private String billNumber;
+    private String amount;
+
 }

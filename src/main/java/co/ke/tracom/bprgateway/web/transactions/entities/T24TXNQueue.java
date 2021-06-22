@@ -12,8 +12,8 @@ import java.util.Date;
 public class T24TXNQueue implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @Column(nullable = false, precision = 19)
+    @Column(name="T24TXNQUEUEID")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long t24TXNQueueid;
     @Column(length = 20)
     private Long starttime;

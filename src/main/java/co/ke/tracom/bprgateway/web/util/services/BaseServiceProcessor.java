@@ -30,14 +30,16 @@ public class BaseServiceProcessor implements BaseServiceInterface {
     public Optional<AuthenticateAgentResponse> authenticateAgentUsernamePassword(MerchantAuthInfo merchantAuthInfo, String url) {
         try {
             ResponseEntity<String> stringResponseEntity = restHTTPService.postRequest(merchantAuthInfo, url);
+            log.info("Response status from URL["+url+"]"+stringResponseEntity.getStatusCode());
+
             if (stringResponseEntity.getStatusCode().is2xxSuccessful()) {
                 AuthenticateAgentResponse authenticateAgentResponse = new ObjectMapper().readValue(stringResponseEntity.getBody(), AuthenticateAgentResponse.class);
-                return Optional.ofNullable(authenticateAgentResponse);
+                return Optional.of(authenticateAgentResponse);
             }
         } catch (Exception e) {
-            log.error(" Failed ");
+            log.error(" Failed "+e.getMessage());
         }
-        return Optional.ofNullable(null);
+        return Optional.empty();
     }
 
     @Override

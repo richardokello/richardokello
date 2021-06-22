@@ -55,7 +55,6 @@ public class DepositMoneyService {
                     .build();
 
         }
-
         AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
         String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
         String agentMerchantId = "PCMerchant";

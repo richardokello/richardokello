@@ -19,5 +19,6 @@ public class IremboBillPaymentRequest {
     private String customerName;
     private String expiryDate;
     private String transactionType;
+    private String paymentStatus;
     private String mobileNo;
 }

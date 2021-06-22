@@ -5,6 +5,7 @@ import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudent
 import co.ke.tracom.bprgateway.web.customerwithdrawal.data.requests.AccountWithdrawalRequest;
 import co.ke.tracom.bprgateway.web.customerwithdrawal.data.response.WithdrawMoneyResult;
 import co.ke.tracom.bprgateway.web.customerwithdrawal.data.response.WithdrawalMoneyResultData;
+import co.ke.tracom.bprgateway.web.customerwithdrawal.services.CustomerWithdrawalService;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResultData;
 import io.swagger.annotations.ApiOperation;
@@ -21,19 +22,21 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class CustomerWithdrawalController {
-
+private final CustomerWithdrawalService customerWithdrawalService;
     @ApiOperation(value = "Withdrawal Transaction", response = WithdrawMoneyResult.class)
     @PostMapping(value = "/pc/customer/account-withdrawal")
-    public ResponseEntity<?> customerWithdrawalFromAccount(@RequestBody AccountWithdrawalRequest sendMoney) {
+    public ResponseEntity<?> customerWithdrawalFromAccount(@RequestBody AccountWithdrawalRequest request) {
+        String transactionRRN = RRNGenerator.getInstance("IC").getRRN();
+        WithdrawMoneyResult response = customerWithdrawalService.processAccountWithdrawal(request, transactionRRN);
 
-        WithdrawalMoneyResultData data = WithdrawalMoneyResultData.builder()
-                .t24Reference(RRNGenerator.getInstance("PC").getRRN())
-                .charges("500.51").build();
-
-        WithdrawMoneyResult response = WithdrawMoneyResult.builder()
-                .status("00")
-                .message("Transaction processed successfully")
-                .data(data).build();
+//        WithdrawalMoneyResultData data = WithdrawalMoneyResultData.builder()
+//                .t24Reference(RRNGenerator.getInstance("PC").getRRN())
+//                .charges("500.51").build();
+//
+//        WithdrawMoneyResult response = WithdrawMoneyResult.builder()
+//                .status("00")
+//                .message("Transaction processed successfully")
+//                .data(data).build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

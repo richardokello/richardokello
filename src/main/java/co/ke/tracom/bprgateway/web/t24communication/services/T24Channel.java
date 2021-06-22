@@ -1,7 +1,10 @@
 package co.ke.tracom.bprgateway.web.t24communication.services;
 
+import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
+import co.ke.tracom.bprgateway.web.util.services.UtilityService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.springframework.stereotype.Service;
@@ -10,9 +13,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class T24Channel {
 
     public static final String MASKED_T24_USERNAME = "########U";
@@ -20,8 +25,8 @@ public class T24Channel {
     public static final SimpleDateFormat GATEWAY_SERVER_DATE_FORMAT =
             new SimpleDateFormat("dd/MM/yy HH:mm:ss SSS Z");
 
-    private XSwitchParameterRepository xSwitchParameterRepository;
-
+    private final UtilityService utilityService;
+    private final XSwitchParameterRepository xSwitchParameterRepository;
 
     public void processTransactionToT24(String t24Ip, int t24Port, T24TXNQueue transactionPendingT24Processing) {
         try {
@@ -64,8 +69,15 @@ public class T24Channel {
             String[] OFSSplit = T24RequestOFS.split(",");
             String OFSContainingMaskedCredentials = OFSSplit[2];
 
-            String t24usn = xSwitchParameterRepository.findByParamName("T24USER").get().getParamValue();
-            String t24pwd = xSwitchParameterRepository.findByParamName("T24PASS").get().getParamValue();
+            Optional<XSwitchParameter> optionalT24UserCredentials = xSwitchParameterRepository.findByParamName("T24USER");
+            Optional<XSwitchParameter> optionalT24Pass = xSwitchParameterRepository.findByParamName("T24PASS");
+
+            if (optionalT24Pass.isEmpty() || optionalT24UserCredentials.isEmpty()) {
+                log.info("****************************** Missing T24 Pass or T24 User on the database. ******************************");
+            }
+
+            String t24usn = utilityService.decryptSensitiveData( optionalT24UserCredentials.get().getParamValue());
+            String t24pwd = utilityService.decryptSensitiveData(optionalT24Pass.get().getParamValue());
 
             String[] T24ChannelCredentials = OFSContainingMaskedCredentials.split("/");
             String OFSWithPlainTextCredentials =
@@ -224,7 +236,7 @@ public class T24Channel {
                         + System.currentTimeMillis());
     }
 
-    private static void parseT24ResponseRefactored(T24TXNQueue t24TXNQueue, String transactionRRN){
+    private static void parseT24ResponseRefactored(T24TXNQueue t24TXNQueue, String transactionRRN) {
         t24TXNQueue.setPostedstatus("1");
 
         String T24RawResponse = t24TXNQueue.getResponseleg();

@@ -19,5 +19,6 @@ public class IremboValidationData {
     private String createdAt;
     private String expiryDate;
     private String transactionType;
+    private String paymentStatus;
 
 }

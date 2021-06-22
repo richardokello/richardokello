@@ -24,26 +24,22 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 public class SendMoneyController {
+    private final SendMoneyService sendMoneyService;
 
-  private final SendMoneyService sendMoneyService;
+    @ApiOperation(value = "Send Money Transaction", response = SendMoneyResponse.class)
+    @PostMapping(value = "/pc/customer/send-money")
+    public ResponseEntity<?> sendMoneyTransaction(@Valid @RequestBody SendMoneyRequest request) {
+        String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
+        SendMoneyResponse response = sendMoneyService.processSendMoneyRequest(request, transactionRRN);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
-  @ApiOperation(value = "Send Money Transaction", response = SendMoneyResponse.class)
-  @PostMapping(value = "/pc/customer/send-money")
-  public ResponseEntity<?> sendMoneyTransaction(@Valid @RequestBody SendMoneyRequest request) {
-    String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
-    SendMoneyResponse response = sendMoneyService.processSendMoneyRequest(request,  transactionRRN);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
+    @ApiOperation(value = "Receive Money Transaction", response = SendMoneyResponse.class)
+    @PostMapping(value = "/pc/customer/receive-money")
+    public ResponseEntity<?> receiveMoneyTransaction(@Valid @RequestBody ReceiveMoneyRequest request) {
 
-
-
-
-  @ApiOperation(value = "Receive Money Transaction", response = SendMoneyResponse.class)
-  @PostMapping(value = "/pc/customer/receive-money")
-  public ResponseEntity<?> receiveMoneyTransaction(@Valid @RequestBody ReceiveMoneyRequest request) {
-
-    String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
-    SendMoneyResponse response = sendMoneyService.processReceiveMoneyRequest(request,  transactionRRN);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
+        String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
+        SendMoneyResponse response = sendMoneyService.processReceiveMoneyRequest(request, transactionRRN);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

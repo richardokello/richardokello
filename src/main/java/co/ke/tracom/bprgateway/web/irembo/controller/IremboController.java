@@ -25,34 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class IremboController {
 
     private final IremboService iremboService;
+
     @ApiOperation(
             value = "Return validation details for bill number",
             response = IremboBillNoValidationResponse.class)
     @PostMapping(value = "/bill-validation")
     public ResponseEntity<?> MeterNoValidation(@RequestBody BillNumberValidationRequest request) {
-
-            String transactionRefNo = RRNGenerator.getInstance("IV").getRRN();
-//   IremboBillNoValidationResponse response =         iremboService.validateIremboBillNo(request, transactionRefNo);
-
-        IremboValidationData data = IremboValidationData.builder()
-                .billNo(request.getCustomerBillNo())
-                .customerName("MWISENEZA NDAYISHIMIYE ANDERSON")
-                .mobileNo("0453718285")
-                .RRAAccountNo("100001766")
-                .amount("3000000")
-                .currencyCode("RWF")
-                .createdAt("01/03/2021 03:03:26")
-                .expiryDate("07/04/2021 09:31:07")
-                .transactionType("RRA")
-                .build();
-
-        IremboBillNoValidationResponse response = IremboBillNoValidationResponse
-                .builder()
-                .status("00")
-                .message("Meter no validation successful")
-                .data(data)
-                .build();
-
+        String transactionRefNo = RRNGenerator.getInstance("IV").getRRN();
+        IremboBillNoValidationResponse response = iremboService.validateIremboBillNo(request, transactionRefNo);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -61,18 +41,8 @@ public class IremboController {
             response = IremboPaymentResponse.class)
     @PostMapping(value = "/bill-payment")
     public ResponseEntity<?> iremboBillPayment(@RequestBody IremboBillPaymentRequest request) {
-
-        IremboPaymentResponseData data = IremboPaymentResponseData.builder()
-                .t24Reference(RRNGenerator.getInstance("BP").getRRN()).build();
-
-
-        IremboPaymentResponse response = IremboPaymentResponse
-                .builder()
-                .status("00")
-                .message("Account creation successful")
-                .data(data)
-                .build();
-
+        String transactionRefNo = RRNGenerator.getInstance("IV").getRRN();
+        IremboPaymentResponse response = iremboService.processPayment(request, transactionRefNo);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

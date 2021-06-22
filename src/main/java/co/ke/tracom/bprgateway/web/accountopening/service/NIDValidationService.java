@@ -55,14 +55,12 @@ public class NIDValidationService {
                             .surname(validationResults.get("Surnames"))
                             .build();
 
-
                     return NIDValidationResponse
                             .builder()
                             .status("00")
                             .message("The document number verified successfully. ")
                             .data(data)
                             .build();
-
                 } else {
                     log.info("NID validation for transaction " + referenceNo + " failed. No match found for document no " + returneddocumentid);
                     return NIDValidationResponse
@@ -106,15 +104,11 @@ public class NIDValidationService {
             URL obj = new URL(NID_KYC_SERVICE_ENDPOINT);
             con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("POST");
-            //Content-Type:
-            //is content length dynamic
             con.setRequestProperty("Content-Type", "text/xml");
-            //    con.setRequestProperty("Follow Redirects", "true");
-            // con.setRequestProperty("SOAPAction", "http://tempuri.org/AuthenticateDocument");
             con.setUseCaches(false);
             con.setDoInput(true);
-            con.setConnectTimeout(Integer.valueOf(muReadTimeout) * 1000);
-            con.setReadTimeout(Integer.valueOf(muConnectTimeout) * 1000);
+            con.setConnectTimeout(Integer.parseInt(muReadTimeout) * 1000);
+            con.setReadTimeout(Integer.parseInt(muConnectTimeout) * 1000);
             con.setDefaultUseCaches(false);
             con.setDoOutput(true);
 

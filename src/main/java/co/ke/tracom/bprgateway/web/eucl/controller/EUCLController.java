@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/pc/api/eucl")
@@ -28,7 +30,7 @@ public class EUCLController {
             value = "Return validation details for meter number",
             response = MeterNoValidationResponse.class)
     @PostMapping(value = "/meter-validation")
-    public ResponseEntity<?> MeterNoValidation(@RequestBody MeterNoValidation request) {
+    public ResponseEntity<?> MeterNoValidation(@Valid @RequestBody MeterNoValidation request) {
         String requestRef = RRNGenerator.getInstance("EV").getRRN();
         MeterNoValidationResponse response = euclService.validateEUCLMeterNo(request, requestRef);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -38,13 +40,9 @@ public class EUCLController {
             value = "Purchase electricity ",
             response = EUCLPaymentResponse.class)
     @PostMapping(value = "/payment")
-    public ResponseEntity<?> purchaseElectricity(@RequestBody EUCLPaymentRequest request) {
-        EUCLPaymentResponse response = EUCLPaymentResponse
-                .builder()
-                .status("00")
-                .message("Account creation successful")
-                .build();
-
+    public ResponseEntity<?> purchaseElectricity(@Valid @RequestBody EUCLPaymentRequest request) {
+        String requestRef = RRNGenerator.getInstance("EV").getRRN();
+        EUCLPaymentResponse response = euclService.purchaseEUCLTokens(request, requestRef);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
