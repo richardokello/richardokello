@@ -11,6 +11,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.text.DecimalFormat;
 
 @Slf4j
 @Service
@@ -217,5 +218,11 @@ public class UtilityService {
     public String sanitizePaymentDetails(String paymentdetail1, String DefaultValue) {
         String paymentDetail = paymentdetail1.isEmpty() ? DefaultValue : paymentdetail1.trim();
         return paymentDetail.replaceAll("\\P{Alnum}", " ");
+    }
+
+    public String formatDecimal(float money) {
+        String pattern = "###,###.##";
+        DecimalFormat decimalFormat = new DecimalFormat(pattern);
+        return  decimalFormat.format(money);
     }
 }

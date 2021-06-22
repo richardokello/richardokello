@@ -17,6 +17,7 @@ import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -54,6 +55,12 @@ public class DepositMoneyService {
                     .data(null)
                     .build();
 
+        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            return DepositMoneyResult.builder()
+                    .status(String.valueOf(
+                            optionalAuthenticateAgentResponse.get().getCode())
+                    )
+                    .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
         }
         AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
         String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
@@ -78,8 +85,7 @@ public class DepositMoneyService {
         //TODO fetch the payment details (Terminal ID and Merchant ID)
         String secondDetails = agentMerchantId;  // From merchant validation request
         String thirdDetails = "CUSTOMER DEPOSIT AT AGENT";
-
-        if (branch.getId() != null) {
+        if (branch.getId() == null) {
             return DepositMoneyResult.builder()
                     .status("65")
                     .message("Missing agent branch details")
@@ -114,7 +120,7 @@ public class DepositMoneyService {
                         + ",,TRANSACTION.TYPE::=ACTD,DEBIT.ACCT.NO::="
                         + agentFloatAccount.trim()
                         + ",DEBIT.AMOUNT::="
-                        + String.valueOf(depositMoneyRequest.getAmount())
+                        + (int) depositMoneyRequest.getAmount()
                         + ",CREDIT.ACCT.NO::="
                         + customerAccount.trim().trim()
                         + ",DEBIT.CURRENCY::=RWF,TCM.REF::="
@@ -193,7 +199,10 @@ public class DepositMoneyService {
 
                 DepositMoneyResultData data = DepositMoneyResultData.builder()
                         .t24Reference(transactionRRN)
-                        .charges(ISOFormattedAmount).build();
+                        .charges(utilityService.formatDecimal(
+                                Float.parseFloat(ISOFormattedAmount)
+                        ))
+                        .build();
 
                 return DepositMoneyResult.builder()
                         .status("00")
@@ -210,7 +219,7 @@ public class DepositMoneyService {
                     transactionRRN, tot24.getT24failnarration());
 
             return DepositMoneyResult.builder()
-                    .status("98")
+                    .status("098")
                     .message((tot24.getT24failnarration() == null || tot24.getT24failnarration().isEmpty())
                             ? "TRANSACTION FAILED. SYSTEM FAILURE "
                             : tot24.getT24failnarration())
@@ -296,23 +305,8 @@ public class DepositMoneyService {
         }
     }
 
-
     private BPRBranches getBranchDetailsFromAccount(String account) {
-        account = account.toUpperCase();
-        String branchCode = "";
-        if (account.length() < 10) {
-            System.out.println("invalid debit account " + account);
-            return null;
-        }
-
-        if (account.startsWith("RWF")) {
-            branchCode = "0" + account.substring(account.length() - 3, account.length());
-        } else {
-            branchCode = "0" + account.substring(0, 3);
-        }
-
-        System.out.printf("Account %s branch code %s  \n", account, branchCode);
-        return bprBranchService.fetchBranchAccountsByBranchCode(branchCode);
+        return bprBranchService.fetchBranchAccountsByBranchCode(account);
     }
 
 }

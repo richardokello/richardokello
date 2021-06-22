@@ -6,6 +6,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionSe
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
 import co.ke.tracom.bprgateway.web.irembo.dto.request.BillNumberValidationRequest;
 import co.ke.tracom.bprgateway.web.irembo.dto.request.IremboBillPaymentRequest;
 import co.ke.tracom.bprgateway.web.irembo.dto.request.IremboRequest;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -207,6 +209,13 @@ public class IremboService {
                         .data(null)
                         .build();
 
+            }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+                return IremboPaymentResponse
+                        .builder()
+                        .status(String.valueOf(
+                                optionalAuthenticateAgentResponse.get().getCode()))
+                        .message(optionalAuthenticateAgentResponse.get().getMessage())
+                        .build();
             }
             AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
             String tid = "PC";

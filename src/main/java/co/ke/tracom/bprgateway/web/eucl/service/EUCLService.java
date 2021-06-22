@@ -1,11 +1,13 @@
 package co.ke.tracom.bprgateway.web.eucl.service;
 
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
+import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.eucl.dto.request.EUCLPaymentRequest;
 import co.ke.tracom.bprgateway.web.eucl.dto.request.MeterNoValidation;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoData;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.entities.EUCLElectricityTxnLogs;
 import co.ke.tracom.bprgateway.web.eucl.repository.EUCLElectricityTxnLogsRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
@@ -16,7 +18,9 @@ import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -145,146 +149,154 @@ public class EUCLService {
             log.info(
                     "Agent Float Deposit:[Failed] Missing agent information.  Transaction RRN [" + transactionReferenceNo + "]");
             return EUCLPaymentResponse
-                .builder()
-                .status("117")
-                .message("Missing agent information")
-                .build();
+                    .builder()
+                    .status("117")
+                    .message("Missing agent information")
+                    .build();
+        }  else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            return EUCLPaymentResponse
+                    .builder()
+                    .status(String.valueOf(
+                            optionalAuthenticateAgentResponse.get().getCode()))
+                    .message(optionalAuthenticateAgentResponse.get().getMessage())
+                    .build();
         }
         AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
 
-        EUCLElectricityTxnLogs euclElectricityTxnLogs = new EUCLElectricityTxnLogs();
-//        try {
-//
-//
-//            Long amount = Long.valueOf(isomsg.getString(4));
-//                      elecTxnLogs.setAmount(amount + "");
-//
-//            String channel = isomsg.getString(25);
-//            String txnref = isomsg.getString(37);
-//            String tid = isomsg.getString(41);
-//            String f60 = isomsg.getString(60);
-//
-//            String[] data = f60.split("#");
-//            String meterNo = data[0];
-//            String phone = data[1];
-//            String customerName = data[2];
-//            String customerAddress = data[3];
-//            String mid = isomsg.getString(42);
-//            String euclBankBranch = BPRFunctions.getParambyName("DEFAULT_EUCL_BRANCH");
-//
-//            elecTxnLogs.setCustomer_name(customerName);
-//            elecTxnLogs.setMeterno(meterNo);
-//            elecTxnLogs.setPosref(txnref);
-//            elecTxnLogs.setMid(mid);
-//            elecTxnLogs.setTid(tid);
-//
-//            // create t24 string
-//            String t24 =
-//                    "0000AFUNDS.TRANSFER,BPR.MIB.EUCL.PAY/I/PROCESS,"
-//                            + t24usn
-//                            + "/"
-//                            + t24pwd
-//                            + "/"
-//                            + euclBankBranch
-//                            + ",,"
-//                            + "METER.NO::="
-//                            + meterNo
-//                            + ","
-//                            + "DEBIT.ACCT.NO::="
-//                            + agentfloatacc
-//                            + ","
-//                            + "DEBIT.CURRENCY::=RWF,"
-//                            + "ORDERING.BANK::=BNK,"
-//                            + "DEBIT.AMOUNT::="
-//                            + amount
-//                            + ","
-//                            + "MOBILE.NO::="
-//                            + phone
-//                            + ","
-//                            + "PAYMENT.DETAILS:1:1=ELECTRICITY PAYMENT BY USER,"
-//                            + "PAYMENT.DETAILS:2:="
-//                            + tid
-//                            + " "
-//                            + mid
-//                            + ","
-//                            + "PAYMENT.DETAILS:3:="
-//                            + txnref
-//                            + ","
-//                            + "CHANNEL::=AGB";
-//
-//            String tot24str = String.format("%04d", t24.length()) + t24;
-//            System.out.println("String to t24==>" + tot24str);
-//
-//            String waittime = BPRFunctions.getParambyName("T24_INQUIRY_WAIT_TIME_MILLISECONDS");
-//            waittime = waittime.isEmpty() ? "30000" : waittime;
-//
-//            T24TXNQueue tot24 = new T24TXNQueue();
-//            tot24.setMeterno(meterNo);
-//            // base 64 encode request in db
-//            tot24.setRequestleg(tot24str);
-//            tot24.setStarttime(System.currentTimeMillis());
-//            tot24.setTxnmti(isomsg.getMTI());
-//            tot24.setTxnchannel(channel);
-//            tot24.setGatewayref(txnref);
-//            tot24.setPostedstatus("0");
-//            tot24.setProcode(isomsg.getString(3));
-//            tot24.setTid(tid);
-//            tot24.setDebitacctno(agentfloatacc);
-//
-//            final String t24Ip = SwitchFN.getParam_By_Name(db, "T24_IP");
-//            final String t24Port = SwitchFN.getParam_By_Name(db, "T24_PORT");
-//
-//            T24HandlerProcessor.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
-//
-//            T24HandlerProcessor.updateT24TransactionDTO(tot24);
-//
-//            System.out.println(".Gateway ref.. " + txnref + " txn queued for t24 posting !!");
-//
-//            String accname = tot24.getCustomerName() == null ? "" : tot24.getCustomerName();
-//            String errorMessage =
-//                    tot24.getT24failnarration() == null ? "" : tot24.getT24failnarration();
-//            if (errorMessage.isEmpty()) {
-//
-//                if (tot24.getT24responsecode().equals("3")) {
-//                    isomsg.set(60, "Transaction failed due to timeout");
-//                    isomsg.set(61, "");
-//                    isomsg.set(39, "098");
-//                } else {
-//                    isomsg.set(
-//                            60,
-//                            meterNo
-//                                    + "#"
-//                                    + phone
-//                                    + "#"
-//                                    + accname
-//                                    + "#"
-//                                    + customerAddress
-//                                    + "#"
-//                                    + tot24.getTokenNo()
-//                                    + "#"
-//                                    + tot24.getUnitsKw()
-//                                    + "#");
-//                    isomsg.set(61, tot24.getT24reference());
-//                    isomsg.set(39, "000");
-//
-//                    elecTxnLogs.setGateway_t24postingstatus("1");
-//                    elecTxnLogs.setToken_no(tot24.getTokenNo());
-//                    insertEuclElecTxnLogs(elecTxnLogs, db);
-//                }
-//            } else {
-//                isomsg.set(60, tot24.getT24failnarration().replace("\"", ""));
-//                isomsg.set(39, "135");
-//
-//                elecTxnLogs.setGateway_t24postingstatus("0");
-//            }
-//            tot24.setT24reference(tot24.getT24reference());
-//            SwitchFN.saveCardLessTransactionToAllTransactionTable(tot24, isomsg, "EUCL ELECTRICITY");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return isomsg;
+        EUCLElectricityTxnLogs elecTxnLogs = new EUCLElectricityTxnLogs();
+        try {
 
-        return null;
+            elecTxnLogs.setAmount(request.getAmount());
+            String channel = "PC";
+            String tid = "PC";
 
+            String meterNo = request.getMeterNo();
+            String phone = request.getPhoneNo();
+            String customerName = request.getPhoneNo();
+            String customerAddress = request.getMeterLocation();
+            String mid = authenticateAgentResponse.getData().getUsername();
+
+            Long amount = Long.valueOf(request.getAmount());
+
+            String euclBranch = xSwitchParameterRepository.findByParamName("DEFAULT_EUCL_BRANCH").get().getParamValue();
+
+            elecTxnLogs.setCustomer_name(customerName);
+            elecTxnLogs.setMeterno(meterNo);
+            elecTxnLogs.setPosref(transactionReferenceNo);
+            elecTxnLogs.setMid(mid);
+            elecTxnLogs.setTid(tid);
+
+            // create t24 string
+            String t24 =
+                    "0000AFUNDS.TRANSFER,BPR.MIB.EUCL.PAY/I/PROCESS,"
+                            + MASKED_T24_USERNAME
+                            + "/"
+                            + MASKED_T24_PASSWORD
+                            + "/"
+                            + euclBranch
+                            + ",,"
+                            + "METER.NO::="
+                            + meterNo
+                            + ","
+                            + "DEBIT.ACCT.NO::="
+                            + authenticateAgentResponse.getData().getAccountNumber()
+                            + ","
+                            + "DEBIT.CURRENCY::=RWF,"
+                            + "ORDERING.BANK::=BNK,"
+                            + "DEBIT.AMOUNT::="
+                            + amount
+                            + ","
+                            + "MOBILE.NO::="
+                            + phone
+                            + ","
+                            + "PAYMENT.DETAILS:1:1=ELECTRICITY PAYMENT BY USER,"
+                            + "PAYMENT.DETAILS:2:="
+                            + tid
+                            + " "
+                            + mid
+                            + ","
+                            + "PAYMENT.DETAILS:3:="
+                            + transactionReferenceNo
+                            + ","
+                            + "CHANNEL::=AGB";
+
+            String tot24str = String.format("%04d", t24.length()) + t24;
+            System.out.println("String to t24==>" + tot24str);
+
+            T24TXNQueue tot24 = new T24TXNQueue();
+            tot24.setMeterno(meterNo);
+            // base 64 encode request in db
+            tot24.setRequestleg(tot24str);
+            tot24.setStarttime(System.currentTimeMillis());
+            //TODO Define this in enum
+            tot24.setTxnmti("1200");
+            tot24.setTxnchannel(channel);
+            tot24.setGatewayref(transactionReferenceNo);
+            tot24.setPostedstatus("0");
+            //TODO Define this in enum
+            tot24.setProcode("460001");
+            tot24.setTid(tid);
+            tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
+
+            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
+            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+
+            t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
+            transactionService.updateT24TransactionDTO(tot24);
+
+            String accname = tot24.getCustomerName() == null ? "" : tot24.getCustomerName();
+            String errorMessage =
+                    tot24.getT24failnarration() == null ? "" : tot24.getT24failnarration();
+            if (errorMessage.isEmpty()) {
+
+                if (tot24.getT24responsecode().equals("1")) {
+
+                    elecTxnLogs.setGateway_t24postingstatus("1");
+                    elecTxnLogs.setToken_no(tot24.getTokenNo());
+                    euclElectricityTxnLogsRepository.save(elecTxnLogs);
+
+                    PaymentResponseData paymentResponseData = PaymentResponseData.builder()
+                            .token(tot24.getTokenNo())
+                            .t24Reference(tot24.getT24reference())
+                            .unitsInKW(tot24.getUnitsKw())
+                            .build();
+
+                    EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder()
+                            .status("00")
+                            .message("EUCL Transaction successful")
+                            .data(paymentResponseData).build();
+
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY");
+                    return euclPaymentResponse;
+                } else {
+
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY");
+                    log.info("EUCL Transaction [] failed " + errorMessage);
+                    return EUCLPaymentResponse
+                            .builder()
+                            .status("098")
+                            .message("EUCL Transaction failed.")
+                            .build();
+                }
+            } else {
+                elecTxnLogs.setGateway_t24postingstatus("0");
+                euclElectricityTxnLogsRepository.save(elecTxnLogs);
+
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY");
+
+                return EUCLPaymentResponse.builder()
+                        .status("135")
+                        .message(tot24.getT24failnarration().replace("\"", ""))
+                        .data(null).build();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("EUCL transaction [" + transactionReferenceNo + "] failed. Error " + e.getMessage());
+            return EUCLPaymentResponse.builder()
+                    .status("098")
+                    .message("EUCL transaction failed. An exception occured")
+                    .data(null).build();
+        }
     }
 }

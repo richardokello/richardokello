@@ -12,6 +12,7 @@ import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -30,16 +31,25 @@ public class BaseServiceProcessor implements BaseServiceInterface {
     public Optional<AuthenticateAgentResponse> authenticateAgentUsernamePassword(MerchantAuthInfo merchantAuthInfo, String url) {
         try {
             ResponseEntity<String> stringResponseEntity = restHTTPService.postRequest(merchantAuthInfo, url);
-            log.info("Response status from URL["+url+"]"+stringResponseEntity.getStatusCode());
+            log.info("Response status from URL[" + url + "]" + stringResponseEntity.getStatusCode());
 
+            String body = stringResponseEntity.getBody();
             if (stringResponseEntity.getStatusCode().is2xxSuccessful()) {
-                AuthenticateAgentResponse authenticateAgentResponse = new ObjectMapper().readValue(stringResponseEntity.getBody(), AuthenticateAgentResponse.class);
+                AuthenticateAgentResponse authenticateAgentResponse = new ObjectMapper().readValue(body, AuthenticateAgentResponse.class);
                 return Optional.of(authenticateAgentResponse);
+            } else {
+                AuthenticateAgentResponse response = new AuthenticateAgentResponse();
+                response.setCode(stringResponseEntity.getStatusCode().value());
+                response.setMessage("Agent validation failed.");
+                return Optional.of(response);
             }
         } catch (Exception e) {
-            log.error(" Failed "+e.getMessage());
+            log.error(" Failed " + e.getMessage());
+            AuthenticateAgentResponse response = new AuthenticateAgentResponse();
+            response.setCode(HttpStatus.BAD_GATEWAY.value());
+            response.setMessage("Unable to fetch agent validation information. Please try again!");
+            return Optional.of(response);
         }
-        return Optional.empty();
     }
 
     @Override

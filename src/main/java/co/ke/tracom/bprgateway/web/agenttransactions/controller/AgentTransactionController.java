@@ -8,6 +8,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AgentTransacti
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
+import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.DecimalFormat;
 import java.util.Optional;
 
 @Slf4j
@@ -28,6 +30,7 @@ import java.util.Optional;
 public class AgentTransactionController {
     private final AgentTransactionService agentTransactionService;
     private final BaseServiceProcessor baseServiceProcessor;
+    private final UtilityService utilityService;
 
     @Value("${merchant.account.validation}")
     private String agentValidation;
@@ -60,12 +63,18 @@ public class AgentTransactionController {
             log.info("Agent Float Deposit:[Failed] Missing agent information.");
             response.setStatus("117");
             response.setMessage("Missing agent information");
+        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+
+            response.setStatus(String.valueOf(
+                    optionalAuthenticateAgentResponse.get().getCode())
+            );
+            response.setMessage(optionalAuthenticateAgentResponse.get().getMessage());
         } else {
             String accountNumber = optionalAuthenticateAgentResponse.get().getData().getAccountNumber();
             Long agentAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(accountNumber);
-            response.setMessage("00");
+            response.setStatus("00");
             response.setMessage("Balance inquiry processed successfully");
-            response.setBalance(String.valueOf(agentAccountBalance));
+            response.setBalance(utilityService. formatDecimal(agentAccountBalance));
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);

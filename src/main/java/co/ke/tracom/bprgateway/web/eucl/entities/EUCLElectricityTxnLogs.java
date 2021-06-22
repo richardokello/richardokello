@@ -2,9 +2,7 @@ package co.ke.tracom.bprgateway.web.eucl.entities;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
@@ -12,6 +10,7 @@ import java.io.Serializable;
 @Table(name = "BPR_EUCL_ELECAUDITTRAIL")
 public class EUCLElectricityTxnLogs implements Serializable {
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     private String tid;
     private String mid;

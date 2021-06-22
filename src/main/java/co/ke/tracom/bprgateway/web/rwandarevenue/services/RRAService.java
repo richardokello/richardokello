@@ -1,6 +1,7 @@
 package co.ke.tracom.bprgateway.web.rwandarevenue.services;
 
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
+import co.ke.tracom.bprgateway.web.irembo.dto.response.IremboPaymentResponse;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests.RRATINValidationRequest;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRATINValidationResponse;
@@ -23,6 +24,7 @@ import org.json.JSONException;
 import org.json.XML;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -61,6 +63,13 @@ public class RRAService {
                     .status("117")
                     .message("Missing agent information")
                     .data(null).build();
+        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            return RRATINValidationResponse
+                    .builder()
+                    .status(String.valueOf(
+                            optionalAuthenticateAgentResponse.get().getCode()))
+                    .message(optionalAuthenticateAgentResponse.get().getMessage())
+                    .build();
         }
         HttpPost httpPost = null;
 

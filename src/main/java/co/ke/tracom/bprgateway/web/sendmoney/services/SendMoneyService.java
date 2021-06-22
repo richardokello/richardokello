@@ -5,6 +5,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAg
 import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRATINValidationResponse;
 import co.ke.tracom.bprgateway.web.sendmoney.data.requests.ReceiveMoneyRequest;
 import co.ke.tracom.bprgateway.web.sendmoney.data.requests.SendMoneyRequest;
 import co.ke.tracom.bprgateway.web.sendmoney.data.response.SendMoneyResponse;
@@ -27,6 +28,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -67,6 +69,13 @@ public class SendMoneyService {
                     .status("117")
                     .message("Missing agent information")
                     .data(null)
+                    .build();
+        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            return SendMoneyResponse
+                    .builder()
+                    .status(String.valueOf(
+                            optionalAuthenticateAgentResponse.get().getCode()))
+                    .message(optionalAuthenticateAgentResponse.get().getMessage())
                     .build();
         }
         AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
@@ -550,6 +559,13 @@ public class SendMoneyService {
                     .status("117")
                     .message("Missing agent information")
                     .data(null)
+                    .build();
+        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            return SendMoneyResponse
+                    .builder()
+                    .status(String.valueOf(
+                            optionalAuthenticateAgentResponse.get().getCode()))
+                    .message(optionalAuthenticateAgentResponse.get().getMessage())
                     .build();
         }
 

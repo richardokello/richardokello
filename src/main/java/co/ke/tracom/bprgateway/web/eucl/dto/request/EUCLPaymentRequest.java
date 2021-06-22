@@ -12,5 +12,6 @@ public class EUCLPaymentRequest {
     private MerchantAuthInfo credentials;
     private String amount;
     private String meterNo;
-    private String phone;
+    private String phoneNo;
+    private String meterLocation;
 }

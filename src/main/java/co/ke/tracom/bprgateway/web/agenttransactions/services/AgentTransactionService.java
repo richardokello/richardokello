@@ -11,11 +11,13 @@ import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterR
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
+import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -48,12 +50,18 @@ public class AgentTransactionService {
             response.setStatus("117");
             response.setMessage("Missing agent information");
             return response;
+        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            response.setStatus(String.valueOf(
+                    optionalAuthenticateAgentResponse.get().getCode())
+            );
+            response.setMessage(optionalAuthenticateAgentResponse.get().getMessage());
+            return response;
         }
-
         AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
 
         String transactionReferenceNo = RRNGenerator.getInstance("AD").getRRN();
         String POSAgentAccount = authenticateAgentResponse.getData().getAccountNumber();
+
         long POSAgentFloatBalance = fetchAgentAccountBalanceOnly(POSAgentAccount);
         long depositAmount = agentTransactionRequest.getAmount();
 
@@ -65,8 +73,28 @@ public class AgentTransactionService {
             return response;
         }
 
-        String customerAgentAccountNo = agentTransactionRequest.getCustomerAgentAccount();
-        String customerAgentName = agentTransactionRequest.getCustomerAgentName();
+        MerchantAuthInfo customerAgent = MerchantAuthInfo.builder()
+                .password(agentTransactionRequest.getCustomerAgentPass())
+                .username(agentTransactionRequest.getCustomerAgentId()).build();
+
+        Optional<AuthenticateAgentResponse> optionalCustomerAgent = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent, agentValidation);
+        if (optionalCustomerAgent.isEmpty()) {
+            log.info(
+                    "Agent Float Deposit:[Failed] Missing agent information %n");
+            response.setStatus("117");
+            response.setMessage("Missing agent information");
+            return response;
+        }else if (optionalCustomerAgent.get().getCode() != HttpStatus.OK.value()) {
+            response.setStatus(String.valueOf(
+                    optionalCustomerAgent.get().getCode())
+            );
+            response.setMessage(optionalCustomerAgent.get().getMessage());
+            return response;
+        }
+        AuthenticateAgentResponse customerAgentData = optionalCustomerAgent.get();
+
+        String customerAgentAccountNo = customerAgentData.getData().getAccountNumber();
+        String customerAgentName = customerAgentData.getData().getNames();
         System.out.printf(
                 "Agent Float Deposit: Transaction %s customer agent name: %s and account no: %s. %n",
                 transactionReferenceNo, customerAgentName, customerAgentAccountNo);
@@ -238,12 +266,37 @@ public class AgentTransactionService {
             response.setStatus("117");
             response.setMessage("Missing agent information");
             return response;
+        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            response.setStatus(String.valueOf(
+                    optionalAuthenticateAgentResponse.get().getCode())
+            );
+            response.setMessage(optionalAuthenticateAgentResponse.get().getMessage());
+            return response;
         }
         AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
 
+        MerchantAuthInfo customerAgent = MerchantAuthInfo.builder()
+                .password(request.getCustomerAgentPass())
+                .username(request.getCustomerAgentId()).build();
 
-        String recipientAgentAccountNo = request.getCustomerAgentAccount();
-        String recipientAgentName = request.getCustomerAgentAccount();
+        Optional<AuthenticateAgentResponse> optionalCustomerAgent = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent, agentValidation);
+        if (optionalCustomerAgent.isEmpty()) {
+            log.info(
+                    "Agent Float Deposit:[Failed] Missing agent information %n");
+            response.setStatus("117");
+            response.setMessage("Missing agent information");
+            return response;
+        }else if (optionalCustomerAgent.get().getCode() != HttpStatus.OK.value()) {
+            response.setStatus(String.valueOf(
+                    optionalCustomerAgent.get().getCode())
+            );
+            response.setMessage(optionalCustomerAgent.get().getMessage());
+            return response;
+        }
+        AuthenticateAgentResponse customerAgentData = optionalCustomerAgent.get();
+
+        String recipientAgentAccountNo = customerAgentData.getData().getAccountNumber();
+        String recipientAgentName = customerAgentData.getData().getNames();
         System.out.printf(
                 "Agent Float Withdrawal: Transaction %s recipient agent name: %s and account no: %s. %n",
                 transactionReferenceNo, recipientAgentName, recipientAgentAccountNo);

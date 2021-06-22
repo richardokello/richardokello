@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AgentTransactionRequest {
-    MerchantAuthInfo credentials;
-    String transactionType;
-    String customerAgentAccount;
-    String customerAgentName;
-    long amount;
+    private MerchantAuthInfo credentials;
+    private String customerAgentId;
+    private String customerAgentPass;
+    private long amount;
 }
