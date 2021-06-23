@@ -54,17 +54,16 @@ public class DesUtil {
 		return encryptedString;
 	}
 
-	public String _decrypt(String encryptedString) {
-		String decryptedText = null;
+	public  String _decrypt(String encryptedString) {
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, key);
 			byte[] encryptedText = Base64.decodeBase64(encryptedString);
 			byte[] plainText = cipher.doFinal(encryptedText);
-			decryptedText = new String(plainText);
+			return new String(plainText);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return decryptedText;
+		return null;
 	}
 
 }

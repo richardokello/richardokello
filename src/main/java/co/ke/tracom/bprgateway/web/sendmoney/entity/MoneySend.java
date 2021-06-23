@@ -6,11 +6,12 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "BPRSMSSCHEDULED")
+@Table(name = "BPRMONEYSEND")
 public class MoneySend {
 	@Id
-	@Basic(optional = false)
-	@Column(nullable = false, precision = 19)
+    @Basic(optional = false)
+    @Column(nullable = false, precision = 19)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long moneysendid;
     private String recevernumber;
     private String sendernumber;

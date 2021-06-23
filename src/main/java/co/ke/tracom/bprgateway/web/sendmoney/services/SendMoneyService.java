@@ -70,7 +70,7 @@ public class SendMoneyService {
                     .message("Missing agent information")
                     .data(null)
                     .build();
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
             return SendMoneyResponse
                     .builder()
                     .status(String.valueOf(
@@ -264,12 +264,13 @@ public class SendMoneyService {
                     String CARDLESSTXNBIN = "123456";
                     String VIRTUALCARDBIN = vbin.equals("") ? CARDLESSTXNBIN : vbin;
                     String cno = bprCreditCardNumberGenerator.generate(VIRTUALCARDBIN, 12);
+                    System.out.println("cnoenc **************************************** " + cno);
                     String cnoenc = desUtil.encryptPlainText(cno);
 
                     if (cnoenc != null || !Objects.requireNonNull(cnoenc).isEmpty()) {
                         Random generator = new Random();
                         String token = String.format("%06d", 100000 + generator.nextInt(899999));
-
+                        System.out.println("token ======================= " + token);
                         MoneySend ms = new MoneySend();
                         ms.setChannel("POS");
                         ms.setAmount(String.valueOf(request.getAmount()));
@@ -305,7 +306,7 @@ public class SendMoneyService {
                             ScheduledSMS scheduledSMSTransaction = new ScheduledSMS();
                             scheduledSMSTransaction.setSentstatus(0);
                             scheduledSMSTransaction.setAttempts(0);
-                            scheduledSMSTransaction  .setReceiverphone(receiverMobile);
+                            scheduledSMSTransaction.setReceiverphone(receiverMobile);
                             scheduledSMSTransaction.setTxnref(transactionRRN);
 
                             if (SMScontent.length() <= 160) {
@@ -341,6 +342,12 @@ public class SendMoneyService {
                         scheduledSMS.setTxnref(transactionRRN);
                         scheduledSMSRepository.save(scheduledSMS);
 
+                        return SendMoneyResponse.builder()
+                                .status("00")
+                                .message("Send money transaction processed successfully.")
+                                .data(data)
+                                .build();
+
                     } else {
                         System.out.println(
                                 "Card less vcard generation error for rrn " + transactionRRN);
@@ -351,6 +358,8 @@ public class SendMoneyService {
                                 .build();
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
+                    log.info("=================================================" + e.getMessage());
                     return SendMoneyResponse.builder()
                             .status("118")
                             .message("Transaction failed. Please try again.")
@@ -366,6 +375,7 @@ public class SendMoneyService {
             }
 
         } catch (Exception w) {
+            w.printStackTrace();
             log.info("Send money transaction error : " + w.getMessage());
         }
         return SendMoneyResponse.builder()
@@ -560,7 +570,7 @@ public class SendMoneyService {
                     .message("Missing agent information")
                     .data(null)
                     .build();
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
             return SendMoneyResponse
                     .builder()
                     .status(String.valueOf(
@@ -580,7 +590,6 @@ public class SendMoneyService {
                     .build();
         }
 
-        String cno = request.getVCard();
         String channel = "1510";
         String posRRN = transactionRRN;
         String sendMoneySuspense = xSwitchParameterRepository.findByParamName("SENDMONEYSUSPENSE").get().getParamValue();
@@ -627,148 +636,151 @@ public class SendMoneyService {
         try {
 
             String tid = "PC";
-            String t24pwd = "########A";
-            String cnoenc = "";
+            String narr = "RECEIVEMONEY";
+            Optional<MoneySend> optionalMoneySend = getSendMoneyTxn(recipientPhoneNo, passcode, String.valueOf(request.getAmount()));
 
-            try {
-                cnoenc = desUtil.encryptPlainText(cno);
-            } catch (Exception e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-                System.out.println("Error encrypting card no for send money txn ref ~ " + posRRN);
-
+            if (!optionalMoneySend.isPresent()) {
                 return SendMoneyResponse.builder()
-                        .status("116")
-                        .message("Transaction failed. Error encrypting vCard no.")
+                        .status("139")
+                        .message("Transaction failed. Missing original send money record.")
                         .data(null)
                         .build();
             }
 
-            String narr = "RECEIVEMONEY";
-            MoneySend ms = new MoneySend();
-            ms = getSendMoneyTxn(cnoenc, passcode, String.valueOf(request.getAmount()));
-
-            if (cnoenc.equals("") || null == ms) {
-
+            MoneySend sendMoneyTxn = optionalMoneySend.get();
+            String storedVCard = "";
+            try {
+                storedVCard = desUtil._decrypt(sendMoneyTxn.getCno());
+            } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+                System.out.println("Error encrypting card no for send money txn ref ~ " + posRRN);
                 return SendMoneyResponse.builder()
-                        .status("139")
-                        .message("Transaction failed. Invalid vCard No")
+                        .status("116")
+                        .message("Transaction failed. Contact administrator")
                         .data(null)
                         .build();
-            } else {
-                String paymentdetail1 = recipientPhoneNo;
-                paymentdetail3 = narr;
-                System.out.println(
-                        "Send Money Withdrawal Txn Found , Money send Id:  " + ms.getMoneysendid());
-                String smwOFS =
-                        "0000AFUNDS.TRANSFER,SEND.MONEYWD/I/PROCESS/1/0,"
-                                + ""
-                                + MASKED_T24_USERNAME
-                                + "/"
-                                + MASKED_T24_PASSWORD
-                                + "/"
-                                + accountbranchid
-                                + ","
-                                + ",TRANSACTION.TYPE::=ACSS,"
-                                + "DEBIT.ACCT.NO::="
-                                + sendMoneySuspense
-                                + ","
-                                + "DEBIT.AMOUNT::="
+            }
+
+            if (!storedVCard.equalsIgnoreCase(request.getVCard())) {
+                return SendMoneyResponse.builder()
+                        .status("116")
+                        .message("Transaction failed. Invalid vCard. Please try again.")
+                        .data(null)
+                        .build();
+            }
+
+            String paymentdetail1 = recipientPhoneNo;
+            paymentdetail3 = narr;
+            System.out.println(
+                    "Send Money Withdrawal Txn Found , Money send Id:  " + sendMoneyTxn.getMoneysendid());
+            String smwOFS =
+                    "0000AFUNDS.TRANSFER,SEND.MONEYWD/I/PROCESS/1/0,"
+                            + ""
+                            + MASKED_T24_USERNAME
+                            + "/"
+                            + MASKED_T24_PASSWORD
+                            + "/"
+                            + accountbranchid
+                            + ","
+                            + ",TRANSACTION.TYPE::=ACSS,"
+                            + "DEBIT.ACCT.NO::="
+                            + sendMoneySuspense
+                            + ","
+                            + "DEBIT.AMOUNT::="
+                            + request.getAmount()
+                            + ","
+                            + "CREDIT.ACCT.NO::="
+                            + authenticateAgentResponse.getData().getAccountNumber()
+                            + ","
+                            + "DEBIT.CURRENCY::=RWF,"
+                            + "TCM.REF::="
+                            + posRRN
+                            + ",ORDERING.BANK::='BPR',"
+                            + "PAYMENT.DETAILS:1:= "
+                            + utilityService.sanitizePaymentDetails(paymentdetail1.trim(), "Send Money Withdrawal").trim()
+                            + ","
+                            + "PAYMENT.DETAILS:2:="
+                            + paymentdetail2.trim()
+                            + ","
+                            + "PAYMENT.DETAILS:3:="
+                            + paymentdetail3.trim();
+
+            System.out.println("Receive money OFS " + smwOFS);
+
+            String tot24str = String.format("%04d", smwOFS.length()) + smwOFS;
+            Long moneysendid_or = sendMoneyTxn.getMoneysendid();
+            String t24ref = "";
+            T24TXNQueue tot24 = new T24TXNQueue();
+            // base 64 encode request in db
+
+            tot24.setRequestleg(tot24str);
+            tot24.setStarttime(System.currentTimeMillis());
+            tot24.setTxnchannel(channel);
+            tot24.setGatewayref(posRRN);
+            tot24.setPostedstatus("0");
+            tot24.setAttempts(0);
+            tot24.setTid(tid);
+            tot24.setCreditacctno(authenticateAgentResponse.getData().getAccountNumber());
+            tot24.setDebitacctno(sendMoneySuspense);
+
+            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
+            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+
+            t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
+            transactionService.updateT24TransactionDTO(tot24);
+            t24ref = tot24.getT24reference() == null ? "NA" : tot24.getT24reference();
+
+
+            if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
+
+                sendMoneyTxn.setFulfilmentref(posRRN);
+                sendMoneyTxn.setFulfilmentreft24(tot24.getT24reference());
+                sendMoneyTxn.setFulfilmentstatus(1);
+                sendMoneyTxn.setFulfilmentagentid(tid);
+                moneySendRepository.save(sendMoneyTxn);
+
+                // use provided templates
+                String smsrecipient =
+                        "You have withdrawn RF "
                                 + request.getAmount()
-                                + ","
-                                + "CREDIT.ACCT.NO::="
-                                + authenticateAgentResponse.getData().getAccountNumber()
-                                + ","
-                                + "DEBIT.CURRENCY::=RWF,"
-                                + "TCM.REF::="
-                                + posRRN
-                                + ",ORDERING.BANK::='BPR',"
-                                + "PAYMENT.DETAILS:1:= "
-                                + utilityService.sanitizePaymentDetails(paymentdetail1.trim(), "Send Money Withdrawal").trim()
-                                + ","
-                                + "PAYMENT.DETAILS:2:="
-                                + paymentdetail2.trim()
-                                + ","
-                                + "PAYMENT.DETAILS:3:="
-                                + paymentdetail3.trim();
-
-                System.out.println("Receive money OFS " + smwOFS);
-
-                String tot24str = String.format("%04d", smwOFS.length()) + smwOFS;
-                Long moneysendid_or = ms.getMoneysendid();
-                String t24ref = "";
-                T24TXNQueue tot24 = new T24TXNQueue();
-                // base 64 encode request in db
-
-                tot24.setRequestleg(tot24str);
-                tot24.setStarttime(System.currentTimeMillis());
-                tot24.setTxnchannel(channel);
-                tot24.setGatewayref(posRRN);
-                tot24.setPostedstatus("0");
-                tot24.setAttempts(0);
-                tot24.setTid(tid);
-                tot24.setCreditacctno(authenticateAgentResponse.getData().getAccountNumber());
-                tot24.setDebitacctno(sendMoneySuspense);
-
-                final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-                final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
-                t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
-                transactionService.updateT24TransactionDTO(tot24);
-                t24ref = tot24.getT24reference() == null ? "NA" : tot24.getT24reference();
+                                + " from  "
+                                + tid
+                                + " "
+                                + "via BPR Card-less Transfer. Thank you for banking with BPR. ";
+                ScheduledSMS smssched = new ScheduledSMS();
+                smssched.setSentstatus(0);
+                smssched.setAttempts(0);
+                smssched.setMessage(utilityService.encryptText(smsrecipient));
+                smssched.setReceiverphone(recipientPhoneNo);
+                smssched.setTxnref(posRRN);
+                scheduledSMSRepository.save(smssched);
 
 
-                if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
+                tot24.setT24reference(tot24.getT24reference());
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY");
 
-                    ms.setFulfilmentref(posRRN);
-                    ms.setFulfilmentreft24(tot24.getT24reference());
-                    ms.setFulfilmentstatus(1);
-                    ms.setFulfilmentagentid(tid);
-                    moneySendRepository.save(ms);
+                SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
+                        .T24Reference(tot24.getT24reference())
+                        .charges(0.0)
+                        .build();
 
-                    // use provided templates
-                    String smsrecipient =
-                            "You have withdrawn RF "
-                                    + request.getAmount()
-                                    + " from  "
-                                    + tid
-                                    + " "
-                                    + "via BPR Card-less Transfer. Thank you for banking with BPR. ";
-                    ScheduledSMS smssched = new ScheduledSMS();
-                    smssched.setSentstatus(0);
-                    smssched.setAttempts(0);
-                    smssched.setMessage(utilityService.decryptSensitiveData(smsrecipient));
-                    smssched.setReceiverphone(recipientPhoneNo);
-                    smssched.setTxnref(posRRN);
-                    scheduledSMSRepository.save(smssched);
+                return SendMoneyResponse.builder()
+                        .status("00")
+                        .message("Transaction processed successfully")
+                        .data(sendMoneyResponseData)
+                        .build();
 
+            } else {
 
-                    tot24.setT24reference(tot24.getT24reference());
-                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY");
+                tot24.setT24reference(tot24.getT24reference());
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY");
 
-                    SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
-                            .T24Reference(tot24.getT24reference())
-                            .charges(0.0)
-                            .build();
-
-                    return SendMoneyResponse.builder()
-                            .status("00")
-                            .message("Transaction processed successfully")
-                            .data(sendMoneyResponseData)
-                            .build();
-
-                } else {
-
-                    tot24.setT24reference(tot24.getT24reference());
-                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY");
-
-
-                    return SendMoneyResponse.builder()
-                            .status("118")
-                            .message("Transaction failed. " + tot24.getT24failnarration())
-                            .data(null)
-                            .build();
-                }
+                return SendMoneyResponse.builder()
+                        .status("118")
+                        .message("Transaction failed. " + tot24.getT24failnarration())
+                        .data(null)
+                        .build();
             }
 
         } catch (Exception w) {
@@ -781,13 +793,7 @@ public class SendMoneyService {
         }
     }
 
-    public MoneySend getSendMoneyTxn(String cno, String mstoken, String amount) {
-        Optional<MoneySend> optionalMoneySend = moneySendRepository.findFirstByFulfilmentstatusAndMstokenAndCnoAndAmountOrderByMoneysendidAsc(
-                0, mstoken, cno, amount
-        );
-
-        if (optionalMoneySend.isEmpty()) return null;
-
-        return optionalMoneySend.get();
+    public Optional<MoneySend> getSendMoneyTxn(String receiverPhone, String msToken, String amount) {
+        return moneySendRepository.findByRecevernumberAndMstokenAndAmount(receiverPhone, msToken, amount);
     }
 }
