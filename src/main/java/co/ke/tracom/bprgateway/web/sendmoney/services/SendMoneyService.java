@@ -212,7 +212,6 @@ public class SendMoneyService {
             tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
             tot24.setCreditacctno(configuredSendMoneySuspenseAccount);
 
-
             final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
             final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
 
@@ -241,6 +240,7 @@ public class SendMoneyService {
                     SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
                             .T24Reference(t24Reference)
                             .charges(Double.parseDouble(formattedcharge))
+                            .rrn(transactionRRN)
                             .build();
 
                     SendMoneyResponse.builder()
@@ -763,6 +763,7 @@ public class SendMoneyService {
                 SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
                         .T24Reference(tot24.getT24reference())
                         .charges(0.0)
+                        .rrn(transactionRRN)
                         .build();
 
                 return SendMoneyResponse.builder()

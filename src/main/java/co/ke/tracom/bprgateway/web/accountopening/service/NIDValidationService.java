@@ -3,9 +3,13 @@ package co.ke.tracom.bprgateway.web.accountopening.service;
 import co.ke.tracom.bprgateway.web.accountopening.dto.request.NIDValidationRequest;
 import co.ke.tracom.bprgateway.web.accountopening.dto.response.NIDData;
 import co.ke.tracom.bprgateway.web.accountopening.dto.response.NIDValidationResponse;
+import co.ke.tracom.bprgateway.web.accountvalidation.data.BPRAccountValidationResponse;
+import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
+import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -21,15 +25,31 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class NIDValidationService {
 
+    @Value("${merchant.account.validation}")
+    private String agentValidation;
+    private final BaseServiceProcessor baseServiceProcessor;
     private final XSwitchParameterRepository xSwitchParameterRepository;
 
     public NIDValidationResponse validateNationalID(NIDValidationRequest request, String referenceNo) {
+        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
+        if (optionalAuthenticateAgentResponse.isEmpty()) {
+            log.info(
+                    "Agent Float Deposit:[Failed] Missing agent information %n");
+            return NIDValidationResponse.builder()
+                    .status("117")
+                    .message("Missing agent information").build();
+        } else if (optionalAuthenticateAgentResponse.get().getCode() != org.springframework.http.HttpStatus.OK.value()) {
+            return NIDValidationResponse.builder().status(String.valueOf(
+                    optionalAuthenticateAgentResponse.get().getCode())
+            ).message(optionalAuthenticateAgentResponse.get().getMessage()).build();
+        }
 
         String returneddocumentid = "";
 

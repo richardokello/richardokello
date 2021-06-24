@@ -1,5 +1,6 @@
 package co.ke.tracom.bprgateway.web.depositmoney.controller;
 
+import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.web.depositmoney.data.requests.DepositMoneyRequest;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.depositmoney.services.DepositMoneyService;
@@ -22,7 +23,8 @@ public class DepositMoneyController {
     @ApiOperation(value = "Deposit Money Transaction", response = DepositMoneyResult.class)
     @PostMapping(value = "/pc/customer/deposit-money")
     public ResponseEntity<?> depositMoneyTransaction(@Validated @RequestBody DepositMoneyRequest depositMoneyRequest) {
-        DepositMoneyResult response =  depositMoneyService.processCustomerDepositMoneyTnx(depositMoneyRequest);
+        String transactionRRN = RRNGenerator.getInstance("CD").getRRN();
+        DepositMoneyResult response =  depositMoneyService.processCustomerDepositMoneyTnx(depositMoneyRequest, transactionRRN);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

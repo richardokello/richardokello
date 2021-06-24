@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class RRAPaymentResponseData {
     double transactionCharges;
     String T24Reference;
-
+    String rrn;
 }

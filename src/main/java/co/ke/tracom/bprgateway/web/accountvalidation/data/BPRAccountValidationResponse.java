@@ -13,4 +13,5 @@ public class BPRAccountValidationResponse {
     private String message;
     private String status;
     private String accountName;
+    private String rrn;
 }

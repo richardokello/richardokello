@@ -4,18 +4,25 @@ import co.ke.tracom.bprgateway.core.tracomchannels.tcp.T24MessageProcessor;
 import co.ke.tracom.bprgateway.core.tracomchannels.tcp.T24TCPClient;
 import co.ke.tracom.bprgateway.core.tracomchannels.tcp.dto.BankAccountValidationResponse;
 import co.ke.tracom.bprgateway.core.tracomchannels.tcp.dto.EUCLMeterValidationResponse;
+import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.web.accountvalidation.data.BPRAccountValidationRequest;
 import co.ke.tracom.bprgateway.web.accountvalidation.data.BPRAccountValidationResponse;
+import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
+import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
+import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
 
 @RequiredArgsConstructor
 @Service
@@ -24,13 +31,26 @@ public class AccountValidationService {
     private final T24TCPClient t24TCPClient;
     private final T24MessageProcessor t24MessageProcessor;
 
-    private final String maskedUsername = "########U";
-    private final String maskedPassword = "########A";
+    @Value("${merchant.account.validation}")
+    private String agentValidation;
+    private final BaseServiceProcessor baseServiceProcessor;
 
     public BPRAccountValidationResponse processBankAccountValidation(BPRAccountValidationRequest request) {
+        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
+        if (optionalAuthenticateAgentResponse.isEmpty()) {
+            log.info(
+                    "Agent Float Deposit:[Failed] Missing agent information %n");
+            return BPRAccountValidationResponse.builder()
+                    .status("117")
+                    .message("Missing agent information").build();
+        } else if (optionalAuthenticateAgentResponse.get().getCode() != org.springframework.http.HttpStatus.OK.value()) {
+            return BPRAccountValidationResponse.builder().status(String.valueOf(
+                    optionalAuthenticateAgentResponse.get().getCode())
+            ).message(optionalAuthenticateAgentResponse.get().getMessage()).build();
+        }
 
         String accountValidationRequest =
-                "0000AENQUIRY.SELECT,," + maskedUsername + "/" + maskedPassword +
+                "0000AENQUIRY.SELECT,," + MASKED_T24_USERNAME + "/" + MASKED_T24_PASSWORD +
                         ",ECL.ENQUIRY.DETS,ID:EQ=" + request.getAccountNo() + ",TRANS.TYPE.ID:EQ=CUSTDET";
         String OFSMsg = String.format("%04d", accountValidationRequest.length()) + accountValidationRequest;
 
@@ -45,6 +65,7 @@ public class AccountValidationService {
                     )
                     .message("Account validation successful")
                     .accountName(bankAccountValidationResponse.getAccountName())
+                    .rrn(RRNGenerator.getInstance("AV").getRRN())
                     .build();
 
         } catch (NoSuchFieldException | IOException e) {

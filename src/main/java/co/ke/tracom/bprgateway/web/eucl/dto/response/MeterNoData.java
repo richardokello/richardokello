@@ -13,4 +13,5 @@ public class MeterNoData {
     String meterNo;
     String accountName;
     String meterLocation;
+    String rrn;
 }

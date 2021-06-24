@@ -6,6 +6,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AgentTransacti
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
@@ -35,6 +36,7 @@ public class AgentTransactionService {
     private final UtilityService utilityService;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService bprBranchService;
+
     private final XSwitchParameterRepository xSwitchParameterRepository;
 
     @Value("${merchant.account.validation}")
@@ -100,15 +102,21 @@ public class AgentTransactionService {
                 transactionReferenceNo, customerAgentName, customerAgentAccountNo);
 
         String firstPaymentDetails = POSAgentAccount + " " + authenticateAgentResponse.getData().getNames();
-//        branch.getCompanyname();
         firstPaymentDetails =
                 firstPaymentDetails.length() > 34
                         ? firstPaymentDetails.substring(0, 34)
                         : firstPaymentDetails;
 
-        //TODO Get branch id from agent validation response
-//        String accountBranchId = branch.getId();
-        String accountBranchId = "10577";
+        BPRBranches bprBranches = bprBranchService.fetchBranchAccountsByBranchCode(POSAgentAccount);
+        if (null == bprBranches.getCompanyName()) {
+           log.info("Agent float deposit transaction ["+transactionReferenceNo+"] failed. Error: Agent branch details could not be verified.");
+
+            response.setStatus("065");
+            response.setMessage("Agent branch details could not be verified. Kindly contact BPR customer care");
+            return response;
+        }
+
+        String accountBranchId = bprBranches.getId();
         if (accountBranchId.isEmpty()) {
             System.out.printf(
                     "Agent Float Deposit:[Failed] Transaction %s failed. Error message: Missing branch details for recipient agent. %n",
@@ -119,7 +127,7 @@ public class AgentTransactionService {
         }
 
         //TODO Terminal id and merchant id combination
-        String secondPaymentDetails = authenticateAgentResponse.getData().getAccountNumber();
+        String secondPaymentDetails = authenticateAgentResponse.getData().getAccountNumber()+" "+authenticateAgentResponse.getData().getNames();
         String thirdPaymentDetails = "Agent Float Deposit";
         String agentFloatDepositOFSTemplate =
                 "0000AFUNDS.TRANSFER,AGENCY.DEPOSIT/I/PROCESS/2/0,"
@@ -198,6 +206,7 @@ public class AgentTransactionService {
             }
 
             response.setT24Reference(tot24.getT24reference());
+            response.setRrn(transactionReferenceNo);
             response.setStatus("00");
             return response;
         } else {
@@ -247,7 +256,11 @@ public class AgentTransactionService {
 
         transactionService.updateT24TransactionDTO(T24Transaction);
         if ((T24Transaction.getResponseleg() != null)) {
-            if (null != T24Transaction.getAccountname() || !T24Transaction.getBaladvise().isEmpty()) {
+            if(T24Transaction.getBaladvise().trim().isEmpty()){
+                return 0L;
+            }
+            else {
+
                 System.out.printf(
                         "Agent Balance [Success]: Transaction %s processing completed. Agent balance %d %n",
                         transactionReferenceNo, Long.parseLong(T24Transaction.getBaladvise()));
@@ -419,6 +432,7 @@ public class AgentTransactionService {
             }
 
             response.setT24Reference(tot24.getT24reference());
+            response.setRrn(transactionReferenceNo);
             response.setStatus("00");
         } else {
             System.out.printf(

@@ -44,16 +44,8 @@ public class RwandaRevenueAuthorityController {
             response = RRAPaymentResponse.class)
     @PostMapping(value = "/rra-payment")
     public ResponseEntity<?> RRAPaymentRequest(@RequestBody RRAPaymentRequest request) {
-
-        RRAPaymentResponseData data = RRAPaymentResponseData.builder()
-                .T24Reference(RRNGenerator.getInstance("BP").getRRN())
-                .transactionCharges(34.55)
-                .build();
-        RRAPaymentResponse response = RRAPaymentResponse.builder()
-                .status("00")
-                .message("RRA Validation processed successfully")
-                .data(data)
-                .build();
+        String transactionRRN =  RRNGenerator.getInstance("RP").getRRN();
+        RRAPaymentResponse response = rraService.processRRAPayment(request, transactionRRN);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

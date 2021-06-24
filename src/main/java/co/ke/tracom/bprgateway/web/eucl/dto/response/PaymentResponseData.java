@@ -13,4 +13,5 @@ public class PaymentResponseData {
     String t24Reference;
     String token;
     String unitsInKW;
+    String rrn;
 }

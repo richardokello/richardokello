@@ -43,9 +43,26 @@ public class EUCLService {
     private final EUCLElectricityTxnLogsRepository euclElectricityTxnLogsRepository;
 
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
+        // Validate agent credentials
+        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
+        if (optionalAuthenticateAgentResponse.isEmpty()) {
+            log.info(
+                    "Agent Float Deposit:[Failed] Missing agent information %n");
+            return MeterNoValidationResponse.builder()
+                    .status("117")
+                    .message("Missing agent information")
+                    .data(null)
+                    .build();
 
+        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            return MeterNoValidationResponse.builder()
+                    .status(String.valueOf(
+                            optionalAuthenticateAgentResponse.get().getCode())
+                    )
+                    .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
+        }
         try {
-            String channel = "1510";
+            String channel = "PC";
             String txnref = referenceNo;
             String tid = "PCTID";
 
@@ -101,6 +118,7 @@ public class EUCLService {
                         .meterNo(request.getMeterNo())
                         .accountName(accname)
                         .meterLocation(tot24.getMeterLocation())
+                        .rrn(referenceNo)
                         .build();
 
                 MeterNoValidationResponse response = MeterNoValidationResponse
@@ -153,7 +171,7 @@ public class EUCLService {
                     .status("117")
                     .message("Missing agent information")
                     .build();
-        }  else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
             return EUCLPaymentResponse
                     .builder()
                     .status(String.valueOf(
@@ -259,6 +277,7 @@ public class EUCLService {
                             .token(tot24.getTokenNo())
                             .t24Reference(tot24.getT24reference())
                             .unitsInKW(tot24.getUnitsKw())
+                            .rrn(transactionReferenceNo)
                             .build();
 
                     EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder()

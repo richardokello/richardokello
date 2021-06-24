@@ -1,5 +1,6 @@
 package co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests;
 
+import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRATINValidationResponse;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import lombok.AllArgsConstructor;
@@ -12,5 +13,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RRAPaymentRequest {
     private MerchantAuthInfo credentials;
-    RRATINValidationResponse data;
+    String taxTypeDescription;
+    String declarationDate;
+    int taxCentreNo;
+    String TIN;
+    int RRAOriginNo;
+    long declarationID;
+    String taxPayerName;
+    String requestDate;
+    String taxCentreDescription;
+    int taxTypeNo;
+    long assessNo;
+    double amountToPay;
+    String RRAReferenceNo;
 }

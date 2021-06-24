@@ -20,8 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
@@ -42,8 +40,7 @@ public class DepositMoneyService {
     @Value("${merchant.account.validation}")
     private String agentValidation;
 
-    public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest) {
-        String transactionRRN = RRNGenerator.getInstance("CD").getRRN();
+    public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest, String transactionRRN) {
         // Validate agent credentials
         Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials(), agentValidation);
         if (optionalAuthenticateAgentResponse.isEmpty()) {
@@ -97,8 +94,7 @@ public class DepositMoneyService {
         long agentbalancelong = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
 
         String channel = "1510";
-        log.info(
-                "Customer Deposit: Transaction %s. Agent Balance=%s Deposit amount=%d  %n",
+        log.info("Customer Deposit: Transaction %s. Agent Balance=%s Deposit amount=%d ",
                 transactionRRN, agentbalancelong, depositMoneyRequest.getAmount());
         if (agentbalancelong < depositMoneyRequest.getAmount()) {
             System.out.printf(
@@ -198,7 +194,8 @@ public class DepositMoneyService {
                         tot24, "AGENT DEPOSIT TO CUSTOMER");
 
                 DepositMoneyResultData data = DepositMoneyResultData.builder()
-                        .t24Reference(transactionRRN)
+                        .t24Reference(tot24.getT24reference())
+                        .rrn(transactionRRN)
                         .charges(utilityService.formatDecimal(
                                 Float.parseFloat(ISOFormattedAmount)
                         ))
@@ -213,21 +210,17 @@ public class DepositMoneyService {
                 e.printStackTrace();
             }
         } else {
-
             System.out.printf(
                     "Customer Deposit: [Failed] Transaction %s failed. T24 Response message %s  %n",
                     transactionRRN, tot24.getT24failnarration());
-
             return DepositMoneyResult.builder()
                     .status("098")
                     .message((tot24.getT24failnarration() == null || tot24.getT24failnarration().isEmpty())
-                            ? "TRANSACTION FAILED. SYSTEM FAILURE "
-                            : tot24.getT24failnarration())
+                            ? "TRANSACTION FAILED. SYSTEM FAILURE"
+                            : "Transaction failed. " + tot24.getT24failnarration())
                     .data(null)
                     .build();
-
         }
-
         return DepositMoneyResult.builder()
                 .status("98")
                 .message("Transaction failed processing")

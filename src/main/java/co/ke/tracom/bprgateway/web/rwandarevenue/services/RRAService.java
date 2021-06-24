@@ -1,13 +1,21 @@
 package co.ke.tracom.bprgateway.web.rwandarevenue.services;
 
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
-import co.ke.tracom.bprgateway.web.irembo.dto.response.IremboPaymentResponse;
+import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
+import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
+import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests.RRAPaymentRequest;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests.RRATINValidationRequest;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAData;
+import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponse;
+import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponseData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRATINValidationResponse;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
+import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
+import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.entities.TransactionAdvices;
 import co.ke.tracom.bprgateway.web.transactions.repository.TransactionAdvicesRepository;
+import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +48,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
+
+import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,8 +61,12 @@ public class RRAService {
     @Value("${merchant.account.validation}")
     private String agentValidation;
     private final BaseServiceProcessor baseServiceProcessor;
-    private final XSwitchParameterRepository xSwitchParameterRepository;
+    private final BPRBranchService bprBranchService;
+    private final AgentTransactionService agentTransactionService;
+    private final T24Channel t24Channel;
+    private final TransactionService transactionService;
 
+    private final XSwitchParameterRepository xSwitchParameterRepository;
     private final TransactionAdvicesRepository transactionAdvicesRepository;
 
 
@@ -303,5 +319,186 @@ public class RRAService {
                 + "      </ws:getDec>\n"
                 + "   </soapenv:Body>\n"
                 + "</soapenv:Envelope>";
+    }
+
+    public RRAPaymentResponse processRRAPayment(RRAPaymentRequest request, String transactionRRN) {
+
+        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
+        if (optionalAuthenticateAgentResponse.isEmpty()) {
+            log.info(
+                    "RRA Validation :[Failed] Missing agent information.  Transaction RRN [" + transactionRRN + "]");
+            return RRAPaymentResponse.builder()
+                    .status("117")
+                    .message("Missing agent information")
+                    .data(null).build();
+        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            return RRAPaymentResponse
+                    .builder()
+                    .status(String.valueOf(
+                            optionalAuthenticateAgentResponse.get().getCode()))
+                    .message(optionalAuthenticateAgentResponse.get().getMessage())
+                    .build();
+        }
+
+        AuthenticateAgentResponse response = optionalAuthenticateAgentResponse.get();
+        try {
+
+            String tid = "PC";
+            String RRA_REF = request.getRRAReferenceNo();
+            long DEC_ID = request.getDeclarationID();
+            String TIN = request.getTIN();
+            String TAX_PAYER_NAME = request.getTaxPayerName();
+            double AMOUNT_TO_PAY = request.getAmountToPay();
+            int TAX_TYPE_NO = request.getTaxTypeNo();
+            String TAX_CENTRE_NO = request.getTaxCentreDescription();
+            long ASSESS_NO = request.getAssessNo();
+            int RRA_ORIGIN_NO = request.getRRAOriginNo();
+
+            String agentFloatAccount = response.getData().getAccountNumber();
+            BPRBranches branch = bprBranchService.fetchBranchAccountsByBranchCode(agentFloatAccount);
+            if (null == branch.getCompanyName()) {
+                log.info("Agent float deposit transaction ["+transactionRRN+"] failed. Error: Agent branch details could not be verified.");
+
+                return RRAPaymentResponse.builder()
+                        .status("065")
+                        .message("Agent branch details could not be verified. Kindly contact BPR customer care")
+                        .data(null).build();
+            }
+
+            String agentBranchId = branch.getId();
+            if (agentBranchId.isEmpty()) {
+                return RRAPaymentResponse.builder()
+                        .status("065")
+                        .message("Agent branch details could not be verified. Kindly contact BPR customer care")
+                        .data(null).build();
+            }
+
+            long agentFloatBalance = agentTransactionService.fetchAgentAccountBalanceOnly( agentFloatAccount);
+            if(agentFloatBalance < AMOUNT_TO_PAY){
+                return RRAPaymentResponse.builder()
+                        .status("065")
+                        .message("Insufficient agent float balance.")
+                        .data(null).build();
+            }
+            String channel = "PC";
+            String sanitizedTaxPayerName = TAX_PAYER_NAME.length() > 49 ? TAX_PAYER_NAME.substring(0, 49) : TAX_PAYER_NAME;
+
+            String RRAOFSMsg =
+                    "0000AFUNDS.TRANSFER,BPR.AGB.ETAX/I/PROCESS,INPUTT/"
+                            + MASKED_T24_PASSWORD
+                            + "/"
+                            + agentBranchId
+                            + ",,TRANSACTION.TYPE::=ACTT,RRA.REF::="
+                            + RRA_REF
+                            + ",TCM.REF::="
+                            + transactionRRN
+                            + ",RRA.DEC.ID::="
+                            + DEC_ID
+                            + ",DEBIT.CURRENCY::=RWF,DEBIT.ACCT.NO::="
+                            + agentFloatAccount
+                            + ",DEBIT.AMOUNT::="
+                            + AMOUNT_TO_PAY
+                            + ","
+                            + "PAYMENT.DETAILS:1::="
+                            + RRA_REF
+                            + "/"
+                            + TIN
+                            + ",RRA.TIN.NO::="
+                            + TIN
+                            + ",TAX.PAYER.NAME::="
+                            + sanitizedTaxPayerName
+                            + ",RRA.ASSESS.NO::="
+                            + ASSESS_NO
+                            + ",RRA.ORIGIN.NO::="
+                            + RRA_ORIGIN_NO
+                            + ",RRA.TAX.TYPE.NO::="
+                            + TAX_TYPE_NO
+                            + ",RRA.CENTER.NO::="
+                            + TAX_CENTRE_NO;
+
+
+            String tot24str = String.format("%04d", RRAOFSMsg.length()) + RRAOFSMsg;
+            System.out.println("RRA T24 OFS REQ: " + tot24str);
+
+            System.out.println("channel :" + channel);
+            System.out.println("tid :" + tid);
+
+            T24TXNQueue tot24 = new T24TXNQueue();
+            tot24.setRequestleg(tot24str);
+            tot24.setStarttime(System.currentTimeMillis());
+            tot24.setTxnchannel(channel);
+            tot24.setGatewayref(transactionRRN);
+            tot24.setPostedstatus("0");
+            tot24.setTid(tid);
+            tot24.setProcode("460000");
+            tot24.setDebitacctno(agentFloatAccount);
+
+            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
+            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+
+            t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
+
+            transactionService.updateT24TransactionDTO(tot24);
+
+            String t24ref = tot24.getT24reference() == null ? "NA" : tot24.getT24reference();
+
+            if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
+                try {
+                    String charges  = tot24.getTotalchargeamt();
+                    String cleanedChargeAmount = charges.replace("RWF", "");
+
+                    String ISOFormatAmount = String.format("%012d", Integer.parseInt(cleanedChargeAmount));
+                    log.info("RRA Transaction ["+transactionRRN+"] charged amount "+ISOFormatAmount);
+
+                    transactionService.updateT24TransactionDTO(tot24);
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA");
+                    RRAPaymentResponseData data = RRAPaymentResponseData.builder()
+                            .T24Reference(t24ref)
+                            .transactionCharges( Double.parseDouble( cleanedChargeAmount))
+                            .rrn(transactionRRN)
+                            .build();
+
+                    return RRAPaymentResponse.builder()
+                            .status("00")
+                            .message("RRA Transaction successful")
+                            .data(data).build();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    transactionService.updateT24TransactionDTO(tot24);
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA");
+                    RRAPaymentResponseData data = RRAPaymentResponseData.builder()
+                            .T24Reference(t24ref)
+                            .transactionCharges(0.0)
+                            .rrn(transactionRRN)
+                            .build();
+
+                    return RRAPaymentResponse.builder()
+                            .status("00")
+                            .message("RRA Transaction successful")
+                            .data(data).build();
+                }
+            } else {
+                transactionService.updateT24TransactionDTO(tot24);
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA");
+                RRAPaymentResponseData data = RRAPaymentResponseData.builder()
+                        .T24Reference(t24ref)
+                        .transactionCharges(0.0)
+                        .rrn(transactionRRN)
+                        .build();
+
+                return RRAPaymentResponse.builder()
+                        .status("118")
+                        .message("Transaction processing failed. "+tot24.getT24failnarration())
+                        .data(data).build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("RRA Transaction ["+transactionRRN+"] failed during processing. Kindly contact BPR Customer Care");
+            return RRAPaymentResponse.builder()
+                    .status("118")
+                    .message("RRA Transaction [] failed during processing. Kindly contact BPR Customer Care")
+                    .data(null).build();
+        }
     }
 }

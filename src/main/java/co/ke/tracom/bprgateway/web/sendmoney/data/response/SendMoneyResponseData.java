@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class SendMoneyResponseData {
     private double charges;
     private String T24Reference;
+    private String rrn;
 
 }

@@ -64,7 +64,6 @@ public class AgentTransactionController {
             response.setStatus("117");
             response.setMessage("Missing agent information");
         } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-
             response.setStatus(String.valueOf(
                     optionalAuthenticateAgentResponse.get().getCode())
             );

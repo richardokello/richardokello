@@ -8,4 +8,5 @@ import lombok.Data;
 public class DepositMoneyResultData {
        private String t24Reference;
        private String charges;
+       private String rrn;
 }

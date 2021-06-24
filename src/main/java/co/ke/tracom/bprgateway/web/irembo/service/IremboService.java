@@ -7,6 +7,7 @@ import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
 import co.ke.tracom.bprgateway.web.irembo.dto.request.BillNumberValidationRequest;
 import co.ke.tracom.bprgateway.web.irembo.dto.request.IremboBillPaymentRequest;
 import co.ke.tracom.bprgateway.web.irembo.dto.request.IremboRequest;
@@ -67,6 +68,25 @@ public class IremboService {
     private final IremboPaymentNotificationsRepository iremboPaymentNotificationsRepository;
 
     public IremboBillNoValidationResponse validateIremboBillNo(BillNumberValidationRequest request, String transactionRefNo) {
+        // Validate agent credentials
+        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
+        if (optionalAuthenticateAgentResponse.isEmpty()) {
+            log.info(
+                    "Agent Float Deposit:[Failed] Missing agent information %n");
+            return IremboBillNoValidationResponse.builder()
+                    .status("117")
+                    .message("Missing agent information")
+                    .data(null)
+                    .build();
+
+        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            return IremboBillNoValidationResponse.builder()
+                    .status(String.valueOf(
+                            optionalAuthenticateAgentResponse.get().getCode())
+                    )
+                    .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
+        }
+
         HttpURLConnection httpConnection = null;
         try {
 
@@ -196,9 +216,8 @@ public class IremboService {
     }
 
     public IremboPaymentResponse processPayment(IremboBillPaymentRequest request, String transactionRefNo) {
-        T24TXNQueue tot24 = new T24TXNQueue();
-        try {
 
+        try {
             Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
             if (optionalAuthenticateAgentResponse.isEmpty()) {
                 log.info(
@@ -209,7 +228,7 @@ public class IremboService {
                         .data(null)
                         .build();
 
-            }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+            } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
                 return IremboPaymentResponse
                         .builder()
                         .status(String.valueOf(
@@ -296,9 +315,8 @@ public class IremboService {
             System.out.println("TXNREF :" + txnref);
             System.out.println("TID :" + tid);
 
-            String t24ref = "";
 
-            // base 64 encode request in db
+            T24TXNQueue tot24 = new T24TXNQueue();
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
             tot24.setTxnchannel(channel);
@@ -337,7 +355,7 @@ public class IremboService {
                 if (Integer.parseInt(ISOFormatCharge) > 0) {
                     if (!chargesAccountNumber.isEmpty()) {
                         sweepChargesToPL(tid, profitcentre, branchId, chargeCreditPLAccount,
-                                chargesAccountNumber, ISOFormatCharge, transactionRefNo, t24ref,
+                                chargesAccountNumber, ISOFormatCharge, transactionRefNo, tot24.getT24reference(),
                                 "470000");
                     }
                 }
@@ -473,7 +491,7 @@ public class IremboService {
                 + "',CREDIT.THEIR.REF::='" + T24reference + "'";
 
         String preparedOFSMsg = String.format("%04d", iremboChargesOFS.length()) + iremboChargesOFS;
-        log.info("Irembo Charges transaction [" + chargesRRN + "] ready for processing. Original transaction reference [" + gatewayRef + "] OFS "+preparedOFSMsg);
+        log.info("Irembo Charges transaction [" + chargesRRN + "] ready for processing. Original transaction reference [" + gatewayRef + "] OFS " + preparedOFSMsg);
 
         T24TXNQueue tot24 = new T24TXNQueue();
         tot24.setRequestleg(preparedOFSMsg);

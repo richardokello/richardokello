@@ -14,5 +14,6 @@ public class AgentTransactionResponse {
     String message;
     double transactionCharges;
     String T24Reference;
+    String rrn;
 
 }
