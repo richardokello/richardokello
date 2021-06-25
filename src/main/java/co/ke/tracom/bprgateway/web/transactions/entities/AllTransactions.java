@@ -9,12 +9,17 @@ import java.util.Date;
 public class AllTransactions implements java.io.Serializable {
 
     @Id
+    @Column(name = "TRANSACTIONNUMBER")
     private long transactionNumber;
-
+    @Column(name = "T24POSREF")
     private String t24PosRef;
+    @Column(name = "T24RESPONSECODE")
     private String t24ResponseCode;
+    @Column(name = "T24REFERENCE")
     private String t24Reference;
+    @Column(name = "CREDITACCTNO")
     private String creditAccountNo;
+    @Column(name = "DEBITACCTNO")
     private String debitAccountNo;
 
     @Temporal(TemporalType.TIMESTAMP)
