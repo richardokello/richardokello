@@ -214,6 +214,7 @@ public class AgentTransactionService {
             response.setT24Reference(tot24.getT24reference());
             response.setRrn(transactionReferenceNo);
             response.setStatus("00");
+            response.setMessage("Transaction processed successful");
             return response;
         } else {
         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT DEPOSIT", "1200",
