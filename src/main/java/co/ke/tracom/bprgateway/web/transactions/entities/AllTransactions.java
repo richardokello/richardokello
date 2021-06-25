@@ -22,20 +22,44 @@ public class AllTransactions implements java.io.Serializable {
     @Column(name = "DEBITACCTNO")
     private String debitAccountNo;
 
+    @Column(name = "INSERTTIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date insertTime;
 
+    @Column(name = "field000")
     private String field000;
+
+    @Column(name = "field002")
     private String field002;
+
+    @Column(name = "field003")
     private String field003;
+
+    @Column(name = "field004")
     private String field004;
+
+    @Column(name = "field005")
     private String field005;
+
+    @Column(name = "field037")
     private String field037;
+
+    @Column(name = "field039")
     private String field039;
+
+    @Column(name = "field041")
     private String field041;
+
+    @Column(name = "field042")
     private String field042;
+
+    @Column(name = "field061")
     private String field061;
+
+    @Column(name = "field121")
     private String field121;
+
+    @Column(name = "FIELD123")
     private String field123;
 
     public long getTransactionNumber() {

@@ -33,6 +33,8 @@ public class T24TXNQueue implements Serializable {
     private String t24responsecode;
     @Column(length = 400)
     private String postedstatus;
+
+    @Column(name = "INSERTTIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date inserttime;
     @Column(length = 50)
