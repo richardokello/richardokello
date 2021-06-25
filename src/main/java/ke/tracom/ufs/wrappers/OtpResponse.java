@@ -26,4 +26,6 @@ public class OtpResponse {
     public String userType;
 
     public String countyId;
+
+    public String licenseMessage;
 }

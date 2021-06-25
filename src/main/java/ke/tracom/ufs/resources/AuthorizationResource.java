@@ -16,16 +16,15 @@ import ke.tracom.ufs.entities.UfsAuthentication;
 import ke.tracom.ufs.entities.UfsOtp;
 import ke.tracom.ufs.entities.UfsOtpCategory;
 import ke.tracom.ufs.entities.UfsUser;
+import ke.tracom.ufs.entities.wrapper.LicenseDetails;
 import ke.tracom.ufs.entities.wrapper.OtpConfigWrapper;
 import ke.tracom.ufs.repositories.*;
 import ke.tracom.ufs.security.CustomUserDetails;
 import ke.tracom.ufs.security.OtpOAuth2AccessToken;
 import ke.tracom.ufs.services.CustomUserService;
+import ke.tracom.ufs.services.SysConfigService;
 import ke.tracom.ufs.services.UserService;
-import ke.tracom.ufs.services.template.FileStorageService;
-import ke.tracom.ufs.services.template.LoggerServiceTemplate;
-import ke.tracom.ufs.services.template.NotifyServiceTemplate;
-import ke.tracom.ufs.services.template.UserAccountService;
+import ke.tracom.ufs.services.template.*;
 import ke.tracom.ufs.utils.AppConstants;
 import ke.tracom.ufs.utils.PasswordGenerator;
 import ke.tracom.ufs.wrappers.ChangePasswordWrapper;
@@ -37,6 +36,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,7 +50,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -70,6 +76,8 @@ public class AuthorizationResource {
     private final AuthenticationRepository authRepository;
     private final NotifyServiceTemplate notifyService;
     private final OTPRepository otpRepository;
+    private final SysConfigService configService;
+    private final LicenseDecryption licenseDecryption;
     @Autowired
     UserAccountService accService;
     @Autowired
@@ -85,7 +93,7 @@ public class AuthorizationResource {
 
     public AuthorizationResource(TokenStore tokenStore, @Qualifier("mainUserService") UserService userService,
                                  UserRepository userRepository, LoggerServiceTemplate loggerService, PasswordEncoder encoder, CustomUserService customUserService, AuthenticationRepository authRepository,
-                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository) {
+                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository, SysConfigService configService, LicenseDecryption licenseDecryption) {
         this.tokenStore = tokenStore;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -95,6 +103,8 @@ public class AuthorizationResource {
         this.authRepository = authRepository;
         this.notifyService = notifyService;
         this.otpRepository = otpRepository;
+        this.configService = configService;
+        this.licenseDecryption = licenseDecryption;
     }
 
     //@RequestMapping("/test")
@@ -120,6 +130,7 @@ public class AuthorizationResource {
         String tenantIds = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getTenantIds();
         String userType = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getUserType().getUserType();
         String countyId = null;
+        String licenseMessage = null;
         if (Objects.nonNull(authRepository.findByusernameIgnoreCase(a.getName()).getUser().getCountyId())) {
             countyId = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getCountyId();
         }
@@ -128,6 +139,29 @@ public class AuthorizationResource {
             UfsUser ufsUser = userRepository.findByuserId(Long.valueOf(user.getUserId()));
             if (ufsUser.getStatus() == AppConstants.STATUS_LOCKED) {
                 throw new LockedException("Account is locked");
+            }
+
+            String licenseKey = configService.fetchSysConfig(AppConstants.ENTITY_GLOBAL_INTEGRATION,AppConstants.PARAMETER_UFS_LICENSE_KEY).getValue();
+            String ufsLicenseKeyNotification = configService.fetchSysConfig(AppConstants.ENTITY_GLOBAL_INTEGRATION,AppConstants.PARAMETER_UFS_LICENSE_KEY_NOTIFICATION).getValue();
+
+            Optional<LicenseDetails> licenseDetails = licenseDecryption.getLicenseDetails(licenseKey);
+            if(licenseDetails.isPresent()){
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                Date currentDate = new Date();
+
+                LocalDateTime localDateTime = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                localDateTime = localDateTime.plusDays(Integer.parseInt(ufsLicenseKeyNotification));
+                Date currentDatePlusNotificationDay = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                String notificationDay = new SimpleDateFormat("dd-MM-yyyy").format(currentDatePlusNotificationDay);
+                try {
+                    if(sdf.parse(notificationDay).after(sdf.parse(licenseDetails.get().getExpiryDate()))){
+                        licenseMessage = "Your License will expire on "+ licenseDetails.get().getExpiryDate() +".Kindly renew your license";
+                    }
+                }catch (ParseException ex){
+                    response.setMessage(ex.getMessage());
+                    response.setCode(401);
+                    return new ResponseEntity(response, HttpStatus.UNAUTHORIZED);
+                }
             }
 
             Integer expiry = Integer.valueOf(configRepo.getConfiguration(AppConstants.ENTITY_PASSWORD_POLICY,
@@ -144,6 +178,7 @@ public class AuthorizationResource {
             data.tenantIds = tenantIds;
             data.userType = userType;
             data.countyId = countyId;
+            data.licenseMessage = licenseMessage;
 
 
             response.setData(data);
