@@ -349,6 +349,12 @@ public class IremboService {
                         .charges(isoamount)
                         .build();
 
+                data.setUsername(authenticateAgentResponse.getData().getUsername());
+                data.setNames(authenticateAgentResponse.getData().getNames());
+                data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                data.setLocation(authenticateAgentResponse.getData().getLocation());
+
+
                 IremboPaymentNotifications ipn = new IremboPaymentNotifications();
 
                 ipn.setBillid(request.getBillNo());
@@ -380,11 +386,20 @@ public class IremboService {
             } else {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IREMBO", "1200",
                         Double.parseDouble(  request.getAmount()), "098");
+                IremboPaymentResponseData data = IremboPaymentResponseData.builder()
+                        .t24Reference(tot24.getT24reference())
+                        .charges("0")
+                        .build();
+
+                data.setUsername(authenticateAgentResponse.getData().getUsername());
+                data.setNames(authenticateAgentResponse.getData().getNames());
+                data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                data.setLocation(authenticateAgentResponse.getData().getLocation());
 
                 return IremboPaymentResponse.builder()
                         .status("098")
                         .message("TRANSACTION FAILED. SYSTEM FAILURE" + tot24.getT24failnarration())
-                        .data(null)
+                        .data(data)
                         .build();
             }
 

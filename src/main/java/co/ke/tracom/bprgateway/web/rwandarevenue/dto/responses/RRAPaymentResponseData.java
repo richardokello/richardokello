@@ -1,5 +1,6 @@
 package co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses;
 
+import co.ke.tracom.bprgateway.web.util.data.BaseResponseData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RRAPaymentResponseData {
+public class RRAPaymentResponseData extends BaseResponseData {
     double transactionCharges;
     String T24Reference;
     String rrn;

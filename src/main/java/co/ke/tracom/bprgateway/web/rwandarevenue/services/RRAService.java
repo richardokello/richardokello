@@ -340,7 +340,7 @@ public class RRAService {
                     .build();
         }
 
-        AuthenticateAgentResponse response = optionalAuthenticateAgentResponse.get();
+        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
         try {
 
             String tid = "PC";
@@ -354,7 +354,7 @@ public class RRAService {
             long ASSESS_NO = request.getAssessNo();
             int RRA_ORIGIN_NO = request.getRRAOriginNo();
 
-            String agentFloatAccount = response.getData().getAccountNumber();
+            String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
             BPRBranches branch = bprBranchService.fetchBranchAccountsByBranchCode(agentFloatAccount);
             if (null == branch.getCompanyName()) {
                 log.info("Agent float deposit transaction ["+transactionRRN+"] failed. Error: Agent branch details could not be verified.");
@@ -460,6 +460,11 @@ public class RRAService {
                             .rrn(transactionRRN)
                             .build();
 
+                    data.setUsername(authenticateAgentResponse.getData().getUsername());
+                    data.setNames(authenticateAgentResponse.getData().getNames());
+                    data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                    data.setLocation(authenticateAgentResponse.getData().getLocation());
+
                     return RRAPaymentResponse.builder()
                             .status("00")
                             .message("RRA Transaction successful")
@@ -476,6 +481,11 @@ public class RRAService {
                             .rrn(transactionRRN)
                             .build();
 
+                    data.setUsername(authenticateAgentResponse.getData().getUsername());
+                    data.setNames(authenticateAgentResponse.getData().getNames());
+                    data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                    data.setLocation(authenticateAgentResponse.getData().getLocation());
+
                     return RRAPaymentResponse.builder()
                             .status("00")
                             .message("RRA Transaction successful")
@@ -490,6 +500,12 @@ public class RRAService {
                         .transactionCharges(0.0)
                         .rrn(transactionRRN)
                         .build();
+
+                data.setUsername(authenticateAgentResponse.getData().getUsername());
+                data.setNames(authenticateAgentResponse.getData().getNames());
+                data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                data.setLocation(authenticateAgentResponse.getData().getLocation());
+
 
                 return RRAPaymentResponse.builder()
                         .status("118")

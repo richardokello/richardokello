@@ -269,12 +269,16 @@ public class EUCLService {
                     elecTxnLogs.setToken_no(tot24.getTokenNo());
                     euclElectricityTxnLogsRepository.save(elecTxnLogs);
 
-                    PaymentResponseData paymentResponseData = PaymentResponseData.builder()
-                            .token(tot24.getTokenNo())
-                            .t24Reference(tot24.getT24reference())
-                            .unitsInKW(tot24.getUnitsKw())
-                            .rrn(transactionReferenceNo)
-                            .build();
+                    PaymentResponseData paymentResponseData = new PaymentResponseData()
+                            .setToken(tot24.getTokenNo())
+                            .setT24Reference(tot24.getT24reference())
+                            .setUnitsInKW(tot24.getUnitsKw())
+                            .setRrn(transactionReferenceNo);
+
+                    paymentResponseData.setUsername(authenticateAgentResponse.getData().getUsername());
+                    paymentResponseData.setNames(authenticateAgentResponse.getData().getNames());
+                    paymentResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                    paymentResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
 
                     EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder()
                             .status("00")
@@ -283,13 +287,13 @@ public class EUCLService {
 
 
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
-                          Double.valueOf(  request.getAmount()), "000");
+                            Double.valueOf(request.getAmount()), "000");
 
                     return euclPaymentResponse;
                 } else {
 
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
-                            Double.valueOf(  request.getAmount()), "098");
+                            Double.valueOf(request.getAmount()), "098");
                     log.info("EUCL Transaction [] failed " + errorMessage);
                     return EUCLPaymentResponse
                             .builder()
@@ -302,7 +306,7 @@ public class EUCLService {
                 euclElectricityTxnLogsRepository.save(elecTxnLogs);
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
-                        Double.valueOf(  request.getAmount()), "135");
+                        Double.valueOf(request.getAmount()), "135");
 
                 return EUCLPaymentResponse.builder()
                         .status("135")

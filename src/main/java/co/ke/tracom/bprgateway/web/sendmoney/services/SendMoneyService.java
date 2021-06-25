@@ -243,6 +243,11 @@ public class SendMoneyService {
                             .rrn(transactionRRN)
                             .build();
 
+                    sendMoneyResponseData.setUsername(authenticateAgentResponse.getData().getUsername());
+                    sendMoneyResponseData.setNames(authenticateAgentResponse.getData().getNames());
+                    sendMoneyResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                    sendMoneyResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
+
                     SendMoneyResponse.builder()
                             .status("00")
                             .message("Transaction processing successful.")
@@ -369,10 +374,22 @@ public class SendMoneyService {
                             .build();
                 }
             } else {
+
+                SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
+                        .T24Reference(t24Reference)
+                        .charges(0)
+                        .rrn(transactionRRN)
+                        .build();
+
+                sendMoneyResponseData.setUsername(authenticateAgentResponse.getData().getUsername());
+                sendMoneyResponseData.setNames(authenticateAgentResponse.getData().getNames());
+                sendMoneyResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                sendMoneyResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
+
                 return SendMoneyResponse.builder()
                         .status("098")
                         .message("Transaction failed. Unable to post transaction to remote server.")
-                        .data(null)
+                        .data(sendMoneyResponseData)
                         .build();
             }
 

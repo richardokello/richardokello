@@ -18,18 +18,30 @@ public class Data {
 
     @JsonProperty("username")
     private String username;
+
     @JsonProperty("names")
     private String names;
+
     @JsonProperty("workgroup")
     private Object workgroup;
+
     @JsonProperty("tid")
     private Object tid;
+
     @JsonProperty("tidStatus")
     private Boolean tidStatus;
+
     @JsonProperty("accountNumber")
     private String accountNumber;
+
     @JsonProperty("mid")
-    private Object mid;
+    private String mid;
+
+    @JsonProperty("businessName")
+    private String businessName;
+
+    @JsonProperty("location")
+    private String location;
 
     @JsonProperty("username")
     public String getUsername() {
@@ -92,13 +104,32 @@ public class Data {
     }
 
     @JsonProperty("mid")
-    public Object getMid() {
+    public String getMid() {
         return mid;
     }
 
     @JsonProperty("mid")
-    public void setMid(Object mid) {
+    public void setMid(String mid) {
         this.mid = mid;
     }
 
+    @JsonProperty("businessName")
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    @JsonProperty("businessName")
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
+
+    @JsonProperty("location")
+    public String getLocation() {
+        return location;
+    }
+
+    @JsonProperty("location")
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

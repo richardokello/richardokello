@@ -269,6 +269,11 @@ public class IZICashService {
                                 .IZIReference(modeFinReference)
                                 .build();
 
+                        iziCashResponseData.setUsername(authenticateAgentResponse.getData().getUsername());
+                        iziCashResponseData.setNames(authenticateAgentResponse.getData().getNames());
+                        iziCashResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                        iziCashResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
+
                         IZICashResponse iziCashResponse = IZICashResponse.builder()
                                 .data(iziCashResponseData)
                                 .status("00")

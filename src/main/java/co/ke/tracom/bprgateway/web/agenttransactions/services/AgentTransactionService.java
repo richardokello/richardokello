@@ -6,7 +6,6 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AgentTransacti
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
-import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
@@ -60,6 +59,10 @@ public class AgentTransactionService {
             return response;
         }
         AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        response.setUsername(authenticateAgentResponse.getData().getUsername());
+        response.setNames(authenticateAgentResponse.getData().getNames());
+        response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+        response.setLocation(authenticateAgentResponse.getData().getLocation());
 
         String transactionReferenceNo = RRNGenerator.getInstance("AD").getRRN();
         String POSAgentAccount = authenticateAgentResponse.getData().getAccountNumber();
@@ -291,6 +294,10 @@ public class AgentTransactionService {
             return response;
         }
         AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        response.setUsername(authenticateAgentResponse.getData().getUsername());
+        response.setNames(authenticateAgentResponse.getData().getNames());
+        response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+        response.setLocation(authenticateAgentResponse.getData().getLocation());
 
         MerchantAuthInfo customerAgent = MerchantAuthInfo.builder()
                 .password(request.getCustomerAgentPass())
