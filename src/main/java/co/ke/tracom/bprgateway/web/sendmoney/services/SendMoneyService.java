@@ -787,6 +787,11 @@ public class SendMoneyService {
                         .rrn(transactionRRN)
                         .build();
 
+                sendMoneyResponseData.setUsername(authenticateAgentResponse.getData().getUsername());
+                sendMoneyResponseData.setNames(authenticateAgentResponse.getData().getNames());
+                sendMoneyResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                sendMoneyResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
+
                 return SendMoneyResponse.builder()
                         .status("00")
                         .message("Transaction processed successfully")
@@ -798,10 +803,22 @@ public class SendMoneyService {
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                         request.getAmount() , "118");
+
+                SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
+                        .T24Reference(tot24.getT24reference())
+                        .charges(0.0)
+                        .rrn(transactionRRN)
+                        .build();
+
+                sendMoneyResponseData.setUsername(authenticateAgentResponse.getData().getUsername());
+                sendMoneyResponseData.setNames(authenticateAgentResponse.getData().getNames());
+                sendMoneyResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                sendMoneyResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
+
                 return SendMoneyResponse.builder()
                         .status("118")
                         .message("Transaction failed. " + tot24.getT24failnarration())
-                        .data(null)
+                        .data(sendMoneyResponseData)
                         .build();
             }
 

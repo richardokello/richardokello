@@ -506,7 +506,6 @@ public class RRAService {
                 data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
                 data.setLocation(authenticateAgentResponse.getData().getLocation());
 
-
                 return RRAPaymentResponse.builder()
                         .status("118")
                         .message("Transaction processing failed. "+tot24.getT24failnarration())
