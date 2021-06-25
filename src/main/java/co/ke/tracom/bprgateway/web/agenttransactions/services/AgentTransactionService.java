@@ -448,6 +448,7 @@ public class AgentTransactionService {
             response.setT24Reference(tot24.getT24reference());
             response.setRrn(transactionReferenceNo);
             response.setStatus("00");
+            response.setMessage("Transaction processed successful");
 
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
                     request.getAmount(), "000");
