@@ -129,10 +129,6 @@ public class EUCLService {
                         .build();
                 log.info("EUCL Validation successful. Transaction [" + referenceNo + "] ");
 
-
-                transactionService.saveCardLessTransactionToAllTransactionTable(
-                        tot24, "EUCL ACCOUNT VALIDATION");
-
                 return response;
 
             } else {
@@ -285,11 +281,15 @@ public class EUCLService {
                             .message("EUCL Transaction successful")
                             .data(paymentResponseData).build();
 
-                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY");
+
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                          Double.valueOf(  request.getAmount()), "000");
+
                     return euclPaymentResponse;
                 } else {
 
-                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY");
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                            Double.valueOf(  request.getAmount()), "098");
                     log.info("EUCL Transaction [] failed " + errorMessage);
                     return EUCLPaymentResponse
                             .builder()
@@ -301,7 +301,8 @@ public class EUCLService {
                 elecTxnLogs.setGateway_t24postingstatus("0");
                 euclElectricityTxnLogsRepository.save(elecTxnLogs);
 
-                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY");
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                        Double.valueOf(  request.getAmount()), "135");
 
                 return EUCLPaymentResponse.builder()
                         .status("135")
@@ -314,7 +315,7 @@ public class EUCLService {
             log.info("EUCL transaction [" + transactionReferenceNo + "] failed. Error " + e.getMessage());
             return EUCLPaymentResponse.builder()
                     .status("098")
-                    .message("EUCL transaction failed. An exception occured")
+                    .message("EUCL transaction failed. An exception occurred")
                     .data(null).build();
         }
     }

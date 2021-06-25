@@ -250,9 +250,11 @@ public class SendMoneyService {
                             .build();
 
                     tot24.setT24reference(t24Reference);
-                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY");
-
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY", "1200",
+                            request.getAmount() , "000");
                 } catch (Exception e) {
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY", "1200",
+                            request.getAmount() , "000");
                     System.out.println(
                             "Unable to get charges for send money transaction reference " + transactionRRN);
                     e.printStackTrace();
@@ -758,7 +760,9 @@ public class SendMoneyService {
 
 
                 tot24.setT24reference(tot24.getT24reference());
-                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY");
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                        request.getAmount() , "000");
+
 
                 SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
                         .T24Reference(tot24.getT24reference())
@@ -775,8 +779,8 @@ public class SendMoneyService {
             } else {
 
                 tot24.setT24reference(tot24.getT24reference());
-                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY");
-
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                        request.getAmount() , "118");
                 return SendMoneyResponse.builder()
                         .status("118")
                         .message("Transaction failed. " + tot24.getT24failnarration())

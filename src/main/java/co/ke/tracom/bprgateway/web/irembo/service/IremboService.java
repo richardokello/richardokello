@@ -257,27 +257,8 @@ public class IremboService {
             String irembocharges = clientPaymentConfirmationValidate(authenticateAgentResponse.getData().getAccountNumber(), branchId, request, transactionRefNo);
             long irembochargeslong = Long.parseLong(irembocharges);
 
-
-            // Save de60 in db
-//            String bill_id = split60[0];
-//            String payment_status_message = split60[1];
-//            String biller_code = split60[2];
-//            String description = split60[3];
-//            String amount = split60[4];
-//            String ccy = split60[5];
-//            String IREMBO_account_number = split60[6];
-//            String expirydate = split60[7];
-//            String IREMBO_account_name = split60[8];
-//            String payer_name = split60[9];
-//            String bill_created_date = split60[10];
-//            String payment_txn_type = split60[11];
-//            String payment_status = split60[12];
-//            String payer_phone = split60[13];
-
-
             String channel = "Channel";
             String txnref = transactionRefNo;
-
 
             String amountf4 = request.getAmount();
             long iremboamt = Long.parseLong(amountf4);
@@ -386,7 +367,8 @@ public class IremboService {
 
                 // Insert in database
                 queueIremboNotification(ipn);
-                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IREMBO");
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IREMBO", "1200",
+                        Double.parseDouble(  request.getAmount()), "000");
 
                 return IremboPaymentResponse
                         .builder()
@@ -396,7 +378,8 @@ public class IremboService {
                         .build();
 
             } else {
-                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IREMBO");
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IREMBO", "1200",
+                        Double.parseDouble(  request.getAmount()), "098");
 
                 return IremboPaymentResponse.builder()
                         .status("098")

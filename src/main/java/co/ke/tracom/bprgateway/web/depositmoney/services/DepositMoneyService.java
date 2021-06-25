@@ -41,122 +41,123 @@ public class DepositMoneyService {
     private String agentValidation;
 
     public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest, String transactionRRN) {
-        // Validate agent credentials
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            return DepositMoneyResult.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null)
-                    .build();
 
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return DepositMoneyResult.builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode())
-                    )
-                    .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
-        }
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
-        String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
-        String agentMerchantId = "PCMerchant";
-        String chargeCreditPLAccount = "PL64200\\HOF";
-        String customerAccount = depositMoneyRequest.getAccountNumber();
+        try {
+            // Validate agent credentials
+            Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials(), agentValidation);
+            if (optionalAuthenticateAgentResponse.isEmpty()) {
+                log.info(
+                        "Agent Float Deposit:[Failed] Missing agent information %n");
+                return DepositMoneyResult.builder()
+                        .status("117")
+                        .message("Missing agent information")
+                        .data(null)
+                        .build();
 
-        // Todo check the payment details required
-        String firstDetails = depositMoneyRequest.getAccountName() + " " + depositMoneyRequest.getAccountNumber();
-        firstDetails =
-                firstDetails.length() > 34 ? firstDetails.substring(0, 34) : firstDetails;
+            } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+                return DepositMoneyResult.builder()
+                        .status(String.valueOf(
+                                optionalAuthenticateAgentResponse.get().getCode())
+                        )
+                        .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
+            }
+            AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+            String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
+            String agentMerchantId = "PCMerchant";
+            String chargeCreditPLAccount = "PL64200\\HOF";
+            String customerAccount = depositMoneyRequest.getAccountNumber();
 
-        BPRBranches branch = getBranchDetailsFromAccount(agentFloatAccount);
-        if (null == branch.getCompanyName()) {
-            return DepositMoneyResult.builder()
-                    .status("65")
-                    .message("Agent branch details could not be verified. Kindly contact BPR customer care")
-                    .data(null)
-                    .build();
-        }
+            // Todo check the payment details required
+            String firstDetails = depositMoneyRequest.getAccountName() + " " + depositMoneyRequest.getAccountNumber();
+            firstDetails =
+                    firstDetails.length() > 34 ? firstDetails.substring(0, 34) : firstDetails;
 
-        //TODO fetch the payment details (Terminal ID and Merchant ID)
-        String secondDetails = agentMerchantId;  // From merchant validation request
-        String thirdDetails = "CUSTOMER DEPOSIT AT AGENT";
-        if (branch.getId() == null) {
-            return DepositMoneyResult.builder()
-                    .status("65")
-                    .message("Missing agent branch details")
-                    .data(null)
-                    .build();
-        }
-        String accountBranchId = branch.getId();
+            BPRBranches branch = getBranchDetailsFromAccount(agentFloatAccount);
+            if (null == branch.getCompanyName()) {
+                return DepositMoneyResult.builder()
+                        .status("65")
+                        .message("Agent branch details could not be verified. Kindly contact BPR customer care")
+                        .data(null)
+                        .build();
+            }
 
-        long agentbalancelong = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
+            //TODO fetch the payment details (Terminal ID and Merchant ID)
+            String secondDetails = agentMerchantId;  // From merchant validation request
+            String thirdDetails = "CUSTOMER DEPOSIT AT AGENT";
+            if (branch.getId() == null) {
+                return DepositMoneyResult.builder()
+                        .status("65")
+                        .message("Missing agent branch details")
+                        .data(null)
+                        .build();
+            }
+            String accountBranchId = branch.getId();
 
-        String channel = "1510";
-        log.info("Customer Deposit: Transaction %s. Agent Balance=%s Deposit amount=%d ",
-                transactionRRN, agentbalancelong, depositMoneyRequest.getAmount());
-        if (agentbalancelong < depositMoneyRequest.getAmount()) {
-            System.out.printf(
-                    "Customer Deposit: Transaction %s Failed. Agent does not have sufficient balance %n", transactionRRN);
-            return DepositMoneyResult.builder()
-                    .status("65")
-                    .message("Insufficient agent balance")
-                    .data(null)
-                    .build();
-        }
+            long agentbalancelong = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
 
-        String customerDepositOFS =
-                "0000AFUNDS.TRANSFER,CUSTOMER.DEPOSIT/I/PROCESS//0,"
-                        + MASKED_T24_USERNAME
-                        + "/"
-                        + MASKED_T24_PASSWORD
-                        + "/"
-                        + accountBranchId.trim()
-                        + ",,TRANSACTION.TYPE::=ACTD,DEBIT.ACCT.NO::="
-                        + agentFloatAccount.trim()
-                        + ",DEBIT.AMOUNT::="
-                        + (int) depositMoneyRequest.getAmount()
-                        + ",CREDIT.ACCT.NO::="
-                        + customerAccount.trim().trim()
-                        + ",DEBIT.CURRENCY::=RWF,TCM.REF::="
-                        + transactionRRN.trim()
-                        + ",PAYMENT.DETAILS:1:="
-                        + utilityService.sanitizePaymentDetails(firstDetails, "Customer Deposit")
-                        + ",PAYMENT.DETAILS:2:="
-                        + secondDetails.trim()
-                        + ",PAYMENT.DETAILS:3:="
-                        + thirdDetails.trim();
+            String channel = "1510";
+            log.info("Customer Deposit: Transaction %s. Agent Balance=%s Deposit amount=%d ",
+                    transactionRRN, agentbalancelong, depositMoneyRequest.getAmount());
+            if (agentbalancelong < depositMoneyRequest.getAmount()) {
+                System.out.printf(
+                        "Customer Deposit: Transaction %s Failed. Agent does not have sufficient balance %n", transactionRRN);
+                return DepositMoneyResult.builder()
+                        .status("65")
+                        .message("Insufficient agent balance")
+                        .data(null)
+                        .build();
+            }
 
-        String tot24str = String.format("%04d", customerDepositOFS.length()) + customerDepositOFS;
+            String customerDepositOFS =
+                    "0000AFUNDS.TRANSFER,CUSTOMER.DEPOSIT/I/PROCESS//0,"
+                            + MASKED_T24_USERNAME
+                            + "/"
+                            + MASKED_T24_PASSWORD
+                            + "/"
+                            + accountBranchId.trim()
+                            + ",,TRANSACTION.TYPE::=ACTD,DEBIT.ACCT.NO::="
+                            + agentFloatAccount.trim()
+                            + ",DEBIT.AMOUNT::="
+                            + (int) depositMoneyRequest.getAmount()
+                            + ",CREDIT.ACCT.NO::="
+                            + customerAccount.trim().trim()
+                            + ",DEBIT.CURRENCY::=RWF,TCM.REF::="
+                            + transactionRRN.trim()
+                            + ",PAYMENT.DETAILS:1:="
+                            + utilityService.sanitizePaymentDetails(firstDetails, "Customer Deposit")
+                            + ",PAYMENT.DETAILS:2:="
+                            + secondDetails.trim()
+                            + ",PAYMENT.DETAILS:3:="
+                            + thirdDetails.trim();
 
-        // create a table or function to generate T24 messages
-        T24TXNQueue tot24 = new T24TXNQueue();
-        // base 64 encode request in db
-        tot24.setRequestleg(tot24str);
-        tot24.setStarttime(System.currentTimeMillis());
-        tot24.setTxnchannel(channel);
-        tot24.setGatewayref(transactionRRN);
-        tot24.setPostedstatus("0");
-        tot24.setProcode("440000");
-        String tid = "PC";
-        tot24.setTid(tid);
-        tot24.setDebitacctno(agentFloatAccount);
-        tot24.setCreditacctno(customerAccount);
+            String tot24str = String.format("%04d", customerDepositOFS.length()) + customerDepositOFS;
+
+            // create a table or function to generate T24 messages
+            T24TXNQueue tot24 = new T24TXNQueue();
+            // base 64 encode request in db
+            tot24.setRequestleg(tot24str);
+            tot24.setStarttime(System.currentTimeMillis());
+            tot24.setTxnchannel(channel);
+            tot24.setGatewayref(transactionRRN);
+            tot24.setPostedstatus("0");
+            tot24.setProcode("440000");
+            String tid = "PC";
+            tot24.setTid(tid);
+            tot24.setDebitacctno(agentFloatAccount);
+            tot24.setCreditacctno(customerAccount);
 
 
-        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
+            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
 
-        t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
+            t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
-        //TODO check this
-        transactionService.updateT24TransactionDTO(tot24);
+            //TODO check this
+            transactionService.updateT24TransactionDTO(tot24);
 
-        String T24RawResponseCode =
-                tot24.getT24responsecode() == null ? "NA" : tot24.getT24responsecode();
-        if (T24RawResponseCode.equals("1")) {
-            try {
+            String T24RawResponseCode =
+                    tot24.getT24responsecode() == null ? "NA" : tot24.getT24responsecode();
+            if (T24RawResponseCode.equals("1")) {
                 String charges =
                         null == tot24.getTotalchargeamt() || tot24.getTotalchargeamt().isEmpty()
                                 ? "0"
@@ -189,9 +190,8 @@ public class DepositMoneyService {
                 }
 
                 tot24.setT24reference(tot24.getT24reference());
-                //TODO fix saving transaction to database
-                transactionService.saveCardLessTransactionToAllTransactionTable(
-                        tot24, "AGENT DEPOSIT TO CUSTOMER");
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
+                        depositMoneyRequest.getAmount(), "000");
 
                 DepositMoneyResultData data = DepositMoneyResultData.builder()
                         .t24Reference(tot24.getT24reference())
@@ -205,27 +205,31 @@ public class DepositMoneyService {
                         .status("00")
                         .message("Transaction processed successfully")
                         .data(data).build();
+            } else {
+                System.out.printf(
+                        "Customer Deposit: [Failed] Transaction %s failed. T24 Response message %s  %n",
+                        transactionRRN, tot24.getT24failnarration());
 
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
+                        depositMoneyRequest.getAmount(), "098");
+
+                return DepositMoneyResult.builder()
+                        .status("098")
+                        .message((tot24.getT24failnarration() == null || tot24.getT24failnarration().isEmpty())
+                                ? "TRANSACTION FAILED. SYSTEM FAILURE"
+                                : "Transaction failed. " + tot24.getT24failnarration())
+                        .data(null)
+                        .build();
             }
-        } else {
-            System.out.printf(
-                    "Customer Deposit: [Failed] Transaction %s failed. T24 Response message %s  %n",
-                    transactionRRN, tot24.getT24failnarration());
+        } catch (Exception e) {
+            log.info("Customer deposit transaction [" + transactionRRN + "] failed processing. Error: " + e.getMessage());
+            e.printStackTrace();
             return DepositMoneyResult.builder()
-                    .status("098")
-                    .message((tot24.getT24failnarration() == null || tot24.getT24failnarration().isEmpty())
-                            ? "TRANSACTION FAILED. SYSTEM FAILURE"
-                            : "Transaction failed. " + tot24.getT24failnarration())
-                    .data(null)
-                    .build();
+                    .status("98")
+                    .message("Transaction failed processing")
+                    .data(null).build();
         }
-        return DepositMoneyResult.builder()
-                .status("98")
-                .message("Transaction failed processing")
-                .data(null).build();
-
     }
 
     public void sweepChargesToPL(String tid, String profitCentre, String accountBranchId, String chargeDebit,

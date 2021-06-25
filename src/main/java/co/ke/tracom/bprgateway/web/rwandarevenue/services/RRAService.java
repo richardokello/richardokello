@@ -451,7 +451,9 @@ public class RRAService {
                     log.info("RRA Transaction ["+transactionRRN+"] charged amount "+ISOFormatAmount);
 
                     transactionService.updateT24TransactionDTO(tot24);
-                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA");
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                            request.getAmountToPay() , "000");
+
                     RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                             .T24Reference(t24ref)
                             .transactionCharges( Double.parseDouble( cleanedChargeAmount))
@@ -466,7 +468,8 @@ public class RRAService {
                 } catch (Exception e) {
                     e.printStackTrace();
                     transactionService.updateT24TransactionDTO(tot24);
-                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA");
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                            request.getAmountToPay() , "000");
                     RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                             .T24Reference(t24ref)
                             .transactionCharges(0.0)
@@ -480,7 +483,8 @@ public class RRAService {
                 }
             } else {
                 transactionService.updateT24TransactionDTO(tot24);
-                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA");
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                        request.getAmountToPay() , "118");
                 RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                         .T24Reference(t24ref)
                         .transactionCharges(0.0)

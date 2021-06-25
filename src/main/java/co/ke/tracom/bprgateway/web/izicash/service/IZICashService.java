@@ -246,7 +246,7 @@ public class IZICashService {
                                     thirdPaymentDetails);
 
                     // sweep charges
-                    T24TXNQueue T24Transaction =
+                    T24TXNQueue tot24 =
                             postToT24(
                                     transactionTerminalID,
                                     creditAgentRequest,
@@ -255,17 +255,17 @@ public class IZICashService {
                                     "530000");
 
 
-                    if (T24Transaction.getT24responsecode().equalsIgnoreCase("1")) {
+                    if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
                         System.out.printf(
                                 "IZI Cash: [Success] Transaction %s was completed at T24 successfully. %n",
                                 transactionRRN);
 
-                        iziCashTxnLogs.setGatewayT24Reference(T24Transaction.getT24reference());
-                        iziCashTxnLogs.setGatewayT24PostingStatus(T24Transaction.getT24responsecode());
+                        iziCashTxnLogs.setGatewayT24Reference(tot24.getT24reference());
+                        iziCashTxnLogs.setGatewayT24PostingStatus(tot24.getT24responsecode());
                        //TODO Put success response
                         IZICashResponseData iziCashResponseData = IZICashResponseData.builder()
                                 .rrn(transactionRRN)
-                                .t24Reference(T24Transaction.getT24reference())
+                                .t24Reference(tot24.getT24reference())
                                 .IZIReference(modeFinReference)
                                 .build();
 
@@ -276,7 +276,8 @@ public class IZICashService {
                                 .build();
 
                         log.info("IZICash withdrawal successful. "+ iziCashResponse.toString());
-                        transactionService.saveCardLessTransactionToAllTransactionTable(T24Transaction, "IZI CASH WITHDRAWAL");
+                        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IZI CASH WITHDRAWAL", "1200",
+                                 request.getAmount() , "000");
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;
                     } else {
@@ -285,7 +286,7 @@ public class IZICashService {
                                 transactionRRN);
                         IZICashResponseData iziCashResponseData = IZICashResponseData.builder()
                                 .rrn(transactionRRN)
-                                .t24Reference(T24Transaction.getT24reference())
+                                .t24Reference(tot24.getT24reference())
                                 .IZIReference(modeFinReference)
                                 .build();
                         IZICashResponse iziCashResponse = IZICashResponse.builder()
@@ -294,7 +295,8 @@ public class IZICashService {
                                 .message("IZICash Withdrawal transaction failed. Reversal Required.")
                                 .build();
 
-                        transactionService.saveCardLessTransactionToAllTransactionTable(T24Transaction, "IZI CASH WITHDRAWAL");
+                        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IZI CASH WITHDRAWAL", "1200",
+                                request.getAmount() , "098");
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;
                     }

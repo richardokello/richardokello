@@ -205,11 +205,16 @@ public class AgentTransactionService {
                 e.printStackTrace();
             }
 
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT DEPOSIT", "1200",
+                    agentTransactionRequest.getAmount(), "000");
+
             response.setT24Reference(tot24.getT24reference());
             response.setRrn(transactionReferenceNo);
             response.setStatus("00");
             return response;
         } else {
+        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT DEPOSIT", "1200",
+                agentTransactionRequest.getAmount(), "908");
             System.out.printf(
                     "Agent Float Deposit:[Error] Transaction %s processing failed. Error message: Transaction failed at T24 %n",
                     transactionReferenceNo);
@@ -221,7 +226,6 @@ public class AgentTransactionService {
                     ? "TRANSACTION FAILED. SYSTEM FAILURE"
                     : tot24.getT24failnarration());
         }
-        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT DEPOSIT");
         return response;
     }
 
@@ -413,6 +417,8 @@ public class AgentTransactionService {
                 transactionReferenceNo);
 
         if (null != tot24.getT24responsecode() && tot24.getT24responsecode().equals("1")) {
+
+            tot24.setT24reference(tot24.getT24reference());
             System.out.printf(
                     "Agent Float withdrawal:[Success] Transaction %s processing succeeded. %n",
                     transactionReferenceNo);
@@ -434,6 +440,9 @@ public class AgentTransactionService {
             response.setT24Reference(tot24.getT24reference());
             response.setRrn(transactionReferenceNo);
             response.setStatus("00");
+
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
+                    request.getAmount(), "000");
         } else {
             System.out.printf(
                     "Agent Float withdrawal:[Error] Transaction %s processing failed. Error message: Transaction failed at T24 %n",
@@ -445,10 +454,11 @@ public class AgentTransactionService {
             response.setMessage((tot24.getT24failnarration() == null || tot24.getT24failnarration().isEmpty())
                     ? "TRANSACTION FAILED. SYSTEM FAILURE"
                     : tot24.getT24failnarration());
+
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
+                    request.getAmount(), "908");
         }
         transactionService.updateT24TransactionDTO(tot24);
-        tot24.setT24reference(tot24.getT24reference());
-        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL");
 
         return response;
     }
