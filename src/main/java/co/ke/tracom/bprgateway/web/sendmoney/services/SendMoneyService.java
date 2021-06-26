@@ -237,29 +237,21 @@ public class SendMoneyService {
                     String isoamount = String.format("%012d", Integer.parseInt(formattedcharge));
                     data.setCharges(Double.parseDouble(isoamount));
 
-                    SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
-                            .T24Reference(t24Reference)
-                            .charges(Double.parseDouble(formattedcharge))
-                            .rrn(transactionRRN)
-                            .build();
+                    data.setT24Reference(t24Reference);
+                    data.setCharges(Double.parseDouble(formattedcharge));
+                    data.setRrn(transactionRRN);
 
-                    sendMoneyResponseData.setUsername(authenticateAgentResponse.getData().getUsername());
-                    sendMoneyResponseData.setNames(authenticateAgentResponse.getData().getNames());
-                    sendMoneyResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
-                    sendMoneyResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
-
-                    SendMoneyResponse.builder()
-                            .status("00")
-                            .message("Transaction processing successful.")
-                            .data(sendMoneyResponseData)
-                            .build();
+                    data.setUsername(authenticateAgentResponse.getData().getUsername());
+                    data.setNames(authenticateAgentResponse.getData().getNames());
+                    data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                    data.setLocation(authenticateAgentResponse.getData().getLocation());
 
                     tot24.setT24reference(t24Reference);
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY", "1200",
-                            request.getAmount() , "000");
+                            request.getAmount(), "000");
                 } catch (Exception e) {
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY", "1200",
-                            request.getAmount() , "000");
+                            request.getAmount(), "000");
                     System.out.println(
                             "Unable to get charges for send money transaction reference " + transactionRRN);
                     e.printStackTrace();
@@ -778,7 +770,7 @@ public class SendMoneyService {
 
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
-                        request.getAmount() , "000");
+                        request.getAmount(), "000");
 
 
                 SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
@@ -802,7 +794,7 @@ public class SendMoneyService {
 
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
-                        request.getAmount() , "118");
+                        request.getAmount(), "118");
 
                 SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
                         .T24Reference(tot24.getT24reference())
