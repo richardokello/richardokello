@@ -5,7 +5,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAg
 import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
-import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRATINValidationResponse;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.sendmoney.data.requests.ReceiveMoneyRequest;
 import co.ke.tracom.bprgateway.web.sendmoney.data.requests.SendMoneyRequest;
 import co.ke.tracom.bprgateway.web.sendmoney.data.response.SendMoneyResponse;
@@ -22,11 +22,6 @@ import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Criteria;
-import org.hibernate.NonUniqueResultException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -59,7 +54,7 @@ public class SendMoneyService {
     private String agentValidation;
 
 
-    public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
+    public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) throws InvalidAgentCredentialsException {
 
         Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
         if (optionalAuthenticateAgentResponse.isEmpty()) {
@@ -70,7 +65,8 @@ public class SendMoneyService {
                     .message("Missing agent information")
                     .data(null)
                     .build();
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
+        }
+        else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
             return SendMoneyResponse
                     .builder()
                     .status(String.valueOf(
