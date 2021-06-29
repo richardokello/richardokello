@@ -231,17 +231,7 @@ public class SendMoneyService {
                             thirdTransactionPaymentDetails, branchAccountID, collectionCommissionAccount);
 
                     String isoamount = String.format("%012d", Integer.parseInt(formattedcharge));
-                    data.setCharges(Double.parseDouble(isoamount));
-
-                    data.setT24Reference(t24Reference);
                     data.setCharges(Double.parseDouble(formattedcharge));
-                    data.setRrn(transactionRRN);
-
-                    data.setUsername(authenticateAgentResponse.getData().getUsername());
-                    data.setNames(authenticateAgentResponse.getData().getNames());
-                    data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
-                    data.setLocation(authenticateAgentResponse.getData().getLocation());
-
                     tot24.setT24reference(t24Reference);
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY", "1200",
                             request.getAmount(), "000");
@@ -253,6 +243,11 @@ public class SendMoneyService {
                     e.printStackTrace();
                 }
                 data.setT24Reference(t24Reference);
+                data.setRrn(transactionRRN);
+                data.setUsername(authenticateAgentResponse.getData().getUsername());
+                data.setNames(authenticateAgentResponse.getData().getNames());
+                data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+                data.setLocation(authenticateAgentResponse.getData().getLocation());
                 try {
 
                     String vbin = xSwitchParameterRepository.findByParamName("CARDLESSTXNBIN").get().getParamValue();
