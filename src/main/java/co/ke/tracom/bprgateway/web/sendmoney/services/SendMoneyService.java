@@ -471,8 +471,8 @@ public class SendMoneyService {
 
                     } else {
                         System.out.printf(
-                                "Send Money Charges Request [Failed]: Transaction %s has no transaction charge %s from T24 Processing. %n",
-                                validationReferenceNo, charges);
+                                "Send Money Charges Request [Failed]: Transaction %s has no transaction charges from T24 Processing. %n",
+                                validationReferenceNo);
                         return String.format("%012d", Integer.parseInt("0"));
                     }
                 } catch (Exception e) {
