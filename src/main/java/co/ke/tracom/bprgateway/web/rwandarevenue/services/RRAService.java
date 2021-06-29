@@ -10,6 +10,7 @@ import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponse;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponseData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRATINValidationResponse;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
@@ -31,8 +32,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.XML;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,7 +63,7 @@ public class RRAService {
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
 
-    private final XSwitchParameterRepository xSwitchParameterRepository;
+    private final XSwitchParameterService xSwitchParameterService;
     private final TransactionAdvicesRepository transactionAdvicesRepository;
 
 
@@ -91,7 +90,7 @@ public class RRAService {
 
             String rraValidationPayload = bootstrapRRAXMLRequest(request.getRRATIN());
 
-            String rrasoapurl = xSwitchParameterRepository.findByParamName("RRASOAPURL").get().getParamValue();
+            String rrasoapurl = xSwitchParameterService.fetchXSwitchParamValue("RRASOAPURL") ;
 
             System.err.println("rrasoapurl = " + rrasoapurl);
             httpPost = new HttpPost(rrasoapurl);
@@ -283,8 +282,8 @@ public class RRAService {
     }
 
     private String bootstrapRRAXMLRequest(String rwandaRevenueAuthorityTIN) {
-        String RRAID = xSwitchParameterRepository.findByParamName("RRA_ID").get().getParamValue();
-        String RRAPass = xSwitchParameterRepository.findByParamName("RRA_PASS").get().getParamValue();
+        String RRAID = xSwitchParameterService.fetchXSwitchParamValue("RRA_ID");
+        String RRAPass = xSwitchParameterService.fetchXSwitchParamValue("RRA_PASS");
 
         return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://WS.epay.rra.rw\">\n"
                 + "   <soapenv:Header/>\n"
@@ -400,9 +399,8 @@ public class RRAService {
             tot24.setProcode("460000");
             tot24.setDebitacctno(agentFloatAccount);
 
-            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
             transactionService.updateT24TransactionDTO(tot24);

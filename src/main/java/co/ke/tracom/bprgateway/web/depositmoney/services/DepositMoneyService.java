@@ -8,7 +8,7 @@ import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
 import co.ke.tracom.bprgateway.web.depositmoney.data.requests.DepositMoneyRequest;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResultData;
-import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
@@ -16,11 +16,7 @@ import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
@@ -32,7 +28,7 @@ public class DepositMoneyService {
     private final UtilityService utilityService;
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
-    private final XSwitchParameterRepository xSwitchParameterRepository;
+    private final XSwitchParameterService xSwitchParameterService;
     private final AgentTransactionService agentTransactionService;
     private final BPRBranchService bprBranchService;
     private final BaseServiceProcessor baseServiceProcessor;
@@ -127,9 +123,8 @@ public class DepositMoneyService {
             tot24.setCreditacctno(customerAccount);
 
 
-            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
             //TODO check this
@@ -261,8 +256,8 @@ public class DepositMoneyService {
         tot24.setProcode(proCode);
         tot24.setTid(tid);
 
-        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
         //TODO check this
         transactionService.updateT24TransactionDTO(tot24);

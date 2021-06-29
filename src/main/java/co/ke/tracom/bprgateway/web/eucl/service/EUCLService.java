@@ -10,6 +10,7 @@ import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.entities.EUCLElectricityTxnLogs;
 import co.ke.tracom.bprgateway.web.eucl.repository.EUCLElectricityTxnLogsRepository;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
@@ -32,14 +33,12 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class EUCLService {
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
 
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
     private final BaseServiceProcessor baseServiceProcessor;
 
-    private final XSwitchParameterRepository xSwitchParameterRepository;
+    private final XSwitchParameterService xSwitchParameterService;
     private final EUCLElectricityTxnLogsRepository euclElectricityTxnLogsRepository;
 
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
@@ -54,7 +53,7 @@ public class EUCLService {
             Long amount = Long.valueOf(request.getAmount());
             String meterNo = request.getMeterNo();
             String phone = request.getPhoneNo();
-            String EUCLBranch = xSwitchParameterRepository.findByParamName("DEFAULT_EUCL_BRANCH").get().getParamValue();
+            String EUCLBranch = xSwitchParameterService.fetchXSwitchParamValue("DEFAULT_EUCL_BRANCH");
             String newt24tem =
                     "0000AENQUIRY.SELECT,,"
                             + MASKED_T24_USERNAME
@@ -82,15 +81,8 @@ public class EUCLService {
             tot24.setTxnmti("1100");
             tot24.setTid(tid);
 
-            Optional<XSwitchParameter> optionalT24IP = xSwitchParameterRepository.findByParamName("T24_IP");
-            Optional<XSwitchParameter> optionalT24Port = xSwitchParameterRepository.findByParamName("T24_PORT");
-            if (optionalT24IP.isEmpty() || optionalT24Port.isEmpty()) {
-                return MeterNoValidationResponse.builder()
-                        .status("098")
-                        .message("Missing remote switch configuration. Contact administrator").build();
-            }
-            final String t24Ip = optionalT24IP.get().getParamValue();
-            final String t24Port = optionalT24Port.get().getParamValue();
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
 
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
@@ -160,7 +152,7 @@ public class EUCLService {
 
             Long amount = Long.valueOf(request.getAmount());
 
-            String euclBranch = xSwitchParameterRepository.findByParamName("DEFAULT_EUCL_BRANCH").get().getParamValue();
+            String euclBranch = xSwitchParameterService.fetchXSwitchParamValue("DEFAULT_EUCL_BRANCH");
 
             elecTxnLogs.setCustomer_name(customerName);
             elecTxnLogs.setMeterno(meterNo);
@@ -220,9 +212,8 @@ public class EUCLService {
             tot24.setTid(tid);
             tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
 
-            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
             transactionService.updateT24TransactionDTO(tot24);
 

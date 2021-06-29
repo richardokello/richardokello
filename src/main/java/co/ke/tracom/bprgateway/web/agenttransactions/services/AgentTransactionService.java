@@ -6,6 +6,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AgentTransacti
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
@@ -36,7 +37,7 @@ public class AgentTransactionService {
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService bprBranchService;
 
-    private final XSwitchParameterRepository xSwitchParameterRepository;
+    private final XSwitchParameterService xSwitchParameterService;
 
     public AgentTransactionResponse processAgentFloatDeposit(AgentTransactionRequest agentTransactionRequest) {
         AgentTransactionResponse response = new AgentTransactionResponse();
@@ -147,8 +148,8 @@ public class AgentTransactionService {
         tot24.setDebitacctno(POSAgentAccount);
         tot24.setCreditacctno(customerAgentAccountNo);
 
-        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
 
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
@@ -224,15 +225,11 @@ public class AgentTransactionService {
         String tid = "PC";
         T24Transaction.setTid(tid);
 
-        Optional<XSwitchParameter> optionalXSwitchT24IP = xSwitchParameterRepository.findByParamName("T24_IP");
-        final String t24Ip = optionalXSwitchT24IP.get().getParamValue();
-
-        Optional<XSwitchParameter> optionalXSwitchT24Port = xSwitchParameterRepository.findByParamName("T24_PORT");
-        final String t24Port = optionalXSwitchT24Port.get().getParamValue();
-
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), T24Transaction);
-
         transactionService.updateT24TransactionDTO(T24Transaction);
+
         if ((T24Transaction.getResponseleg() != null)) {
             if(T24Transaction.getBaladvise().trim().isEmpty()){
                 return 0L;
@@ -356,10 +353,8 @@ public class AgentTransactionService {
         tot24.setDebitacctno(recipientAgentAccountNo);
         tot24.setCreditacctno(authenticateAgentResponse.getData().getAccountNumber());
 
-
-        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
         transactionService.updateT24TransactionDTO(tot24);
 
