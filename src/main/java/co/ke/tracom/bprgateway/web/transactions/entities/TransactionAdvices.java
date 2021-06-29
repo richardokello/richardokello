@@ -11,28 +11,61 @@ import java.sql.Timestamp;
 public class TransactionAdvices {
     @Id
     @Basic(optional = false)
-    @Column(nullable = false, precision = 19)
+    @Column(name = "ADVICEID", nullable = false, precision = 19)
     private long adviceid;
+
+    @Column(name = "TERMINALID")
     private String tid;
+
+    @Column(name = "MERCHANTID")
     private String mid;
+
+    @Column(name = "AMOUNT")
     private String amount;
-    private String transtype;
-    private String reqtype;
-    private String rspcode;
-    private String walletid;
-    private String transref;
+
+    @Column(name = "TRANSACTIONTYPE")
+    private String transactionType;
+
+    @Column(name = "REQUESTTYPE")
+    private String requestType;
+
+    @Column(name = "RESPONSECODE")
+    private String responseCode;
+
+    @Column(name = "TRANSACTIONREF")
+    private String transactionReference;
+
+    @Column(name = "PAN")
     private String pan;
-    private String xmldatarequest;
-    private String xmldataresponse;
-    private String otherdata;
+
+    @Column(name = "XMLDATAREQUEST")
+    private String xmlDataRequest;
+
+    @Column(name = "XMLDATARESPONSE")
+    private String xmlDataResponse;
+
+    @Column(name = "OTHERDATA")
+    private String otherData;
+
+    @Column(name = "TRIALS")
     private int trials;
+
+    @Column(name = "ADVISED")
     private String advised;
 
-    @Column(name = "ref_number")
+    @Column(name = "REF_NUMBER")
     private String refNumber;
-    private String message_id;
+
+    @Column(name = "MESSAGE_ID")
+    private String messageId;
+
+    @Column(name = "T24_REF_NO")
     private String t24RefNo;
-    private Timestamp inserttime;
-    private String sendtime;
+
+    @Column(name = "INSERTTIME")
+    private Timestamp insertTime;
+
+    @Column(name = "SENDTIME")
+    private String sendTime;
 
 }

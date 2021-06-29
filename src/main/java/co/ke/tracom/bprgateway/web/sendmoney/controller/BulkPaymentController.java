@@ -1,6 +1,6 @@
-package co.ke.tracom.bprgateway.web.bulkpayment.controller;
+package co.ke.tracom.bprgateway.web.sendmoney.controller;
 
-import co.ke.tracom.bprgateway.web.bulkpayment.dto.BulkPaymentResponse;
+import co.ke.tracom.bprgateway.web.sendmoney.data.response.BulkPaymentResponse;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

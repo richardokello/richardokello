@@ -61,11 +61,15 @@ public class DepositMoneyService {
                         .setMessage(optionalAuthenticateAgentResponse.get().getMessage());
             }
             AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
-            response.getData().setUsername( authenticateAgentResponse.getData().getUsername());
-            response.getData().setNames(authenticateAgentResponse.getData().getNames());
-            response.getData().setBusinessName(authenticateAgentResponse.getData().getBusinessName());
-            response.getData().setLocation(authenticateAgentResponse.getData().getLocation());
-            
+
+            DepositMoneyResultData depositMoneyResultData = DepositMoneyResultData.builder().build();
+
+            depositMoneyResultData.setUsername(authenticateAgentResponse.getData().getUsername());
+            depositMoneyResultData.setNames(authenticateAgentResponse.getData().getNames());
+            depositMoneyResultData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+            depositMoneyResultData.setLocation(authenticateAgentResponse.getData().getLocation());
+            response.setData(depositMoneyResultData);
+
             String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
             String agentMerchantId = "PCMerchant";
             String chargeCreditPLAccount = "PL64200\\HOF";
@@ -81,7 +85,7 @@ public class DepositMoneyService {
                 return response
                         .setStatus("65")
                         .setMessage("Agent branch details could not be verified. Kindly contact BPR customer care")
-                        .setData(null) ;
+                        .setData(null);
             }
 
             //TODO fetch the payment details (Terminal ID and Merchant ID)
@@ -91,7 +95,7 @@ public class DepositMoneyService {
                 return response
                         .setStatus("65")
                         .setMessage("Missing agent branch details")
-                        .setData(null) ;
+                        .setData(null);
             }
             String accountBranchId = branch.getId();
 
@@ -194,23 +198,19 @@ public class DepositMoneyService {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                         depositMoneyRequest.getAmount(), "000");
 
-                DepositMoneyResultData data = DepositMoneyResultData.builder()
-                        .t24Reference(tot24.getT24reference())
-                        .rrn(transactionRRN)
-                        .charges(utilityService.formatDecimal(
-                                Float.parseFloat(ISOFormattedAmount)
-                        ))
-                        .build();
+                response.getData().setT24Reference(tot24.getT24reference());
+                response.getData().setRrn(transactionRRN);
+                response.getData().setCharges(utilityService.formatDecimal(
+                        Float.parseFloat(ISOFormattedAmount)
+                ));
 
                 return response
                         .setStatus("00")
-                        .setMessage("Transaction processed successfully")
-                        .setData(data) ;
+                        .setMessage("Transaction processed successfully");
             } else {
                 System.out.printf(
-                        "Customer Deposit: [Failed] Transaction %s failed. T24 Response message %s  %n",
+                        "Customer Deposit: [Failed] Transaction %s failed. T24 Response message %s %n",
                         transactionRRN, tot24.getT24failnarration());
-
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                         depositMoneyRequest.getAmount(), "098");
@@ -220,15 +220,15 @@ public class DepositMoneyService {
                         .setMessage((tot24.getT24failnarration() == null || tot24.getT24failnarration().isEmpty())
                                 ? "TRANSACTION FAILED. SYSTEM FAILURE"
                                 : "Transaction failed. " + tot24.getT24failnarration())
-                        .setData(null) ;
+                        .setData(null);
             }
         } catch (Exception e) {
             log.info("Customer deposit transaction [" + transactionRRN + "] failed processing. Error: " + e.getMessage());
             e.printStackTrace();
             return response
-                    .setStatus("98")
+                    .setStatus("098")
                     .setMessage("Transaction failed processing")
-                    .setData(null) ;
+                    .setData(null);
         }
     }
 

@@ -1,4 +1,4 @@
-package co.ke.tracom.bprgateway.web.bulkpayment.dto;
+package co.ke.tracom.bprgateway.web.sendmoney.data.response;
 
 import lombok.Builder;
 import lombok.Data;

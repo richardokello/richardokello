@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionAdvicesRepository extends CrudRepository<TransactionAdvices, Long> {
-    Optional<TransactionAdvices> findByAdvisedAndTrialsLessThanAndTranstypeAndReqtypeAndRefNumber(
+    Optional<TransactionAdvices> findByAdvisedAndTrialsLessThanAndTransactionTypeAndRequestTypeAndTransactionReference(
 String advised, int trials,String transType,String reqType, String refereneNo
     );
 }

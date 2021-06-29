@@ -108,8 +108,9 @@ public class RRAService {
 
             String rraValidationPayload = bootstrapRRAXMLRequest(request.getRRATIN());
 
-
             String rrasoapurl = xSwitchParameterRepository.findByParamName("RRASOAPURL").get().getParamValue();
+
+            System.err.println("rrasoapurl = " + rrasoapurl);
             httpPost = new HttpPost(rrasoapurl);
             StringEntity stringEntity = new StringEntity(rraValidationPayload, "UTF-8");
             stringEntity.setChunked(true);
@@ -148,7 +149,6 @@ public class RRAService {
                         retrnedxml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>", "");
                 // print results
                 System.out.println("RRA >> RETURNED VALIDATION DATA  Start ::  \n" + properxml);
-                System.out.println("\n=============== <<< :: End");
 
                 // Convert to xml string ...
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -293,7 +293,7 @@ public class RRAService {
     }
 
     private Boolean findPendingRRAPaymentOnQueueByRRATIN(String RRATIN) {
-        Optional<TransactionAdvices> optionalTransactionAdvices = transactionAdvicesRepository.findByAdvisedAndTrialsLessThanAndTranstypeAndReqtypeAndRefNumber(
+        Optional<TransactionAdvices> optionalTransactionAdvices = transactionAdvicesRepository.findByAdvisedAndTrialsLessThanAndTransactionTypeAndRequestTypeAndTransactionReference(
                 "N", 3, "470000", "1200_RRAPAYMENT", RRATIN
         );
         return optionalTransactionAdvices.isPresent();
@@ -505,7 +505,6 @@ public class RRAService {
                 data.setNames(authenticateAgentResponse.getData().getNames());
                 data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
                 data.setLocation(authenticateAgentResponse.getData().getLocation());
-
 
                 return RRAPaymentResponse.builder()
                         .status("118")
