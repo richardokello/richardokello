@@ -38,27 +38,11 @@ public class AgentTransactionService {
 
     private final XSwitchParameterRepository xSwitchParameterRepository;
 
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
-
     public AgentTransactionResponse processAgentFloatDeposit(AgentTransactionRequest agentTransactionRequest) {
         AgentTransactionResponse response = new AgentTransactionResponse();
         // Validate agent credentials
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            response.setStatus("117");
-            response.setMessage("Missing agent information");
-            return response;
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            response.setStatus(String.valueOf(
-                    optionalAuthenticateAgentResponse.get().getCode())
-            );
-            response.setMessage(optionalAuthenticateAgentResponse.get().getMessage());
-            return response;
-        }
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
+
         response.setUsername(authenticateAgentResponse.getData().getUsername());
         response.setNames(authenticateAgentResponse.getData().getNames());
         response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
@@ -82,21 +66,7 @@ public class AgentTransactionService {
                 .password(agentTransactionRequest.getCustomerAgentPass())
                 .username(agentTransactionRequest.getCustomerAgentId()).build();
 
-        Optional<AuthenticateAgentResponse> optionalCustomerAgent = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent, agentValidation);
-        if (optionalCustomerAgent.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            response.setStatus("117");
-            response.setMessage("Missing agent information");
-            return response;
-        }else if (optionalCustomerAgent.get().getCode() != HttpStatus.OK.value()) {
-            response.setStatus(String.valueOf(
-                    optionalCustomerAgent.get().getCode())
-            );
-            response.setMessage(optionalCustomerAgent.get().getMessage());
-            return response;
-        }
-        AuthenticateAgentResponse customerAgentData = optionalCustomerAgent.get();
+        AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent);
 
         String customerAgentAccountNo = customerAgentData.getData().getAccountNumber();
         String customerAgentName = customerAgentData.getData().getNames();
@@ -280,21 +250,8 @@ public class AgentTransactionService {
 
     public AgentTransactionResponse processAgentFloatWithdrawal(AgentTransactionRequest request, String transactionReferenceNo) {
         AgentTransactionResponse response = AgentTransactionResponse.builder().build();
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information.  Transaction RRN [" + transactionReferenceNo + "]");
-            response.setStatus("117");
-            response.setMessage("Missing agent information");
-            return response;
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            response.setStatus(String.valueOf(
-                    optionalAuthenticateAgentResponse.get().getCode())
-            );
-            response.setMessage(optionalAuthenticateAgentResponse.get().getMessage());
-            return response;
-        }
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+
         response.setUsername(authenticateAgentResponse.getData().getUsername());
         response.setNames(authenticateAgentResponse.getData().getNames());
         response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
@@ -304,21 +261,7 @@ public class AgentTransactionService {
                 .password(request.getCustomerAgentPass())
                 .username(request.getCustomerAgentId()).build();
 
-        Optional<AuthenticateAgentResponse> optionalCustomerAgent = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent, agentValidation);
-        if (optionalCustomerAgent.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            response.setStatus("117");
-            response.setMessage("Missing agent information");
-            return response;
-        }else if (optionalCustomerAgent.get().getCode() != HttpStatus.OK.value()) {
-            response.setStatus(String.valueOf(
-                    optionalCustomerAgent.get().getCode())
-            );
-            response.setMessage(optionalCustomerAgent.get().getMessage());
-            return response;
-        }
-        AuthenticateAgentResponse customerAgentData = optionalCustomerAgent.get();
+        AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent);
 
         String recipientAgentAccountNo = customerAgentData.getData().getAccountNumber();
         String recipientAgentName = customerAgentData.getData().getNames();

@@ -58,8 +58,6 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class RRAService {
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService bprBranchService;
     private final AgentTransactionService agentTransactionService;
@@ -71,24 +69,9 @@ public class RRAService {
 
 
     public RRATINValidationResponse validateCustomerTIN(RRATINValidationRequest request, String transactionRRN) {
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "RRA Validation :[Failed] Missing agent information.  Transaction RRN [" + transactionRRN + "]");
-            return RRATINValidationResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null).build();
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return RRATINValidationResponse
-                    .builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode()))
-                    .message(optionalAuthenticateAgentResponse.get().getMessage())
-                    .build();
-        }
-        HttpPost httpPost = null;
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
+        HttpPost httpPost = null;
         try {
             Boolean exists = findPendingRRAPaymentOnQueueByRRATIN(request.getRRATIN());
 
@@ -323,24 +306,8 @@ public class RRAService {
 
     public RRAPaymentResponse processRRAPayment(RRAPaymentRequest request, String transactionRRN) {
 
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "RRA Validation :[Failed] Missing agent information.  Transaction RRN [" + transactionRRN + "]");
-            return RRAPaymentResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null).build();
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return RRAPaymentResponse
-                    .builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode()))
-                    .message(optionalAuthenticateAgentResponse.get().getMessage())
-                    .build();
-        }
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
         try {
 
             String tid = "PC";

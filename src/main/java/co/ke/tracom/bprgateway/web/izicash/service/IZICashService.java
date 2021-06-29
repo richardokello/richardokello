@@ -54,29 +54,10 @@ public class IZICashService {
     private final XSwitchParameterRepository xSwitchParameterRepository;
     private final IZICashTxnLogsRepository iziCashTxnLogsRepository;
 
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
 
     public IZICashResponse processWithdrawMoneyTnx(IZICashRequest request, String transactionRRN) {
         // Validate agent credentials
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            return IZICashResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null)
-                    .build();
-
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return IZICashResponse.builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode())
-                    )
-                    .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
-        }
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         IZICashTxnLogs iziCashTxnLogs = new IZICashTxnLogs();
         /*

@@ -37,33 +37,14 @@ public class DepositMoneyService {
     private final BPRBranchService bprBranchService;
     private final BaseServiceProcessor baseServiceProcessor;
 
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
 
     public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest, String transactionRRN) {
         DepositMoneyResult response = DepositMoneyResult.builder().build();
         try {
             // Validate agent credentials
-            Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials(), agentValidation);
-            if (optionalAuthenticateAgentResponse.isEmpty()) {
-                log.info(
-                        "Agent Float Deposit:[Failed] Missing agent information %n");
-                return response
-                        .setStatus("117")
-                        .setMessage("Missing agent information")
-                        .setData(null);
-
-            } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-                return response
-                        .setStatus(String.valueOf(
-                                optionalAuthenticateAgentResponse.get().getCode())
-                        )
-                        .setMessage(optionalAuthenticateAgentResponse.get().getMessage());
-            }
-            AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+            AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials());
 
             DepositMoneyResultData depositMoneyResultData = DepositMoneyResultData.builder().build();
-
             depositMoneyResultData.setUsername(authenticateAgentResponse.getData().getUsername());
             depositMoneyResultData.setNames(authenticateAgentResponse.getData().getNames());
             depositMoneyResultData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
@@ -91,12 +72,6 @@ public class DepositMoneyService {
             //TODO fetch the payment details (Terminal ID and Merchant ID)
             String secondDetails = agentMerchantId;  // From merchant validation request
             String thirdDetails = "CUSTOMER DEPOSIT AT AGENT";
-            if (branch.getId() == null) {
-                return response
-                        .setStatus("65")
-                        .setMessage("Missing agent branch details")
-                        .setData(null);
-            }
             String accountBranchId = branch.getId();
 
             long agentbalancelong = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);

@@ -53,8 +53,6 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class IremboService {
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
 
     private final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
     private final String VALIDATE_URI = "/api/v1/clients/validateBill";
@@ -69,23 +67,7 @@ public class IremboService {
 
     public IremboBillNoValidationResponse validateIremboBillNo(BillNumberValidationRequest request, String transactionRefNo) {
         // Validate agent credentials
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            return IremboBillNoValidationResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null)
-                    .build();
-
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return IremboBillNoValidationResponse.builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode())
-                    )
-                    .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
-        }
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         HttpURLConnection httpConnection = null;
         try {
@@ -218,25 +200,8 @@ public class IremboService {
     public IremboPaymentResponse processPayment(IremboBillPaymentRequest request, String transactionRefNo) {
 
         try {
-            Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-            if (optionalAuthenticateAgentResponse.isEmpty()) {
-                log.info(
-                        "Agent Float Deposit:[Failed] Missing agent information %n");
-                return IremboPaymentResponse.builder()
-                        .status("117")
-                        .message("Missing agent information")
-                        .data(null)
-                        .build();
+            AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
-            } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-                return IremboPaymentResponse
-                        .builder()
-                        .status(String.valueOf(
-                                optionalAuthenticateAgentResponse.get().getCode()))
-                        .message(optionalAuthenticateAgentResponse.get().getMessage())
-                        .build();
-            }
-            AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
             String tid = "PC";
 
             BPRBranches bprBranches = bprBranchService.fetchBranchAccountsByBranchCode(authenticateAgentResponse.getData().getAccountNumber());

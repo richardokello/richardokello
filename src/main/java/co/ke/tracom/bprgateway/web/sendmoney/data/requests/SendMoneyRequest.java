@@ -1,6 +1,5 @@
 package co.ke.tracom.bprgateway.web.sendmoney.data.requests;
 
-import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponseData;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;

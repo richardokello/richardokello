@@ -50,52 +50,12 @@ public class SendMoneyService {
     private final MoneySendRepository moneySendRepository;
     private final ScheduledSMSRepository scheduledSMSRepository;
 
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
+
+    public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
 
-    public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) throws InvalidAgentCredentialsException {
-
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Send Money transaction :[Failed] Missing agent information %n");
-            return SendMoneyResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null)
-                    .build();
-        }
-        else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return SendMoneyResponse
-                    .builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode()))
-                    .message(optionalAuthenticateAgentResponse.get().getMessage())
-                    .build();
-        }
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
-
-        BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(authenticateAgentResponse.getData().getAccountNumber());
-        if (null == branch.getCompanyName()) {
-            return SendMoneyResponse.builder()
-                    .status("065")
-                    .message("Missing agent branch details")
-                    .data(null)
-                    .build();
-        }
-
-        String branchAccountID = branch.getId();
-        if (branchAccountID.isEmpty()) {
-            return SendMoneyResponse.builder()
-                    .status("065")
-                    .message("Missing agent branch account id")
-                    .data(null)
-                    .build();
-        }
-
-        long agentFloatAccountBalance =
-                agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
+        long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
 
         try {
 
@@ -103,6 +63,9 @@ public class SendMoneyService {
              * "Debit Agent float Acc - Credit Agent Suspense Acc, Dr Agent - Cr Agent Fees, Debit Agent
              * Fees - Credit Agent Tax Acc"
              */
+
+            BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(authenticateAgentResponse.getData().getAccountNumber());
+            String branchAccountID = branch.getId();
             String charges = fetchSendMoneyTransactionCharges(authenticateAgentResponse.getData().getAccountNumber(),
                     branchAccountID, transactionRRN, request.getAmount());
             long chargesLong = Long.parseLong(charges);
@@ -563,25 +526,8 @@ public class SendMoneyService {
 
     public SendMoneyResponse processReceiveMoneyRequest(ReceiveMoneyRequest request, String transactionRRN) {
 
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Send Money transaction :[Failed] Missing agent information %n");
-            return SendMoneyResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null)
-                    .build();
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return SendMoneyResponse
-                    .builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode()))
-                    .message(optionalAuthenticateAgentResponse.get().getMessage())
-                    .build();
-        }
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
 
         if (agentFloatAccountBalance < request.getAmount()) {

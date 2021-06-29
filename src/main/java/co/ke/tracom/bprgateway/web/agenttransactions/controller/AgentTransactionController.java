@@ -32,10 +32,6 @@ public class AgentTransactionController {
     private final BaseServiceProcessor baseServiceProcessor;
     private final UtilityService utilityService;
 
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
-
-
     @ApiOperation(value = "Process agent deposit", response = AgentTransactionResponse.class)
     @PostMapping(value = "/deposit")
     public ResponseEntity<?> agentDeposit(@RequestBody AgentTransactionRequest request) {
@@ -56,26 +52,15 @@ public class AgentTransactionController {
     @ApiOperation(value = "Fetch agent account balance", response = AgentBalanceInquiryResponse.class)
     @PostMapping(value = "/balance-inquiry")
     public ResponseEntity<AgentBalanceInquiryResponse> agentBalanceInquiry(@RequestBody AgentBalanceInquiryRequest request) {
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        String accountNumber = authenticateAgentResponse.getData().getAccountNumber();
 
-        AgentBalanceInquiryResponse response = AgentBalanceInquiryResponse.builder().build();
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info("Agent Float Deposit:[Failed] Missing agent information.");
-            response.setStatus("117");
-            response.setMessage("Missing agent information");
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            response.setStatus(String.valueOf(
-                    optionalAuthenticateAgentResponse.get().getCode())
-            );
-            response.setMessage(optionalAuthenticateAgentResponse.get().getMessage());
-        } else {
-            String accountNumber = optionalAuthenticateAgentResponse.get().getData().getAccountNumber();
-            Long agentAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(accountNumber);
-            response.setStatus("00");
-            response.setMessage("Balance inquiry processed successfully");
-            response.setBalance(utilityService. formatDecimal(agentAccountBalance));
-        }
+        Long agentAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(accountNumber);
 
+        AgentBalanceInquiryResponse response = AgentBalanceInquiryResponse.builder()
+                .status("00")
+                .message("Balance inquiry processed successfully")
+                .balance(utilityService.formatDecimal(agentAccountBalance)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

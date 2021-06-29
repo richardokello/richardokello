@@ -30,24 +30,10 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 public class AccountValidationService {
     private final T24TCPClient t24TCPClient;
     private final T24MessageProcessor t24MessageProcessor;
-
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
     private final BaseServiceProcessor baseServiceProcessor;
 
     public BPRAccountValidationResponse processBankAccountValidation(BPRAccountValidationRequest request) {
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            return BPRAccountValidationResponse.builder()
-                    .status("117")
-                    .message("Missing agent information").build();
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != org.springframework.http.HttpStatus.OK.value()) {
-            return BPRAccountValidationResponse.builder().status(String.valueOf(
-                    optionalAuthenticateAgentResponse.get().getCode())
-            ).message(optionalAuthenticateAgentResponse.get().getMessage()).build();
-        }
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         String accountValidationRequest =
                 "0000AENQUIRY.SELECT,," + MASKED_T24_USERNAME + "/" + MASKED_T24_PASSWORD +

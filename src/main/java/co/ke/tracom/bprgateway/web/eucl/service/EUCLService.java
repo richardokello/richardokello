@@ -44,23 +44,8 @@ public class EUCLService {
 
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
         // Validate agent credentials
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            return MeterNoValidationResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null)
-                    .build();
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return MeterNoValidationResponse.builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode())
-                    )
-                    .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
-        }
         try {
             String channel = "PC";
             String txnref = referenceNo;
@@ -158,24 +143,7 @@ public class EUCLService {
     }
 
     public EUCLPaymentResponse purchaseEUCLTokens(EUCLPaymentRequest request, String transactionReferenceNo) {
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information.  Transaction RRN [" + transactionReferenceNo + "]");
-            return EUCLPaymentResponse
-                    .builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .build();
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return EUCLPaymentResponse
-                    .builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode()))
-                    .message(optionalAuthenticateAgentResponse.get().getMessage())
-                    .build();
-        }
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         EUCLElectricityTxnLogs elecTxnLogs = new EUCLElectricityTxnLogs();
         try {
