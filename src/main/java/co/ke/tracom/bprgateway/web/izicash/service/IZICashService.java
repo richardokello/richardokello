@@ -9,7 +9,6 @@ import co.ke.tracom.bprgateway.web.izicash.data.response.IZICashResponseData;
 import co.ke.tracom.bprgateway.web.izicash.entities.IZICashTxnLogs;
 import co.ke.tracom.bprgateway.web.izicash.repository.IZICashTxnLogsRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
-import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
@@ -29,7 +28,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
@@ -82,12 +80,12 @@ public class IZICashService {
             String customerMobileNo = mobileNo10.substring(mobileNo10.length() - 5);
             iziCashTxnLogs.setRecipientNo(mobileNo10);
 
-            String transactionPassCode = request.getPassCode();
+            String transactionPassCode = request.getPinCode();
             Long transactionAmount = request.getAmount();
 
-            String customerPAN = request.getCustomerPAN();
-            String secretCode = customerPAN.substring(customerPAN.length() - 5);
-            iziCashTxnLogs.setSecretCode(secretCode);
+//            String customerPAN = request.getSecretCode();
+            String secretCode = request.getSecretCode();
+            iziCashTxnLogs.setSecretCode(request.getSecretCode());
             iziCashTxnLogs.setPassCode(new String(org.apache.commons.codec.binary.Base64.encodeBase64(secretCode.getBytes())));
             iziCashTxnLogs.setAmount(String.valueOf(transactionAmount));
 
@@ -143,7 +141,7 @@ public class IZICashService {
                     iziCashTxnLogs.setModeFinResponseCode(WSResultArray[0]);
 
                     String firstPaymentDetails = "AGENCY BANKING IZI WITHDRAWAL";
-                    String secondPaymentDetails = customerPAN + "/" + transactionPassCode + "/" + mobileNo10;
+                    String secondPaymentDetails = request.getSecretCode() + "/" + transactionPassCode + "/" + mobileNo10;
                     String thirdPaymentDetails = transactionTerminalID + "/" + transactionRRN + "/" + modeFinReference;
 
                     String creditAgentRequest =

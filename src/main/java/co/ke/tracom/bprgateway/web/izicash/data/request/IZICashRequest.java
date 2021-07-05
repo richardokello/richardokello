@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IZICashRequest {
-    private String customerPAN;
-    private String passCode;
+    private String secretCode;
+    private String pinCode;
     private String mobileNo;
     private long amount;
     private MerchantAuthInfo credentials;

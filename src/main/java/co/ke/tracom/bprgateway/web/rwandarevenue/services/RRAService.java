@@ -89,6 +89,7 @@ public class RRAService {
                     transactionRRN, request.getRRATIN());
 
             String rraValidationPayload = bootstrapRRAXMLRequest(request.getRRATIN());
+            System.err.println("rraValidationPayload = " + rraValidationPayload);
 
             String rrasoapurl = xSwitchParameterService.fetchXSwitchParamValue("RRASOAPURL") ;
 
@@ -282,25 +283,47 @@ public class RRAService {
     }
 
     private String bootstrapRRAXMLRequest(String rwandaRevenueAuthorityTIN) {
-        String RRAID = xSwitchParameterService.fetchXSwitchParamValue("RRA_ID");
-        String RRAPass = xSwitchParameterService.fetchXSwitchParamValue("RRA_PASS");
+        String id = xSwitchParameterService.fetchXSwitchParamValue("RRA_ID");
+        String rrapass = xSwitchParameterService.fetchXSwitchParamValue("RRA_PASS");
 
-        return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://WS.epay.rra.rw\">\n"
-                + "   <soapenv:Header/>\n"
-                + "   <soapenv:Body>\n"
-                + "      <ws:getDec>\n"
-                + "         <ws:userID>"
-                + RRAID
-                + "</ws:userID>\n"
-                + "         <ws:userPassword>"
-                + RRAPass
-                + "</ws:userPassword>\n"
-                + "         <ws:RRA_ref>"
-                + rwandaRevenueAuthorityTIN
-                + "</ws:RRA_ref>\n"
-                + "      </ws:getDec>\n"
-                + "   </soapenv:Body>\n"
-                + "</soapenv:Envelope>";
+        System.err.println("ID = "+id);
+        System.err.println("rrapass = " + rrapass);
+
+        String body =
+                "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://WS.epay.rra.rw\">\n"
+                        + "   <soapenv:Header/>\n"
+                        + "   <soapenv:Body>\n"
+                        + "      <ws:getDec>\n"
+                        + "         <ws:userID>"
+                        + id
+                        + "</ws:userID>\n"
+                        + "         <ws:userPassword>"
+                        + rrapass
+                        + "</ws:userPassword>\n"
+                        + "         <ws:RRA_ref>"
+                        + rwandaRevenueAuthorityTIN
+                        + "</ws:RRA_ref>\n"
+                        + "      </ws:getDec>\n"
+                        + "   </soapenv:Body>\n"
+                        + "</soapenv:Envelope>";
+        return body;
+//
+//        return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://WS.epay.rra.rw\">\n"
+//                + "   <soapenv:Header/>\n"
+//                + "   <soapenv:Body>\n"
+//                + "      <ws:getDec>\n"
+//                + "         <ws:userID>"
+//                + RRAID
+//                + "</ws:userID>\n"
+//                + "         <ws:userPassword>"
+//                + RRAPass
+//                + "</ws:userPassword>\n"
+//                + "         <ws:RRA_ref>"
+//                + rwandaRevenueAuthorityTIN
+//                + "</ws:RRA_ref>\n"
+//                + "      </ws:getDec>\n"
+//                + "   </soapenv:Body>\n"
+//                + "</soapenv:Envelope>";
     }
 
     public RRAPaymentResponse processRRAPayment(RRAPaymentRequest request, String transactionRRN) {

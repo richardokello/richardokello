@@ -72,7 +72,7 @@ public class SendMoneyService {
             compareSenderRecipientMobileNumbers(transactionRRN, receiverMobile.equalsIgnoreCase(senderMobileNo));
 
             String configuredSendMoneySuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue("SENDMONEYSUSPENSE");
-            String firstTransactionPaymentDetails = senderMobileNo + " / " + receiverMobile;
+            String firstTransactionPaymentDetails = senderMobileNo + "/" + receiverMobile;
             String secondTransactionPaymentDetails = agentAuthData.getNames() + " " + agentAuthData.getAccountNumber();
             String thirdTransactionPaymentDetails = "SEND MONEY";
 
