@@ -8,7 +8,7 @@ import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
 import co.ke.tracom.bprgateway.web.depositmoney.data.requests.DepositMoneyRequest;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResultData;
-import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
@@ -16,11 +16,7 @@ import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
@@ -32,38 +28,19 @@ public class DepositMoneyService {
     private final UtilityService utilityService;
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
-    private final XSwitchParameterRepository xSwitchParameterRepository;
+    private final XSwitchParameterService xSwitchParameterService;
     private final AgentTransactionService agentTransactionService;
     private final BPRBranchService bprBranchService;
     private final BaseServiceProcessor baseServiceProcessor;
 
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
 
     public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest, String transactionRRN) {
         DepositMoneyResult response = DepositMoneyResult.builder().build();
         try {
             // Validate agent credentials
-            Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials(), agentValidation);
-            if (optionalAuthenticateAgentResponse.isEmpty()) {
-                log.info(
-                        "Agent Float Deposit:[Failed] Missing agent information %n");
-                return response
-                        .setStatus("117")
-                        .setMessage("Missing agent information")
-                        .setData(null);
-
-            } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-                return response
-                        .setStatus(String.valueOf(
-                                optionalAuthenticateAgentResponse.get().getCode())
-                        )
-                        .setMessage(optionalAuthenticateAgentResponse.get().getMessage());
-            }
-            AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+            AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials());
 
             DepositMoneyResultData depositMoneyResultData = DepositMoneyResultData.builder().build();
-
             depositMoneyResultData.setUsername(authenticateAgentResponse.getData().getUsername());
             depositMoneyResultData.setNames(authenticateAgentResponse.getData().getNames());
             depositMoneyResultData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
@@ -91,12 +68,6 @@ public class DepositMoneyService {
             //TODO fetch the payment details (Terminal ID and Merchant ID)
             String secondDetails = agentMerchantId;  // From merchant validation request
             String thirdDetails = "CUSTOMER DEPOSIT AT AGENT";
-            if (branch.getId() == null) {
-                return response
-                        .setStatus("65")
-                        .setMessage("Missing agent branch details")
-                        .setData(null);
-            }
             String accountBranchId = branch.getId();
 
             long agentbalancelong = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
@@ -152,9 +123,8 @@ public class DepositMoneyService {
             tot24.setCreditacctno(customerAccount);
 
 
-            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
             //TODO check this
@@ -286,8 +256,8 @@ public class DepositMoneyService {
         tot24.setProcode(proCode);
         tot24.setTid(tid);
 
-        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
         //TODO check this
         transactionService.updateT24TransactionDTO(tot24);

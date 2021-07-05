@@ -10,6 +10,7 @@ import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponse;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponseData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRATINValidationResponse;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
@@ -31,8 +32,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.XML;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,37 +57,20 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class RRAService {
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService bprBranchService;
     private final AgentTransactionService agentTransactionService;
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
 
-    private final XSwitchParameterRepository xSwitchParameterRepository;
+    private final XSwitchParameterService xSwitchParameterService;
     private final TransactionAdvicesRepository transactionAdvicesRepository;
 
 
     public RRATINValidationResponse validateCustomerTIN(RRATINValidationRequest request, String transactionRRN) {
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "RRA Validation :[Failed] Missing agent information.  Transaction RRN [" + transactionRRN + "]");
-            return RRATINValidationResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null).build();
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return RRATINValidationResponse
-                    .builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode()))
-                    .message(optionalAuthenticateAgentResponse.get().getMessage())
-                    .build();
-        }
-        HttpPost httpPost = null;
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
+        HttpPost httpPost = null;
         try {
             Boolean exists = findPendingRRAPaymentOnQueueByRRATIN(request.getRRATIN());
 
@@ -107,8 +89,9 @@ public class RRAService {
                     transactionRRN, request.getRRATIN());
 
             String rraValidationPayload = bootstrapRRAXMLRequest(request.getRRATIN());
+            System.err.println("rraValidationPayload = " + rraValidationPayload);
 
-            String rrasoapurl = xSwitchParameterRepository.findByParamName("RRASOAPURL").get().getParamValue();
+            String rrasoapurl = xSwitchParameterService.fetchXSwitchParamValue("RRASOAPURL") ;
 
             System.err.println("rrasoapurl = " + rrasoapurl);
             httpPost = new HttpPost(rrasoapurl);
@@ -300,47 +283,53 @@ public class RRAService {
     }
 
     private String bootstrapRRAXMLRequest(String rwandaRevenueAuthorityTIN) {
-        String RRAID = xSwitchParameterRepository.findByParamName("RRA_ID").get().getParamValue();
-        String RRAPass = xSwitchParameterRepository.findByParamName("RRA_PASS").get().getParamValue();
+        String id = xSwitchParameterService.fetchXSwitchParamValue("RRA_ID");
+        String rrapass = xSwitchParameterService.fetchXSwitchParamValue("RRA_PASS");
 
-        return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://WS.epay.rra.rw\">\n"
-                + "   <soapenv:Header/>\n"
-                + "   <soapenv:Body>\n"
-                + "      <ws:getDec>\n"
-                + "         <ws:userID>"
-                + RRAID
-                + "</ws:userID>\n"
-                + "         <ws:userPassword>"
-                + RRAPass
-                + "</ws:userPassword>\n"
-                + "         <ws:RRA_ref>"
-                + rwandaRevenueAuthorityTIN
-                + "</ws:RRA_ref>\n"
-                + "      </ws:getDec>\n"
-                + "   </soapenv:Body>\n"
-                + "</soapenv:Envelope>";
+        System.err.println("ID = "+id);
+        System.err.println("rrapass = " + rrapass);
+
+        String body =
+                "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://WS.epay.rra.rw\">\n"
+                        + "   <soapenv:Header/>\n"
+                        + "   <soapenv:Body>\n"
+                        + "      <ws:getDec>\n"
+                        + "         <ws:userID>"
+                        + id
+                        + "</ws:userID>\n"
+                        + "         <ws:userPassword>"
+                        + rrapass
+                        + "</ws:userPassword>\n"
+                        + "         <ws:RRA_ref>"
+                        + rwandaRevenueAuthorityTIN
+                        + "</ws:RRA_ref>\n"
+                        + "      </ws:getDec>\n"
+                        + "   </soapenv:Body>\n"
+                        + "</soapenv:Envelope>";
+        return body;
+//
+//        return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://WS.epay.rra.rw\">\n"
+//                + "   <soapenv:Header/>\n"
+//                + "   <soapenv:Body>\n"
+//                + "      <ws:getDec>\n"
+//                + "         <ws:userID>"
+//                + RRAID
+//                + "</ws:userID>\n"
+//                + "         <ws:userPassword>"
+//                + RRAPass
+//                + "</ws:userPassword>\n"
+//                + "         <ws:RRA_ref>"
+//                + rwandaRevenueAuthorityTIN
+//                + "</ws:RRA_ref>\n"
+//                + "      </ws:getDec>\n"
+//                + "   </soapenv:Body>\n"
+//                + "</soapenv:Envelope>";
     }
 
     public RRAPaymentResponse processRRAPayment(RRAPaymentRequest request, String transactionRRN) {
 
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "RRA Validation :[Failed] Missing agent information.  Transaction RRN [" + transactionRRN + "]");
-            return RRAPaymentResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null).build();
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return RRAPaymentResponse
-                    .builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode()))
-                    .message(optionalAuthenticateAgentResponse.get().getMessage())
-                    .build();
-        }
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
         try {
 
             String tid = "PC";
@@ -433,9 +422,8 @@ public class RRAService {
             tot24.setProcode("460000");
             tot24.setDebitacctno(agentFloatAccount);
 
-            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
             transactionService.updateT24TransactionDTO(tot24);

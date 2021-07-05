@@ -32,24 +32,11 @@ import java.util.Optional;
 @Service
 public class NIDValidationService {
 
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
     private final BaseServiceProcessor baseServiceProcessor;
     private final XSwitchParameterRepository xSwitchParameterRepository;
 
     public NIDValidationResponse validateNationalID(NIDValidationRequest request, String referenceNo) {
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            return NIDValidationResponse.builder()
-                    .status("117")
-                    .message("Missing agent information").build();
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != org.springframework.http.HttpStatus.OK.value()) {
-            return NIDValidationResponse.builder().status(String.valueOf(
-                    optionalAuthenticateAgentResponse.get().getCode())
-            ).message(optionalAuthenticateAgentResponse.get().getMessage()).build();
-        }
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         String returneddocumentid = "";
 

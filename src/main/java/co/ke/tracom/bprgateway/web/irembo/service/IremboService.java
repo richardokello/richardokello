@@ -14,6 +14,7 @@ import co.ke.tracom.bprgateway.web.irembo.dto.request.IremboRequest;
 import co.ke.tracom.bprgateway.web.irembo.dto.response.*;
 import co.ke.tracom.bprgateway.web.irembo.entity.IremboPaymentNotifications;
 import co.ke.tracom.bprgateway.web.irembo.repository.IremboPaymentNotificationsRepository;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
@@ -53,8 +54,6 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class IremboService {
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
 
     private final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
     private final String VALIDATE_URI = "/api/v1/clients/validateBill";
@@ -64,35 +63,19 @@ public class IremboService {
     private final BPRBranchService bprBranchService;
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
-    private final XSwitchParameterRepository xSwitchParameterRepository;
+    private final XSwitchParameterService xSwitchParameterService;
     private final IremboPaymentNotificationsRepository iremboPaymentNotificationsRepository;
 
     public IremboBillNoValidationResponse validateIremboBillNo(BillNumberValidationRequest request, String transactionRefNo) {
         // Validate agent credentials
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            return IremboBillNoValidationResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null)
-                    .build();
-
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return IremboBillNoValidationResponse.builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode())
-                    )
-                    .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
-        }
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         HttpURLConnection httpConnection = null;
         try {
 
-            String IREMBOGATEWAYVALIDATEURL = xSwitchParameterRepository.findByParamName("IREMBOGATEWAYVALIDATEURL").get().getParamValue();
-            String IREMBOPIVOTACCESSID = xSwitchParameterRepository.findByParamName("IREMBOPIVOTACCESSID").get().getParamValue();
-            String IREMBOPIVOTSECRETKEY = xSwitchParameterRepository.findByParamName("IREMBOPIVOTSECRETKEY").get().getParamValue();
+            String IREMBOGATEWAYVALIDATEURL = xSwitchParameterService.fetchXSwitchParamValue("IREMBOGATEWAYVALIDATEURL") ;
+            String IREMBOPIVOTACCESSID = xSwitchParameterService.fetchXSwitchParamValue("IREMBOPIVOTACCESSID") ;
+            String IREMBOPIVOTSECRETKEY = xSwitchParameterService.fetchXSwitchParamValue("IREMBOPIVOTSECRETKEY") ;
 
 
             String customerBillNo = request.getCustomerBillNo().trim();
@@ -218,25 +201,8 @@ public class IremboService {
     public IremboPaymentResponse processPayment(IremboBillPaymentRequest request, String transactionRefNo) {
 
         try {
-            Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-            if (optionalAuthenticateAgentResponse.isEmpty()) {
-                log.info(
-                        "Agent Float Deposit:[Failed] Missing agent information %n");
-                return IremboPaymentResponse.builder()
-                        .status("117")
-                        .message("Missing agent information")
-                        .data(null)
-                        .build();
+            AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
-            } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-                return IremboPaymentResponse
-                        .builder()
-                        .status(String.valueOf(
-                                optionalAuthenticateAgentResponse.get().getCode()))
-                        .message(optionalAuthenticateAgentResponse.get().getMessage())
-                        .build();
-            }
-            AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
             String tid = "PC";
 
             BPRBranches bprBranches = bprBranchService.fetchBranchAccountsByBranchCode(authenticateAgentResponse.getData().getAccountNumber());
@@ -274,7 +240,7 @@ public class IremboService {
                         .build();
             }
             // fetch from X switch params
-            String irembocashaccount = xSwitchParameterRepository.findByParamName("IREMBOCASHACCOUNT").get().getParamValue();
+            String irembocashaccount = xSwitchParameterService.fetchXSwitchParamValue("IREMBOCASHACCOUNT");
 
 
             String paymentdetail2 = authenticateAgentResponse.getData().getNames() + " " + authenticateAgentResponse.getData().getAccountNumber();
@@ -308,9 +274,8 @@ public class IremboService {
             tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
             tot24.setCreditacctno(irembocashaccount);
 
-            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
             transactionService.updateT24TransactionDTO(tot24);
@@ -425,7 +390,7 @@ public class IremboService {
             String tid = "PC";
             String channel = "GATEWAY";
 
-            String IremboCashAcc = xSwitchParameterRepository.findByParamName("IREMBOCASHACCOUNT").get().getParamValue();
+            String IremboCashAcc = xSwitchParameterService.fetchXSwitchParamValue("IREMBOCASHACCOUNT");
 
             String iremboT24OFS = "0000AFUNDS.TRANSFER,IREMBO/I/VALIDATE/0/0,"
                     + MASKED_T24_USERNAME + "/" + MASKED_T24_PASSWORD + "/"
@@ -447,8 +412,8 @@ public class IremboService {
 
             log.info("Irembo Charge Transaction Validation: Sending to T24 [" + preparedOFSMessage + "]");
 
-            final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-            final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
             transactionService.updateT24TransactionDTO(tot24);
 
@@ -500,9 +465,8 @@ public class IremboService {
         tot24.setProcode(processingCode);
         tot24.setTid(tid);
 
-        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
         transactionService.updateT24TransactionDTO(tot24);

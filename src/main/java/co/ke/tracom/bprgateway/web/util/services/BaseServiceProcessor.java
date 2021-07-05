@@ -2,21 +2,19 @@ package co.ke.tracom.bprgateway.web.util.services;
 
 import co.ke.tracom.bprgateway.core.tracomchannels.json.RestHTTPService;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
-import co.ke.tracom.bprgateway.web.sendmoney.data.response.ValidateMerchantDetailsResponse;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InterServiceCommunicationException;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.transactionLimits.entity.TransactionLimitManager;
 import co.ke.tracom.bprgateway.web.transactionLimits.repository.TransactionLimitManagerRepository;
-import co.ke.tracom.bprgateway.web.util.BaseServiceInterface;
 import co.ke.tracom.bprgateway.web.util.ResponseCodes;
-import co.ke.tracom.bprgateway.web.util.data.Field47Data;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,48 +22,32 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class BaseServiceProcessor implements BaseServiceInterface {
+public class BaseServiceProcessor {
+
+
+    @Value("${merchant.account.validation}")
+    private String agentValidationUrl;
+
     private final TransactionLimitManagerRepository transactionLimitManagerRepository;
     private final RestHTTPService restHTTPService;
 
-    public Optional<AuthenticateAgentResponse> authenticateAgentUsernamePassword(MerchantAuthInfo merchantAuthInfo, String url) {
+    public AuthenticateAgentResponse authenticateAgentUsernamePassword(MerchantAuthInfo merchantAuthInfo) {
         try {
-            ResponseEntity<String> stringResponseEntity = restHTTPService.postRequest(merchantAuthInfo, url);
-            log.info("Response status from URL[" + url + "]" + stringResponseEntity.getStatusCode());
+            ResponseEntity<String> stringResponseEntity = restHTTPService.postRequest(merchantAuthInfo, agentValidationUrl);
+            log.info("Response status from URL[" + agentValidationUrl + "]" + stringResponseEntity.getStatusCode());
 
             String body = stringResponseEntity.getBody();
             if (stringResponseEntity.getStatusCode().is2xxSuccessful()) {
-                AuthenticateAgentResponse authenticateAgentResponse = new ObjectMapper().readValue(body, AuthenticateAgentResponse.class);
-                return Optional.of(authenticateAgentResponse);
+                return new ObjectMapper().readValue(body, AuthenticateAgentResponse.class);
             } else {
-                AuthenticateAgentResponse response = new AuthenticateAgentResponse();
-                response.setCode(stringResponseEntity.getStatusCode().value());
-                response.setMessage("Agent validation failed.");
-                return Optional.of(response);
+                throw new InvalidAgentCredentialsException("Agent credentials validation failed");
             }
         } catch (Exception e) {
-            log.error(" Failed " + e.getMessage());
-            AuthenticateAgentResponse response = new AuthenticateAgentResponse();
-            response.setCode(HttpStatus.BAD_GATEWAY.value());
-            response.setMessage("Unable to fetch agent validation information. Please try again!");
-            return Optional.of(response);
+            throw new InterServiceCommunicationException("Inter-service communication error. Please try again!");
         }
     }
 
-    @Override
-    public ValidateMerchantDetailsResponse login(Field47Data loginRequest) {
-
-        return null;
-    }
-
-    @Override
-    public ValidateMerchantDetailsResponse validateMerchantData(Field47Data loginRequest) {
-        return null;
-    }
-
-    @Override
-    public Map<String, String> validateTransactionLimits(
-            String mti, String processingCode, String amount) {
+    public Map<String, String> validateTransactionLimits(String mti, String processingCode, String amount) {
         Map<String, String> results = new HashMap<>();
         Optional<TransactionLimitManager> optionalTransactionLimit =
                 transactionLimitManagerRepository.findByISOMsgMTIAndProcessingCode(mti, processingCode);
@@ -78,8 +60,7 @@ public class BaseServiceProcessor implements BaseServiceInterface {
         return results;
     }
 
-    private void validateTransactionAmount(
-            Map<String, String> results, String amount, TransactionLimitManager transactionLimitManager) {
+    private void validateTransactionAmount(Map<String, String> results, String amount, TransactionLimitManager transactionLimitManager) {
         long transactionValue = Long.parseLong(amount);
 
         if (transactionValue > transactionLimitManager.getUpperlimit()

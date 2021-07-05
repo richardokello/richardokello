@@ -8,20 +8,13 @@ import co.ke.tracom.bprgateway.web.izicash.data.response.IZICashResponse;
 import co.ke.tracom.bprgateway.web.izicash.data.response.IZICashResponseData;
 import co.ke.tracom.bprgateway.web.izicash.entities.IZICashTxnLogs;
 import co.ke.tracom.bprgateway.web.izicash.repository.IZICashTxnLogsRepository;
-import co.ke.tracom.bprgateway.web.sendmoney.data.response.SendMoneyResponse;
-import co.ke.tracom.bprgateway.web.sendmoney.data.response.SendMoneyResponseData;
-import co.ke.tracom.bprgateway.web.sendmoney.entity.MoneySend;
-import co.ke.tracom.bprgateway.web.smsscheduled.entities.ScheduledSMS;
-import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
-import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -35,9 +28,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
@@ -51,32 +41,13 @@ public class IZICashService {
     private final TransactionService transactionService;
     private final T24Channel t24Channel;
 
-    private final XSwitchParameterRepository xSwitchParameterRepository;
+    private final XSwitchParameterService xSwitchParameterService;
     private final IZICashTxnLogsRepository iziCashTxnLogsRepository;
 
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
 
     public IZICashResponse processWithdrawMoneyTnx(IZICashRequest request, String transactionRRN) {
         // Validate agent credentials
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            return IZICashResponse.builder()
-                    .status("117")
-                    .message("Missing agent information")
-                    .data(null)
-                    .build();
-
-        } else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            return IZICashResponse.builder()
-                    .status(String.valueOf(
-                            optionalAuthenticateAgentResponse.get().getCode())
-                    )
-                    .message(optionalAuthenticateAgentResponse.get().getMessage()).build();
-        }
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         IZICashTxnLogs iziCashTxnLogs = new IZICashTxnLogs();
         /*
@@ -92,38 +63,10 @@ public class IZICashService {
             iziCashTxnLogs.setMid("PCMerchant");
             iziCashTxnLogs.setPosReference(transactionRRN);
 
-            Optional<XSwitchParameter> optionalXSwitchParameter = xSwitchParameterRepository.findByParamName("IZICASHSUSPENSE");
-            // this must be set
-            if (optionalXSwitchParameter.isEmpty()) {
-                log.info("IZI Cash transaction [" + transactionRRN + "] processing failed. Missing XSwitch Parameter IZICASHSUSPENSE");
-                return IZICashResponse.builder()
-                        .status("098")
-                        .message("Transaction processing failed. Please contact BPR Customer care")
-                        .data(null)
-                        .build();
-            }
-
-            String IZICashSuspenseAccount = optionalXSwitchParameter.get().getParamValue();
+            String IZICashSuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue("IZICASHSUSPENSE");
 
             BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(IZICashSuspenseAccount); // check what account should be used
-            if (null == branch.getCompanyName()) {
-                log.info("IZI Cash: [Error] An error occurred processing transaction [%s] : Missing configuration for IZI Cash Suspense account");
-                return IZICashResponse.builder()
-                        .status("065")
-                        .message("Transaction processing failed. Please contact BPR Customer care")
-                        .data(null)
-                        .build();
-            }
             String accountBranchID = branch.getId();
-            if (accountBranchID.isEmpty()) {
-                log.info(
-                        "IZI Cash: [Error] An error occurred processing transaction [%s] : Missing configuration for Branch ID");
-                return IZICashResponse.builder()
-                        .status("065")
-                        .message("Transaction processing failed. Please contact BPR Customer care")
-                        .data(null)
-                        .build();
-            }
 
             if (request.getMobileNo().length() < 5) {
                 return IZICashResponse.builder()
@@ -137,28 +80,16 @@ public class IZICashService {
             String customerMobileNo = mobileNo10.substring(mobileNo10.length() - 5);
             iziCashTxnLogs.setRecipientNo(mobileNo10);
 
-
-            String transactionPassCode = request.getPassCode();
+            String transactionPassCode = request.getPinCode();
             Long transactionAmount = request.getAmount();
 
-            String customerPAN = request.getCustomerPAN();
-            String secretCode = customerPAN.substring(customerPAN.length() - 5);
-            iziCashTxnLogs.setSecretCode(secretCode);
+//            String customerPAN = request.getSecretCode();
+            String secretCode = request.getSecretCode();
+            iziCashTxnLogs.setSecretCode(request.getSecretCode());
             iziCashTxnLogs.setPassCode(new String(org.apache.commons.codec.binary.Base64.encodeBase64(secretCode.getBytes())));
             iziCashTxnLogs.setAmount(String.valueOf(transactionAmount));
 
-
-            Optional<XSwitchParameter> optionalIZICashServiceIdConfig = xSwitchParameterRepository.findByParamName("IZICASH_SERVICEID");
-            if (optionalIZICashServiceIdConfig.isEmpty()) {
-                log.info("IZI Cash: [Error] An error occurred processing transaction [%s] : Missing configuration for IZICASH_SERVICEID");
-                return IZICashResponse.builder()
-                        .status("065")
-                        .message("Transaction processing failed. Please contact BPR Customer care")
-                        .data(null)
-                        .build();
-            }
-
-            String IZICashServiceID = optionalIZICashServiceIdConfig.get().getParamValue();
+            String IZICashServiceID = xSwitchParameterService.fetchXSwitchParamValue("IZICASH_SERVICEID");
             String mobileWebServiceRequest =
                     IZICashServiceID
                             .concat("|")
@@ -176,33 +107,11 @@ public class IZICashService {
                             .concat("|");
 
 
-            Optional<XSwitchParameter> optionalInterfaceCode = xSwitchParameterRepository.findByParamName("IZICASH_INTERFACECODE");
-            if (optionalIZICashServiceIdConfig.isEmpty()) {
-                log.info("IZI Cash: [Error] An error occurred processing transaction [%s] : Missing configuration for IZICASH_INTERFACECODE");
-                return IZICashResponse.builder()
-                        .status("065")
-                        .message("Transaction processing failed. Please contact BPR Customer care")
-                        .data(null)
-                        .build();
-            }
-
-            String izicash_interfacecode = optionalInterfaceCode.get().getParamValue();
-
-
+            String izicash_interfacecode = xSwitchParameterService.fetchXSwitchParamValue("IZICASH_INTERFACECODE");
             String soapBody = createIZICashRequestXML(mobileWebServiceRequest, izicash_interfacecode);
             iziCashTxnLogs.setXmlRequest(soapBody);
 
-            Optional<XSwitchParameter> optionalIZICashURL = xSwitchParameterRepository.findByParamName("IZICASH_WSDL_URL");
-            if (optionalIZICashURL.isEmpty()) {
-                log.info("IZI Cash: [Error] An error occurred processing transaction [%s] : Missing configuration for IZICASH_WSDL_URL");
-                return IZICashResponse.builder()
-                        .status("065")
-                        .message("Transaction processing failed. Please contact BPR Customer care")
-                        .data(null)
-                        .build();
-            }
-
-            String endpoint = optionalIZICashURL.get().getParamValue();
+            String endpoint = xSwitchParameterService.fetchXSwitchParamValue("IZICASH_WSDL_URL");
             HashMap<String, String> responseMap = sendPostRequestToMobileBankingWebService(soapBody, transactionRRN, endpoint);
 
             String webServiceCallResponseCode = responseMap.get("responseCode");
@@ -232,7 +141,7 @@ public class IZICashService {
                     iziCashTxnLogs.setModeFinResponseCode(WSResultArray[0]);
 
                     String firstPaymentDetails = "AGENCY BANKING IZI WITHDRAWAL";
-                    String secondPaymentDetails = customerPAN + "/" + transactionPassCode + "/" + mobileNo10;
+                    String secondPaymentDetails = request.getSecretCode() + "/" + transactionPassCode + "/" + mobileNo10;
                     String thirdPaymentDetails = transactionTerminalID + "/" + transactionRRN + "/" + modeFinReference;
 
                     String creditAgentRequest =
@@ -507,9 +416,8 @@ public class IZICashService {
         t24Transaction.setPostedstatus("0");
         t24Transaction.setProcode(field003);
 
-        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), t24Transaction);
         transactionService.updateT24TransactionDTO(t24Transaction);
 

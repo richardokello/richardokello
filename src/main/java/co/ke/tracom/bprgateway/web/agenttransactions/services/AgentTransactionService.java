@@ -6,6 +6,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AgentTransacti
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
@@ -36,29 +37,13 @@ public class AgentTransactionService {
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService bprBranchService;
 
-    private final XSwitchParameterRepository xSwitchParameterRepository;
-
-    @Value("${merchant.account.validation}")
-    private String agentValidation;
+    private final XSwitchParameterService xSwitchParameterService;
 
     public AgentTransactionResponse processAgentFloatDeposit(AgentTransactionRequest agentTransactionRequest) {
         AgentTransactionResponse response = new AgentTransactionResponse();
         // Validate agent credentials
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            response.setStatus("117");
-            response.setMessage("Missing agent information");
-            return response;
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            response.setStatus(String.valueOf(
-                    optionalAuthenticateAgentResponse.get().getCode())
-            );
-            response.setMessage(optionalAuthenticateAgentResponse.get().getMessage());
-            return response;
-        }
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
+
         response.setUsername(authenticateAgentResponse.getData().getUsername());
         response.setNames(authenticateAgentResponse.getData().getNames());
         response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
@@ -82,21 +67,7 @@ public class AgentTransactionService {
                 .password(agentTransactionRequest.getCustomerAgentPass())
                 .username(agentTransactionRequest.getCustomerAgentId()).build();
 
-        Optional<AuthenticateAgentResponse> optionalCustomerAgent = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent, agentValidation);
-        if (optionalCustomerAgent.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            response.setStatus("117");
-            response.setMessage("Missing agent information");
-            return response;
-        }else if (optionalCustomerAgent.get().getCode() != HttpStatus.OK.value()) {
-            response.setStatus(String.valueOf(
-                    optionalCustomerAgent.get().getCode())
-            );
-            response.setMessage(optionalCustomerAgent.get().getMessage());
-            return response;
-        }
-        AuthenticateAgentResponse customerAgentData = optionalCustomerAgent.get();
+        AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent);
 
         String customerAgentAccountNo = customerAgentData.getData().getAccountNumber();
         String customerAgentName = customerAgentData.getData().getNames();
@@ -177,8 +148,8 @@ public class AgentTransactionService {
         tot24.setDebitacctno(POSAgentAccount);
         tot24.setCreditacctno(customerAgentAccountNo);
 
-        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
 
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
@@ -254,15 +225,11 @@ public class AgentTransactionService {
         String tid = "PC";
         T24Transaction.setTid(tid);
 
-        Optional<XSwitchParameter> optionalXSwitchT24IP = xSwitchParameterRepository.findByParamName("T24_IP");
-        final String t24Ip = optionalXSwitchT24IP.get().getParamValue();
-
-        Optional<XSwitchParameter> optionalXSwitchT24Port = xSwitchParameterRepository.findByParamName("T24_PORT");
-        final String t24Port = optionalXSwitchT24Port.get().getParamValue();
-
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), T24Transaction);
-
         transactionService.updateT24TransactionDTO(T24Transaction);
+
         if ((T24Transaction.getResponseleg() != null)) {
             if(T24Transaction.getBaladvise().trim().isEmpty()){
                 return 0L;
@@ -280,21 +247,8 @@ public class AgentTransactionService {
 
     public AgentTransactionResponse processAgentFloatWithdrawal(AgentTransactionRequest request, String transactionReferenceNo) {
         AgentTransactionResponse response = AgentTransactionResponse.builder().build();
-        Optional<AuthenticateAgentResponse> optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials(), agentValidation);
-        if (optionalAuthenticateAgentResponse.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information.  Transaction RRN [" + transactionReferenceNo + "]");
-            response.setStatus("117");
-            response.setMessage("Missing agent information");
-            return response;
-        }else if (optionalAuthenticateAgentResponse.get().getCode() != HttpStatus.OK.value()) {
-            response.setStatus(String.valueOf(
-                    optionalAuthenticateAgentResponse.get().getCode())
-            );
-            response.setMessage(optionalAuthenticateAgentResponse.get().getMessage());
-            return response;
-        }
-        AuthenticateAgentResponse authenticateAgentResponse = optionalAuthenticateAgentResponse.get();
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+
         response.setUsername(authenticateAgentResponse.getData().getUsername());
         response.setNames(authenticateAgentResponse.getData().getNames());
         response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
@@ -304,21 +258,7 @@ public class AgentTransactionService {
                 .password(request.getCustomerAgentPass())
                 .username(request.getCustomerAgentId()).build();
 
-        Optional<AuthenticateAgentResponse> optionalCustomerAgent = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent, agentValidation);
-        if (optionalCustomerAgent.isEmpty()) {
-            log.info(
-                    "Agent Float Deposit:[Failed] Missing agent information %n");
-            response.setStatus("117");
-            response.setMessage("Missing agent information");
-            return response;
-        }else if (optionalCustomerAgent.get().getCode() != HttpStatus.OK.value()) {
-            response.setStatus(String.valueOf(
-                    optionalCustomerAgent.get().getCode())
-            );
-            response.setMessage(optionalCustomerAgent.get().getMessage());
-            return response;
-        }
-        AuthenticateAgentResponse customerAgentData = optionalCustomerAgent.get();
+        AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent);
 
         String recipientAgentAccountNo = customerAgentData.getData().getAccountNumber();
         String recipientAgentName = customerAgentData.getData().getNames();
@@ -413,10 +353,8 @@ public class AgentTransactionService {
         tot24.setDebitacctno(recipientAgentAccountNo);
         tot24.setCreditacctno(authenticateAgentResponse.getData().getAccountNumber());
 
-
-        final String t24Ip = xSwitchParameterRepository.findByParamName("T24_IP").get().getParamValue();
-        final String t24Port = xSwitchParameterRepository.findByParamName("T24_PORT").get().getParamValue();
-
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
         transactionService.updateT24TransactionDTO(tot24);
 
