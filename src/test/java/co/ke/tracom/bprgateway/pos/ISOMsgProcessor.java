@@ -3,6 +3,8 @@ package co.ke.tracom.bprgateway.pos;
 import co.ke.tracom.bprgateway.web.util.data.Field47Data;
 import org.junit.Test;
 
+import java.util.Date;
+
 public class ISOMsgProcessor {
 
   @Test
@@ -139,5 +141,9 @@ public class ISOMsgProcessor {
     String toString = field47Data.toString();
 
     System.out.println("toString = " + toString);
+  }
+
+  @Test public void contextLoads() {
+        System.out.println("new Date() = " + new Date());
   }
 }

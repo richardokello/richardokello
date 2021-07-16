@@ -52,22 +52,21 @@ public class T24Channel {
     }
 
     public boolean T24TransactionPosting(T24TXNQueue transactionPendingProcessing, String t24ip, int t24port) {
-        String T24RequestOFS = transactionPendingProcessing.getRequestleg();
+        String t24RequestOFS = transactionPendingProcessing.getRequestleg();
         String transactionRRN = transactionPendingProcessing.getGatewayref();
 
         System.out.printf(
                 "Processing initialization for Transaction RRN [%s] at [%s] OFS Request: [%s]",
-                transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), T24RequestOFS);
+                transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), t24RequestOFS);
 
         TelnetClient telnetClient = new TelnetClient();
         try {
-            telnetClient.connect(t24ip, t24port);
             System.out.printf(
                     "\nConnection established to T24 for Transaction RRN [%s] at [%s] ",
                     transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()));
 
-            String[] OFSSplit = T24RequestOFS.split(",");
-            String OFSContainingMaskedCredentials = OFSSplit[2];
+//            String[] OFSSplit = t24RequestOFS.split(",");
+//            String OFSContainingMaskedCredentials = OFSSplit[2];
 
             Optional<XSwitchParameter> optionalT24UserCredentials = xSwitchParameterRepository.findByParamName("T24USER");
             Optional<XSwitchParameter> optionalT24Pass = xSwitchParameterRepository.findByParamName("T24PASS");
@@ -76,19 +75,26 @@ public class T24Channel {
                 log.info("****************************** Missing T24 Pass or T24 User on the database. ******************************");
             }
 
-            String t24usn = utilityService.decryptSensitiveData( optionalT24UserCredentials.get().getParamValue());
+            String t24usn = utilityService.decryptSensitiveData(optionalT24UserCredentials.get().getParamValue());
             String t24pwd = utilityService.decryptSensitiveData(optionalT24Pass.get().getParamValue());
 
-            String[] T24ChannelCredentials = OFSContainingMaskedCredentials.split("/");
-            String OFSWithPlainTextCredentials =
-                    T24RequestOFS.replaceAll(T24ChannelCredentials[0], t24usn);
-            OFSWithPlainTextCredentials =
-                    OFSWithPlainTextCredentials.replaceAll(T24ChannelCredentials[1], t24pwd);
+//            String[] T24ChannelCredentials = OFSContainingMaskedCredentials.split("/");
+//            String OFSWithPlainTextCredentials =
+//                    t24RequestOFS.replaceAll(T24ChannelCredentials[0], t24usn);
+//            OFSWithPlainTextCredentials =
+//                    OFSWithPlainTextCredentials.replaceAll(T24ChannelCredentials[1], t24pwd);
+
+            t24RequestOFS = t24RequestOFS.replace(MASKED_T24_USERNAME, t24usn.trim());
+            String OFSWithPlainTextCredentials = t24RequestOFS.replace(MASKED_T24_PASSWORD, t24pwd.trim());
+
 
             String minus4 = OFSWithPlainTextCredentials.substring(4);
             String formattedOFSMessageString = String.format("%04d", minus4.length()) + minus4;
 
-            boolean sent = send(telnetClient, formattedOFSMessageString, transactionRRN);
+            System.err.println("Formatted OFS Message String: " + formattedOFSMessageString);
+
+            telnetClient.connect(t24ip, t24port);
+            boolean sent = send(telnetClient, formattedOFSMessageString.trim(), transactionRRN);
             String T24ResponseOFS = receive(telnetClient, transactionPendingProcessing);
 
             System.out.printf(
@@ -120,6 +126,9 @@ public class T24Channel {
                         case "430000":
                         case "500000":
                             parseT24EnquiryResponse(transactionPendingProcessing, transactionRRN);
+                            break;
+                        case "500001":
+                            parseT24SMSResponse(transactionPendingProcessing, transactionRRN);
                             break;
 
                         default:
@@ -155,6 +164,40 @@ public class T24Channel {
             }
         }
         return true;
+    }
+
+    /**
+     * Unpack OFS Message from T24
+     *  Structure Failure: 0081,Y.STATUS::STATUS/Y.REASON::REJECT.REASON,"FAILED" "The access token has expired"
+     *  Structure Success: 0081,Y.STATUS::STATUS/Y.REASON::REJECT.REASON,"Success" "Message sent successful"
+     * @param t24TXNQueue
+     * @param transactionRRN
+     */
+    private void parseT24SMSResponse(T24TXNQueue t24TXNQueue, String transactionRRN) {
+        String T24RawResponse = t24TXNQueue.getResponseleg();
+        System.out.printf("T24 Raw response for SMS transaction %s is [%s] %n", transactionRRN, T24RawResponse);
+        t24TXNQueue.setT24reference("");
+        t24TXNQueue.setPostedstatus("1");
+        String[] T24MessageBodyArray = T24RawResponse.split(",");
+        if (T24MessageBodyArray.length == 3) {
+            String[] split = T24MessageBodyArray[2].split("\"");
+
+            if (split[1].equalsIgnoreCase("FAILED")) {
+                t24TXNQueue.setT24responsecode("5");
+                System.out.println("Processing status = " + split[1]);
+            }
+            if (split[1].equalsIgnoreCase("SUCCESS")) {
+                t24TXNQueue.setT24responsecode("1");
+                System.out.println("Processing status = " + split[1]);
+            }
+            if (!split[3].isEmpty()) {
+                System.out.println(split[3]);
+                t24TXNQueue.setT24failnarration(split[3]);
+            }
+        } else {
+            t24TXNQueue.setT24responsecode("5");
+            t24TXNQueue.setT24failnarration("Invalid response: " + T24RawResponse);
+        }
     }
 
     private boolean send(TelnetClient client, String data, String referenceNo) throws IOException {
@@ -419,94 +462,101 @@ public class T24Channel {
         t24TXNQueue.setPostedstatus("1");
     }
 
-    private static void parseT24EnquiryResponse(T24TXNQueue T24Request, String transactionRRN) {
+    private static void parseT24EnquiryResponse(T24TXNQueue t24Request, String transactionRRN) {
         System.out.printf("Begin processing of enquiry response for transaction %s %n", transactionRRN);
 
-        String t24Response = T24Request.getResponseleg();
+        String t24Response = t24Request.getResponseleg();
         System.out.printf(
                 "T24 response for transaction reference no %s : [%s] %n", transactionRRN, t24Response);
 
         String[] responseMessageArray = t24Response.substring(4).split(",");
-        String[] enquiryResponseArray = responseMessageArray[2].split("\\|");
 
-        for (int i = 0; i < enquiryResponseArray.length - 1; i++) {
-            if (i == 0) {
-                // Value in array is in format: "CUSTDET"	"401428327210176"	"#RWF
-                String[] currencyArray = enquiryResponseArray[0].split("#");
-                String currency =
-                        currencyArray.length > 1 ? currencyArray[1].toUpperCase() : enquiryResponseArray[0];
-                T24Request.setCurrency(currency);
-                System.out.printf("Transaction %s account currency %s %n", transactionRRN, currency);
+        if (responseMessageArray.length > 1) {
 
-            } else if (i == 1) {
-                T24Request.setAccounttitle(enquiryResponseArray[1]);
-                T24Request.setAccountname(enquiryResponseArray[1]);
-                System.out.printf(
-                        "Transaction %s account title %s %n", transactionRRN, T24Request.getAccounttitle());
 
-            } else if (i == 2) {
-                T24Request.setCustid(enquiryResponseArray[2]);
-                System.out.printf(
-                        "Transaction %s account customer Id %s %n", transactionRRN, T24Request.getCustid());
+            String[] enquiryResponseArray = responseMessageArray[2].split("\\|");
 
-            } else if (i == 3) {
-                T24Request.setWorkingbal(enquiryResponseArray[3]);
-                T24Request.setBaladvise(enquiryResponseArray[3]);
-                System.out.printf(
-                        "Transaction %s account working balance %s %n", transactionRRN, T24Request.getWorkingbal());
+            for (int i = 0; i < enquiryResponseArray.length - 1; i++) {
+                if (i == 0) {
+                    // Value in array is in format: "CUSTDET"	"401428327210176"	"#RWF
+                    String[] currencyArray = enquiryResponseArray[0].split("#");
+                    String currency =
+                            currencyArray.length > 1 ? currencyArray[1].toUpperCase() : enquiryResponseArray[0];
+                    t24Request.setCurrency(currency);
+                    System.out.printf("Transaction %s account currency %s %n", transactionRRN, currency);
 
-            } else if (i == 4) {
-                String inactivemarker = enquiryResponseArray[4];
-                System.out.printf(
-                        "Transaction %s account inactive maker setting %s %n", transactionRRN, inactivemarker);
+                } else if (i == 1) {
+                    t24Request.setAccounttitle(enquiryResponseArray[1]);
+                    t24Request.setAccountname(enquiryResponseArray[1]);
+                    System.out.printf(
+                            "Transaction %s account title %s %n", transactionRRN, t24Request.getAccounttitle());
 
-            } else if (i == 5) {
-                String postingRestrict = enquiryResponseArray[5];
-                System.out.printf(
-                        "Transaction %s account posting restriction setting %s %n",
-                        transactionRRN, postingRestrict);
+                } else if (i == 2) {
+                    t24Request.setCustid(enquiryResponseArray[2]);
+                    System.out.printf(
+                            "Transaction %s account customer Id %s %n", transactionRRN, t24Request.getCustid());
 
-            } else if (i == 6) {
-                T24Request.setLegalid(enquiryResponseArray[6]);
-                System.out.printf(
-                        "Transaction %s customer legal ID %s %n", transactionRRN, T24Request.getLegalid());
+                } else if (i == 3) {
+                    t24Request.setWorkingbal(enquiryResponseArray[3]);
+                    t24Request.setBaladvise(enquiryResponseArray[3]);
+                    System.out.printf(
+                            "Transaction %s account working balance %s %n", transactionRRN, t24Request.getWorkingbal());
 
-            } else if (i == 7) {
-                T24Request.setTowncountry(enquiryResponseArray[7]);
-                System.out.printf(
-                        "Transaction %s customer town/country %s %n", transactionRRN, T24Request.getTowncountry());
+                } else if (i == 4) {
+                    String inactivemarker = enquiryResponseArray[4];
+                    System.out.printf(
+                            "Transaction %s account inactive maker setting %s %n", transactionRRN, inactivemarker);
 
-            } else if (i == 8) {
-                T24Request.setPhone(enquiryResponseArray[8]);
-                System.out.printf(
-                        "Transaction %s customer phone number %s %n", transactionRRN, T24Request.getPhone());
+                } else if (i == 5) {
+                    String postingRestrict = enquiryResponseArray[5];
+                    System.out.printf(
+                            "Transaction %s account posting restriction setting %s %n",
+                            transactionRRN, postingRestrict);
 
-            } else if (i == 9) {
-                T24Request.setDateofbirth(enquiryResponseArray[9]);
-                System.out.printf(
-                        "Transaction %s customer date of birth %s %n", transactionRRN, T24Request.getDateofbirth());
+                } else if (i == 6) {
+                    t24Request.setLegalid(enquiryResponseArray[6]);
+                    System.out.printf(
+                            "Transaction %s customer legal ID %s %n", transactionRRN, t24Request.getLegalid());
 
-            } else if (i == 10) {
-                T24Request.setCustemail(enquiryResponseArray[10]);
-                System.out.printf(
-                        "Transaction %s customer email %s %n", transactionRRN, T24Request.getCustemail());
+                } else if (i == 7) {
+                    t24Request.setTowncountry(enquiryResponseArray[7]);
+                    System.out.printf(
+                            "Transaction %s customer town/country %s %n", transactionRRN, t24Request.getTowncountry());
 
-            } else if (i == 11) {
-                T24Request.setBusinessloc(enquiryResponseArray[11]);
-                System.out.printf(
-                        "Transaction %s customer business location %s %n",
-                        transactionRRN, T24Request.getBusinessloc());
+                } else if (i == 8) {
+                    t24Request.setPhone(enquiryResponseArray[8]);
+                    System.out.printf(
+                            "Transaction %s customer phone number %s %n", transactionRRN, t24Request.getPhone());
 
-            } else if (i == 12) {
-                T24Request.setSector(enquiryResponseArray[12]);
-                System.out.printf(
-                        "Transaction %s customer business sector %s %n", transactionRRN, T24Request.getSector());
+                } else if (i == 9) {
+                    t24Request.setDateofbirth(enquiryResponseArray[9]);
+                    System.out.printf(
+                            "Transaction %s customer date of birth %s %n", transactionRRN, t24Request.getDateofbirth());
+
+                } else if (i == 10) {
+                    t24Request.setCustemail(enquiryResponseArray[10]);
+                    System.out.printf(
+                            "Transaction %s customer email %s %n", transactionRRN, t24Request.getCustemail());
+
+                } else if (i == 11) {
+                    t24Request.setBusinessloc(enquiryResponseArray[11]);
+                    System.out.printf(
+                            "Transaction %s customer business location %s %n",
+                            transactionRRN, t24Request.getBusinessloc());
+
+                } else if (i == 12) {
+                    t24Request.setSector(enquiryResponseArray[12]);
+                    System.out.printf(
+                            "Transaction %s customer business sector %s %n", transactionRRN, t24Request.getSector());
+                }
             }
+        } else {
+            t24Request.setResponseleg(responseMessageArray[0]);
         }
 
-        T24Request.setPostedstatus("1");
-        T24Request.setAttempts(T24Request.getAttempts() < 1 ? 1 : T24Request.getAttempts() + 1);
-//        updateT24TransactionDTO(T24Request);
+        t24Request.setPostedstatus("1");
+        t24Request.setAttempts(t24Request.getAttempts() < 1 ? 1 : t24Request.getAttempts() + 1);
+
         System.out.printf(
                 "T24 Response parsing successful for transaction reference no %s %n", transactionRRN);
     }

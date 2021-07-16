@@ -11,7 +11,6 @@ import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentRespons
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponseData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRATINValidationResponse;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
-import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.entities.TransactionAdvices;
@@ -47,8 +46,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
@@ -72,12 +69,12 @@ public class RRAService {
 
         HttpPost httpPost = null;
         try {
-            Boolean exists = findPendingRRAPaymentOnQueueByRRATIN(request.getRRATIN());
+            Boolean exists = findPendingRRAPaymentOnQueueByRRATIN(request.getRrareferenceNo());
 
             if (exists) {
                 String format = String.format(
                         "RRA Transaction with RRA TIN NO: %s and POS RRN [%s] could not be processed. RRA TIN has a pending transaction on the gateway queue",
-                        request.getRRATIN(), transactionRRN);
+                        request.getRrareferenceNo(), transactionRRN);
                 log.info(format);
                 return RRATINValidationResponse.builder()
                         .status("097")
@@ -86,9 +83,9 @@ public class RRAService {
             }
 
             System.out.printf("Preparing XML request for transaction RRN[%s] with RRA Ref [%s]",
-                    transactionRRN, request.getRRATIN());
+                    transactionRRN, request.getRrareferenceNo());
 
-            String rraValidationPayload = bootstrapRRAXMLRequest(request.getRRATIN());
+            String rraValidationPayload = bootstrapRRAXMLRequest(request.getRrareferenceNo());
             System.err.println("rraValidationPayload = " + rraValidationPayload);
 
             String rrasoapurl = xSwitchParameterService.fetchXSwitchParamValue("RRASOAPURL") ;
@@ -121,7 +118,7 @@ public class RRAService {
                 // Server did not respond
                 retrnedxml = "";
                 System.out.printf(
-                        "\n \n  Empty response for reference : %s \n \n " + request.getRRATIN());
+                        "\n \n  Empty response for reference : %s \n \n " + request.getRrareferenceNo());
             }
 
             // always true
@@ -164,10 +161,10 @@ public class RRAService {
                 JSONObject xmlJSONObj = XML.toJSONObject(writer.toString());
 
                 if (xmlJSONObj == null || xmlJSONObj.length() == 0) {
-                    System.out.println("NO response for RRA REF " + request.getRRATIN());
+                    System.out.println("NO response for RRA REF " + request.getRrareferenceNo());
                     return RRATINValidationResponse.builder()
                             .status("908")
-                            .message("Ref " + request.getRRATIN() + " could not be verified by RRA system")
+                            .message("Ref " + request.getRrareferenceNo() + " could not be verified by RRA system")
                             .data(null).build();
 
                 } else {
@@ -243,18 +240,18 @@ public class RRAService {
 
                     return RRATINValidationResponse.builder()
                             .status("00")
-                            .message("Ref " + request.getRRATIN() + " validated successfully")
+                            .message("Ref " + request.getRrareferenceNo() + " validated successfully")
                             .data(rraData).build();
                 }
             } else {
                 return RRATINValidationResponse.builder()
                         .status("098")
-                        .message("No response from RRA for ref : " + request.getRRATIN() + " system")
+                        .message("No response from RRA for ref : " + request.getRrareferenceNo() + " system")
                         .data(null).build();
             }
 
         } catch (JSONException je) {
-            log.info("RRA TIN Validation for " + request.getRRATIN() + " failed. " + je.getMessage());
+            log.info("RRA TIN Validation for " + request.getRrareferenceNo() + " failed. " + je.getMessage());
             return RRATINValidationResponse.builder()
                     .status("098")
                     .message("RRA Ref Could not be verified.")

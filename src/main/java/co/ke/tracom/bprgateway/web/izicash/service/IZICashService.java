@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -77,10 +78,11 @@ public class IZICashService {
             }
 
             String mobileNo10 = request.getMobileNo();
-            String customerMobileNo = mobileNo10.substring(mobileNo10.length() - 5);
+            String mobileNoLast5Digits = mobileNo10.substring(mobileNo10.length() - 5);
+//            String mobileNoLast5Digits = mobileNo10;
             iziCashTxnLogs.setRecipientNo(mobileNo10);
 
-            String transactionPassCode = request.getPinCode();
+            String pinCode = request.getPinCode();
             Long transactionAmount = request.getAmount();
 
 //            String customerPAN = request.getSecretCode();
@@ -93,19 +95,18 @@ public class IZICashService {
             String mobileWebServiceRequest =
                     IZICashServiceID
                             .concat("|")
-                            .concat(customerMobileNo)
+                            .concat(mobileNoLast5Digits.trim())
                             .concat("|")
-                            .concat(transactionPassCode)
+                            .concat(pinCode.trim())
                             .concat("|")
-                            .concat(secretCode)
+                            .concat(secretCode.substring(secretCode.length()-5).trim())
                             .concat("|")
-                            .concat(String.valueOf(transactionAmount))
+                            .concat(String.valueOf(transactionAmount).trim())
                             .concat("|")
-                            .concat(transactionTerminalID)
+                            .concat(transactionTerminalID.trim())
                             .concat("|")
-                            .concat(transactionRRN)
+                            .concat(transactionRRN.trim())
                             .concat("|");
-
 
             String izicash_interfacecode = xSwitchParameterService.fetchXSwitchParamValue("IZICASH_INTERFACECODE");
             String soapBody = createIZICashRequestXML(mobileWebServiceRequest, izicash_interfacecode);
@@ -120,6 +121,8 @@ public class IZICashService {
             if (webServiceCallResponseCode.equalsIgnoreCase("200")) {
 
                 String response = responseMap.get("responseMessage");
+
+                log.info("IZI Cash Response: " + response);
                 String wsresponse = "";
                 try {
                     wsresponse = getTag(response);
@@ -137,11 +140,13 @@ public class IZICashService {
                 if (WSResultArray[0].equalsIgnoreCase("00") && WSResultArray.length >= 4) {
 
                     String modeFinReference = WSResultArray[3];
+                    log.info("Mode Fin Reference " + modeFinReference);
+
                     iziCashTxnLogs.setGatewayT24Reference(modeFinReference);
                     iziCashTxnLogs.setModeFinResponseCode(WSResultArray[0]);
 
                     String firstPaymentDetails = "AGENCY BANKING IZI WITHDRAWAL";
-                    String secondPaymentDetails = request.getSecretCode() + "/" + transactionPassCode + "/" + mobileNo10;
+                    String secondPaymentDetails = request.getSecretCode() + "/" + pinCode + "/" + mobileNo10;
                     String thirdPaymentDetails = transactionTerminalID + "/" + transactionRRN + "/" + modeFinReference;
 
                     String creditAgentRequest =
@@ -171,7 +176,7 @@ public class IZICashService {
 
                         iziCashTxnLogs.setGatewayT24Reference(tot24.getT24reference());
                         iziCashTxnLogs.setGatewayT24PostingStatus(tot24.getT24responsecode());
-                       //TODO Put success response
+                        //TODO Put success response
                         IZICashResponseData iziCashResponseData = IZICashResponseData.builder()
                                 .rrn(transactionRRN)
                                 .t24Reference(tot24.getT24reference())
@@ -189,9 +194,9 @@ public class IZICashService {
                                 .message("IZICash Withdrawal transaction successful.")
                                 .build();
 
-                        log.info("IZICash withdrawal successful. "+ iziCashResponse.toString());
+                        log.info("IZICash withdrawal successful. " + iziCashResponse.toString());
                         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IZI CASH WITHDRAWAL", "1200",
-                                 request.getAmount() , "000");
+                                request.getAmount(), "000");
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;
                     } else {
@@ -206,11 +211,12 @@ public class IZICashService {
                         IZICashResponse iziCashResponse = IZICashResponse.builder()
                                 .data(iziCashResponseData)
                                 .status("098")
-                                .message("IZICash Withdrawal transaction failed. Reversal Required.")
+                                .message("IZICash Withdrawal transaction failed. Reversal Required. Error: "+ tot24.getT24failnarration())
                                 .build();
 
                         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IZI CASH WITHDRAWAL", "1200",
-                                request.getAmount() , "098");
+                                request.getAmount(), "098");
+                        iziCashTxnLogs.setPassCode("*****");
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;
                     }
@@ -222,18 +228,20 @@ public class IZICashService {
                     iziCashTxnLogs.setModeFinTransactionDescription(WSResultArray[1]);
                     iziCashTxnLogs.setModeFinT24Reference(WSResultArray[3]);
                     iziCashTxnLogs.setGatewayT24PostingStatus("5");
+                    iziCashTxnLogs.setPassCode("*****");
                     iziCashTxnLogsRepository.save(iziCashTxnLogs);
 
                     return IZICashResponse.builder()
                             .data(null)
                             .status("118")
-                            .message("IZICash Withdrawal transaction failed. "+ WSResultArray[1])
+                            .message("IZICash Withdrawal transaction failed. " + WSResultArray[1])
                             .build();
                 }
             } else {
                 iziCashTxnLogs.setGatewayT24PostingStatus("5");
+                iziCashTxnLogs.setPassCode("*****");
                 iziCashTxnLogsRepository.save(iziCashTxnLogs);
-               return IZICashResponse.builder()
+                return IZICashResponse.builder()
                         .data(null)
                         .status("092")
                         .message("IZICash Withdrawal transaction failed.")
@@ -253,6 +261,9 @@ public class IZICashService {
     }
 
     public String createIZICashRequestXML(String payload, String IZICashInterfaceCode) {
+
+        log.info("IZI Cash Payload: " + payload);
+
         return "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ever=\"http://everest\">\n"
                 + "   <soap:Header/>\n"
                 + "   <soap:Body>\n"
@@ -365,8 +376,17 @@ public class IZICashService {
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(new InputSource(new StringReader(response)));
         doc.getDocumentElement().normalize();
-        NodeList statusMessageNL = doc.getElementsByTagName("ns:return");
-        return statusMessageNL.item(0).getTextContent().trim();
+
+        NodeList childNodes = doc.getChildNodes();
+        Node envelope = childNodes.item(0);
+        Node body = envelope.getChildNodes().item(1);
+        Node processWebServiceReq = body.getChildNodes().item(0);
+        Node req = processWebServiceReq.getChildNodes().item(0);
+
+//        NodeList statusMessageNL = doc.getElementsByTagName("ns:return");
+//        return statusMessageNL.item(0).getTextContent().trim();
+
+        return req.getTextContent();
     }
 
     public String prepareIZICashT24OFS(String accountBranchID, String agentFloatAccount, String IZICashSuspenseAccount,
@@ -416,8 +436,8 @@ public class IZICashService {
         t24Transaction.setPostedstatus("0");
         t24Transaction.setProcode(field003);
 
-        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
-        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), t24Transaction);
         transactionService.updateT24TransactionDTO(t24Transaction);
 
