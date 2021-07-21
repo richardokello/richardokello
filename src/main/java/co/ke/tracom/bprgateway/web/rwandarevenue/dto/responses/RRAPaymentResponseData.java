@@ -14,4 +14,6 @@ public class RRAPaymentResponseData extends BaseResponseData {
     double transactionCharges;
     String T24Reference;
     String rrn;
+    String tid;
+    String mid;
 }

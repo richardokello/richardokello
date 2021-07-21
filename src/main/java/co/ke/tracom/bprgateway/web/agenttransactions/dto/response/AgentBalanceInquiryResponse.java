@@ -13,4 +13,6 @@ public class AgentBalanceInquiryResponse {
     String status;
     String message;
     String balance;
+    String tid;
+    String mid;
 }

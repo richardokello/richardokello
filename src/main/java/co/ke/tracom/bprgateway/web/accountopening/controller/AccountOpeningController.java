@@ -42,8 +42,8 @@ public class AccountOpeningController {
     public ResponseEntity<?> OpenCustomerAccount(@RequestBody AccountOpeningRequest request) {
         AccountOpeningResponse response = AccountOpeningResponse
                 .builder()
-                .status("00")
-                .message("Account creation successful")
+                .status("01")
+                .message("Account opening functionality not complete")
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RRATINValidationRequest {
     private MerchantAuthInfo credentials;
-    private String RRATIN;
+    private String rrareferenceNo;
 }

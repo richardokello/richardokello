@@ -14,6 +14,9 @@ import co.ke.tracom.bprgateway.web.sendmoney.data.response.SendMoneyResponse;
 import co.ke.tracom.bprgateway.web.sendmoney.data.response.SendMoneyResponseData;
 import co.ke.tracom.bprgateway.web.sendmoney.entity.MoneySend;
 import co.ke.tracom.bprgateway.web.sendmoney.repository.MoneySendRepository;
+import co.ke.tracom.bprgateway.web.sms.dto.SMSRequest;
+import co.ke.tracom.bprgateway.web.sms.dto.SMSResponse;
+import co.ke.tracom.bprgateway.web.sms.services.SMSService;
 import co.ke.tracom.bprgateway.web.smsscheduled.entities.ScheduledSMS;
 import co.ke.tracom.bprgateway.web.smsscheduled.repository.ScheduledSMSRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
@@ -30,6 +33,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.Random;
 
+import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_RECEIVER;
+import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_SENDER;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
 
@@ -45,6 +50,7 @@ public class SendMoneyService {
     private final TransactionService transactionService;
     private final BPRCreditCardNumberGenerator bprCreditCardNumberGenerator;
     private final DesUtil desUtil;
+    private final SMSService smsService;
 
     private final XSwitchParameterService xSwitchParameterService;
     private final MoneySendRepository moneySendRepository;
@@ -90,7 +96,7 @@ public class SendMoneyService {
             if ((tot24.getT24responsecode().equalsIgnoreCase("1"))) {
                 return processSuccessfulSendMoneyT24Transaction(request, transactionRRN, agentAuthData, branchAccountID,
                         senderMobileNo, receiverMobile, firstTransactionPaymentDetails, secondTransactionPaymentDetails,
-                        thirdTransactionPaymentDetails, nationalIdDocumentName, tid, tot24);
+                        thirdTransactionPaymentDetails, nationalIdDocumentName, tid, tot24, authenticateAgentResponse);
             } else {
                 return processFailedSendMoneyT24Transaction(transactionRRN, agentAuthData, tot24.getT24reference());
             }
@@ -105,7 +111,14 @@ public class SendMoneyService {
                 .build();
     }
 
-    private SendMoneyResponse processSuccessfulSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN, Data agentAuthData, String branchAccountID, String senderMobileNo, String receiverMobile, String firstTransactionPaymentDetails, String secondTransactionPaymentDetails, String thirdTransactionPaymentDetails, String nationalIdDocumentName, String tid, T24TXNQueue tot24) {
+    private SendMoneyResponse processSuccessfulSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN,
+                                                                       Data agentAuthData, String branchAccountID,
+                                                                       String senderMobileNo, String receiverMobile,
+                                                                       String firstTransactionPaymentDetails,
+                                                                       String secondTransactionPaymentDetails,
+                                                                       String thirdTransactionPaymentDetails,
+                                                                       String nationalIdDocumentName, String tid,
+                                                                       T24TXNQueue tot24, AuthenticateAgentResponse authenticateAgentResponse) {
         SendMoneyResponseData data = SendMoneyResponseData.builder().build();
         try {
             String charges = tot24.getTotalchargeamt();
@@ -121,10 +134,12 @@ public class SendMoneyService {
 
             data.setCharges(Double.parseDouble(formattedCharge));
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY", "1200",
-                    request.getAmount(), "000");
+                    request.getAmount(), "000",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
         } catch (Exception e) {
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY", "1200",
-                    request.getAmount(), "000");
+                    request.getAmount(), "098",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             System.out.println(
                     "Unable to get charges for send money transaction reference " + transactionRRN);
             e.printStackTrace();
@@ -136,19 +151,24 @@ public class SendMoneyService {
         data.setBusinessName(agentAuthData.getBusinessName());
         data.setLocation(agentAuthData.getLocation());
 
+        data.setTid(authenticateAgentResponse.getData().getTid());
+        data.setMid(authenticateAgentResponse.getData().getMid());
         try {
             String virtualBIN = xSwitchParameterService.fetchXSwitchParamValue("CARDLESSTXNBIN");
             String CARDLESS_TXN_BIN = "123456";
             String virtualCardBIN = virtualBIN.equals("") ? CARDLESS_TXN_BIN : virtualBIN;
-            String cno = bprCreditCardNumberGenerator.generate(virtualCardBIN, 12);
-            String generatedCardNo = desUtil.encryptPlainText(cno);
+            String vCardNo = bprCreditCardNumberGenerator.generate(virtualCardBIN, 12);
+            String generatedCardNo = desUtil.encryptPlainText(vCardNo);
             if (generatedCardNo != null) {
                 Random generator = new Random();
-                String token = String.format("%06d", 100000 + generator.nextInt(899999));
+                String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
 
-                saveSendMoneyTransaction(request, agentAuthData, senderMobileNo, receiverMobile, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, token);
-                saveRecipientMessage(request, transactionRRN, senderMobileNo, receiverMobile, cno);
-                saveSenderMessage(request, transactionRRN, senderMobileNo, receiverMobile, token);
+                saveSendMoneyTransaction(request, agentAuthData, senderMobileNo, receiverMobile, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode);
+
+
+                saveRecipientMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
+
+                saveSenderMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
 
                 return SendMoneyResponse.builder()
                         .status("00")
@@ -176,12 +196,18 @@ public class SendMoneyService {
         }
     }
 
-    private void saveRecipientMessage(SendMoneyRequest request, String transactionRRN, String senderMobileNo, String receiverMobile, String cno) {
-        String recipientMessage = recipientMessage(request, senderMobileNo, cno);
+    private void saveRecipientMessage(SendMoneyRequest request, String transactionRRN, String senderMobileNo,
+                                      String receiverMobile, String passCode, String vCardNo) {
+        String recipientMessage = recipientMessage(request, senderMobileNo, vCardNo);
+
+        SMSRequest smsObject = getNewSMSRequest(request, senderMobileNo, receiverMobile, passCode, vCardNo, SMS_FUNCTION_RECEIVER);
+        SMSResponse response = smsService.sendSMS(smsObject);
+
+        log.info("Recipient Send Money SMS Status: "+ response.toString());
 
         while (recipientMessage.length() > 0) {
             ScheduledSMS scheduledSMSTransaction = new ScheduledSMS();
-            scheduledSMSTransaction.setSentstatus(0);
+            scheduledSMSTransaction.setSentstatus(1);
             scheduledSMSTransaction.setAttempts(0);
             scheduledSMSTransaction.setReceiverphone(receiverMobile);
             scheduledSMSTransaction.setTxnref(transactionRRN);
@@ -198,13 +224,46 @@ public class SendMoneyService {
         }
     }
 
-    private void saveSenderMessage(SendMoneyRequest request, String transactionRRN, String senderMobileNo, String receiverMobile, String token) {
-        String senderMessage = senderMessage(request, receiverMobile, token);
+    /**
+     * Added on 07/15/2021
+     * BPR Switched SMS API and added a custom way of sending Message
+     * Message body format:  AMOUNT/ PHONE NUMBER IN MESSAGE / PASSCODE / CARD  NO
+     *
+     *
+     * @param request
+     * @param senderMobileNo
+     * @param receiverMobile
+     * @param passCode
+     * @param vCardNo
+     * @param smsFunctionReceiver
+     * @return
+     */
+    private SMSRequest getNewSMSRequest(SendMoneyRequest request, String senderMobileNo, String receiverMobile, String passCode, String vCardNo, String smsFunctionReceiver) {
+        return SMSRequest.builder()
+                .recipient(receiverMobile)
+                .SMSFunction(smsFunctionReceiver)
+                .message(new StringBuilder().append(request.getAmount())
+                        .append("/")
+                        .append(senderMobileNo)
+                        .append("/")
+                        .append(passCode)
+                        .append("/")
+                        .append(vCardNo).toString())
+                .build();
+    }
+
+    private void saveSenderMessage(SendMoneyRequest request, String transactionRRN,
+                                   String senderMobileNo, String receiverMobile, String passCode,
+                                   String vCardNo) {
+        String senderMessage = senderMessage(request, receiverMobile, passCode);
+        SMSRequest smsObject = getNewSMSRequest(request, receiverMobile, senderMobileNo, passCode, vCardNo, SMS_FUNCTION_SENDER);
+        SMSResponse response = smsService.sendSMS(smsObject);
+        log.info("Sender Send Money SMS Status: "+ response.toString());
 
         // Insert Second SMS
         String SMSContent = utilityService.encryptText(senderMessage);
         ScheduledSMS scheduledSMS = new ScheduledSMS();
-        scheduledSMS.setSentstatus(0);
+        scheduledSMS.setSentstatus(1);
         scheduledSMS.setAttempts(0);
         scheduledSMS.setMessage(SMSContent);
         scheduledSMS.setReceiverphone(senderMobileNo);
@@ -212,7 +271,7 @@ public class SendMoneyService {
         scheduledSMSRepository.save(scheduledSMS);
     }
 
-    private String senderMessage(SendMoneyRequest request, String receiverMobile, String token) {
+    private String senderMessage(SendMoneyRequest request, String receiverMobile, String passCode) {
         return "You have successfully sent RWF"
                 + request.getAmount()
                 + " to "
@@ -220,18 +279,18 @@ public class SendMoneyService {
                 + " "
                 + "via BPR Cardless transfer. Kindly share passcode with the recipient."
                 + "passcode : "
-                + token
+                + passCode
                 + ". Thanks for banking with us.";
     }
 
-    private String recipientMessage(SendMoneyRequest request, String senderMobileNo, String cno) {
+    private String recipientMessage(SendMoneyRequest request, String senderMobileNo, String cardNo) {
         return "You have received RWF "
                 + request.getAmount()
                 + " from "
                 + senderMobileNo
                 + " to "
                 + "withdraw at a BPR agent. Provide VCARD no: "
-                + cno
+                + cardNo
                 + ", "
                 + "Sender will share the passcode. MURAKOZE";
     }
@@ -694,7 +753,8 @@ public class SendMoneyService {
 
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
-                        request.getAmount(), "000");
+                        request.getAmount(), "000",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
 
                 SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
@@ -707,6 +767,10 @@ public class SendMoneyService {
                 sendMoneyResponseData.setNames(authenticateAgentResponse.getData().getNames());
                 sendMoneyResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
                 sendMoneyResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
+                sendMoneyResponseData.setTid(authenticateAgentResponse.getData().getTid());
+                sendMoneyResponseData.setMid(authenticateAgentResponse.getData().getMid());
+
+
 
                 return SendMoneyResponse.builder()
                         .status("00")
@@ -718,7 +782,8 @@ public class SendMoneyService {
 
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
-                        request.getAmount(), "118");
+                        request.getAmount(), "118",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
                 SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
                         .T24Reference(tot24.getT24reference())

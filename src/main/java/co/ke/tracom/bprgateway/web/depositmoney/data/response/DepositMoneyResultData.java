@@ -12,5 +12,7 @@ public class DepositMoneyResultData extends BaseResponseData {
        private String t24Reference;
        private String charges;
        private String rrn;
+       private String tid;
+       private String mid;
 
 }

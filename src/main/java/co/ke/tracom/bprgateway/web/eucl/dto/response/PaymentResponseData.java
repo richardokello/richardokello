@@ -17,4 +17,6 @@ public class PaymentResponseData extends BaseResponseData {
     String token;
     String unitsInKW;
     String rrn;
+    String tid;
+    String mid;
 }

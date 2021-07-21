@@ -48,6 +48,8 @@ public class AgentTransactionService {
         response.setNames(authenticateAgentResponse.getData().getNames());
         response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
         response.setLocation(authenticateAgentResponse.getData().getLocation());
+        response.setTid(authenticateAgentResponse.getData().getTid());
+        response.setMid(authenticateAgentResponse.getData().getMid());
 
         String transactionReferenceNo = RRNGenerator.getInstance("AD").getRRN();
         String POSAgentAccount = authenticateAgentResponse.getData().getAccountNumber();
@@ -83,7 +85,7 @@ public class AgentTransactionService {
 
         BPRBranches bprBranches = bprBranchService.fetchBranchAccountsByBranchCode(POSAgentAccount);
         if (null == bprBranches.getCompanyName()) {
-           log.info("Agent float deposit transaction ["+transactionReferenceNo+"] failed. Error: Agent branch details could not be verified.");
+            log.info("Agent float deposit transaction [" + transactionReferenceNo + "] failed. Error: Agent branch details could not be verified.");
 
             response.setStatus("065");
             response.setMessage("Agent branch details could not be verified. Kindly contact BPR customer care");
@@ -101,7 +103,7 @@ public class AgentTransactionService {
         }
 
         //TODO Terminal id and merchant id combination
-        String secondPaymentDetails = authenticateAgentResponse.getData().getAccountNumber()+" "+authenticateAgentResponse.getData().getNames();
+        String secondPaymentDetails = authenticateAgentResponse.getData().getAccountNumber() + " " + authenticateAgentResponse.getData().getNames();
         String thirdPaymentDetails = "Agent Float Deposit";
         String agentFloatDepositOFSTemplate =
                 "0000AFUNDS.TRANSFER,AGENCY.DEPOSIT/I/PROCESS/2/0,"
@@ -143,7 +145,7 @@ public class AgentTransactionService {
 
         //TODO Put processing codes on enum
         tot24.setProcode("480000");
-        String tid = "PC";
+        String tid = authenticateAgentResponse.getData().getTid();
         tot24.setTid(tid);
         tot24.setDebitacctno(POSAgentAccount);
         tot24.setCreditacctno(customerAgentAccountNo);
@@ -179,8 +181,10 @@ public class AgentTransactionService {
                 e.printStackTrace();
             }
 
-            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT DEPOSIT", "1200",
-                    agentTransactionRequest.getAmount(), "000");
+            transactionService.saveCardLessTransactionToAllTransactionTable(
+                    tot24, "AGENT FLOAT DEPOSIT", "1200",
+                    agentTransactionRequest.getAmount(), "000",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
             response.setT24Reference(tot24.getT24reference());
             response.setRrn(transactionReferenceNo);
@@ -188,8 +192,10 @@ public class AgentTransactionService {
             response.setMessage("Transaction processed successful");
             return response;
         } else {
-        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT DEPOSIT", "1200",
-                agentTransactionRequest.getAmount(), "908");
+            transactionService.saveCardLessTransactionToAllTransactionTable(
+                    tot24, "AGENT FLOAT DEPOSIT", "1200",
+                    agentTransactionRequest.getAmount(), "908",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             System.out.printf(
                     "Agent Float Deposit:[Error] Transaction %s processing failed. Error message: Transaction failed at T24 %n",
                     transactionReferenceNo);
@@ -231,10 +237,9 @@ public class AgentTransactionService {
         transactionService.updateT24TransactionDTO(T24Transaction);
 
         if ((T24Transaction.getResponseleg() != null)) {
-            if(T24Transaction.getBaladvise().trim().isEmpty()){
+            if (T24Transaction.getBaladvise().trim().isEmpty()) {
                 return 0L;
-            }
-            else {
+            } else {
 
                 System.out.printf(
                         "Agent Balance [Success]: Transaction %s processing completed. Agent balance %d %n",
@@ -253,6 +258,8 @@ public class AgentTransactionService {
         response.setNames(authenticateAgentResponse.getData().getNames());
         response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
         response.setLocation(authenticateAgentResponse.getData().getLocation());
+        response.setTid(authenticateAgentResponse.getData().getTid());
+        response.setMid(authenticateAgentResponse.getData().getMid());
 
         MerchantAuthInfo customerAgent = MerchantAuthInfo.builder()
                 .password(request.getCustomerAgentPass())
@@ -389,7 +396,8 @@ public class AgentTransactionService {
             response.setMessage("Transaction processed successful");
 
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
-                    request.getAmount(), "000");
+                    request.getAmount(), "000",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
         } else {
             System.out.printf(
                     "Agent Float withdrawal:[Error] Transaction %s processing failed. Error message: Transaction failed at T24 %n",
@@ -403,7 +411,8 @@ public class AgentTransactionService {
                     : tot24.getT24failnarration());
 
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
-                    request.getAmount(), "908");
+                    request.getAmount(), "908",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
         }
         transactionService.updateT24TransactionDTO(tot24);
 

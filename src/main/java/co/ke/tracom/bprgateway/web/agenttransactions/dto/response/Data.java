@@ -26,7 +26,7 @@ public class Data {
     private Object workgroup;
 
     @JsonProperty("tid")
-    private Object tid;
+    private String tid;
 
     @JsonProperty("tidStatus")
     private Boolean tidStatus;
@@ -74,12 +74,12 @@ public class Data {
     }
 
     @JsonProperty("tid")
-    public Object getTid() {
+    public String getTid() {
         return tid;
     }
 
     @JsonProperty("tid")
-    public void setTid(Object tid) {
+    public void setTid(String tid) {
         this.tid = tid;
     }
 

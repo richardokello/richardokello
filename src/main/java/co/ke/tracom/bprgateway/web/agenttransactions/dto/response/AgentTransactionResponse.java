@@ -16,4 +16,6 @@ public class AgentTransactionResponse extends BaseResponseData {
     private double transactionCharges;
     private String T24Reference;
     private String rrn;
+    private String tid;
+    private String mid;
 }

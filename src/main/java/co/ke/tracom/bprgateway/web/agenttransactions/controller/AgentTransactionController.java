@@ -34,14 +34,14 @@ public class AgentTransactionController {
 
     @ApiOperation(value = "Process agent deposit", response = AgentTransactionResponse.class)
     @PostMapping(value = "/deposit")
-    public ResponseEntity<?> agentDeposit(@RequestBody AgentTransactionRequest request) {
+    public ResponseEntity<AgentTransactionResponse> agentDeposit(@RequestBody AgentTransactionRequest request) {
         AgentTransactionResponse response = agentTransactionService.processAgentFloatDeposit(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Process agent withdrawal", response = AgentTransactionResponse.class)
     @PostMapping(value = "/withdrawal")
-    public ResponseEntity<?> agentWithdrawal(@RequestBody AgentTransactionRequest request) {
+    public ResponseEntity<AgentTransactionResponse> agentWithdrawal(@RequestBody AgentTransactionRequest request) {
 
         String transactionReferenceNo = RRNGenerator.getInstance("AW").getRRN();
         log.info("Incoming agent withdrawal request [" + transactionReferenceNo + "]");
@@ -60,6 +60,8 @@ public class AgentTransactionController {
         AgentBalanceInquiryResponse response = AgentBalanceInquiryResponse.builder()
                 .status("00")
                 .message("Balance inquiry processed successfully")
+                .tid(authenticateAgentResponse.getData().getTid())
+                .mid(authenticateAgentResponse.getData().getMid())
                 .balance(utilityService.formatDecimal(agentAccountBalance)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
