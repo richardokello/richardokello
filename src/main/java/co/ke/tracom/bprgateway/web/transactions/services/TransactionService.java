@@ -18,7 +18,7 @@ public class TransactionService {
     private final T24TXNQueueRepository t24TXNQueueRepository;
 
     public void saveCardLessTransactionToAllTransactionTable(T24TXNQueue tot24, String transactionType, String MTI,
-                                                             double amount, String processingStatus) {
+                                                             double amount, String processingStatus, String TID, String MID) {
         AllTransactions allTransactions =
                 new AllTransactions()
                         .setField000(MTI) // Transaction type
@@ -28,8 +28,8 @@ public class TransactionService {
                         .setField005(tot24.getTotalchargeamt()) // Amount Charges
                         .setField037(tot24.getGatewayref()) // RRN
                         .setField039(processingStatus) // Processing status
-                        .setField041(tot24.getTid()) // TID
-                        .setField042("PCAgent") // MID
+                        .setField041(TID) // TID
+                        .setField042(MID) // MID
                         .setField061(tot24.getT24reference()) // Response to POS
                         .setField121("CARDLESS")
                         .setField123(transactionType)

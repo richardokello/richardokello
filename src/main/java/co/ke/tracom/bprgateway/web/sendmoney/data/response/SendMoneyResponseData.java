@@ -16,5 +16,7 @@ public class SendMoneyResponseData  extends BaseResponseData {
     private double charges;
     private String T24Reference;
     private String rrn;
+    private String tid;
+    private String mid;
 
 }

@@ -12,4 +12,6 @@ public class IZICashResponseData extends BaseResponseData {
     private String t24Reference;
     private String IZIReference;
     private String rrn;
+    private String tid;
+    private String mid;
 }

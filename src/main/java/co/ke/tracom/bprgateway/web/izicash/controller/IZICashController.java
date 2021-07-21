@@ -27,6 +27,7 @@ public class IZICashController {
     @PostMapping(value = "/pc/izicash-withdrawal")
     public ResponseEntity<?> depositMoneyTransaction(@Validated @RequestBody IZICashRequest request) {
         String transactionRRN = RRNGenerator.getInstance("CD").getRRN();
+        log.info("IZICash Request: "+ transactionRRN+" Message Body: "+ request.toString());
         IZICashResponse response =  iziCashService.processWithdrawMoneyTnx(request, transactionRRN);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

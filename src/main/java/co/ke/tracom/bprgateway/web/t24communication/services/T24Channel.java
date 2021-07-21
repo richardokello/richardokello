@@ -168,8 +168,9 @@ public class T24Channel {
 
     /**
      * Unpack OFS Message from T24
-     *  Structure Failure: 0081,Y.STATUS::STATUS/Y.REASON::REJECT.REASON,"FAILED" "The access token has expired"
-     *  Structure Success: 0081,Y.STATUS::STATUS/Y.REASON::REJECT.REASON,"Success" "Message sent successful"
+     * Structure Failure: 0081,Y.STATUS::STATUS/Y.REASON::REJECT.REASON,"FAILED" "The access token has expired"
+     * Structure Success: 0081,Y.STATUS::STATUS/Y.REASON::REJECT.REASON,"Success" "Message sent successful"
+     *
      * @param t24TXNQueue
      * @param transactionRRN
      */
@@ -190,9 +191,11 @@ public class T24Channel {
                 t24TXNQueue.setT24responsecode("1");
                 System.out.println("Processing status = " + split[1]);
             }
-            if (!split[3].isEmpty()) {
-                System.out.println(split[3]);
-                t24TXNQueue.setT24failnarration(split[3]);
+            if (split.length == 3) {
+                if (!split[3].isEmpty()) {
+                    System.out.println(split[3]);
+                    t24TXNQueue.setT24failnarration(split[3]);
+                }
             }
         } else {
             t24TXNQueue.setT24responsecode("5");

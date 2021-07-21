@@ -239,6 +239,9 @@ public class EUCLService {
                     paymentResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
                     paymentResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
 
+                    paymentResponseData.setTid(authenticateAgentResponse.getData().getTid());
+                    paymentResponseData.setMid(authenticateAgentResponse.getData().getMid());
+
                     EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder()
                             .status("00")
                             .message("EUCL Transaction successful")
@@ -246,13 +249,15 @@ public class EUCLService {
 
 
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
-                            Double.valueOf(request.getAmount()), "000");
+                            Double.valueOf(request.getAmount()), "000",
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
                     return euclPaymentResponse;
                 } else {
 
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
-                            Double.valueOf(request.getAmount()), "098");
+                            Double.valueOf(request.getAmount()), "098",
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                     log.info("EUCL Transaction [] failed " + errorMessage);
                     return EUCLPaymentResponse
                             .builder()
@@ -265,7 +270,8 @@ public class EUCLService {
                 euclElectricityTxnLogsRepository.save(elecTxnLogs);
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
-                        Double.valueOf(request.getAmount()), "135");
+                        Double.valueOf(request.getAmount()), "135",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
                 return EUCLPaymentResponse.builder()
                         .status("135")

@@ -166,13 +166,17 @@ public class DepositMoneyService {
 
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
-                        depositMoneyRequest.getAmount(), "000");
+                        depositMoneyRequest.getAmount(), "000",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
                 response.getData().setT24Reference(tot24.getT24reference());
                 response.getData().setRrn(transactionRRN);
                 response.getData().setCharges(utilityService.formatDecimal(
                         Float.parseFloat(ISOFormattedAmount)
                 ));
+
+                response.getData().setTid(authenticateAgentResponse.getData().getTid());
+                response.getData().setMid(authenticateAgentResponse.getData().getMid());
 
                 return response
                         .setStatus("00")
@@ -183,7 +187,8 @@ public class DepositMoneyService {
                         transactionRRN, tot24.getT24failnarration());
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
-                        depositMoneyRequest.getAmount(), "098");
+                        depositMoneyRequest.getAmount(), "098",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
                 return response
                         .setStatus("098")

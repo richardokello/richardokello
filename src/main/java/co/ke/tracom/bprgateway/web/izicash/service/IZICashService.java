@@ -87,8 +87,8 @@ public class IZICashService {
 
 //            String customerPAN = request.getSecretCode();
             String secretCode = request.getSecretCode();
-            iziCashTxnLogs.setSecretCode(request.getSecretCode());
-            iziCashTxnLogs.setPassCode(new String(org.apache.commons.codec.binary.Base64.encodeBase64(secretCode.getBytes())));
+            iziCashTxnLogs.setSecretCode(secretCode);
+            iziCashTxnLogs.setPassCode(new String(org.apache.commons.codec.binary.Base64.encodeBase64(request.getPinCode().getBytes())));
             iziCashTxnLogs.setAmount(String.valueOf(transactionAmount));
 
             String IZICashServiceID = xSwitchParameterService.fetchXSwitchParamValue("IZICASH_SERVICEID");
@@ -187,6 +187,8 @@ public class IZICashService {
                         iziCashResponseData.setNames(authenticateAgentResponse.getData().getNames());
                         iziCashResponseData.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
                         iziCashResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
+                        iziCashResponseData.setTid(authenticateAgentResponse.getData().getTid());
+                        iziCashResponseData.setMid(authenticateAgentResponse.getData().getMid());
 
                         IZICashResponse iziCashResponse = IZICashResponse.builder()
                                 .data(iziCashResponseData)
@@ -196,7 +198,8 @@ public class IZICashService {
 
                         log.info("IZICash withdrawal successful. " + iziCashResponse.toString());
                         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IZI CASH WITHDRAWAL", "1200",
-                                request.getAmount(), "000");
+                                request.getAmount(), "000",
+                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;
                     } else {
@@ -215,7 +218,8 @@ public class IZICashService {
                                 .build();
 
                         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IZI CASH WITHDRAWAL", "1200",
-                                request.getAmount(), "098");
+                                request.getAmount(), "098",
+                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                         iziCashTxnLogs.setPassCode("*****");
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;

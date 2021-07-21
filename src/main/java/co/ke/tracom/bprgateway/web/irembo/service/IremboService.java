@@ -339,7 +339,8 @@ public class IremboService {
                 // Insert in database
                 queueIremboNotification(ipn);
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IREMBO", "1200",
-                        Double.parseDouble(  request.getAmount()), "000");
+                        Double.parseDouble(  request.getAmount()), "000",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
                 return IremboPaymentResponse
                         .builder()
@@ -350,7 +351,8 @@ public class IremboService {
 
             } else {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IREMBO", "1200",
-                        Double.parseDouble(  request.getAmount()), "098");
+                        Double.parseDouble(  request.getAmount()), "098",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 IremboPaymentResponseData data = IremboPaymentResponseData.builder()
                         .t24Reference(tot24.getT24reference())
                         .charges("0")
