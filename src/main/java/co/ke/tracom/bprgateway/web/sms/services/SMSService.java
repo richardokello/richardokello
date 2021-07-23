@@ -82,7 +82,7 @@ public class SMSService {
         }
     }
 
-    private SMSResponse sendFDISMSRequest(String fdismsapiAuthToken, SMSRequest smsRequest) throws JsonProcessingException {
+    public SMSResponse sendFDISMSRequest(String fdismsapiAuthToken, SMSRequest smsRequest) throws JsonProcessingException {
         String fdi_sms_send_single_mt_url = xSwitchParameterService.fetchXSwitchParamValue("FDI_SMS_SEND_SINGLE_MT_URL");
         String fdi_sms_send_id = xSwitchParameterService.fetchXSwitchParamValue("FDI_SMS_SENDER_ID");
 
@@ -123,7 +123,7 @@ public class SMSService {
                 .build();
     }
 
-    private String getFDISMSAPIAuthToken() throws JsonProcessingException {
+    public String getFDISMSAPIAuthToken() throws JsonProcessingException {
         String fdi_sms_api_username = xSwitchParameterService.fetchXSwitchParamValue("FDI_SMS_API_USERNAME");
         String fdi_sms_api_password = xSwitchParameterService.fetchXSwitchParamValue("FDI_SMS_API_PASSWORD");
         String fdi_sms_api_authentication_url = xSwitchParameterService.fetchXSwitchParamValue("FDI_SMS_API_AUTHENTICATION_URL");
