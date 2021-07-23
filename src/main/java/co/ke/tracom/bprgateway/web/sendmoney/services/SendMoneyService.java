@@ -200,8 +200,9 @@ public class SendMoneyService {
                                       String receiverMobile, String passCode, String vCardNo) {
         String recipientMessage = recipientMessage(request, senderMobileNo, vCardNo);
 
-        SMSRequest smsObject = getNewSMSRequest(request, senderMobileNo, receiverMobile, passCode, vCardNo, SMS_FUNCTION_RECEIVER);
-        SMSResponse response = smsService.sendSMS(smsObject);
+//        SMSRequest smsObject = getNewSMSRequest(request, senderMobileNo, receiverMobile, passCode, vCardNo, SMS_FUNCTION_RECEIVER);
+        SMSRequest smsObject = getFDISMSRequest(recipientMessage, receiverMobile, SMS_FUNCTION_RECEIVER);
+        SMSResponse response = smsService.processFDISMSAPI(smsObject);
 
         log.info("Recipient Send Money SMS Status: "+ response.toString());
 
@@ -238,6 +239,7 @@ public class SendMoneyService {
      * @param smsFunctionReceiver
      * @return
      */
+    @Deprecated
     private SMSRequest getNewSMSRequest(SendMoneyRequest request, String senderMobileNo, String receiverMobile, String passCode, String vCardNo, String smsFunctionReceiver) {
         return SMSRequest.builder()
                 .recipient(receiverMobile)
@@ -252,12 +254,22 @@ public class SendMoneyService {
                 .build();
     }
 
+
+    private SMSRequest getFDISMSRequest(String message, String receiverMobile,String smsFunctionReceiver) {
+        return SMSRequest.builder()
+                .recipient(receiverMobile)
+                .SMSFunction(smsFunctionReceiver)
+                .message(message)
+                .build();
+    }
+
     private void saveSenderMessage(SendMoneyRequest request, String transactionRRN,
                                    String senderMobileNo, String receiverMobile, String passCode,
                                    String vCardNo) {
         String senderMessage = senderMessage(request, receiverMobile, passCode);
-        SMSRequest smsObject = getNewSMSRequest(request, receiverMobile, senderMobileNo, passCode, vCardNo, SMS_FUNCTION_SENDER);
-        SMSResponse response = smsService.sendSMS(smsObject);
+//        SMSRequest smsObject = getNewSMSRequest(request, receiverMobile, senderMobileNo, passCode, vCardNo, SMS_FUNCTION_SENDER);
+        SMSRequest smsObject = getFDISMSRequest(senderMessage, receiverMobile, SMS_FUNCTION_SENDER);
+        SMSResponse response = smsService.processFDISMSAPI(smsObject);
         log.info("Sender Send Money SMS Status: "+ response.toString());
 
         // Insert Second SMS
