@@ -254,6 +254,8 @@ public class SendMoneyService {
 
 
     private SMSRequest getFDISMSRequest(String message, String receiverMobile, String smsFunctionReceiver) {
+
+        System.out.println("message = "+smsFunctionReceiver+ " : " + message);
         return SMSRequest.builder()
                 .recipient(receiverMobile)
                 .SMSFunction(smsFunctionReceiver)
