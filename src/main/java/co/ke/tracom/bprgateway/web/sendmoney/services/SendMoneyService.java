@@ -164,11 +164,13 @@ public class SendMoneyService {
                 String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
 
                 saveSendMoneyTransaction(request, agentAuthData, senderMobileNo, receiverMobile, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode);
+                SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
+                SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
 
 
-                saveRecipientMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
-
-                saveSenderMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
+                String fdiSMSAPIAuthToken = smsService.getFDISMSAPIAuthToken();
+                SMSResponse recipientResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, recipientMessage);
+                SMSResponse senderResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, senderMessage);
 
                 return SendMoneyResponse.builder()
                         .status("00")
@@ -196,14 +198,10 @@ public class SendMoneyService {
         }
     }
 
-    private void saveRecipientMessage(SendMoneyRequest request, String transactionRRN, String senderMobileNo,
-                                      String receiverMobile, String passCode, String vCardNo) {
+    private SMSRequest saveRecipientMessage(SendMoneyRequest request, String transactionRRN, String senderMobileNo,
+                                            String receiverMobile, String passCode, String vCardNo) {
         String recipientMessage = recipientMessage(request, senderMobileNo, vCardNo);
-
-        SMSRequest smsObject = getNewSMSRequest(request, senderMobileNo, receiverMobile, passCode, vCardNo, SMS_FUNCTION_RECEIVER);
-        SMSResponse response = smsService.sendSMS(smsObject);
-
-        log.info("Recipient Send Money SMS Status: "+ response.toString());
+        SMSRequest fdismsRequest = getFDISMSRequest(recipientMessage, receiverMobile, SMS_FUNCTION_RECEIVER);
 
         while (recipientMessage.length() > 0) {
             ScheduledSMS scheduledSMSTransaction = new ScheduledSMS();
@@ -222,13 +220,14 @@ public class SendMoneyService {
             }
             scheduledSMSRepository.save(scheduledSMSTransaction);
         }
+//        SMSRequest smsObject = getNewSMSRequest(request, senderMobileNo, receiverMobile, passCode, vCardNo, SMS_FUNCTION_RECEIVER);
+        return fdismsRequest;
     }
 
     /**
      * Added on 07/15/2021
      * BPR Switched SMS API and added a custom way of sending Message
      * Message body format:  AMOUNT/ PHONE NUMBER IN MESSAGE / PASSCODE / CARD  NO
-     *
      *
      * @param request
      * @param senderMobileNo
@@ -238,6 +237,7 @@ public class SendMoneyService {
      * @param smsFunctionReceiver
      * @return
      */
+    @Deprecated
     private SMSRequest getNewSMSRequest(SendMoneyRequest request, String senderMobileNo, String receiverMobile, String passCode, String vCardNo, String smsFunctionReceiver) {
         return SMSRequest.builder()
                 .recipient(receiverMobile)
@@ -252,14 +252,23 @@ public class SendMoneyService {
                 .build();
     }
 
-    private void saveSenderMessage(SendMoneyRequest request, String transactionRRN,
-                                   String senderMobileNo, String receiverMobile, String passCode,
-                                   String vCardNo) {
-        String senderMessage = senderMessage(request, receiverMobile, passCode);
-        SMSRequest smsObject = getNewSMSRequest(request, receiverMobile, senderMobileNo, passCode, vCardNo, SMS_FUNCTION_SENDER);
-        SMSResponse response = smsService.sendSMS(smsObject);
-        log.info("Sender Send Money SMS Status: "+ response.toString());
 
+    private SMSRequest getFDISMSRequest(String message, String receiverMobile, String smsFunctionReceiver) {
+
+        System.out.println("message = "+smsFunctionReceiver+ " : " + message);
+        return SMSRequest.builder()
+                .recipient(receiverMobile)
+                .SMSFunction(smsFunctionReceiver)
+                .message(message)
+                .build();
+    }
+
+    private SMSRequest saveSenderMessage(SendMoneyRequest request, String transactionRRN,
+                                         String senderMobileNo, String receiverMobile, String passCode,
+                                         String vCardNo) {
+
+        String senderMessage = senderMessage(request, receiverMobile, passCode);
+        SMSRequest fdismsRequest = getFDISMSRequest(senderMessage, receiverMobile, SMS_FUNCTION_SENDER);
         // Insert Second SMS
         String SMSContent = utilityService.encryptText(senderMessage);
         ScheduledSMS scheduledSMS = new ScheduledSMS();
@@ -269,6 +278,8 @@ public class SendMoneyService {
         scheduledSMS.setReceiverphone(senderMobileNo);
         scheduledSMS.setTxnref(transactionRRN);
         scheduledSMSRepository.save(scheduledSMS);
+
+        return fdismsRequest;
     }
 
     private String senderMessage(SendMoneyRequest request, String receiverMobile, String passCode) {
@@ -769,7 +780,6 @@ public class SendMoneyService {
                 sendMoneyResponseData.setLocation(authenticateAgentResponse.getData().getLocation());
                 sendMoneyResponseData.setTid(authenticateAgentResponse.getData().getTid());
                 sendMoneyResponseData.setMid(authenticateAgentResponse.getData().getMid());
-
 
 
                 return SendMoneyResponse.builder()

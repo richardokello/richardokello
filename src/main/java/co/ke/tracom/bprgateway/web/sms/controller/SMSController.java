@@ -22,7 +22,7 @@ public class SMSController {
 
     @ApiOperation(value = "Send SMS", response = SMSResponse.class)
     @PostMapping(value = "/util/send-sms")
-    public ResponseEntity<?> sendSMSRequest(@Valid @RequestBody SMSRequest request) {
-        return new ResponseEntity<>(smsService.sendSMS(request), HttpStatus.OK);
+    public ResponseEntity<SMSResponse> sendSMSRequest(@Valid @RequestBody SMSRequest request) {
+        return new ResponseEntity<>(smsService.processFDISMSAPI(request), HttpStatus.OK);
     }
 }

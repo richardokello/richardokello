@@ -49,6 +49,7 @@ import java.io.StringWriter;
 import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
+import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -320,7 +321,7 @@ public class RRAService {
             String TAX_PAYER_NAME = request.getTaxPayerName();
             double AMOUNT_TO_PAY = request.getAmountToPay();
             int TAX_TYPE_NO = request.getTaxTypeNo();
-            String TAX_CENTRE_NO = request.getTaxCentreDescription();
+            int TAX_CENTRE_NO = request.getTaxCentreNo();
             long ASSESS_NO = request.getAssessNo();
             int RRA_ORIGIN_NO = request.getRRAOriginNo();
 
@@ -354,7 +355,9 @@ public class RRAService {
             String sanitizedTaxPayerName = TAX_PAYER_NAME.length() > 49 ? TAX_PAYER_NAME.substring(0, 49) : TAX_PAYER_NAME;
 
             String RRAOFSMsg =
-                    "0000AFUNDS.TRANSFER,BPR.AGB.ETAX/I/PROCESS,INPUTT/"
+                    "0000AFUNDS.TRANSFER,BPR.AGB.ETAX/I/PROCESS," +
+                            MASKED_T24_USERNAME +
+                            "/"
                             + MASKED_T24_PASSWORD
                             + "/"
                             + agentBranchId
