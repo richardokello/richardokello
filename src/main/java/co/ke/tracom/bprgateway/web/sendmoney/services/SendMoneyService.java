@@ -201,7 +201,7 @@ public class SendMoneyService {
     private SMSRequest saveRecipientMessage(SendMoneyRequest request, String transactionRRN, String senderMobileNo,
                                             String receiverMobile, String passCode, String vCardNo) {
         String recipientMessage = recipientMessage(request, senderMobileNo, vCardNo);
-
+        SMSRequest fdismsRequest = getFDISMSRequest(recipientMessage, receiverMobile, SMS_FUNCTION_RECEIVER);
 
         while (recipientMessage.length() > 0) {
             ScheduledSMS scheduledSMSTransaction = new ScheduledSMS();
@@ -221,7 +221,7 @@ public class SendMoneyService {
             scheduledSMSRepository.save(scheduledSMSTransaction);
         }
 //        SMSRequest smsObject = getNewSMSRequest(request, senderMobileNo, receiverMobile, passCode, vCardNo, SMS_FUNCTION_RECEIVER);
-        return getFDISMSRequest(recipientMessage, receiverMobile, SMS_FUNCTION_RECEIVER);
+        return fdismsRequest;
     }
 
     /**
@@ -268,6 +268,7 @@ public class SendMoneyService {
                                          String vCardNo) {
 
         String senderMessage = senderMessage(request, receiverMobile, passCode);
+        SMSRequest fdismsRequest = getFDISMSRequest(senderMessage, receiverMobile, SMS_FUNCTION_SENDER);
         // Insert Second SMS
         String SMSContent = utilityService.encryptText(senderMessage);
         ScheduledSMS scheduledSMS = new ScheduledSMS();
@@ -278,7 +279,7 @@ public class SendMoneyService {
         scheduledSMS.setTxnref(transactionRRN);
         scheduledSMSRepository.save(scheduledSMS);
 
-        return getFDISMSRequest(senderMessage, receiverMobile, SMS_FUNCTION_SENDER);
+        return fdismsRequest;
     }
 
     private String senderMessage(SendMoneyRequest request, String receiverMobile, String passCode) {
