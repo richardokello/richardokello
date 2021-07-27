@@ -39,7 +39,6 @@ public class BillMenusService {
       // Parse json file into menu items
       CustomObjectMapper mapper = new CustomObjectMapper();
       billMenuResponse = mapper.readValue(jsonAsStream, BillMenuResponse.class);
-      // log.info("BILL MENU SERVICE RESPONSE: {}", billMenuResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
       log.error("BILL MENU SERVICE: {}", ex.getMessage());
@@ -47,7 +46,10 @@ public class BillMenusService {
     }
   }
 
-  public BillMenuResponse getAllMenus() {
+  public BillMenuResponse fetchEnglishMenus() {
+    return billMenuResponse;
+  }
+  public BillMenuResponse fetchKinyarwandaMenus() {
     return billMenuResponse;
   }
 }

@@ -164,9 +164,8 @@ public class SendMoneyService {
                 String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
 
                 saveSendMoneyTransaction(request, agentAuthData, senderMobileNo, receiverMobile, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode);
-                SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
-                SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
-
+                SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, receiverMobile, vCardNo);
+                SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, senderMobileNo, passCode);
 
                 String fdiSMSAPIAuthToken = smsService.getFDISMSAPIAuthToken();
                 SMSResponse recipientResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, recipientMessage);
@@ -198,9 +197,10 @@ public class SendMoneyService {
         }
     }
 
-    private SMSRequest saveRecipientMessage(SendMoneyRequest request, String transactionRRN, String senderMobileNo,
-                                            String receiverMobile, String passCode, String vCardNo) {
-        String recipientMessage = recipientMessage(request, senderMobileNo, vCardNo);
+    private SMSRequest saveRecipientMessage(SendMoneyRequest request, String transactionRRN,
+                                            String receiverMobile, String vCardNo) {
+
+        String recipientMessage = recipientMessage(request, receiverMobile, vCardNo);
         SMSRequest fdismsRequest = getFDISMSRequest(recipientMessage, receiverMobile, SMS_FUNCTION_RECEIVER);
 
         while (recipientMessage.length() > 0) {
@@ -224,6 +224,7 @@ public class SendMoneyService {
         return fdismsRequest;
     }
 
+
     /**
      * Added on 07/15/2021
      * BPR Switched SMS API and added a custom way of sending Message
@@ -236,6 +237,7 @@ public class SendMoneyService {
      * @param vCardNo
      * @param smsFunctionReceiver
      * @return
+     * @deprecated OFS message no longer viable
      */
     @Deprecated
     private SMSRequest getNewSMSRequest(SendMoneyRequest request, String senderMobileNo, String receiverMobile, String passCode, String vCardNo, String smsFunctionReceiver) {
@@ -255,7 +257,7 @@ public class SendMoneyService {
 
     private SMSRequest getFDISMSRequest(String message, String receiverMobile, String smsFunctionReceiver) {
 
-        System.out.println("message = "+smsFunctionReceiver+ " : " + message);
+        System.out.println("message = " + smsFunctionReceiver + " : " + message);
         return SMSRequest.builder()
                 .recipient(receiverMobile)
                 .SMSFunction(smsFunctionReceiver)
@@ -264,11 +266,10 @@ public class SendMoneyService {
     }
 
     private SMSRequest saveSenderMessage(SendMoneyRequest request, String transactionRRN,
-                                         String senderMobileNo, String receiverMobile, String passCode,
-                                         String vCardNo) {
+                                         String senderMobileNo, String passCode) {
 
-        String senderMessage = senderMessage(request, receiverMobile, passCode);
-        SMSRequest fdismsRequest = getFDISMSRequest(senderMessage, receiverMobile, SMS_FUNCTION_SENDER);
+        String senderMessage = senderMessage(request, senderMobileNo, passCode);
+        SMSRequest fdismsRequest = getFDISMSRequest(senderMessage, senderMobileNo, SMS_FUNCTION_SENDER);
         // Insert Second SMS
         String SMSContent = utilityService.encryptText(senderMessage);
         ScheduledSMS scheduledSMS = new ScheduledSMS();
@@ -282,11 +283,11 @@ public class SendMoneyService {
         return fdismsRequest;
     }
 
-    private String senderMessage(SendMoneyRequest request, String receiverMobile, String passCode) {
+    private String senderMessage(SendMoneyRequest request, String senderMobile, String passCode) {
         return "You have successfully sent RWF"
                 + request.getAmount()
                 + " to "
-                + receiverMobile
+                + senderMobile
                 + " "
                 + "via BPR Cardless transfer. Kindly share passcode with the recipient."
                 + "passcode : "
@@ -294,11 +295,11 @@ public class SendMoneyService {
                 + ". Thanks for banking with us.";
     }
 
-    private String recipientMessage(SendMoneyRequest request, String senderMobileNo, String cardNo) {
-        return "You have received RWF "
+    private String recipientMessage(SendMoneyRequest request, String recieverMobile, String cardNo) {
+        return "You have received RWF"
                 + request.getAmount()
                 + " from "
-                + senderMobileNo
+                + recieverMobile
                 + " to "
                 + "withdraw at a BPR agent. Provide VCARD no: "
                 + cardNo
@@ -648,7 +649,7 @@ public class SendMoneyService {
         try {
             String tid = "PC";
             String narration = "RECEIVEMONEY";
-            Optional<MoneySend> optionalMoneySend = getSendMoneyTxn(recipientPhoneNo, passcode, String.valueOf(request.getAmount()));
+            Optional<MoneySend> optionalMoneySend = getSendMoneyTxn(recipientPhoneNo, passcode);
 
             if (optionalMoneySend.isEmpty()) {
                 return SendMoneyResponse.builder()
@@ -823,7 +824,7 @@ public class SendMoneyService {
         }
     }
 
-    public Optional<MoneySend> getSendMoneyTxn(String receiverPhone, String msToken, String amount) {
-        return moneySendRepository.findByRecevernumberAndMstokenAndAmount(receiverPhone, msToken, amount);
+    public Optional<MoneySend> getSendMoneyTxn(String receiverPhone, String msToken) {
+        return moneySendRepository.findByRecevernumberAndMstoken(receiverPhone, msToken);
     }
 }

@@ -8,8 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface MoneySendRepository extends CrudRepository<MoneySend, Long> {
-
-    Optional<MoneySend> findByRecevernumberAndMstokenAndAmount(
-        String    receiverNo, String msToken, String amount
-    );
+    Optional<MoneySend> findByRecevernumberAndMstoken(String receiverNo, String msToken);
 }

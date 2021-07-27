@@ -8,28 +8,37 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Returns all bill menu items as a json string */
+import java.util.HashMap;
+
+/**
+ * Returns all bill menu items as a json string
+ */
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping(value = "/api/menus")
 public class BillMenuController {
 
-  private final BillMenusService billMenusService;
+    private final BillMenusService billMenusService;
 
-  @ApiOperation(
-      value = "Return all currently available menu items ",
-      response = BillMenuResponse.class)
-  @GetMapping
-  public ResponseEntity<?> getBillMenus() {
+    @ApiOperation(
+            value = "Return all currently available menu items ",
+            response = BillMenuResponse.class)
+    @GetMapping({"api/menus", "api/menus/{language}"})
+    public ResponseEntity<BillMenuResponse> getBillMenus(@PathVariable(required = false) String language) {
 
-    BillMenuResponse billMenuResponse = billMenusService.getAllMenus();
+        if (language != null && !language.isEmpty() && language.equalsIgnoreCase("RW")) {
+            BillMenuResponse billMenuResponse = billMenusService.fetchKinyarwandaMenus();
+            log.error("BILL MENU SERVICE Request: {}", billMenuResponse);
 
-    log.error("BILL MENU SERVICE Request: {}", billMenuResponse);
+            return new ResponseEntity<>(billMenuResponse, HttpStatus.OK);
+        }
 
-    return new ResponseEntity<>(billMenuResponse, HttpStatus.OK);
-  }
+        BillMenuResponse billMenuResponse = billMenusService.fetchEnglishMenus();
+        log.error("BILL MENU SERVICE Request: {}", billMenuResponse);
+        return new ResponseEntity<>(billMenuResponse, HttpStatus.OK);
+
+    }
 }

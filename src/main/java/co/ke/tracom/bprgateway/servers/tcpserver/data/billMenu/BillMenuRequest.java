@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BillMenuRequest extends GenericRequest {
   private String tnxType;
+  private String lang;
 }

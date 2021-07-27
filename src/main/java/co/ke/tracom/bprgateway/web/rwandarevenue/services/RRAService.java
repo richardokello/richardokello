@@ -155,14 +155,14 @@ public class RRAService {
                     transformer.transform(source, result);
                 }
 
-                System.out.println(
+                System.err.println(
                         "rra res writer unescape : \n " + StringEscapeUtils.unescapeXml(writer.toString()));
 
                 // writer.toString()
                 JSONObject xmlJSONObj = XML.toJSONObject(writer.toString());
 
                 if (xmlJSONObj == null || xmlJSONObj.length() == 0) {
-                    System.out.println("NO response for RRA REF " + request.getRrareferenceNo());
+                        System.err.println("NO response for RRA REF " + request.getRrareferenceNo());
                     return RRATINValidationResponse.builder()
                             .status("908")
                             .message("Ref " + request.getRrareferenceNo() + " could not be verified by RRA system")
@@ -431,8 +431,10 @@ public class RRAService {
                             .T24Reference(t24ref)
                             .transactionCharges(Double.parseDouble(cleanedChargeAmount))
                             .rrn(transactionRRN)
+                            .mid(authenticateAgentResponse.getData().getMid())
+                            .tid(authenticateAgentResponse.getData().getTid())
                             .build();
-
+                    data.setUsername(authenticateAgentResponse.getData().getUsername());
                     data.setUsername(authenticateAgentResponse.getData().getUsername());
                     data.setNames(authenticateAgentResponse.getData().getNames());
                     data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());

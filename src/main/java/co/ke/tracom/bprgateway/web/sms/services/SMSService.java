@@ -77,7 +77,7 @@ public class SMSService {
             log.info("Error sending SMS: " + e.getMessage());
             return SMSResponse.builder()
                     .message("Processing failed")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                    .status("500")
                     .build();
         }
     }
@@ -119,7 +119,7 @@ public class SMSService {
 
         return SMSResponse.builder()
                 .message(authResponse.getMessage())
-                .status(HttpStatus.OK.toString())
+                .status("200")
                 .build();
     }
 
