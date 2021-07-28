@@ -75,6 +75,7 @@ public class SendMoneyService {
             validateMobileNumberLength(transactionRRN, senderMobileNo.length());
 
             String receiverMobile = request.getRecipientMobileNo().trim();
+
             compareSenderRecipientMobileNumbers(transactionRRN, receiverMobile.equalsIgnoreCase(senderMobileNo));
 
             String configuredSendMoneySuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue("SENDMONEYSUSPENSE");
@@ -164,8 +165,9 @@ public class SendMoneyService {
                 String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
 
                 saveSendMoneyTransaction(request, agentAuthData, senderMobileNo, receiverMobile, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode);
-                SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, receiverMobile, vCardNo);
-                SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, senderMobileNo, passCode);
+
+                SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, receiverMobile, senderMobileNo, vCardNo);
+                SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, receiverMobile, senderMobileNo, passCode);
 
                 String fdiSMSAPIAuthToken = smsService.getFDISMSAPIAuthToken();
                 SMSResponse recipientResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, recipientMessage);
@@ -198,9 +200,10 @@ public class SendMoneyService {
     }
 
     private SMSRequest saveRecipientMessage(SendMoneyRequest request, String transactionRRN,
-                                            String receiverMobile, String vCardNo) {
+                                            String receiverMobile, String senderMobile, String vCardNo) {
 
-        String recipientMessage = recipientMessage(request, receiverMobile, vCardNo);
+        String recipientMessage = recipientMessage(request, senderMobile, vCardNo);
+
         SMSRequest fdismsRequest = getFDISMSRequest(recipientMessage, receiverMobile, SMS_FUNCTION_RECEIVER);
 
         while (recipientMessage.length() > 0) {
@@ -266,9 +269,9 @@ public class SendMoneyService {
     }
 
     private SMSRequest saveSenderMessage(SendMoneyRequest request, String transactionRRN,
-                                         String senderMobileNo, String passCode) {
+                                         String senderMobileNo,    String recipientMobile, String passCode) {
 
-        String senderMessage = senderMessage(request, senderMobileNo, passCode);
+        String senderMessage = senderMessage(request, recipientMobile, passCode);
         SMSRequest fdismsRequest = getFDISMSRequest(senderMessage, senderMobileNo, SMS_FUNCTION_SENDER);
         // Insert Second SMS
         String SMSContent = utilityService.encryptText(senderMessage);
@@ -283,28 +286,24 @@ public class SendMoneyService {
         return fdismsRequest;
     }
 
-    private String senderMessage(SendMoneyRequest request, String senderMobile, String passCode) {
+    private String senderMessage(SendMoneyRequest request, String recipientMobile, String passCode) {
         return "You have successfully sent RWF"
                 + request.getAmount()
                 + " to "
-                + senderMobile
-                + " "
-                + "via BPR Cardless transfer. Kindly share passcode with the recipient."
-                + "passcode : "
+                + recipientMobile
+                + " via BPR Cardless transfer. Kindly share passcode with the recipient. Passcode: "
                 + passCode
                 + ". Thanks for banking with us.";
     }
 
-    private String recipientMessage(SendMoneyRequest request, String recieverMobile, String cardNo) {
+    private String recipientMessage(SendMoneyRequest request, String sendMobile, String cardNo) {
         return "You have received RWF"
                 + request.getAmount()
                 + " from "
-                + recieverMobile
-                + " to "
-                + "withdraw at a BPR agent. Provide VCARD no: "
+                + sendMobile
+                + " to withdraw at a BPR agent. Provide VCARD no: "
                 + cardNo
-                + ", "
-                + "Sender will share the passcode. MURAKOZE";
+                + " ,Sender will share the passcode. MURAKOZE";
     }
 
     private void saveSendMoneyTransaction(SendMoneyRequest request, Data agentAuthData, String senderMobileNo,
@@ -392,8 +391,7 @@ public class SendMoneyService {
                 + "DEBIT.CURRENCY::=RWF,"
                 + "TCM.REF::="
                 + transactionRRN
-                + ","
-                + "PAYMENT.DETAILS:1:= "
+                + ",PAYMENT.DETAILS:1:= "
                 + utilityService.sanitizePaymentDetails(firstTransactionPaymentDetails, "Send Money").trim()
                 + ","
                 + "PAYMENT.DETAILS:2:="
@@ -617,8 +615,8 @@ public class SendMoneyService {
                     .build();
         }
 
-        String recipientPhoneNo = request.getReceiverMobileNo();
-        String passcode = request.getPassCode();
+        String recipientPhoneNo = request.getReceiverMobileNo().trim();
+        String passcode = request.getPasscode().trim();
 
         // No need to validate agent account is being debited
         BPRBranches branch =
@@ -673,7 +671,6 @@ public class SendMoneyService {
                 }
 
             } catch (Exception e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
                 System.out.println("Error encrypting card no for send money txn ref ~ " + transactionRRN);
                 return SendMoneyResponse.builder()

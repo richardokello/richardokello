@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class  ReceiveMoneyRequest {
     private String receiverMobileNo;
     private String vCard;
-    private String passCode;
+    private String passcode;
     private double amount;
     private MerchantAuthInfo credentials;
 }
