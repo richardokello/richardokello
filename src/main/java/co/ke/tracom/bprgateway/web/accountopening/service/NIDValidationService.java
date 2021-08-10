@@ -89,8 +89,6 @@ public class NIDValidationService {
     }
 
     public HashMap<String, String> prepareAndSendRequest(String documentNo) {
-
-
         HashMap<String, String> niddata = new HashMap<>();
 
         niddata.put("txnDescription", "");
@@ -332,4 +330,6 @@ public class NIDValidationService {
                 + "  </soap12:Body>\n"
                 + "</soap12:Envelope>";
     }
+
+
 }

@@ -18,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,14 +112,22 @@ public class SMSService {
                 httpEntity.getBody());
         ResponseEntity<FDISMSResponse> responseEntity =
                 restTemplate.exchange(uriComponents.toString(), HttpMethod.POST, httpEntity, FDISMSResponse.class);
-        FDISMSResponse authResponse = responseEntity.getBody();
-        log.info("SERVICE RESPONSE : {} {}", responseEntity.getHeaders(), authResponse);
+        if (responseEntity.getBody() != null) {
+            FDISMSResponse authResponse = responseEntity.getBody();
+            log.info("SERVICE RESPONSE : {} {}", responseEntity.getHeaders(), authResponse);
 
 
-        return SMSResponse.builder()
-                .message(authResponse.getMessage())
-                .status("200")
-                .build();
+            return SMSResponse.builder()
+                    .message(authResponse.getMessage())
+                    .status("200")
+                    .build();
+        } else {
+            log.info("FDI SMS Error: System unable to send SMS request");
+            return SMSResponse.builder()
+                    .message("SMS Request could not be completed. Please try again")
+                    .status("500")
+                    .build();
+        }
     }
 
     public String getFDISMSAPIAuthToken() throws JsonProcessingException {
@@ -150,15 +157,22 @@ public class SMSService {
                 httpEntity.getBody());
         ResponseEntity<AuthResponse> responseEntity =
                 restTemplate.exchange(uriComponents.toString(), HttpMethod.POST, httpEntity, AuthResponse.class);
-        AuthResponse authResponse = responseEntity.getBody();
-        log.info("SERVICE RESPONSE : {} {}", responseEntity.getHeaders(), authResponse);
 
-        String expiresAt = authResponse.getExpiresAt();
-        System.out.println("expiresAt = " + expiresAt);
-        String accessToken = authResponse.getAccessToken();
-        System.out.println("accessToken = " + accessToken);
 
-        return accessToken;
+        if (responseEntity.getBody() != null) {
+            AuthResponse authResponse = responseEntity.getBody();
+            log.info("SERVICE RESPONSE : {} {}", responseEntity.getHeaders(), authResponse);
+
+            String expiresAt = authResponse.getExpiresAt();
+            System.err.println("expiresAt = " + expiresAt);
+            String accessToken = authResponse.getAccessToken();
+            System.err.println("accessToken = " + accessToken);
+
+            return accessToken;
+        } else {
+            log.info("Fetch SMS Token Error: Could not fetch token from remote FDI SMS System");
+            return "";
+        }
 
     }
 

@@ -16,4 +16,6 @@ public class RRAPaymentResponseData extends BaseResponseData {
     String rrn;
     String tid;
     String mid;
+    String RRAReference;
+    String taxPayerName;
 }
