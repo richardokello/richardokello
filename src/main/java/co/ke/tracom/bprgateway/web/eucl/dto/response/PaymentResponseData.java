@@ -19,4 +19,5 @@ public class PaymentResponseData extends BaseResponseData {
     String rrn;
     String tid;
     String mid;
+    String charges = "0.0";
 }

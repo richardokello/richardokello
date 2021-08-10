@@ -41,7 +41,7 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.*
 @RequiredArgsConstructor
 @Service
 public class SendMoneyService {
-    private final String CURRENCY_ISO_FORMAT = "%012d";
+    public final String CURRENCY_ISO_FORMAT = "%012d";
     private final String SEND_MONEY_TRANSACTION_LOG_LABEL = "Send money transaction [";
     private final String SEND_MONEY_SUSPENSE_ACC = "SENDMONEYSUSPENSE";
     private final String SEND_MONEY_LABEL = "SEND MONEY";

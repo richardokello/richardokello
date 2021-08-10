@@ -1,7 +1,6 @@
 package co.ke.tracom.bprgateway.web.eucl.service;
 
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
-import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.eucl.dto.request.EUCLPaymentRequest;
 import co.ke.tracom.bprgateway.web.eucl.dto.request.MeterNoValidation;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
@@ -11,20 +10,13 @@ import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.entities.EUCLElectricityTxnLogs;
 import co.ke.tracom.bprgateway.web.eucl.repository.EUCLElectricityTxnLogsRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
-import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
-import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
@@ -81,8 +73,8 @@ public class EUCLService {
             tot24.setTxnmti("1100");
             tot24.setTid(tid);
 
-            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
-            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
 
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
@@ -212,8 +204,8 @@ public class EUCLService {
             tot24.setTid(tid);
             tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
 
-            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
-            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
             transactionService.updateT24TransactionDTO(tot24);
 
@@ -228,10 +220,16 @@ public class EUCLService {
                     elecTxnLogs.setToken_no(tot24.getTokenNo());
                     euclElectricityTxnLogsRepository.save(elecTxnLogs);
 
+                    String charges = "0.0";
+                    if (null != tot24.getTotalchargeamt()) {
+                        charges = tot24.getTotalchargeamt().replace("RWF", "");
+                    }
+
                     PaymentResponseData paymentResponseData = new PaymentResponseData()
                             .setToken(tot24.getTokenNo())
                             .setT24Reference(tot24.getT24reference())
                             .setUnitsInKW(tot24.getUnitsKw())
+                            .setCharges(charges)
                             .setRrn(transactionReferenceNo);
 
                     paymentResponseData.setUsername(authenticateAgentResponse.getData().getUsername());
