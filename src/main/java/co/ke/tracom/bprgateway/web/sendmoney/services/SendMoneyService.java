@@ -35,13 +35,18 @@ import java.util.Random;
 
 import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_RECEIVER;
 import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_SENDER;
-import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
-import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
+import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class SendMoneyService {
+    private final String CURRENCY_ISO_FORMAT = "%012d";
+    private final String SEND_MONEY_TRANSACTION_LOG_LABEL = "Send money transaction [";
+    private final String SEND_MONEY_SUSPENSE_ACC = "SENDMONEYSUSPENSE";
+    private final String SEND_MONEY_LABEL = "SEND MONEY";
+
+
     private final AgentTransactionService agentTransactionService;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService branchService;
@@ -60,7 +65,7 @@ public class SendMoneyService {
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
-        log.info("Send money transaction [" + transactionRRN + "] processing begins. Request " + request);
+        log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + transactionRRN + "] processing begins. Request " + request);
 
         Data agentAuthData = authenticateAgentResponse.getData();
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
@@ -75,16 +80,21 @@ public class SendMoneyService {
             validateMobileNumberLength(transactionRRN, senderMobileNo.length());
 
             String receiverMobile = request.getRecipientMobileNo().trim();
+
             compareSenderRecipientMobileNumbers(transactionRRN, receiverMobile.equalsIgnoreCase(senderMobileNo));
 
-            String configuredSendMoneySuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue("SENDMONEYSUSPENSE");
-            String firstTransactionPaymentDetails = senderMobileNo + "/" + receiverMobile;
-            String secondTransactionPaymentDetails = agentAuthData.getNames() + " " + agentAuthData.getAccountNumber();
-            String thirdTransactionPaymentDetails = "SEND MONEY";
+            String configuredSendMoneySuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue(SEND_MONEY_SUSPENSE_ACC);
 
-            String sendMoneyOFSMsg = bootstrapSendMoneyOFSMsg(request.getAmount(), transactionRRN, agentAuthData, branchAccountID, configuredSendMoneySuspenseAccount, firstTransactionPaymentDetails, secondTransactionPaymentDetails, thirdTransactionPaymentDetails);
+            String[] paymentDetails = new String[3];
+
+            paymentDetails[0] = senderMobileNo + "/" + receiverMobile;
+            paymentDetails[1] = agentAuthData.getNames() + " " + agentAuthData.getAccountNumber();
+            paymentDetails[2] = SEND_MONEY_LABEL;
+
+            String sendMoneyOFSMsg = bootstrapSendMoneyOFSMsg(request.getAmount(), transactionRRN, agentAuthData, branchAccountID,
+                    configuredSendMoneySuspenseAccount, paymentDetails);
             String tot24str = String.format("%04d", sendMoneyOFSMsg.length()) + sendMoneyOFSMsg;
-            log.info("Send money transaction [" + transactionRRN + "] OFS is ready. " + tot24str);
+            log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + transactionRRN + "] OFS is ready. " + tot24str);
 
             String nationalIdDocumentName = request.getSenderNationalIDType().equals("0") ? "NID" : "OTHERS";
             String tid = "PC";
@@ -95,8 +105,7 @@ public class SendMoneyService {
 
             if ((tot24.getT24responsecode().equalsIgnoreCase("1"))) {
                 return processSuccessfulSendMoneyT24Transaction(request, transactionRRN, agentAuthData, branchAccountID,
-                        senderMobileNo, receiverMobile, firstTransactionPaymentDetails, secondTransactionPaymentDetails,
-                        thirdTransactionPaymentDetails, nationalIdDocumentName, tid, tot24, authenticateAgentResponse);
+                        paymentDetails, nationalIdDocumentName, tid, tot24, authenticateAgentResponse);
             } else {
                 return processFailedSendMoneyT24Transaction(transactionRRN, agentAuthData, tot24.getT24reference());
             }
@@ -113,34 +122,33 @@ public class SendMoneyService {
 
     private SendMoneyResponse processSuccessfulSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN,
                                                                        Data agentAuthData, String branchAccountID,
-                                                                       String senderMobileNo, String receiverMobile,
-                                                                       String firstTransactionPaymentDetails,
-                                                                       String secondTransactionPaymentDetails,
-                                                                       String thirdTransactionPaymentDetails,
+                                                                       String[] paymentDetails,
                                                                        String nationalIdDocumentName, String tid,
                                                                        T24TXNQueue tot24, AuthenticateAgentResponse authenticateAgentResponse) {
+        String senderMobileNo = request.getSenderMobileNo();
+        String receiverMobile = request.getRecipientMobileNo();
+
         SendMoneyResponseData data = SendMoneyResponseData.builder().build();
         try {
             String charges = tot24.getTotalchargeamt();
-            System.out.println("Charges " + charges);
+            System.err.println("Charges " + charges);
             String formattedCharge = charges.replace("RWF", "");
-            System.out.println("Transaction charge : " + formattedCharge);
+            System.err.println("Transaction charge : " + formattedCharge);
             //send money commission save
 
             String collectionCommissionAccount = xSwitchParameterService.fetchXSwitchParamValue("SENDMONEYCOMMISSIONCOLLECTIONACC");
             this.saveSendMoneyCommission(formattedCharge, tid, transactionRRN, agentAuthData.getAccountNumber(),
-                    firstTransactionPaymentDetails, secondTransactionPaymentDetails,
-                    thirdTransactionPaymentDetails, branchAccountID, collectionCommissionAccount);
+                    paymentDetails, branchAccountID, collectionCommissionAccount);
 
             data.setCharges(Double.parseDouble(formattedCharge));
-            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY", "1200",
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
                     request.getAmount(), "000",
                     authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
         } catch (Exception e) {
-            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "SEND MONEY", "1200",
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
                     request.getAmount(), "098",
                     authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
-            System.out.println(
+            System.err.println(
                     "Unable to get charges for send money transaction reference " + transactionRRN);
             e.printStackTrace();
         }
@@ -163,14 +171,17 @@ public class SendMoneyService {
                 Random generator = new Random();
                 String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
 
-                saveSendMoneyTransaction(request, agentAuthData, senderMobileNo, receiverMobile, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode);
-                SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
-                SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, senderMobileNo, receiverMobile, passCode, vCardNo);
+                saveSendMoneyTransaction(request, agentAuthData, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode);
 
+                SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, receiverMobile, senderMobileNo, vCardNo);
+                SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, receiverMobile, senderMobileNo, passCode);
 
                 String fdiSMSAPIAuthToken = smsService.getFDISMSAPIAuthToken();
+
                 SMSResponse recipientResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, recipientMessage);
+                log.info("Recipient SMS Response[" + transactionRRN + "]: " + recipientResponse.toString());
                 SMSResponse senderResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, senderMessage);
+                log.info("Sender SMS Response[" + transactionRRN + "]: " + senderResponse.toString());
 
                 return SendMoneyResponse.builder()
                         .status("00")
@@ -179,7 +190,7 @@ public class SendMoneyService {
                         .build();
 
             } else {
-                System.out.println(
+                System.err.println(
                         "Card less vcard generation error for rrn " + transactionRRN);
                 return SendMoneyResponse.builder()
                         .status("118")
@@ -198,9 +209,11 @@ public class SendMoneyService {
         }
     }
 
-    private SMSRequest saveRecipientMessage(SendMoneyRequest request, String transactionRRN, String senderMobileNo,
-                                            String receiverMobile, String passCode, String vCardNo) {
-        String recipientMessage = recipientMessage(request, senderMobileNo, vCardNo);
+    private SMSRequest saveRecipientMessage(SendMoneyRequest request, String transactionRRN,
+                                            String receiverMobile, String senderMobile, String vCardNo) {
+
+        String recipientMessage = recipientMessage(request, senderMobile, vCardNo);
+
         SMSRequest fdismsRequest = getFDISMSRequest(recipientMessage, receiverMobile, SMS_FUNCTION_RECEIVER);
 
         while (recipientMessage.length() > 0) {
@@ -224,6 +237,7 @@ public class SendMoneyService {
         return fdismsRequest;
     }
 
+
     /**
      * Added on 07/15/2021
      * BPR Switched SMS API and added a custom way of sending Message
@@ -236,8 +250,9 @@ public class SendMoneyService {
      * @param vCardNo
      * @param smsFunctionReceiver
      * @return
+     * @deprecated OFS message no longer viable
      */
-    @Deprecated
+    @Deprecated(since = "v1.6", forRemoval = true)
     private SMSRequest getNewSMSRequest(SendMoneyRequest request, String senderMobileNo, String receiverMobile, String passCode, String vCardNo, String smsFunctionReceiver) {
         return SMSRequest.builder()
                 .recipient(receiverMobile)
@@ -253,22 +268,21 @@ public class SendMoneyService {
     }
 
 
-    private SMSRequest getFDISMSRequest(String message, String receiverMobile, String smsFunctionReceiver) {
+    private SMSRequest getFDISMSRequest(String message, String smsRecipientNo, String smsFunctionReceiver) {
 
-        System.out.println("message = "+smsFunctionReceiver+ " : " + message);
+        System.err.println("message = " + smsFunctionReceiver + " : " + message);
         return SMSRequest.builder()
-                .recipient(receiverMobile)
+                .recipient(smsRecipientNo)
                 .SMSFunction(smsFunctionReceiver)
                 .message(message)
                 .build();
     }
 
     private SMSRequest saveSenderMessage(SendMoneyRequest request, String transactionRRN,
-                                         String senderMobileNo, String receiverMobile, String passCode,
-                                         String vCardNo) {
+                                         String recipientMobile, String senderMobileNo, String passCode) {
 
-        String senderMessage = senderMessage(request, receiverMobile, passCode);
-        SMSRequest fdismsRequest = getFDISMSRequest(senderMessage, receiverMobile, SMS_FUNCTION_SENDER);
+        String senderMessage = senderMessage(request, recipientMobile, passCode);
+        SMSRequest fdismsRequest = getFDISMSRequest(senderMessage, senderMobileNo, SMS_FUNCTION_SENDER);
         // Insert Second SMS
         String SMSContent = utilityService.encryptText(senderMessage);
         ScheduledSMS scheduledSMS = new ScheduledSMS();
@@ -282,33 +296,31 @@ public class SendMoneyService {
         return fdismsRequest;
     }
 
-    private String senderMessage(SendMoneyRequest request, String receiverMobile, String passCode) {
+    private String senderMessage(SendMoneyRequest request, String recipientMobile, String passCode) {
         return "You have successfully sent RWF"
                 + request.getAmount()
                 + " to "
-                + receiverMobile
-                + " "
-                + "via BPR Cardless transfer. Kindly share passcode with the recipient."
-                + "passcode : "
+                + recipientMobile
+                + " via BPR Cardless transfer. Kindly share passcode with the recipient. Passcode: "
                 + passCode
                 + ". Thanks for banking with us.";
     }
 
-    private String recipientMessage(SendMoneyRequest request, String senderMobileNo, String cardNo) {
-        return "You have received RWF "
+    private String recipientMessage(SendMoneyRequest request, String sendMobile, String cardNo) {
+        return "You have received RWF"
                 + request.getAmount()
                 + " from "
-                + senderMobileNo
-                + " to "
-                + "withdraw at a BPR agent. Provide VCARD no: "
+                + sendMobile
+                + " to withdraw at a BPR agent. Provide VCARD no: "
                 + cardNo
-                + ", "
-                + "Sender will share the passcode. MURAKOZE";
+                + " ,Sender will share the passcode. MURAKOZE";
     }
 
-    private void saveSendMoneyTransaction(SendMoneyRequest request, Data agentAuthData, String senderMobileNo,
-                                          String receiverMobile, String nationalIdDocumentName, String t24Reference,
-                                          String generatedCardNo, String token) {
+    private void saveSendMoneyTransaction(SendMoneyRequest request, Data agentAuthData, String nationalIdDocumentName,
+                                          String t24Reference, String generatedCardNo, String token) {
+        String senderMobileNo = request.getSenderMobileNo();
+        String receiverMobile = request.getRecipientMobileNo();
+
         MoneySend ms = new MoneySend();
         ms.setChannel("POS");
         ms.setAmount(String.valueOf(request.getAmount()));
@@ -347,8 +359,8 @@ public class SendMoneyService {
     }
 
     private void processSendMoneyTransaction(T24TXNQueue tot24) {
-        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
-        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
+        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue(T24_IP);
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue(T24_PORT);
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
         tot24.setPostedstatus("1");
         transactionService.updateT24TransactionDTO(tot24);
@@ -369,7 +381,8 @@ public class SendMoneyService {
         return tot24;
     }
 
-    private String bootstrapSendMoneyOFSMsg(double amount, String transactionRRN, Data agentAuthData, String branchAccountID, String configuredSendMoneySuspenseAccount, String firstTransactionPaymentDetails, String secondTransactionPaymentDetails, String thirdTransactionPaymentDetails) {
+    private String bootstrapSendMoneyOFSMsg(double amount, String transactionRRN, Data agentAuthData, String branchAccountID,
+                                            String configuredSendMoneySuspenseAccount, String[] paymentDetails) {
         return "0000AFUNDS.TRANSFER,SEND.MONEY/I//1/0,"
                 + ""
                 + MASKED_T24_USERNAME
@@ -391,34 +404,33 @@ public class SendMoneyService {
                 + "DEBIT.CURRENCY::=RWF,"
                 + "TCM.REF::="
                 + transactionRRN
-                + ","
-                + "PAYMENT.DETAILS:1:= "
-                + utilityService.sanitizePaymentDetails(firstTransactionPaymentDetails, "Send Money").trim()
+                + ",PAYMENT.DETAILS:1:= "
+                + utilityService.sanitizePaymentDetails(paymentDetails[0], SEND_MONEY_LABEL).trim()
                 + ","
                 + "PAYMENT.DETAILS:2:="
-                + secondTransactionPaymentDetails.trim()
+                + paymentDetails[1].trim()
                 + ","
                 + "PAYMENT.DETAILS:3:="
-                + thirdTransactionPaymentDetails.trim();
+                + paymentDetails[2].trim();
     }
 
     private void compareSenderRecipientMobileNumbers(String RRN, boolean sameMobileNo) {
         if (sameMobileNo) {
-            log.info("Send money transaction [" + RRN + "] failed. Sender mobile number and recipient mobile number are the same.");
+            log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + RRN + "] failed. Sender mobile number and recipient mobile number are the same.");
             throw new InvalidMobileNumberException("Transaction failed. Sender mobile number and recipient mobile number are the same.");
         }
     }
 
     private void validateMobileNumberLength(String RRN, int length) {
         if (length != 10) {
-            log.info("Send money transaction [" + RRN + "] failed. Invalid mobile number length.");
+            log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + RRN + "] failed. Invalid mobile number length.");
             throw new InvalidMobileNumberException("Invalid mobile number length");
         }
     }
 
     private void doesAgentHaveSufficientBalance(SendMoneyRequest request, String transactionRRN, Data agentAuthData, long agentFloatAccountBalance, String branchAccountID) {
         long chargesLong = fetchSendMoneyTransactionCharges(agentAuthData.getAccountNumber(), branchAccountID, transactionRRN, request.getAmount());
-        System.out.printf(
+        System.err.printf(
                 "%n Transaction %s T24 Charges (%d) and agent float account balance (%d) against send money amount (%f) %n",
                 transactionRRN, chargesLong, agentFloatAccountBalance, request.getAmount());
 
@@ -431,12 +443,12 @@ public class SendMoneyService {
                                                  String originalTransactionReference, double amount) {
 
         String validationReferenceNo = RRNGenerator.getInstance("BP").getRRN();
-        System.out.printf(
+        System.err.printf(
                 "Send Money Charges generated transaction ID %s for POS request transaction ID %s %n",
                 validationReferenceNo, originalTransactionReference);
 
         try {
-            String configuredSendMoneySuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue("SENDMONEYSUSPENSE");
+            String configuredSendMoneySuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue(SEND_MONEY_SUSPENSE_ACC);
             String tid = "PC";
             String cardlesssendOFS =
                     "0000AFUNDS.TRANSFER,SEND.MONEY/I/VALIDATE/1/0,"
@@ -475,51 +487,56 @@ public class SendMoneyService {
             tot24.setProcode("410000");
             tot24.setTid(tid);
 
-            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
-            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue(T24_IP);
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue(T24_PORT);
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
             transactionService.updateT24TransactionDTO(tot24);
 
-            System.out.printf(
+            System.err.printf(
                     "Send Money Charges Request : Transaction %s has been queued for T24 Processing. %n",
                     validationReferenceNo);
 
             if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
-                try {
 
-                    String charges = tot24.getTotalchargeamt();
-                    if (null != charges) {
-                        System.out.printf(
-                                "Send Money Charges Request [Success]: Transaction %s has transaction charge %s from T24 Processing. %n",
-                                validationReferenceNo, charges);
-                        return Long.parseLong(charges.replace("RWF", ""));
+                return extractChargesFromResponse(validationReferenceNo, tot24);
 
-                    } else {
-                        System.out.printf(
-                                "Send Money Charges Request [Failed]: Transaction %s has no transaction charges from T24 Processing. %n",
-                                validationReferenceNo);
-                        return Long.parseLong(String.format("%012d", Integer.parseInt("0")));
-                    }
-                } catch (Exception e) {
-                    System.out.printf(
-                            "Send Money Charges Request [Error]: Transaction %s has failed T24 Processing. Error message %s %n",
-                            validationReferenceNo, e.getMessage());
-                    e.printStackTrace();
-                }
             }
 
         } catch (Exception w) {
-            System.out.printf(
+            System.err.printf(
                     "Send Money Charges Request [Error]: Transaction %s has failed T24 Processing. Error message %s %n",
                     validationReferenceNo, w.getMessage());
             w.printStackTrace();
         }
-        return Long.parseLong(String.format("%012d", Integer.parseInt("0")));
+        return Long.parseLong(String.format(CURRENCY_ISO_FORMAT, Integer.parseInt("0")));
+    }
+
+    private long extractChargesFromResponse(String validationReferenceNo, T24TXNQueue tot24) {
+        try {
+            String charges = tot24.getTotalchargeamt();
+            if (null != charges) {
+                System.err.printf(
+                        "Send Money Charges Request [Success]: Transaction %s has transaction charge %s from T24 Processing. %n",
+                        validationReferenceNo, charges);
+                return Long.parseLong(charges.replace("RWF", ""));
+
+            } else {
+                System.err.printf(
+                        "Send Money Charges Request [Failed]: Transaction %s has no transaction charges from T24 Processing. %n",
+                        validationReferenceNo);
+                return Long.parseLong(String.format(CURRENCY_ISO_FORMAT, Integer.parseInt("0")));
+            }
+        } catch (Exception e) {
+            System.err.printf(
+                    "Send Money Charges Request [Error]: Transaction %s has failed T24 Processing. Error message %s %n",
+                    validationReferenceNo, e.getMessage());
+            e.printStackTrace();
+            return Long.parseLong(String.format(CURRENCY_ISO_FORMAT, Integer.parseInt("0")));
+        }
     }
 
     private void saveSendMoneyCommission(String charges, String tid, String gatewayref,
-                                         String debitAccount, String firstTransactionPaymentDetails,
-                                         String secondTransactionPaymentDetails, String thirdTransactionPaymentDetails,
+                                         String debitAccount, String[] paymentDetails,
                                          String branchAccountID, String creditAccount) {
         try {
             String commissionOFS =
@@ -546,15 +563,15 @@ public class SendMoneyService {
                             + gatewayref
                             + ","
                             + "PAYMENT.DETAILS:1:= "
-                            + utilityService.sanitizePaymentDetails(firstTransactionPaymentDetails, "Send Money Commission").trim()
+                            + utilityService.sanitizePaymentDetails(paymentDetails[0], "Send Money Commission").trim()
                             + ","
                             + "PAYMENT.DETAILS:2:="
-                            + secondTransactionPaymentDetails.trim()
+                            + paymentDetails[1].trim()
                             + ","
                             + "PAYMENT.DETAILS:3:="
-                            + thirdTransactionPaymentDetails.trim();
+                            + paymentDetails[2].trim();
 
-            System.out.println("Send money commission OFS for transaction [" + gatewayref + "] : " + commissionOFS);
+            System.err.println("Send money commission OFS for transaction [" + gatewayref + "] : " + commissionOFS);
 
             String refno = RRNGenerator.getInstance("SC").getRRN();
             String tot24str = String.format("%04d", commissionOFS.length()) + commissionOFS;
@@ -571,8 +588,8 @@ public class SendMoneyService {
             tot24.setDebitacctno(debitAccount);
             tot24.setCreditacctno(creditAccount);
 
-            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
-            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue(T24_IP);
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue(T24_PORT);
 
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
             transactionService.updateT24TransactionDTO(tot24);
@@ -605,7 +622,7 @@ public class SendMoneyService {
         }
 
         String channel = "1510";
-        String sendMoneySuspense = xSwitchParameterService.fetchXSwitchParamValue("SENDMONEYSUSPENSE");
+        String sendMoneySuspense = xSwitchParameterService.fetchXSwitchParamValue(SEND_MONEY_SUSPENSE_ACC);
 
         // this must be set
         if (sendMoneySuspense.isEmpty()) {
@@ -616,14 +633,14 @@ public class SendMoneyService {
                     .build();
         }
 
-        String recipientPhoneNo = request.getReceiverMobileNo();
-        String passcode = request.getPassCode();
+        String recipientPhoneNo = request.getReceiverMobileNo().trim();
+        String passcode = request.getPasscode().trim();
 
         // No need to validate agent account is being debited
         BPRBranches branch =
                 branchService.fetchBranchAccountsByBranchCode(sendMoneySuspense);
         if (null == branch.getCompanyName()) {
-            System.out.println(
+            System.err.println(
                     "Receive money suspense account details could not be verified for account "
                             + sendMoneySuspense);
             return SendMoneyResponse.builder()
@@ -648,7 +665,7 @@ public class SendMoneyService {
         try {
             String tid = "PC";
             String narration = "RECEIVEMONEY";
-            Optional<MoneySend> optionalMoneySend = getSendMoneyTxn(recipientPhoneNo, passcode, String.valueOf(request.getAmount()));
+            Optional<MoneySend> optionalMoneySend = getSendMoneyTxn(recipientPhoneNo, passcode);
 
             if (optionalMoneySend.isEmpty()) {
                 return SendMoneyResponse.builder()
@@ -660,29 +677,15 @@ public class SendMoneyService {
 
             MoneySend sendMoneyTxn = optionalMoneySend.get();
 
-            try {
-                String storedVCard = desUtil._decrypt(sendMoneyTxn.getCno());
-
-                if (!storedVCard.equalsIgnoreCase(request.getVCard())) {
-                    return SendMoneyResponse.builder()
-                            .status("116")
-                            .message("Transaction failed. Invalid vCard. Please try again.")
-                            .data(null)
-                            .build();
-                }
-
-            } catch (Exception e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-                System.out.println("Error encrypting card no for send money txn ref ~ " + transactionRRN);
+            if (compareRequestTokenWithStoredToken(request, transactionRRN, sendMoneyTxn)) {
                 return SendMoneyResponse.builder()
                         .status("116")
-                        .message("Transaction failed. Contact administrator")
+                        .message("Transaction failed. Invalid vCard. Please try again.")
                         .data(null)
                         .build();
             }
 
-            System.out.println(
+            System.err.println(
                     "Send Money Withdrawal Txn Found , Money send Id:  " + sendMoneyTxn.getMoneysendid());
             String smwOFS =
                     "0000AFUNDS.TRANSFER,SEND.MONEYWD/I/PROCESS/1/0,"
@@ -716,7 +719,7 @@ public class SendMoneyService {
                             + "PAYMENT.DETAILS:3:="
                             + narration.trim();
 
-            System.out.println("Receive money OFS " + smwOFS);
+            System.err.println("Receive money OFS " + smwOFS);
 
             String tot24str = String.format("%04d", smwOFS.length()) + smwOFS;
 
@@ -731,8 +734,8 @@ public class SendMoneyService {
             tot24.setCreditacctno(authenticateAgentResponse.getData().getAccountNumber());
             tot24.setDebitacctno(sendMoneySuspense);
 
-            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
-            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
+            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue(T24_IP);
+            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue(T24_PORT);
 
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
             transactionService.updateT24TransactionDTO(tot24);
@@ -823,7 +826,22 @@ public class SendMoneyService {
         }
     }
 
-    public Optional<MoneySend> getSendMoneyTxn(String receiverPhone, String msToken, String amount) {
-        return moneySendRepository.findByRecevernumberAndMstokenAndAmount(receiverPhone, msToken, amount);
+    private boolean compareRequestTokenWithStoredToken(ReceiveMoneyRequest request, String transactionRRN, MoneySend sendMoneyTxn) {
+        try {
+            String storedVCard = desUtil._decrypt(sendMoneyTxn.getCno());
+
+            if (!storedVCard.equalsIgnoreCase(request.getVCard())) {
+                return true;
+            }
+
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            System.err.println("Error encrypting card no for send money txn ref ~ " + transactionRRN);
+        }
+        return false;
+    }
+
+    public Optional<MoneySend> getSendMoneyTxn(String receiverPhone, String msToken) {
+        return moneySendRepository.findByRecevernumberAndMstoken(receiverPhone, msToken);
     }
 }
