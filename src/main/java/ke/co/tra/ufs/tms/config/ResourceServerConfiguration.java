@@ -216,7 +216,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers(HttpMethod.DELETE, "/par-master-profiles").hasAuthority("DELETE_MASTER_PROFILES")
                 .antMatchers(HttpMethod.PUT, "/par-master-profiles/approve-actions", "/par-master-profiles/decline-actions").hasAuthority("APPROVE_MASTER_PROFILES")
 
-
 //                .antMatchers(HttpMethod.PUT, "/bin-profile").hasAuthority("UPDATE_BIN_PROFILE")
 //                .antMatchers(HttpMethod.PUT, "/bin-profile/approve-actions").hasAuthority("CREATE_BIN_PROFILE")
 //                .antMatchers(HttpMethod.GET, "/bin-profile").hasAuthority("VIEW_BIN_PROFILE")

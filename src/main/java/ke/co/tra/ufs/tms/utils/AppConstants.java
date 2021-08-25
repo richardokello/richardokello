@@ -230,4 +230,11 @@ public class AppConstants {
 
     public static final String POS_SUPERVISOR_ROLE = "Supervisor";
 
+    public static final String BILL_OWNER_IS_HOSPITAL = "HOSPITAL";
+    public static final String REQUEST_DIRECTION = "RESPONSE";
+    public static final String STAPI_PAY_CONTROL_NUMBER_CODE = "CRDB14";
+
+
+
+
 }
