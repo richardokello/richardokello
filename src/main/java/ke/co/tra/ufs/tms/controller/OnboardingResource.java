@@ -164,7 +164,6 @@ public class OnboardingResource {
         tmsDevice.setDeviceTypeId(onboardWrapper.getDeviceTypeId());
         tmsDevice.setImeiNo(onboardWrapper.getImeiNo());
         tmsDevice.setMasterProfileId(onboardWrapper.getMasterProfileId());
-        tmsDevice.setOrgData(onboardWrapper.getOrgData());
 
         if (onboardWrapper.getEstateId() != null) {
             try {
@@ -363,7 +362,6 @@ public class OnboardingResource {
         TmsDevice tmsDevice = new TmsDevice();
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
         tmsDevice.setMasterProfileId(onboardWrapper.getMasterProfileId());
-        tmsDevice.setOrgData(onboardWrapper.getOrgData());
 
         if (onboardWrapper.getEstateId() != null) {
             try {
@@ -640,7 +638,6 @@ public class OnboardingResource {
         tmsDevice.setDeviceTypeId(onboardWrapper.getDeviceTypeId());
         tmsDevice.setImeiNo(onboardWrapper.getImeiNo());
         tmsDevice.setMasterProfileId(onboardWrapper.getMasterProfileId());
-        tmsDevice.setOrgData(onboardWrapper.getOrgData());
 
         if (onboardWrapper.getEstateId() != null) {
             try {

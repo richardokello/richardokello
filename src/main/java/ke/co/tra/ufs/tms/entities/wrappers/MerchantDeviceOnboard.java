@@ -11,6 +11,4 @@ public class MerchantDeviceOnboard extends DevicesWrapper {
     @NotNull
     Long customerId;
     Long outletIds;
-    //used when assigning terminal to a hospital
-    String orgData;
 }

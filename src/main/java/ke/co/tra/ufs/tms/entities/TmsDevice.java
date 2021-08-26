@@ -154,7 +154,5 @@ public class TmsDevice implements Serializable {
     @ModifiableField
     private String tid;
 
-    @Column(name="ORGMETADATA")
-    private String orgData;
 
 }
