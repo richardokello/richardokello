@@ -1,10 +1,13 @@
 package ke.co.tra.ufs.tms.service.templates;
 
+import com.google.gson.Gson;
 import ke.co.tra.ufs.tms.entities.*;
+import ke.co.tra.ufs.tms.entities.wrappers.InstitutionWrapper;
 import ke.co.tra.ufs.tms.repository.*;
 import ke.co.tra.ufs.tms.service.CustomerConfigFileService;
 import ke.co.tra.ufs.tms.service.CustomerOutletService;
 import ke.co.tra.ufs.tms.service.FileExtensionRepository;
+import ke.co.tra.ufs.tms.utils.AppConstants;
 import ke.co.tra.ufs.tms.utils.SharedMethods;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.data.domain.Sort;
@@ -67,6 +70,15 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
             log.error("Entity Names=>" + parentIndex.getConfig().getEntityName());
             switch (parentIndex.getConfig().getEntityName()) {
                 case CUSTOMER:
+                    if(parentIndex.getConfig().getKeyName().equals(AppConstants.CRDB_BILLER_PREFIX)){
+                        Gson gson = new Gson();
+                        if(customer.getOrgData() != null){
+                            InstitutionWrapper institutionWrapper = gson.fromJson(customer.getOrgData(), InstitutionWrapper.class);
+                            return institutionWrapper.getOrgPrefix();
+                        }else{
+                            return null;
+                        }
+                    }
                     return getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomer.class, customer);
                 case TID_MID:
                     // has children -- get children

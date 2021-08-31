@@ -173,6 +173,14 @@ public class UfsCustomer implements Serializable {
     @Searchable
     @Column(name = "MID")
     private String mid;
+    @Column(name="ORGMETADATA")
+    private String orgData;
+    @ModifiableField
+    @Column(name="CONVENIENCE_FEE_ENABLED")
+    private Integer convenienceFeeEnabled;
+    @ModifiableField
+    @Column(name="CONVENIENCE_FEE")
+    private Integer convenienceFee;
 
     public UfsCustomer() {
     }
@@ -424,6 +432,30 @@ public class UfsCustomer implements Serializable {
 
     public void setMid(String mid) {
         this.mid = mid;
+    }
+
+    public String getOrgData() {
+        return orgData;
+    }
+
+    public void setOrgData(String orgData) {
+        this.orgData = orgData;
+    }
+
+    public Integer getConvenienceFeeEnabled() {
+        return convenienceFeeEnabled;
+    }
+
+    public void setConvenienceFeeEnabled(Integer convenienceFeeEnabled) {
+        this.convenienceFeeEnabled = convenienceFeeEnabled;
+    }
+
+    public Integer getConvenienceFee() {
+        return convenienceFee;
+    }
+
+    public void setConvenienceFee(Integer convenienceFee) {
+        this.convenienceFee = convenienceFee;
     }
 
     @Override

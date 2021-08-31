@@ -229,6 +229,7 @@ public class AppConstants {
     public static final String POS_USER_WORKGROUP = "Pos Admin";
 
     public static final String POS_SUPERVISOR_ROLE = "Supervisor";
+    public static final String CRDB_BILLER_PREFIX = "orgPrefix";
 
 
 
