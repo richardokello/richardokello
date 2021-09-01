@@ -74,7 +74,7 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
                         Gson gson = new Gson();
                         if(customer.getOrgData() != null){
                             InstitutionWrapper institutionWrapper = gson.fromJson(customer.getOrgData(), InstitutionWrapper.class);
-                            return institutionWrapper.getOrgPrefix();
+                            return institutionWrapper.getOrgPrefix().replaceAll("\"", "");
                         }else{
                             return null;
                         }
