@@ -5,6 +5,7 @@ import ke.tra.ufs.webportal.entities.UfsBanks;
 import ke.tra.ufs.webportal.repository.UfsBankBinsRepository;
 import ke.tra.ufs.webportal.repository.UfsBankRepository;
 import ke.tra.ufs.webportal.service.BankService;
+import ke.tra.ufs.webportal.utils.AppConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,6 @@ public class BankServiceTemplate implements BankService {
 
     @Override
     public UfsBanks findByNameOrCode(String bankName, String bankCode) {
-        return bankRepository.findByBankNameOrBankCode(bankName,bankCode);
+        return bankRepository.findByBankNameOrBankCodeAndIntrash(bankName,bankCode, AppConstants.INTRASH_NO);
     }
 }
