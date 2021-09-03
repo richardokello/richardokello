@@ -41,9 +41,17 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
 
     @Override
     public ResponseEntity<ResponseWrapper<UfsBanks>> create(@Valid @RequestBody UfsBanks ufsBanks) {
-        ResponseEntity response = super.create(ufsBanks);
-        if ((!response.getStatusCode().equals(HttpStatus.CREATED))) {
-            return response;
+        ResponseWrapper response = new ResponseWrapper();
+        UfsBanks bank = bankService.findByNameOrCode(ufsBanks.getBankName(),ufsBanks.getBankCode());
+        if (bank != null ) {
+            response.setCode(HttpStatus.CONFLICT.value());
+            response.setMessage(bank.getBankName()+" Bank Name or "+bank.getBankCode()+" Bank Code already exist");
+
+            return new ResponseEntity(response, HttpStatus.CONFLICT);
+        }
+        ResponseEntity responseEntity = super.create(ufsBanks);
+        if ((!responseEntity.getStatusCode().equals(HttpStatus.CREATED))) {
+            return responseEntity;
         }
 
         if(ufsBanks.getUfsBankBins() != null){
@@ -58,7 +66,7 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
             bankService.saveAllBins(bins);
         }
 
-        return response;
+        return responseEntity;
     }
 
     /*Getting Bank Bins */

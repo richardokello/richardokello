@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UfsBankRepository extends CrudRepository<UfsBanks,Long> {
+
+    UfsBanks findByBankNameOrBankCode(String bankName, String bankCode);
 }
