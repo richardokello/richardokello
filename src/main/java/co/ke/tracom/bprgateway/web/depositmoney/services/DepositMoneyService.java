@@ -58,7 +58,7 @@ public class DepositMoneyService {
                     firstDetails.length() > 34 ? firstDetails.substring(0, 34) : firstDetails;
 
             BPRBranches branch = getBranchDetailsFromAccount(agentFloatAccount);
-            if (null == branch.getCompanyName()) {
+            if ( branch.getCompanyName()==null) {
                 return response
                         .setStatus("65")
                         .setMessage("Agent branch details could not be verified. Kindly contact BPR customer care")
@@ -134,9 +134,8 @@ public class DepositMoneyService {
                     tot24.getT24responsecode() == null ? "NA" : tot24.getT24responsecode();
             if (T24RawResponseCode.equals("1")) {
                 String charges =
-                        null == tot24.getTotalchargeamt() || tot24.getTotalchargeamt().isEmpty()
-                                ? "0"
-                                : tot24.getTotalchargeamt();
+                        tot24.getTotalchargeamt() ==null || tot24.getTotalchargeamt().isEmpty()
+                                ? "0" : tot24.getTotalchargeamt();
                 String formattedCharge = charges.replace("RWF", "");
 
                 String ISOFormattedAmount = String.format("%012d", Integer.parseInt(formattedCharge));

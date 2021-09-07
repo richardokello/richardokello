@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class T24Channel {
+public class  T24Channel {
 
     public static final String MASKED_T24_USERNAME = "########U";
     public static final String MASKED_T24_PASSWORD = "########A";

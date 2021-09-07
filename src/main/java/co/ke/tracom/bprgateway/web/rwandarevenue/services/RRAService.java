@@ -66,10 +66,11 @@ public class RRAService {
 
 
     public RRATINValidationResponse validateCustomerTIN(RRATINValidationRequest request, String transactionRRN) {
-        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+       // AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         HttpPost httpPost = null;
         try {
+            String rrasoapurl = xSwitchParameterService.fetchXSwitchParamValue("RRASOAPURL");
             Boolean exists = findPendingRRAPaymentOnQueueByRRATIN(request.getRrareferenceNo());
 
             if (exists) {
@@ -89,12 +90,14 @@ public class RRAService {
             String rraValidationPayload = bootstrapRRAXMLRequest(request.getRrareferenceNo());
             System.err.println("rraValidationPayload = " + rraValidationPayload);
 
-            String rrasoapurl = xSwitchParameterService.fetchXSwitchParamValue("RRASOAPURL");
+
 
             System.err.println("rrasoapurl = " + rrasoapurl);
             httpPost = new HttpPost(rrasoapurl);
             StringEntity stringEntity = new StringEntity(rraValidationPayload, "UTF-8");
             stringEntity.setChunked(true);
+
+
 
             // Request parameters and other properties.
             httpPost.setEntity(stringEntity);
@@ -118,22 +121,27 @@ public class RRAService {
             } else {
                 // Server did not respond
                 retrnedxml = "";
-                System.err.printf(
+                System.out.printf(
                         "\n \n  Empty response for reference : %s \n \n " + request.getRrareferenceNo());
             }
+
+
 
             // always true
             if (!retrnedxml.isEmpty()) {
 
+                System.out.println("RRA >> RETURNED RAW VALIDATION DATA  Start ::  \n" + retrnedxml);
+                System.out.println("\n=============== <<< :: End");
                 // Remove header that may cause errors during conversion using document builder factory
                 String properxml =
                         retrnedxml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>", "");
                 // print results
-                System.err.println("RRA >> RETURNED VALIDATION DATA  Start ::  \n" + properxml);
+                System.out.println("RRA >> RETURNED VALIDATION DATA  Start ::  \n" + properxml);
+                System.out.println("\n=============== <<< :: End");
 
                 // Convert to xml string ...
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                //dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                 Document doc = dBuilder.parse(new InputSource(new StringReader(properxml)));
                 doc.getDocumentElement().normalize();
@@ -162,7 +170,7 @@ public class RRAService {
                 JSONObject xmlJSONObj = XML.toJSONObject(writer.toString());
 
                 if (xmlJSONObj == null || xmlJSONObj.length() == 0) {
-                    System.err.println("NO response for RRA REF " + request.getRrareferenceNo());
+                    System.err.println("NO response for RRA R3EF " + request.getRrareferenceNo());
                     return RRATINValidationResponse.builder()
                             .status("908")
                             .message("Ref " + request.getRrareferenceNo() + " could not be verified by RRA system")
@@ -257,11 +265,12 @@ public class RRAService {
 
         } catch (Exception je) {
             je.printStackTrace();
-
+            System.out.println("je exception= " + je);
             return RRATINValidationResponse.builder()
                     .status("097")
                     .message("RRA System could not be reached. Please try later or contact contact BPR customer care")
                     .data(null).build();
+
 
         } finally {
             if (httpPost != null) {
@@ -442,7 +451,7 @@ public class RRAService {
             log.info("RRA Transaction [" + transactionRRN + "] failed during processing. Kindly contact BPR Customer Care");
             return RRAPaymentResponse.builder()
                     .status("118")
-                    .message("RRA Transaction [] failed during processing. Kindly contact BPR Customer Care")
+                    .message("RRA Transaction ["+ authenticateAgentResponse.getData().getAccountNumber()+" ] failed during processing. Kindly contact BPR Customer Care")
                     .data(null).build();
         }
     }

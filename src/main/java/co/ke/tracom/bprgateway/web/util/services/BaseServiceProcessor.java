@@ -50,7 +50,7 @@ public class BaseServiceProcessor {
     public Map<String, String> validateTransactionLimits(String mti, String processingCode, String amount) {
         Map<String, String> results = new HashMap<>();
         Optional<TransactionLimitManager> optionalTransactionLimit =
-                transactionLimitManagerRepository.findByISOMsgMTIAndProcessingCode(mti, processingCode);
+               transactionLimitManagerRepository.findByISOMsgMTIAndProcessingCode(mti, processingCode);
         if (optionalTransactionLimit.isPresent()) {
             TransactionLimitManager transactionLimitManager = optionalTransactionLimit.get();
             validateTransactionAmount(results, amount, transactionLimitManager);
