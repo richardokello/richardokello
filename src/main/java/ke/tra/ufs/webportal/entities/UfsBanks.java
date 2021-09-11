@@ -9,9 +9,12 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import lombok.*;
@@ -85,10 +88,10 @@ public class UfsBanks implements Serializable {
     private String intrash;
 
     @JoinColumn(name = "COUNTRY", referencedColumnName = "ID",insertable = false, updatable = false)
-    @ManyToOne
+    @ManyToOne(optional = true)
     private UfsCountries country;
     @JoinColumn(name = "SETTLEMENT_CURRENCY", referencedColumnName = "ID",insertable = false, updatable = false)
-    @ManyToOne
+    @ManyToOne(optional = true)
     private UfsCurrency settlementCurrency;
     @ModifiableField
     @Column(name = "BANK_GUARANTEE")
@@ -110,7 +113,7 @@ public class UfsBanks implements Serializable {
     @Filter(isDateRange = true)
     private Date createdAt;
     @JoinColumn(name = "TENANT_ID", referencedColumnName = "U_UID", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private UfsOrganizationUnits tenantId;
     @Filter
     @ModifiableField
@@ -118,6 +121,4 @@ public class UfsBanks implements Serializable {
     private String tenantIds;
     @Transient
     private List<UfsBankBins> ufsBankBins;
-
-    
 }

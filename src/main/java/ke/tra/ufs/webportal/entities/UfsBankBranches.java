@@ -8,6 +8,7 @@ package ke.tra.ufs.webportal.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.ModifiableField;
 import ke.axle.chassis.annotations.Searchable;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
@@ -27,18 +28,12 @@ import ke.axle.chassis.annotations.Filter;
  * @author ojuma
  */
 @Entity
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "UFS_BANK_BRANCHES")
-@XmlRootElement
-@NamedQueries({
-        @NamedQuery(name = "UfsBankBranches.findAll", query = "SELECT u FROM UfsBankBranches u")
-        , @NamedQuery(name = "UfsBankBranches.findById", query = "SELECT u FROM UfsBankBranches u WHERE u.id = :id")
-        , @NamedQuery(name = "UfsBankBranches.findByBranchId", query = "SELECT u FROM UfsBankBranches u WHERE u.id = :id")
-        , @NamedQuery(name = "UfsBankBranches.findByName", query = "SELECT u FROM UfsBankBranches u WHERE u.name = :name")
-        , @NamedQuery(name = "UfsBankBranches.findByCode", query = "SELECT u FROM UfsBankBranches u WHERE u.code = :code")
-        , @NamedQuery(name = "UfsBankBranches.findByAction", query = "SELECT u FROM UfsBankBranches u WHERE u.action = :action")
-        , @NamedQuery(name = "UfsBankBranches.findByActionStatus", query = "SELECT u FROM UfsBankBranches u WHERE u.actionStatus = :actionStatus")
-        , @NamedQuery(name = "UfsBankBranches.findByCreatedAt", query = "SELECT u FROM UfsBankBranches u WHERE u.createdAt = :createdAt")
-        , @NamedQuery(name = "UfsBankBranches.findByIntrash", query = "SELECT u FROM UfsBankBranches u WHERE u.intrash = :intrash")})
 public class UfsBankBranches implements Serializable {
 
     @Basic(optional = false)
@@ -79,6 +74,13 @@ public class UfsBankBranches implements Serializable {
     @Filter
     @ModifiableField
     private String tenantIds;
+    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne(optional = true)
+    private UfsBanks ufsBanks;
+    @Column(name = "BANK_ID")
+    @Filter
+    @ModifiableField
+    private Long ufsBankId;
 
 
     private static final long serialVersionUID = 1L;
@@ -113,163 +115,5 @@ public class UfsBankBranches implements Serializable {
     @Column(name = "GEOGRAPHICAL_REGION_ID")
     @ModifiableField
     private BigDecimal geographicalRegionIds;
-
-    public UfsBankBranches() {
-    }
-
-    public UfsBankBranches(Long id) {
-        this.id = id;
-    }
-
-    public UfsBankBranches(Long id, String name, String code) {
-        this.id = id;
-        this.name = name;
-        this.code = code;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public String getActionStatus() {
-        return actionStatus;
-    }
-
-    public void setActionStatus(String actionStatus) {
-        this.actionStatus = actionStatus;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-
-
-//    public UfsBankRegion getBankRegionId() {
-//        return bankRegionId;
-//    }
-//
-//    public void setBankRegionId(UfsBankRegion bankRegionId) {
-//        this.bankRegionId = bankRegionId;
-//    }
-
-    public UfsGeographicalRegion getGeographicalRegionId() {
-        return geographicalRegionId;
-    }
-
-    public void setGeographicalRegionId(UfsGeographicalRegion geographicalRegionId) {
-        this.geographicalRegionId = geographicalRegionId;
-    }
-
-    public UfsOrganizationUnits getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UfsOrganizationUnits tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public String getTenantIds() {
-        return tenantIds;
-    }
-
-    public void setTenantIds(String tenantIds) {
-        this.tenantIds = tenantIds;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UfsBankBranches)) {
-            return false;
-        }
-        UfsBankBranches other = (UfsBankBranches) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "ke.tra.ufs.webportal.entities.UfsBankBranches[ id=" + id + " ]";
-    }
-
-
-    public BigDecimal getBankRegionIds() {
-        return bankRegionIds;
-    }
-
-    public void setBankRegionIds(BigDecimal bankRegionIds) {
-        this.bankRegionIds = bankRegionIds;
-    }
-
-    public BigDecimal getGeographicalRegionIds() {
-        return geographicalRegionIds;
-    }
-
-    public void setGeographicalRegionIds(BigDecimal geographicalRegionIds) {
-        this.geographicalRegionIds = geographicalRegionIds;
-    }
-
-    @XmlTransient
-    @org.codehaus.jackson.annotate.JsonIgnore
-    public Set<UfsGls> getUfsGlsSet() {
-        return ufsGlsSet;
-    }
-
-    public void setUfsGlsSet(Set<UfsGls> ufsGlsSet) {
-        this.ufsGlsSet = ufsGlsSet;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-
-    public String getIntrash() {
-        return intrash;
-    }
-
-    public void setIntrash(String intrash) {
-        this.intrash = intrash;
-    }
-
 
 }

@@ -136,6 +136,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setDateIssued(customerOnboarding.getDateIssued());
         customer.setValidTo(customerOnboarding.getValidTo());
         customer.setMccIds(customerOnboarding.getMccIds());
+        customer.setMainBank(customerOnboarding.getMainBank());
         customer.setBusinessLicenceNumber(customerOnboarding.getBusinessLicenseNumber());
         customer.setLocalRegistrationNumber(customerOnboarding.getLocalRegistrationNumber());
         customer.setBusinessName(customerOnboarding.getBusinessName());
@@ -481,6 +482,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                             customer.setCustomerClassId(entity.getCustomerClassId());
                         }
                         customer.setMccIds(entity.getMccIds());
+                        customer.setMainBank(entity.getMainBank());
                         customer.setCustomerTypeId(entity.getCustomerTypeId());
                         customer.setEstateId(entity.getEstateId());
                         customer.setMid(entity.getMid());

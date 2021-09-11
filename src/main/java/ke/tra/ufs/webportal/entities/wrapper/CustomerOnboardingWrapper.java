@@ -34,4 +34,6 @@ public class CustomerOnboardingWrapper {
     private String mid;
     @NotNull
     private BigDecimal mccIds;
+    @NotNull
+    private Long mainBank;
 }

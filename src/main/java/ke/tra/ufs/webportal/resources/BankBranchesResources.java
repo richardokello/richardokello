@@ -150,6 +150,7 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
 
                     UfsBankBranches entity = supportRepo.mergeChanges(id, bankBranch);
                     bankBranch.setName(entity.getName());
+                    bankBranch.setUfsBankId(entity.getUfsBankId());
                     bankBranch.setTenantIds(entity.getTenantIds());
                     bankBranch.setActionStatus(AppConstants.STATUS_APPROVED);
                     bankBranch.setBankRegionIds(entity.getBankRegionIds());
