@@ -1,6 +1,7 @@
 package ke.tra.ufs.webportal.repository;
 
 import ke.tra.ufs.webportal.entities.UfsCustomer;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,7 @@ public interface CustomerRepository extends CrudRepository<UfsCustomer, Long> {
 
     public List<UfsCustomer> findByIntrash(String intrash);
 
+    @Query("SELECT c FROM UfsCustomer c WHERE c.id = ?1")
     public UfsCustomer findByCustomerId(Long id);
 
     public List<UfsCustomer> findByActionAndActionStatus(String action, String actionStatus);
