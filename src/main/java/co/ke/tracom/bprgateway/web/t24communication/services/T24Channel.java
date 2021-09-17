@@ -343,10 +343,11 @@ public class  T24Channel {
     }
 
     public void processTransactionToT24(String t24Ip, int t24Port, T24TXNQueue transactionPendingT24Processing) {
+       log.info("Processing T24 transaction");
         try {
-            if (null != transactionPendingT24Processing) {
-                System.out.printf(
-                        "%nTransaction %s fetched from database queue ready for processing at T24 %n",
+            if (transactionPendingT24Processing != null) {
+                log.info(
+                        "Transaction {} fetched from database queue ready for processing at T24",
                         transactionPendingT24Processing.getGatewayref());
 
                 transactionPendingT24Processing.setAttempts(
@@ -355,10 +356,11 @@ public class  T24Channel {
                 transactionPendingT24Processing.setStarttime(System.currentTimeMillis());
                 transactionPendingT24Processing.setPostedstatus("6");
                 boolean xx = T24TransactionPosting(transactionPendingT24Processing, t24Ip, t24Port);
+                log.info("After transaction posting >>>> {}", xx);
             }
         } catch (Exception e) {
-            System.out.printf(
-                    "%n [Error] Unable to fetch transaction from database queue. Error message: %s %n",
+           log.info(
+                    "[Error] Unable to fetch transaction from database queue. Error message: {}",
                     e.getMessage());
             transactionPendingT24Processing.setPostedstatus("3");
             e.printStackTrace();
@@ -369,14 +371,14 @@ public class  T24Channel {
         String t24RequestOFS = transactionPendingProcessing.getRequestleg();
         String transactionRRN = transactionPendingProcessing.getGatewayref();
 
-        System.out.printf(
-                "Processing initialization for Transaction RRN [%s] at [%s] OFS Request: [%s]",
+        log.info(
+                "Processing initialization for Transaction RRN [{}] at [{}] OFS Request: [{}]",
                 transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), t24RequestOFS);
 
         TelnetClient telnetClient = new TelnetClient();
         try {
-            System.out.printf(
-                    "\nConnection established to T24 for Transaction RRN [%s] at [%s] ",
+            log.info(
+                    "Connection established to T24 for Transaction RRN [{}] at [{}] ",
                     transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()));
 
 //            String[] OFSSplit = t24RequestOFS.split(",");
@@ -405,30 +407,30 @@ public class  T24Channel {
             String minus4 = OFSWithPlainTextCredentials.substring(4);
             String formattedOFSMessageString = String.format("%04d", minus4.length()) + minus4;
 
-            System.err.println("Formatted OFS Message String: " + formattedOFSMessageString);
+            log.info("Formatted OFS Message String: {}", formattedOFSMessageString);
 
             telnetClient.connect(t24ip, t24port);
+            log.info("Connection established >>>> {}", telnetClient.isConnected());
             boolean sent = send(telnetClient, formattedOFSMessageString.trim(), transactionRRN);
+            log.info("Transaction sent to t24");
             String T24ResponseOFS = receive(telnetClient, transactionPendingProcessing);
 
-            System.out.printf(
-                    "T24 response received for Transaction RRN [%s] at [%s] :: Response [%s]\n",
+            log.info(
+                    "T24 response received for Transaction RRN [{}] at [{}] :: Response [{}]",
                     transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), T24ResponseOFS);
 
             transactionPendingProcessing.setResponseleg(T24ResponseOFS);
             transactionPendingProcessing.setEndtime(System.currentTimeMillis());
 
             if (T24ResponseOFS.length() < 5) {
-                System.out.printf(
-                        "[Error] T24 failed processing Transaction RRN [%s] at [%s] :: Response [UNEXPECTED RESPONSE FROM REMOTE SYSTEM]\n",
+                log.info(
+                        "[Error] T24 failed processing Transaction RRN [{}] at [{}] :: Response [UNEXPECTED RESPONSE FROM REMOTE SYSTEM]",
                         transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()));
                 transactionPendingProcessing.setPostedstatus("4");
                 transactionPendingProcessing.setT24failnarration("UNEXPECTED RESPONSE FROM REMOTE SYSTEM");
             } else {
                 try {
-                    switch (transactionPendingProcessing.getProcode() == null
-                            ? ""
-                            : transactionPendingProcessing.getProcode()) {
+                    switch (transactionPendingProcessing.getProcode() == null ? "" : transactionPendingProcessing.getProcode()) {
                         case "460001":
                             if (transactionPendingProcessing.getTxnmti().equals("1100")) {
                                 parseT24EuclElecInquiry(transactionPendingProcessing, transactionRRN);
@@ -444,13 +446,12 @@ public class  T24Channel {
                         case "500001":
                             parseT24SMSResponse(transactionPendingProcessing, transactionRRN);
                             break;
-
                         default:
                             parseT24ResponseRefactored(transactionPendingProcessing, transactionRRN);
                             break;
                     }
                 } catch (Exception e) {
-                    System.out.println("Error Parsing T24 Response : for  " + transactionRRN + "\n");
+                    log.info("Error Parsing T24 Response : for  {}", transactionRRN );
                     transactionPendingProcessing.setPostedstatus("5");
                     transactionPendingProcessing.setT24failnarration(e.getMessage());
                     e.printStackTrace();
@@ -532,6 +533,7 @@ public class  T24Channel {
 
     private String receive(TelnetClient client, T24TXNQueue lastpostedTxns) {
         StringBuffer strBuffer;
+
         try {
             strBuffer = new StringBuffer();
             byte[] buf = new byte[4096];
@@ -539,12 +541,15 @@ public class  T24Channel {
 
             // Thread.sleep(100L);
             int datalen = -1;
+            log.info("the data recieved from T24 is {}"+ len);
 
             while ((len = client.getInputStream().read(buf)) != 0) {
                 strBuffer.append(new String(buf, 0, len));
+
                 // if length of received data is greater than four ... store the
-                // data length if its not set yet
+                // data length if its not set yet-
                 Thread.sleep(20L);
+
                 if (datalen == -1 && strBuffer.toString().length() > 4) {
                     datalen = Integer.parseInt(strBuffer.toString().substring(0, 4));
                 }
@@ -558,7 +563,7 @@ public class  T24Channel {
             return strBuffer.toString();
 
         } catch (Exception e) {
-            System.out.println("Error receiving data from T24 at " + new Date());
+            log.info("Error receiving data from T24 at " + new Date());
             lastpostedTxns.setPostedstatus("5");
             lastpostedTxns.setT24failnarration(e.getMessage());
             e.printStackTrace();

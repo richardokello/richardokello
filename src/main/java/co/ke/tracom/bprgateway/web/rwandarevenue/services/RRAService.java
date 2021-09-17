@@ -18,6 +18,7 @@ import co.ke.tracom.bprgateway.web.transactions.repository.TransactionAdvicesRep
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.HttpEntity;
@@ -65,8 +66,9 @@ public class RRAService {
     private final TransactionAdvicesRepository transactionAdvicesRepository;
 
 
+    @SneakyThrows
     public RRATINValidationResponse validateCustomerTIN(RRATINValidationRequest request, String transactionRRN) {
-       // AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         HttpPost httpPost = null;
         try {
@@ -91,12 +93,10 @@ public class RRAService {
             System.err.println("rraValidationPayload = " + rraValidationPayload);
 
 
-
             System.err.println("rrasoapurl = " + rrasoapurl);
             httpPost = new HttpPost(rrasoapurl);
             StringEntity stringEntity = new StringEntity(rraValidationPayload, "UTF-8");
             stringEntity.setChunked(true);
-
 
 
             // Request parameters and other properties.
@@ -124,7 +124,6 @@ public class RRAService {
                 System.out.printf(
                         "\n \n  Empty response for reference : %s \n \n " + request.getRrareferenceNo());
             }
-
 
 
             // always true
@@ -168,6 +167,7 @@ public class RRAService {
 
                 // writer.toString()
                 JSONObject xmlJSONObj = XML.toJSONObject(writer.toString());
+                log.info("the sml data is -->>" + xmlJSONObj);
 
                 if (xmlJSONObj == null || xmlJSONObj.length() == 0) {
                     System.err.println("NO response for RRA R3EF " + request.getRrareferenceNo());
@@ -314,6 +314,7 @@ public class RRAService {
         return body;
     }
 
+    @SneakyThrows
     public RRAPaymentResponse processRRAPayment(RRAPaymentRequest request, String transactionRRN) {
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
         try {
@@ -331,7 +332,7 @@ public class RRAService {
 
             String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
             BPRBranches branch = bprBranchService.fetchBranchAccountsByBranchCode(agentFloatAccount);
-            if (null == branch.getCompanyName()) {
+            if (branch.getCompanyName() == null) {
                 log.info("Agent float deposit transaction [" + transactionRRN + "] failed. Error: Agent branch details could not be verified.");
 
                 return RRAPaymentResponse.builder()
@@ -349,6 +350,7 @@ public class RRAService {
             }
 
             long agentFloatBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
+            log.info("Fet balance success >>> is greater {}", (agentFloatBalance > AMOUNT_TO_PAY));
             if (agentFloatBalance < AMOUNT_TO_PAY) {
                 return RRAPaymentResponse.builder()
                         .status("065")
@@ -395,10 +397,10 @@ public class RRAService {
 
 
             String tot24str = String.format("%04d", RRAOFSMsg.length()) + RRAOFSMsg;
-            System.err.println("RRA T24 OFS REQ: " + tot24str);
+            log.info("RRA T24 OFS REQ: {}", tot24str);
 
-            System.err.println("channel :" + channel);
-            System.err.println("tid :" + tid);
+            log.info("channel :" + channel);
+            log.info("tid :" + tid);
 
             T24TXNQueue tot24 = new T24TXNQueue();
             tot24.setRequestleg(tot24str);
@@ -412,6 +414,7 @@ public class RRAService {
 
             final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
             final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
+            log.info("Fetched port and ip success, ip {}, port {}", (t24Ip != null), (t24Port != null));
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
             transactionService.updateT24TransactionDTO(tot24);
@@ -451,7 +454,7 @@ public class RRAService {
             log.info("RRA Transaction [" + transactionRRN + "] failed during processing. Kindly contact BPR Customer Care");
             return RRAPaymentResponse.builder()
                     .status("118")
-                    .message("RRA Transaction ["+ authenticateAgentResponse.getData().getAccountNumber()+" ] failed during processing. Kindly contact BPR Customer Care")
+                    .message("RRA Transaction [" + authenticateAgentResponse.getData().getAccountNumber() + " ] failed during processing. Kindly contact BPR Customer Care")
                     .data(null).build();
         }
     }

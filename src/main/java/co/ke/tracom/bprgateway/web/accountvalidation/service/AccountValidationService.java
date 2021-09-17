@@ -3,23 +3,18 @@ package co.ke.tracom.bprgateway.web.accountvalidation.service;
 import co.ke.tracom.bprgateway.core.tracomchannels.tcp.T24MessageProcessor;
 import co.ke.tracom.bprgateway.core.tracomchannels.tcp.T24TCPClient;
 import co.ke.tracom.bprgateway.core.tracomchannels.tcp.dto.BankAccountValidationResponse;
-import co.ke.tracom.bprgateway.core.tracomchannels.tcp.dto.EUCLMeterValidationResponse;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.web.accountvalidation.data.BPRAccountValidationRequest;
 import co.ke.tracom.bprgateway.web.accountvalidation.data.BPRAccountValidationResponse;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
-import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
-import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
-import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
@@ -32,7 +27,8 @@ public class AccountValidationService {
     private final T24MessageProcessor t24MessageProcessor;
     private final BaseServiceProcessor baseServiceProcessor;
 
-    public BPRAccountValidationResponse processBankAccountValidation(BPRAccountValidationRequest request) {
+    @SneakyThrows
+    public BPRAccountValidationResponse processBankAccountValidation(BPRAccountValidationRequest request, String rrn) {
         AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         String accountValidationRequest =

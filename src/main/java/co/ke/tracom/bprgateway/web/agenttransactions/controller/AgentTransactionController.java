@@ -11,6 +11,7 @@ import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,7 @@ public class AgentTransactionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @SneakyThrows
     @ApiOperation(value = "Fetch agent account balance", response = AgentBalanceInquiryResponse.class)
     @PostMapping(value = "/balance-inquiry")
     public ResponseEntity<AgentBalanceInquiryResponse> agentBalanceInquiry(@RequestBody AgentBalanceInquiryRequest request) {

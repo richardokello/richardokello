@@ -5,9 +5,6 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAg
 import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
-import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
-import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
-import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
 import co.ke.tracom.bprgateway.web.irembo.dto.request.BillNumberValidationRequest;
 import co.ke.tracom.bprgateway.web.irembo.dto.request.IremboBillPaymentRequest;
 import co.ke.tracom.bprgateway.web.irembo.dto.request.IremboRequest;
@@ -15,17 +12,15 @@ import co.ke.tracom.bprgateway.web.irembo.dto.response.*;
 import co.ke.tracom.bprgateway.web.irembo.entity.IremboPaymentNotifications;
 import co.ke.tracom.bprgateway.web.irembo.repository.IremboPaymentNotificationsRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
-import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -44,7 +39,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Optional;
 import java.util.TimeZone;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
@@ -66,6 +60,7 @@ public class IremboService {
     private final XSwitchParameterService xSwitchParameterService;
     private final IremboPaymentNotificationsRepository iremboPaymentNotificationsRepository;
 
+    @SneakyThrows
     public IremboBillNoValidationResponse validateIremboBillNo(BillNumberValidationRequest request, String transactionRefNo) {
         // Validate agent credentials
         AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
@@ -198,6 +193,7 @@ public class IremboService {
         return new String(Base64.encodeBase64(rawHmac));
     }
 
+    @SneakyThrows
     public IremboPaymentResponse processPayment(IremboBillPaymentRequest request, String transactionRefNo) {
 
         try {

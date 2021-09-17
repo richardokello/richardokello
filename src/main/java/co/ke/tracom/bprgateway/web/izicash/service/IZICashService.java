@@ -14,6 +14,7 @@ import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -46,6 +47,7 @@ public class IZICashService {
     private final IZICashTxnLogsRepository iziCashTxnLogsRepository;
 
 
+    @SneakyThrows
     public IZICashResponse processWithdrawMoneyTnx(IZICashRequest request, String transactionRRN) {
         // Validate agent credentials
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());

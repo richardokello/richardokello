@@ -3,13 +3,12 @@ package co.ke.tracom.bprgateway.web.accountopening.service;
 import co.ke.tracom.bprgateway.web.accountopening.dto.request.NIDValidationRequest;
 import co.ke.tracom.bprgateway.web.accountopening.dto.response.NIDData;
 import co.ke.tracom.bprgateway.web.accountopening.dto.response.NIDValidationResponse;
-import co.ke.tracom.bprgateway.web.accountvalidation.data.BPRAccountValidationResponse;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,7 +24,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,6 +33,7 @@ public class NIDValidationService {
     private final BaseServiceProcessor baseServiceProcessor;
     private final XSwitchParameterRepository xSwitchParameterRepository;
 
+    @SneakyThrows
     public NIDValidationResponse validateNationalID(NIDValidationRequest request, String referenceNo) {
         AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 

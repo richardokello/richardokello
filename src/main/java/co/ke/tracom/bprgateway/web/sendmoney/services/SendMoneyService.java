@@ -27,6 +27,7 @@ import co.ke.tracom.bprgateway.web.util.TransactionISO8583ProcessingCode;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,7 @@ public class SendMoneyService {
     private final ScheduledSMSRepository scheduledSMSRepository;
 
 
+    @SneakyThrows
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
@@ -73,6 +75,7 @@ public class SendMoneyService {
         try {
             BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(agentAuthData.getAccountNumber());
             String branchAccountID = branch.getId();
+            System.out.println(" agent authentication data = "+ agentAuthData );
 
             doesAgentHaveSufficientBalance(request, transactionRRN, agentAuthData, agentFloatAccountBalance, branchAccountID);
 
@@ -607,6 +610,7 @@ public class SendMoneyService {
         }
     }
 
+    @SneakyThrows
     public SendMoneyResponse processReceiveMoneyRequest(ReceiveMoneyRequest request, String transactionRRN) {
 
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());

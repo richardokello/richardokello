@@ -8,7 +8,10 @@ import co.ke.tracom.bprgateway.web.transactionLimits.entity.TransactionLimitMana
 import co.ke.tracom.bprgateway.web.transactionLimits.repository.TransactionLimitManagerRepository;
 import co.ke.tracom.bprgateway.web.util.ResponseCodes;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -31,26 +35,48 @@ public class BaseServiceProcessor {
     private final TransactionLimitManagerRepository transactionLimitManagerRepository;
     private final RestHTTPService restHTTPService;
 
-    public AuthenticateAgentResponse authenticateAgentUsernamePassword(MerchantAuthInfo merchantAuthInfo) {
+    public AuthenticateAgentResponse authenticateAgentUsernamePassword(MerchantAuthInfo merchantAuthInfo) throws InvalidAgentCredentialsException, InterServiceCommunicationException {
+        ResponseEntity<String> stringResponseEntity;
         try {
-            ResponseEntity<String> stringResponseEntity = restHTTPService.postRequest(merchantAuthInfo, agentValidationUrl);
+            stringResponseEntity = restHTTPService.postRequest(merchantAuthInfo, agentValidationUrl);
             log.info("Response status from URL[" + agentValidationUrl + "]" + stringResponseEntity.getStatusCode());
-
-            String body = stringResponseEntity.getBody();
-            if (stringResponseEntity.getStatusCode().is2xxSuccessful()) {
-                return new ObjectMapper().readValue(body, AuthenticateAgentResponse.class);
-            } else {
-                throw new InvalidAgentCredentialsException("Agent credentials validation failed");
-            }
         } catch (Exception e) {
             throw new InterServiceCommunicationException("Inter-service communication error. Please try again!");
         }
+
+        Objects.requireNonNull(stringResponseEntity, "Inter-service communication error. Please try again!");
+
+        String body = stringResponseEntity.getBody();
+        AuthenticateAgentResponse authenticateAgentResponse = null;
+        try {
+            authenticateAgentResponse = new ObjectMapper().readValue(body, AuthenticateAgentResponse.class);
+        } catch (JsonProcessingException e) {
+            throw new InvalidAgentCredentialsException("Agent credentials validation failed");
+        }
+
+        if (authenticateAgentResponse.getCode() == 200 && stringResponseEntity.getStatusCode().value() == 200)
+
+        {
+            return authenticateAgentResponse;
+        } else {
+            throw new InvalidAgentCredentialsException("Agent credentials validation failed");
+        }
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class AuthResponse<T> {
+        private String message;
+        private Integer code;
+        private T data;
+        private long timestamp;
     }
 
     public Map<String, String> validateTransactionLimits(String mti, String processingCode, String amount) {
         Map<String, String> results = new HashMap<>();
         Optional<TransactionLimitManager> optionalTransactionLimit =
-               transactionLimitManagerRepository.findByISOMsgMTIAndProcessingCode(mti, processingCode);
+                transactionLimitManagerRepository.findByISOMsgMTIAndProcessingCode(mti, processingCode);
         if (optionalTransactionLimit.isPresent()) {
             TransactionLimitManager transactionLimitManager = optionalTransactionLimit.get();
             validateTransactionAmount(results, amount, transactionLimitManager);

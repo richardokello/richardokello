@@ -30,14 +30,12 @@ public class BPRBranchService {
             branchCode = "0" + account.substring(0, 3);
         }
 
-        log.info("Branch code [" + branchCode + "] for account [" + account + "] found");
-
         Optional<BPRBranches> optionalBPRBranches = bprBranchesRepository.findBySubDivisionCode(branchCode);
 
         if (optionalBPRBranches.isEmpty()) {
             throw new BankBranchException("Missing branch detail configuration for the branch code :" + branchCode);
         }
-
+        log.info("Branch code [" + branchCode + "] for account [" + account + "] found >>> branch {}", optionalBPRBranches.get());
         return optionalBPRBranches.get();
     }
 }
