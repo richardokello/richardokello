@@ -86,7 +86,7 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
 
     @Override
     @Transactional
-    public ResponseEntity<ResponseWrapper> approveActions(@Valid ActionWrapper<Long> actions) throws ExpectationFailed {
+    public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
 
         for(Long id: actions.getIds()){
             Optional<UfsBanks> b = ufsBankRepository.findById(id);
