@@ -48,5 +48,7 @@ public interface TmsDeviceRepository extends CrudRepository<TmsDevice, BigDecima
      */
     public List<TmsDevice> findByestateId(TmsEstateItem estateId);
 
+    List<TmsDevice> findAllByOutletIds(BigDecimal outletIds);
+
 
 }

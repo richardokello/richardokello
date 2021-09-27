@@ -514,10 +514,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                                 UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
                     }
 
-                } else {
-
-                    loggerService.log("Failed To Approve Customer",
-                            UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, actions.getNotes());
                 }
             } else {
 

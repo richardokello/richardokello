@@ -21,6 +21,7 @@ import java.util.List;
 @Entity
 @Table(name = "TMS_DEVICE")
 public class TmsDevice implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GenericGenerator(
@@ -128,6 +129,10 @@ public class TmsDevice implements Serializable {
     @ModifiableField
     private List<TmsDeviceTidsMids> deviceTidsMidsList;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceId")
+    @ModifiableField
+    private List<TmsDeviceSimcard> deviceSimcardList;
+
     @JoinColumn(name = "MASTER_PROFILE", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = true)
     private ParGlobalMasterProfile masterProfile;
@@ -145,6 +150,8 @@ public class TmsDevice implements Serializable {
     private Integer releaseDeviceCount;
 
     @Column(name = "TID")
+    @Searchable
+    @ModifiableField
     private String tid;
 
 }

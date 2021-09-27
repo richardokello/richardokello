@@ -5,6 +5,7 @@
  */
 package ke.tra.ufs.webportal.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.Searchable;
 import org.hibernate.annotations.GenericGenerator;
@@ -90,6 +91,7 @@ public class UfsCustomerComplaints implements Serializable {
     private String actionStatus;
     @JoinColumn(name = "BATCH_ID", referencedColumnName = "BATCH_ID", updatable = false, insertable = false)
     @ManyToOne
+    @JsonIgnore
     private UfsCustomerComplaintsBatch batchId;
 
     @Column(name = "BATCH_ID")

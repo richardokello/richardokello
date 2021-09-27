@@ -12,7 +12,7 @@ public interface UfsBankBranchesRepository extends CrudRepository<UfsBankBranche
 
     public List<UfsBankBranches> findByIntrash(String intrash);
 
-    @Query("SELECT u FROM UfsBankBranches u WHERE u.id =?2")
+    @Query("SELECT u FROM UfsBankBranches u WHERE u.id =?1")
     public UfsBankBranches findByBranchId(Long id);
 
     UfsBankBranches findByNameAndIntrash(String name,String intrash);
