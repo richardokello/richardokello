@@ -230,9 +230,9 @@ public class AppConstants {
 
     public static final String POS_SUPERVISOR_ROLE = "Supervisor";
     public static final String CRDB_BILLER_PREFIX = "orgPrefix";
-
-
-
+    public static final String CRDB_HOSPITAL_CUSTOMER_TYPE = "Hospitals";
+    public static final String CRDB_CUSTOMER_KEY_NAME = "businessName";
+    public static final String CRDB_CUSTOMER_OUTLET_KEY_NAME = "outletName";
 
 
 }

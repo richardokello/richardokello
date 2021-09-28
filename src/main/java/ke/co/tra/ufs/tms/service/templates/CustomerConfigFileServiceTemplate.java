@@ -126,6 +126,14 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
                 case LOCATION:
                     return getParamValue(parentIndex.getConfig().getKeyName(), UfsGeographicalRegion.class, outlet.getGeographicalRegionId());
                 case OUTLET:
+                    UfsCustomerType ufsCustomerType = customer.getCustomerType();
+                    if(ufsCustomerType.getName().equalsIgnoreCase(AppConstants.CRDB_HOSPITAL_CUSTOMER_TYPE) &&
+                            parentIndex.getConfig().getKeyName().equalsIgnoreCase(AppConstants.CRDB_CUSTOMER_OUTLET_KEY_NAME)){
+
+                       String businessName = getParamValue(AppConstants.CRDB_CUSTOMER_KEY_NAME, UfsCustomer.class, customer);
+                       String outletName = getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomerOutlet.class, outlet);
+                       return new StringBuilder().append(businessName).append("-").append(outletName).toString();
+                    }
                     return getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomerOutlet.class, outlet);
                 default:
                     return "";
