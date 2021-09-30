@@ -41,8 +41,20 @@ public class NIDValidationService {
 
         String sendernationalid = request.getNationalID();
         String typeofid = request.getIDType();
+        String othertypes=request.getIDType();
         String frmattednid = "";
 
+        if(typeofid.equals("1"))
+        {
+            HashMap<String, String> validationResults  = prepareAndSendRequest(othertypes);
+            NIDData data=new NIDData();
+            return NIDValidationResponse
+                    .builder()
+                    .status("00")
+                    .message("The document number verified successfully. ")
+                    .data(data)
+                    .build();
+        }
         if (typeofid.equals("0")) {
             HashMap<String, String> validationResults  = prepareAndSendRequest(sendernationalid);
 
