@@ -167,7 +167,7 @@ public class RRAService {
 
                 // writer.toString()
                 JSONObject xmlJSONObj = XML.toJSONObject(writer.toString());
-                log.info("the sml data is -->>" + xmlJSONObj);
+                log.info("the Xml data is -->>" + xmlJSONObj);
 
                 if (xmlJSONObj == null || xmlJSONObj.length() == 0) {
                     System.err.println("NO response for RRA R3EF " + request.getRrareferenceNo());
@@ -486,6 +486,7 @@ public class RRAService {
             data.setNames(authenticateAgentResponse.getData().getNames());
             data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
             data.setLocation(authenticateAgentResponse.getData().getLocation());
+
 
             return RRAPaymentResponse.builder()
                     .status("00")

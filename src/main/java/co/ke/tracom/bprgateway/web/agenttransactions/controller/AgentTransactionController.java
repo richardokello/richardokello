@@ -13,16 +13,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.text.DecimalFormat;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -65,6 +61,10 @@ public class AgentTransactionController {
                 .tid(authenticateAgentResponse.getData().getTid())
                 .mid(authenticateAgentResponse.getData().getMid())
                 .balance(utilityService.formatDecimal(agentAccountBalance)).build();
+        response.setUsername(authenticateAgentResponse.getData().getUsername());
+        response.setNames(authenticateAgentResponse.getData().getNames());
+        response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
+        response.setLocation(authenticateAgentResponse.getData().getLocation());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

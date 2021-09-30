@@ -76,6 +76,7 @@ public class SendMoneyService {
             BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(agentAuthData.getAccountNumber());
             String branchAccountID = branch.getId();
             System.out.println(" agent authentication data = "+ agentAuthData );
+            log.info("Account data fetched ---->[]", branch);
 
             doesAgentHaveSufficientBalance(request, transactionRRN, agentAuthData, agentFloatAccountBalance, branchAccountID);
 
