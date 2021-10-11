@@ -103,25 +103,30 @@ public class EUCLService {
                 return response;
 
             } else {
+                MeterNoData data = MeterNoData.builder()
+                        .rrn(referenceNo)
+                        .build();
                 log.info("EUCL Validation failed. Transaction [" + referenceNo + "] " + tot24.getT24failnarration().replace("\"", ""));
                 MeterNoValidationResponse response = MeterNoValidationResponse
                         .builder()
-                        .status("135")
+                        .status("198")
                         .message(tot24.getT24failnarration().replace("\"", ""))
-                        .data(null)
+                        .data(data)
                         .build();
                 return response;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-
+            MeterNoData data = MeterNoData.builder()
+                    .rrn(referenceNo)
+                    .build();
             log.info("EUCL Validation failed. Transaction [" + referenceNo + "] Error: " + e.getMessage());
             MeterNoValidationResponse response = MeterNoValidationResponse
                     .builder()
                     .status("098")
                     .message("EUCL Validation failed. Contact administrator")
-                    .data(null)
+                    .data(data)
                     .build();
             return response;
         }
@@ -255,13 +260,21 @@ public class EUCLService {
 
                     return euclPaymentResponse;
                 } else {
+                    String charges = "0.0";
+                    if (null != tot24.getTotalchargeamt()) {
+                        charges = tot24.getTotalchargeamt().replace("RWF", "");
+                    }
 
+                    PaymentResponseData paymentResponseData = new PaymentResponseData()
+                            .setCharges(charges)
+                            .setRrn(transactionReferenceNo);
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
                             Double.valueOf(request.getAmount()), "098",
                             authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                     log.info("EUCL Transaction [] failed " + errorMessage);
                     return EUCLPaymentResponse
                             .builder()
+                            .data(paymentResponseData)
                             .status("098")
                             .message("EUCL Transaction failed.")
                             .build();
@@ -281,12 +294,15 @@ public class EUCLService {
             }
 
         } catch (Exception e) {
+            PaymentResponseData paymentResponseData = new PaymentResponseData()
+
+                    .setRrn(transactionReferenceNo);
             e.printStackTrace();
             log.info("EUCL transaction [" + transactionReferenceNo + "] failed. Error " + e.getMessage());
             return EUCLPaymentResponse.builder()
                     .status("098")
                     .message("EUCL transaction failed. An exception occurred")
-                    .data(null).build();
+                    .data(paymentResponseData).build();
         }
     }
 }

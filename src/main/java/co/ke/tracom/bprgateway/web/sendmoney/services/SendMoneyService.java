@@ -349,7 +349,7 @@ public class SendMoneyService {
                 .charges(0)
                 .rrn(transactionRRN)
                 .build();
-
+        sendMoneyResponseData.setRrn(transactionRRN);
         sendMoneyResponseData.setUsername(agentAuthData.getUsername());
         sendMoneyResponseData.setNames(agentAuthData.getNames());
         sendMoneyResponseData.setBusinessName(agentAuthData.getBusinessName());

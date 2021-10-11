@@ -12,5 +12,7 @@ public class DepositMoneyRequest {
     private String accountNumber;
     private String accountName;
     private double amount;
+    private String narration;
     private MerchantAuthInfo credentials;
+
 }

@@ -50,12 +50,12 @@ public class DepositMoneyService {
             response.setData(depositMoneyResultData);
 
             String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
-            String agentMerchantId = "PCMerchant";
+            String agentMerchantId ="";//"PCMerchant";
             String chargeCreditPLAccount = "PL64200\\HOF";
             String customerAccount = depositMoneyRequest.getAccountNumber();
 
             // Todo check the payment details required
-            String firstDetails = depositMoneyRequest.getAccountName() + " " + depositMoneyRequest.getAccountNumber();
+            String firstDetails = depositMoneyRequest.getAccountName() + " " + depositMoneyRequest.getAccountNumber() +""+ depositMoneyRequest.getNarration();
             firstDetails =
                     firstDetails.length() > 34 ? firstDetails.substring(0, 34) : firstDetails;
 
@@ -68,14 +68,14 @@ public class DepositMoneyService {
             }
 
             //TODO fetch the payment details (Terminal ID and Merchant ID)
-            String secondDetails = agentMerchantId;  // From merchant validation request
+            String secondDetails = agentMerchantId;;  // From merchant validation request
             String thirdDetails = "CUSTOMER DEPOSIT AT AGENT";
             String accountBranchId = branch.getId();
 
             long agentbalancelong = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
 
             String channel = "1510";
-            log.info("Customer Deposit: Transaction %s. Agent Balance=%s Deposit amount=%d ",
+            log.info("Customer Deposit: Transaction %s. Agent Balance=%s Deposit amount=%d "+
                     transactionRRN, agentbalancelong, depositMoneyRequest.getAmount());
             if (agentbalancelong < depositMoneyRequest.getAmount()) {
                 System.out.printf(
@@ -103,8 +103,9 @@ public class DepositMoneyService {
                             + transactionRRN.trim()
                             + ",PAYMENT.DETAILS:1:="
                             + utilityService.sanitizePaymentDetails(firstDetails, "Customer Deposit")
+                           // +""+ depositMoneyRequest.getNarration()
                             + ",PAYMENT.DETAILS:2:="
-                            + secondDetails.trim()
+                            + secondDetails.trim()+depositMoneyRequest.getNarration()
                             + ",PAYMENT.DETAILS:3:="
                             + thirdDetails.trim();
 

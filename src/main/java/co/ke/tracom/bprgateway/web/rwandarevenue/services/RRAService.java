@@ -334,19 +334,24 @@ public class RRAService {
             BPRBranches branch = bprBranchService.fetchBranchAccountsByBranchCode(agentFloatAccount);
             if (branch.getCompanyName() == null) {
                 log.info("Agent float deposit transaction [" + transactionRRN + "] failed. Error: Agent branch details could not be verified.");
-
+                RRAPaymentResponseData datas = RRAPaymentResponseData.builder()
+                        .rrn(transactionRRN)
+                        .build();
                 return RRAPaymentResponse.builder()
                         .status("065")
                         .message("Agent branch details could not be verified. Kindly contact BPR customer care")
-                        .data(null).build();
+                        .data(datas).build();
             }
 
             String agentBranchId = branch.getId();
             if (agentBranchId.isEmpty()) {
+                RRAPaymentResponseData data = RRAPaymentResponseData.builder()
+                        .rrn(transactionRRN)
+                        .build();
                 return RRAPaymentResponse.builder()
                         .status("065")
                         .message("Agent branch details could not be verified. Kindly contact BPR customer care")
-                        .data(null).build();
+                        .data(data).build();
             }
 
             long agentFloatBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
@@ -440,7 +445,7 @@ public class RRAService {
                 data.setNames(authenticateAgentResponse.getData().getNames());
                 data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
                 data.setLocation(authenticateAgentResponse.getData().getLocation());
-
+                data.setRRAReference(data.getRrn());
                 data.setTid(authenticateAgentResponse.getData().getTid());
                 data.setMid(authenticateAgentResponse.getData().getMid());
 
@@ -451,11 +456,18 @@ public class RRAService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            RRAPaymentResponseData data = RRAPaymentResponseData.builder()
+                    .rrn(transactionRRN)
+                    .build();
+            data.setRRAReference(data.getRrn());
+            data.setNames(data.getNames());
+
             log.info("RRA Transaction [" + transactionRRN + "] failed during processing. Kindly contact BPR Customer Care");
             return RRAPaymentResponse.builder()
                     .status("118")
                     .message("RRA Transaction [" + authenticateAgentResponse.getData().getAccountNumber() + " ] failed during processing. Kindly contact BPR Customer Care")
-                    .data(null).build();
+                    .data(data)
+                    .build();
         }
     }
 

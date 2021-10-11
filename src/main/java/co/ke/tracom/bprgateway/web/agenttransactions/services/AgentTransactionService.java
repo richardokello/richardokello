@@ -11,6 +11,7 @@ import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
+import co.ke.tracom.bprgateway.web.util.data.MerchantInfoDeposit;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
@@ -38,17 +39,16 @@ public class AgentTransactionService {
     public AgentTransactionResponse processAgentFloatDeposit(AgentTransactionRequest agentTransactionRequest) {
         AgentTransactionResponse response = new AgentTransactionResponse();
         // Validate agent credentials
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
-
-        response.setUsername(authenticateAgentResponse.getData().getUsername());
-        response.setNames(authenticateAgentResponse.getData().getNames());
-        response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
-        response.setLocation(authenticateAgentResponse.getData().getLocation());
-        response.setTid(authenticateAgentResponse.getData().getTid());
-        response.setMid(authenticateAgentResponse.getData().getMid());
+        AuthenticateAgentResponse authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
+        response.setUsername(authenticateAgentDepositResponse.getData().getUsername());
+        response.setNames(authenticateAgentDepositResponse.getData().getNames());
+        response.setBusinessName(authenticateAgentDepositResponse.getData().getBusinessName());
+        response.setLocation(authenticateAgentDepositResponse.getData().getLocation());
+        response.setTid(authenticateAgentDepositResponse.getData().getTid());
+        response.setMid(authenticateAgentDepositResponse.getData().getMid());
 
         String transactionReferenceNo = RRNGenerator.getInstance("AD").getRRN();
-        String POSAgentAccount = authenticateAgentResponse.getData().getAccountNumber();
+        String POSAgentAccount = authenticateAgentDepositResponse.getData().getAccountNumber();
 
         long POSAgentFloatBalance = fetchAgentAccountBalanceOnly(POSAgentAccount);
         long depositAmount = agentTransactionRequest.getAmount();
@@ -61,11 +61,10 @@ public class AgentTransactionService {
             return response;
         }
 
-        MerchantAuthInfo customerAgent = MerchantAuthInfo.builder()
-                .password(agentTransactionRequest.getCustomerAgentPass())
+        MerchantInfoDeposit customerAgent = MerchantInfoDeposit.builder()
                 .username(agentTransactionRequest.getCustomerAgentId()).build();
 
-        AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent);
+        AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentDepositUsername(customerAgent);
 
         String customerAgentAccountNo = customerAgentData.getData().getAccountNumber();
         String customerAgentName = customerAgentData.getData().getNames();
@@ -73,7 +72,7 @@ public class AgentTransactionService {
                 "Agent Float Deposit: Transaction %s customer agent name: %s and account no: %s. %n",
                 transactionReferenceNo, customerAgentName, customerAgentAccountNo);
 
-        String firstPaymentDetails = POSAgentAccount + " " + authenticateAgentResponse.getData().getNames();
+        String firstPaymentDetails = POSAgentAccount + " " + authenticateAgentDepositResponse.getData().getNames();
         firstPaymentDetails =
                 firstPaymentDetails.length() > 34
                         ? firstPaymentDetails.substring(0, 34)
@@ -99,7 +98,7 @@ public class AgentTransactionService {
         }
 
         //TODO Terminal id and merchant id combination
-        String secondPaymentDetails = authenticateAgentResponse.getData().getAccountNumber() + " " + authenticateAgentResponse.getData().getNames();
+        String secondPaymentDetails = authenticateAgentDepositResponse.getData().getAccountNumber() + " " + authenticateAgentDepositResponse.getData().getNames();
         String thirdPaymentDetails = "Agent Float Deposit";
         String agentFloatDepositOFSTemplate =
                 "0000AFUNDS.TRANSFER,AGENCY.DEPOSIT/I/PROCESS/2/0,"
@@ -141,7 +140,7 @@ public class AgentTransactionService {
 
         //TODO Put processing codes on enum
         tot24.setProcode("480000");
-        String tid = authenticateAgentResponse.getData().getTid();
+        String tid = authenticateAgentDepositResponse.getData().getTid();
         tot24.setTid(tid);
         tot24.setDebitacctno(POSAgentAccount);
         tot24.setCreditacctno(customerAgentAccountNo);
@@ -180,7 +179,7 @@ public class AgentTransactionService {
             transactionService.saveCardLessTransactionToAllTransactionTable(
                     tot24, "AGENT FLOAT DEPOSIT", "1200",
                     agentTransactionRequest.getAmount(), "000",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
 
             response.setT24Reference(tot24.getT24reference());
             response.setRrn(transactionReferenceNo);
@@ -191,7 +190,7 @@ public class AgentTransactionService {
             transactionService.saveCardLessTransactionToAllTransactionTable(
                     tot24, "AGENT FLOAT DEPOSIT", "1200",
                     agentTransactionRequest.getAmount(), "908",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
             System.out.printf(
                     "Agent Float Deposit:[Error] Transaction %s processing failed. Error message: Transaction failed at T24 %n",
                     transactionReferenceNo);
@@ -259,7 +258,7 @@ public class AgentTransactionService {
         response.setMid(authenticateAgentResponse.getData().getMid());
 
         MerchantAuthInfo customerAgent = MerchantAuthInfo.builder()
-                .password(request.getCustomerAgentPass())
+               // .password(request.getCustomerAgentPass())
                 .username(request.getCustomerAgentId()).build();
 
         AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent);
