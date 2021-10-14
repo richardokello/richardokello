@@ -11,7 +11,7 @@ import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
-import co.ke.tracom.bprgateway.web.util.data.MerchantInfoDeposit;
+import co.ke.tracom.bprgateway.web.util.data.MerchantcustomerInfoDeposit;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +61,7 @@ public class AgentTransactionService {
             return response;
         }
 
-        MerchantInfoDeposit customerAgent = MerchantInfoDeposit.builder()
+        MerchantcustomerInfoDeposit customerAgent = MerchantcustomerInfoDeposit.builder()
                 .username(agentTransactionRequest.getCustomerAgentId()).build();
 
         AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentDepositUsername(customerAgent);
@@ -197,7 +197,7 @@ public class AgentTransactionService {
 
             response.setStatus("908");
             response.setTransactionCharges(0.0);
-            response.setT24Reference("");
+            response.setT24Reference(response.getT24Reference());
             response.setMessage((tot24.getT24failnarration() == null || tot24.getT24failnarration().isEmpty())
                     ? "TRANSACTION FAILED. SYSTEM FAILURE"
                     : tot24.getT24failnarration());

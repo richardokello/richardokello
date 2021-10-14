@@ -8,7 +8,7 @@ import co.ke.tracom.bprgateway.web.transactionLimits.entity.TransactionLimitMana
 import co.ke.tracom.bprgateway.web.transactionLimits.repository.TransactionLimitManagerRepository;
 import co.ke.tracom.bprgateway.web.util.ResponseCodes;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
-import co.ke.tracom.bprgateway.web.util.data.MerchantInfoDeposit;
+import co.ke.tracom.bprgateway.web.util.data.MerchantcustomerInfoDeposit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -34,22 +33,23 @@ public class BaseServiceProcessor {
     private String agentValidationUrl;
 
 
-    @Value("https://41.215.130.247:8763/bpr-oauth-service/authenticate/agent-deposit" )
+    @Value("http://192.168.24.30:8787/authenticate/agent-deposit")
     private String agentDepositValidationUrl;
 
     private final TransactionLimitManagerRepository transactionLimitManagerRepository;
     private final RestHTTPService restHTTPService;
 
     public AuthenticateAgentResponse authenticateAgentUsernamePassword(MerchantAuthInfo merchantAuthInfo) throws InvalidAgentCredentialsException, InterServiceCommunicationException {
-        ResponseEntity<String> stringResponseEntity;
+        ResponseEntity<String> stringResponseEntity = null;
         try {
             stringResponseEntity = restHTTPService.postRequest(merchantAuthInfo, agentValidationUrl);
             log.info("Response status from URL[" + agentValidationUrl + "]" + stringResponseEntity.getStatusCode());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new InterServiceCommunicationException("Inter-service communication error. Please try again!");
         }
 
-        Objects.requireNonNull(stringResponseEntity, "Inter-service communication error. Please try again------>that!");
+        // Objects.requireNonNull(stringResponseEntity, "Inter-service communication error. Please try again------>that!");
 
         String body = stringResponseEntity.getBody();
         AuthenticateAgentResponse authenticateAgentResponse = null;
@@ -59,50 +59,37 @@ public class BaseServiceProcessor {
             throw new InvalidAgentCredentialsException("Agent credentials validation failed");
         }
 
-        if (authenticateAgentResponse.getCode() == 200 && stringResponseEntity.getStatusCode().value() == 200)
-
-        {
+        if (authenticateAgentResponse.getCode() == 200 && stringResponseEntity.getStatusCode().value() == 200) {
             return authenticateAgentResponse;
-        }
-        else {
+        } else {
             throw new InvalidAgentCredentialsException("Agent credentials validation failed");
         }
-
     }
 
 
-
-     public AuthenticateAgentResponse authenticateAgentDepositUsername(MerchantInfoDeposit merchantAuthInfoAGentDepo) throws InvalidAgentCredentialsException,InterServiceCommunicationException
-     {
+    public AuthenticateAgentResponse authenticateAgentDepositUsername(MerchantcustomerInfoDeposit merchantAuthInfoAGentDepo) throws InvalidAgentCredentialsException, InterServiceCommunicationException {
         ResponseEntity<String> responseEntity;
-        try{
-            responseEntity=restHTTPService.postRequest(merchantAuthInfoAGentDepo, agentDepositValidationUrl );
-            log.info("Response status from URL[" +agentDepositValidationUrl + " ] and the status is {}" +  responseEntity.getBody());
+        try {
+            responseEntity = restHTTPService.postRequest(merchantAuthInfoAGentDepo, agentDepositValidationUrl);
+            log.info("Response status from URL[" + agentDepositValidationUrl + " ] and the status is {}" + responseEntity.getBody());
+        } catch (Exception j) {
+            j.printStackTrace();
+            throw new InterServiceCommunicationException("Inter-service communication error service validation failed. Please try again!");
+
         }
-        catch (Exception j)
-         {
-             throw new InterServiceCommunicationException("Inter-service communication error service validation failed. Please try again!");
-         }
         //Objects.requireNonNull(responseEntity,"Inter-service communication error. Please try to use use non null again!");
-         String agentDepositbody = responseEntity.getBody();
-         AuthenticateAgentResponse authenticateAgentDepositResponse = null;
-         try
-          {
-              authenticateAgentDepositResponse=new ObjectMapper().readValue(agentDepositbody , AuthenticateAgentResponse.class);
-          }
-         catch (Exception j) {
-             throw new InvalidAgentCredentialsException("Agent deposit username validation failed");
-            }
-           if(authenticateAgentDepositResponse.getCode()==200 && responseEntity.getStatusCode().value()==200)
-            {
-             return
-                     authenticateAgentDepositResponse;
-           }
-         else
-           {
-             throw  new
-             InvalidAgentCredentialsException("Agent deposit username validation failed");
-         }
+        String agentDepositbody = responseEntity.getBody();
+        AuthenticateAgentResponse authenticateAgentDepositResponse = null;
+        try {
+            authenticateAgentDepositResponse = new ObjectMapper().readValue(agentDepositbody, AuthenticateAgentResponse.class);
+        } catch (Exception j) {
+            throw new InvalidAgentCredentialsException("Agent deposit username validation failed");
+        }
+        if (authenticateAgentDepositResponse.getCode() == 200 && responseEntity.getStatusCode().value() == 200) {
+            return authenticateAgentDepositResponse;
+        } else {
+            throw new InvalidAgentCredentialsException("Agent deposit username validation failed");
+        }
     }
 
 
