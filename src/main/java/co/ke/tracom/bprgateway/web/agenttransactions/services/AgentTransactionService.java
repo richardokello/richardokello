@@ -40,6 +40,10 @@ public class AgentTransactionService {
         AgentTransactionResponse response = new AgentTransactionResponse();
         // Validate agent credentials
         AuthenticateAgentResponse authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
+
+        // validate amount limits
+
+
         response.setUsername(authenticateAgentDepositResponse.getData().getUsername());
         response.setNames(authenticateAgentDepositResponse.getData().getNames());
         response.setBusinessName(authenticateAgentDepositResponse.getData().getBusinessName());

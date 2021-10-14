@@ -22,4 +22,8 @@ public class TransactionLimitManagerService {
 
     return optionalTransactionLimitManager.orElseThrow();
   }
+
+  public TransactionLimitManager findById(Long id) {
+    return transactionLimitManagerRepository.findById(id).orElseThrow(() -> new RuntimeException("Transaction Limit does not exist"));
+  }
 }
