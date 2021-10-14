@@ -8,6 +8,7 @@ import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
 import co.ke.tracom.bprgateway.web.depositmoney.data.requests.DepositMoneyRequest;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult;
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResultData;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
@@ -209,9 +210,16 @@ public class DepositMoneyService {
                                 : "Transaction failed. " + tot24.getT24failnarration())
                         .setData(null);
             }
-        } catch (Exception e) {
-
-
+        }
+        catch (InvalidAgentCredentialsException e) {
+            log.info("Customer deposit transaction [" + transactionRRN + "] failed processing. Error: " + e.getMessage());
+            e.printStackTrace();
+            return response
+                    .setStatus("409")
+                    .setMessage("Invalid Agent Validation information. Please try again!")
+                    .setData(null);
+        }
+        catch (Exception e) {
             log.info("Customer deposit transaction [" + transactionRRN + "] failed processing. Error: " + e.getMessage());
             e.printStackTrace();
             return response

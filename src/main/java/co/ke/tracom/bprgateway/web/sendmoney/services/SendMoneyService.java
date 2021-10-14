@@ -75,7 +75,7 @@ public class SendMoneyService {
         try {
             BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(agentAuthData.getAccountNumber());
             String branchAccountID = branch.getId();
-            System.out.println(" agent authentication data = "+ agentAuthData );
+            System.out.println(" agent authentication data = " + agentAuthData);
             log.info("Account data fetched ---->[]", branch);
 
             doesAgentHaveSufficientBalance(request, transactionRRN, agentAuthData, agentFloatAccountBalance, branchAccountID);
@@ -681,6 +681,24 @@ public class SendMoneyService {
             }
 
             MoneySend sendMoneyTxn = optionalMoneySend.get();
+
+            if (sendMoneyTxn.getFulfilmentstatus() == 1) {
+                // todo what to log here: log.info("Trying to fulfill an already completed transaction, RRN {} - passcode {} ", sendMoneyTxn.getRecevernumber(), request.getAmount());
+                return SendMoneyResponse.builder()
+                        .status("059")
+                        .message("Transaction failed. Already fulfilled.")
+                        .data(null)
+                        .build();
+            }
+
+            if (Double.parseDouble(sendMoneyTxn.getAmount()) != request.getAmount()) {
+                log.info("Wrong receive amount entered, original {} - current {} ", sendMoneyTxn.getAmount(), request.getAmount());
+                return SendMoneyResponse.builder()
+                        .status("139")
+                        .message("Transaction failed. Incorrect amount was entered.")
+                        .data(null)
+                        .build();
+            }
 
             if (compareRequestTokenWithStoredToken(request, transactionRRN, sendMoneyTxn)) {
                 return SendMoneyResponse.builder()
