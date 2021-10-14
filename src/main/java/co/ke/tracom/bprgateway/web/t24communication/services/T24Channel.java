@@ -355,7 +355,7 @@ public class  T24Channel {
 
                 transactionPendingT24Processing.setStarttime(System.currentTimeMillis());
                 transactionPendingT24Processing.setPostedstatus("6");
-                boolean xx = T24TransactionPosting(transactionPendingT24Processing, t24Ip, t24Port);
+                boolean xx = t24TransactionPosting(transactionPendingT24Processing, t24Ip, t24Port);
                 log.info("After transaction posting >>>> {}", xx);
             }
         } catch (Exception e) {
@@ -367,7 +367,7 @@ public class  T24Channel {
         }
     }
 
-    public boolean T24TransactionPosting(T24TXNQueue transactionPendingProcessing, String t24ip, int t24port) {
+    public boolean t24TransactionPosting(T24TXNQueue transactionPendingProcessing, String t24ip, int t24port) {
         String t24RequestOFS = transactionPendingProcessing.getRequestleg();
         String transactionRRN = transactionPendingProcessing.getGatewayref();
 
