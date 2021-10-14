@@ -32,7 +32,6 @@ public class SendMoneyController {
     @ApiOperation(value = "Receive Money Transaction", response = SendMoneyResponse.class)
     @PostMapping(value = "/pc/customer/receive-money")
     public ResponseEntity<?> receiveMoneyTransaction(@Valid @RequestBody ReceiveMoneyRequest request) {
-
         String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
         SendMoneyResponse response = sendMoneyService.processReceiveMoneyRequest(request, transactionRRN);
         return new ResponseEntity<>(response, HttpStatus.OK);

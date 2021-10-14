@@ -682,6 +682,14 @@ public class SendMoneyService {
 
             MoneySend sendMoneyTxn = optionalMoneySend.get();
 
+            if(Double.parseDouble(sendMoneyTxn.getAmount()) != request.getAmount()) {
+                return SendMoneyResponse.builder()
+                        .status("139")
+                        .message("Transaction failed. Incorrect amount was entered.")
+                        .data(null)
+                        .build();
+            }
+
             if (compareRequestTokenWithStoredToken(request, transactionRRN, sendMoneyTxn)) {
                 return SendMoneyResponse.builder()
                         .status("116")
