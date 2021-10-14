@@ -11,6 +11,7 @@ import co.ke.tracom.bprgateway.web.eucl.entities.EUCLElectricityTxnLogs;
 import co.ke.tracom.bprgateway.web.eucl.repository.EUCLElectricityTxnLogsRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
+import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
@@ -26,20 +27,29 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class EUCLService {
-
+    private final Long AGENT_DEPOSIT_TRANSACTION_LIMIT_ID= 8L;
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
     private final BaseServiceProcessor baseServiceProcessor;
 
     private final XSwitchParameterService xSwitchParameterService;
     private final EUCLElectricityTxnLogsRepository euclElectricityTxnLogsRepository;
-
+    private final TransactionLimitManagerService limitManagerService;
     @SneakyThrows
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
         // Validate agent credentials
         AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         try {
+MeterNoValidationResponse responses=new MeterNoValidationResponse();
+
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_DEPOSIT_TRANSACTION_LIMIT_ID, request.getAmount());
+            if (!limitValid.isValid()) {
+                responses.setStatus("061");
+                responses.setMessage("Amount limit exceeded ");
+                return responses;
+            }
+
             String channel = "PC";
             String txnref = referenceNo;
             String tid = "PCTID";

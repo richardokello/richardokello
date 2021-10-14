@@ -48,8 +48,8 @@ public class AgentTransactionService {
         // validate amount limits
         TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_DEPOSIT_TRANSACTION_LIMIT_ID, agentTransactionRequest.getAmount());
         if (!limitValid.isValid()) {
-            response.setStatus("01");
-            response.setMessage("Amount should be between " + limitValid.getLower() + " and " + limitValid.getUpper());
+            response.setStatus("061");
+            response.setMessage("Amount limit exceeded ");
             return response;
         }
 

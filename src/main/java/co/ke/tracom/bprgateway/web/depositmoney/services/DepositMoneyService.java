@@ -10,6 +10,7 @@ import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResult
 import co.ke.tracom.bprgateway.web.depositmoney.data.response.DepositMoneyResultData;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
+import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
@@ -26,6 +27,7 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @Service
 @Slf4j
 public class DepositMoneyService {
+    private static final Long AGENT_DEPOSIT_TRANSACTION_LIMIT_ID = 3L;
     private final UtilityService utilityService;
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
@@ -33,13 +35,19 @@ public class DepositMoneyService {
     private final AgentTransactionService agentTransactionService;
     private final BPRBranchService bprBranchService;
     private final BaseServiceProcessor baseServiceProcessor;
+    private TransactionLimitManagerService limitManagerService;
 
 
     @SneakyThrows
     public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest, String transactionRRN) {
         DepositMoneyResult response = DepositMoneyResult.builder().build();
         try {
-
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_DEPOSIT_TRANSACTION_LIMIT_ID, (long) depositMoneyRequest.getAmount());
+            if (!limitValid.isValid()) {
+                response.setStatus("01");
+                response.setMessage("Amount should be between " + limitValid.getLower() + " and " + limitValid.getUpper());
+                return response;
+            }
 
             // Validate agent credentials
             AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials());

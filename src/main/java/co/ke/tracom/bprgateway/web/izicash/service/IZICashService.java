@@ -10,6 +10,7 @@ import co.ke.tracom.bprgateway.web.izicash.entities.IZICashTxnLogs;
 import co.ke.tracom.bprgateway.web.izicash.repository.IZICashTxnLogsRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
+import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
@@ -38,6 +39,7 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class IZICashService {
+    private final Long AGENT_DEPOSIT_TRANSACTION_LIMIT_ID=9L;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService branchService;
     private final TransactionService transactionService;
@@ -45,6 +47,7 @@ public class IZICashService {
 
     private final XSwitchParameterService xSwitchParameterService;
     private final IZICashTxnLogsRepository iziCashTxnLogsRepository;
+    TransactionLimitManagerService limitManagerService;
 
 
     @SneakyThrows
@@ -58,6 +61,14 @@ public class IZICashService {
          * Valid Mobile Number 45 Unknown Error
          */
         try {
+
+            IZICashResponse responses=new IZICashResponse();
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_DEPOSIT_TRANSACTION_LIMIT_ID, request.getAmount());
+            if (!limitValid.isValid()) {
+                responses.setStatus("061");
+                responses.setMessage("Amount limit exceeded ");
+                return responses;
+            }
 
             //TODO Clarify
             String transactionTerminalID = "PC";
@@ -78,6 +89,10 @@ public class IZICashService {
                         .data(null)
                         .build();
             }
+
+
+
+
 
             String mobileNo10 = request.getMobileNo();
             String mobileNoLast5Digits = mobileNo10.substring(mobileNo10.length() - 5);

@@ -317,6 +317,11 @@ public class RRAService {
     @SneakyThrows
     public RRAPaymentResponse processRRAPayment(RRAPaymentRequest request, String transactionRRN) {
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+
+
+
+
+
         try {
 
             String tid = "PC";
@@ -357,10 +362,13 @@ public class RRAService {
             long agentFloatBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
             log.info("Fet balance success >>> is greater {}", (agentFloatBalance > AMOUNT_TO_PAY));
             if (agentFloatBalance < AMOUNT_TO_PAY) {
+
+
                 return RRAPaymentResponse.builder()
                         .status("065")
                         .message("Insufficient agent float balance.")
                         .data(null).build();
+
             }
             String channel = "PC";
             String sanitizedTaxPayerName = TAX_PAYER_NAME.length() > 49 ? TAX_PAYER_NAME.substring(0, 49) : TAX_PAYER_NAME;
@@ -445,7 +453,7 @@ public class RRAService {
                 data.setNames(authenticateAgentResponse.getData().getNames());
                 data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
                 data.setLocation(authenticateAgentResponse.getData().getLocation());
-               // data.setRrn(data.getRrn());
+                data.setRrn(transactionRRN);
                 data.setRRAReference(data.getRRAReference());
                 data.setTid(authenticateAgentResponse.getData().getTid());
                 data.setMid(authenticateAgentResponse.getData().getMid());
@@ -460,8 +468,9 @@ public class RRAService {
             RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                     .rrn(transactionRRN)
                     .build();
-           // data.setRrn(data.getRrn());
-            data.setRRAReference(data.getRRAReference());
+            //data.setRrn(data.getRrn());
+            data.setRrn(transactionRRN);
+           // data.setRRAReference(data.getRRAReference());
 
             log.info("RRA Transaction [" + transactionRRN + "] failed during processing. Kindly contact BPR Customer Care");
             return RRAPaymentResponse.builder()
