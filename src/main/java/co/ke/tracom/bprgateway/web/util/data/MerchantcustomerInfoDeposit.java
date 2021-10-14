@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MerchantInfoDeposit {
+public class MerchantcustomerInfoDeposit {
     private String username;
 }

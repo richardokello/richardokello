@@ -38,7 +38,7 @@ public class AccountValidationService {
 
         try {
             String responseOFSMessage = t24TCPClient.sendTransactionToT24(OFSMsg);
-            log.info("T24 Account Validation Response " + responseOFSMessage);
+            log.info("T24 Account Validation Response OFS" + responseOFSMessage);
             BankAccountValidationResponse bankAccountValidationResponse = t24MessageProcessor.parseT24ResponseForBankAccountValidation(responseOFSMessage);
 
             return BPRAccountValidationResponse.builder()

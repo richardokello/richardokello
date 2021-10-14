@@ -445,7 +445,8 @@ public class RRAService {
                 data.setNames(authenticateAgentResponse.getData().getNames());
                 data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
                 data.setLocation(authenticateAgentResponse.getData().getLocation());
-                data.setRRAReference(data.getRrn());
+               // data.setRrn(data.getRrn());
+                data.setRRAReference(data.getRRAReference());
                 data.setTid(authenticateAgentResponse.getData().getTid());
                 data.setMid(authenticateAgentResponse.getData().getMid());
 
@@ -459,8 +460,8 @@ public class RRAService {
             RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                     .rrn(transactionRRN)
                     .build();
-            data.setRRAReference(data.getRrn());
-            data.setNames(data.getNames());
+           // data.setRrn(data.getRrn());
+            data.setRRAReference(data.getRRAReference());
 
             log.info("RRA Transaction [" + transactionRRN + "] failed during processing. Kindly contact BPR Customer Care");
             return RRAPaymentResponse.builder()

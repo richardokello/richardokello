@@ -3,20 +3,13 @@ package co.ke.tracom.bprgateway.core.tracomchannels.tcp;
 import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
 import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
-import io.vertx.core.Vertx;
-import io.vertx.core.net.NetClient;
-import io.vertx.core.net.NetClientOptions;
-import io.vertx.core.net.NetSocket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.telnet.TelnetClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +26,7 @@ public class T24TCPClient {
 
     public String sendTransactionToT24(String T24OFSMessage)
             throws NoSuchFieldException, IOException {
-        log.info("Masked t24 Request to CBS ~~ %s", T24OFSMessage);
+        log.info("Masked t24 Request to CBS ~~ %s"+ T24OFSMessage);
 
         Optional<XSwitchParameter> optionalT24IP =
                 switchParameterRepository.findByParamName(T24_TCP_IP_PARAM_NAME);
@@ -78,7 +71,7 @@ public class T24TCPClient {
                         "Gateway unable to initiate communication with T24 Gateway ["
                                 + optionalT24IP.get().getParamValue()
                                 + ":"
-                                + Integer.parseInt(optionalT24Port.get().getParamValue() + "]"));
+                                + Integer.parseInt(optionalT24Port.get().getParamValue() ) + "]");
             }
         } else {
             throw new NoSuchFieldException("Missing T24 Configuration [IP/PORT] ");

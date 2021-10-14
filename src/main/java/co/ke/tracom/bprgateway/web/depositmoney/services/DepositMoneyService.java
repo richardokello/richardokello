@@ -39,9 +39,10 @@ public class DepositMoneyService {
     public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest, String transactionRRN) {
         DepositMoneyResult response = DepositMoneyResult.builder().build();
         try {
+
+
             // Validate agent credentials
             AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials());
-
             DepositMoneyResultData depositMoneyResultData = DepositMoneyResultData.builder().build();
             depositMoneyResultData.setUsername(authenticateAgentResponse.getData().getUsername());
             depositMoneyResultData.setNames(authenticateAgentResponse.getData().getNames());
@@ -55,7 +56,7 @@ public class DepositMoneyService {
             String customerAccount = depositMoneyRequest.getAccountNumber();
 
             // Todo check the payment details required
-            String firstDetails = depositMoneyRequest.getAccountName() + " " + depositMoneyRequest.getAccountNumber() +""+ depositMoneyRequest.getNarration();
+            String firstDetails = depositMoneyRequest.getAccountName() + " " + depositMoneyRequest.getAccountNumber() +" "+ depositMoneyRequest.getNarration();
             firstDetails =
                     firstDetails.length() > 34 ? firstDetails.substring(0, 34) : firstDetails;
 
@@ -166,6 +167,7 @@ public class DepositMoneyService {
                             "440000");
                 }
 
+
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                         depositMoneyRequest.getAmount(), "000",
@@ -200,6 +202,8 @@ public class DepositMoneyService {
                         .setData(null);
             }
         } catch (Exception e) {
+
+
             log.info("Customer deposit transaction [" + transactionRRN + "] failed processing. Error: " + e.getMessage());
             e.printStackTrace();
             return response
