@@ -8,6 +8,7 @@ import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
+import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
@@ -27,6 +28,8 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 public class AgentTransactionService {
 
+    static final Long AGENT_DEPOSIT_TRANSACTION_LIMIT_ID = 6L;
+
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
     private final UtilityService utilityService;
@@ -34,6 +37,7 @@ public class AgentTransactionService {
     private final BPRBranchService bprBranchService;
 
     private final XSwitchParameterService xSwitchParameterService;
+    private final TransactionLimitManagerService limitManagerService;
 
     @SneakyThrows
     public AgentTransactionResponse processAgentFloatDeposit(AgentTransactionRequest agentTransactionRequest) {
@@ -42,7 +46,12 @@ public class AgentTransactionService {
         AuthenticateAgentResponse authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
 
         // validate amount limits
-
+        TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_DEPOSIT_TRANSACTION_LIMIT_ID, agentTransactionRequest.getAmount());
+        if (!limitValid.isValid()) {
+            response.setStatus("01");
+            response.setMessage("Amount should be between " + limitValid.getLower() + " and " + limitValid.getUpper());
+            return response;
+        }
 
         response.setUsername(authenticateAgentDepositResponse.getData().getUsername());
         response.setNames(authenticateAgentDepositResponse.getData().getNames());
@@ -262,7 +271,7 @@ public class AgentTransactionService {
         response.setMid(authenticateAgentResponse.getData().getMid());
 
         MerchantAuthInfo customerAgent = MerchantAuthInfo.builder()
-               // .password(request.getCustomerAgentPass())
+                // .password(request.getCustomerAgentPass())
                 .username(request.getCustomerAgentId()).build();
 
         AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent);
