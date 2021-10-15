@@ -40,8 +40,6 @@ public class DepositMoneyService {
     public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest, String transactionRRN) {
         DepositMoneyResult response = DepositMoneyResult.builder().build();
         try {
-
-
             // Validate agent credentials
             AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials());
             DepositMoneyResultData depositMoneyResultData = DepositMoneyResultData.builder().build();

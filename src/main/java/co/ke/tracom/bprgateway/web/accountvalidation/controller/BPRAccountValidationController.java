@@ -24,7 +24,6 @@ public class BPRAccountValidationController {
     @ApiOperation(value = "Validate any BPR Accounts i.e. agent account no or customer account no", response = BPRAccountValidationResponse.class)
     @PostMapping(value = "/bank-account-validation")
     public ResponseEntity<?> accountValidation(@RequestBody BPRAccountValidationRequest request) {
-
         String rrn = RRNGenerator.getInstance("AV").getRRN();
         BPRAccountValidationResponse response = accountValidationService.processBankAccountValidation(request, rrn);
         return new ResponseEntity<>(response, HttpStatus.OK);
