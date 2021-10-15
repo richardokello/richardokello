@@ -27,7 +27,7 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class EUCLService {
-    private final Long AGENT_DEPOSIT_TRANSACTION_LIMIT_ID= 8L;
+    private final Long EUCL_TRANSACTION_LIMIT_ID= 8L;
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
     private final BaseServiceProcessor baseServiceProcessor;
@@ -43,7 +43,7 @@ public class EUCLService {
         try {
 MeterNoValidationResponse responses=new MeterNoValidationResponse();
 
-            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_DEPOSIT_TRANSACTION_LIMIT_ID, request.getAmount());
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, request.getAmount());
             if (!limitValid.isValid()) {
                 responses.setStatus("061");
                 responses.setMessage("Amount limit exceeded ");

@@ -29,6 +29,7 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 public class AgentTransactionService {
 
     static final Long AGENT_DEPOSIT_TRANSACTION_LIMIT_ID = 6L;
+    static final Long AGENT_WITHDRAWAL_TRANSACTION_LIMIT_ID = 7L;
 
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
@@ -263,6 +264,9 @@ public class AgentTransactionService {
         AgentTransactionResponse response = AgentTransactionResponse.builder().build();
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
+
+
+
         response.setUsername(authenticateAgentResponse.getData().getUsername());
         response.setNames(authenticateAgentResponse.getData().getNames());
         response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
@@ -291,6 +295,15 @@ public class AgentTransactionService {
                     transactionReferenceNo);
             response.setStatus("117");
             response.setMessage("Insufficient float balance");
+            return response;
+        }
+
+
+
+        TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_WITHDRAWAL_TRANSACTION_LIMIT_ID, request.getAmount());
+        if (!limitValid.isValid()) {
+            response.setStatus("061");
+            response.setMessage("Amount limit exceeded ");
             return response;
         }
 

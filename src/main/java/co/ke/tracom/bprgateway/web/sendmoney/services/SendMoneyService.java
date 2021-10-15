@@ -21,6 +21,7 @@ import co.ke.tracom.bprgateway.web.smsscheduled.entities.ScheduledSMS;
 import co.ke.tracom.bprgateway.web.smsscheduled.repository.ScheduledSMSRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
+import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.TransactionISO8583ProcessingCode;
@@ -47,7 +48,8 @@ public class SendMoneyService {
     private final String SEND_MONEY_SUSPENSE_ACC = "SENDMONEYSUSPENSE";
     private final String SEND_MONEY_LABEL = "SEND MONEY";
 
-
+    private final Long SENDMONEY_TRANSACTION_LIMIT_ID=1L;
+    private final Long RECEIVEMONEY_TRANSACTION_LIMIT_ID=2L;
     private final AgentTransactionService agentTransactionService;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService branchService;
@@ -61,18 +63,23 @@ public class SendMoneyService {
     private final XSwitchParameterService xSwitchParameterService;
     private final MoneySendRepository moneySendRepository;
     private final ScheduledSMSRepository scheduledSMSRepository;
-
+    private final TransactionLimitManagerService limitManagerService;
 
     @SneakyThrows
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
+
         log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + transactionRRN + "] processing begins. Request " + request);
 
         Data agentAuthData = authenticateAgentResponse.getData();
+
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
 
         try {
+
+
+
             BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(agentAuthData.getAccountNumber());
             String branchAccountID = branch.getId();
             System.out.println(" agent authentication data = " + agentAuthData);
@@ -85,9 +92,25 @@ public class SendMoneyService {
 
             String receiverMobile = request.getRecipientMobileNo().trim();
 
+
+            SendMoneyResponse responses=new SendMoneyResponse();
+
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(SENDMONEY_TRANSACTION_LIMIT_ID, (long) request.getAmount());
+            if (!limitValid.isValid()) {
+                responses.setStatus("061");
+                responses.setMessage("Amount limit exceeded ");
+                return responses;
+            }
+
+
             compareSenderRecipientMobileNumbers(transactionRRN, receiverMobile.equalsIgnoreCase(senderMobileNo));
 
             String configuredSendMoneySuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue(SEND_MONEY_SUSPENSE_ACC);
+
+
+
+
+
 
             String[] paymentDetails = new String[3];
 
@@ -106,6 +129,12 @@ public class SendMoneyService {
             T24TXNQueue tot24 = prepareT24Transaction(transactionRRN, agentAuthData, configuredSendMoneySuspenseAccount, tot24str, tid);
 
             processSendMoneyTransaction(tot24);
+
+
+
+
+
+
 
             if ((tot24.getT24responsecode().equalsIgnoreCase("1"))) {
                 return processSuccessfulSendMoneyT24Transaction(request, transactionRRN, agentAuthData, branchAccountID,
@@ -133,7 +162,10 @@ public class SendMoneyService {
         String receiverMobile = request.getRecipientMobileNo();
 
         SendMoneyResponseData data = SendMoneyResponseData.builder().build();
+
         try {
+
+//
             String charges = tot24.getTotalchargeamt();
             System.err.println("Charges " + charges);
             String formattedCharge = charges.replace("RWF", "");
@@ -624,6 +656,15 @@ public class SendMoneyService {
                     .message("Insufficient agent account balance")
                     .data(null)
                     .build();
+        }
+
+        SendMoneyResponse responses=new SendMoneyResponse();
+
+        TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(RECEIVEMONEY_TRANSACTION_LIMIT_ID, (long) request.getAmount());
+        if (!limitValid.isValid()) {
+            responses.setStatus("061");
+            responses.setMessage("Amount limit exceeded ");
+            return responses;
         }
 
         String channel = "1510";

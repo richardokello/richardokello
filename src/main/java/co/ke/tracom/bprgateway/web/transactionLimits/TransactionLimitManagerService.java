@@ -27,10 +27,12 @@ public class TransactionLimitManagerService {
     }
 
     public TransactionLimitManager findById(Long id) throws Exception {
-        return transactionLimitManagerRepository.findById(id).orElseThrow(() -> new RuntimeException("Transaction Limit does not exist"));
+        Optional<TransactionLimitManager> optional = transactionLimitManagerRepository.findById(id);
+        if(optional.isEmpty()) throw new RuntimeException("Transaction Limit does not exist");
+        return optional.get();
     }
 
-    public TransactionLimit isLimitValid(Long id, Long amount) throws Exception {
+    public TransactionLimit isLimitValid(Long id, double amount) throws Exception {
         TransactionLimitManager transactionLimit = findById(id);
         boolean isValid = amount <= transactionLimit.getUpperlimit() && amount >= transactionLimit.getLowerlimit();
         return new TransactionLimit(isValid, transactionLimit.getUpperlimit(), transactionLimit.getLowerlimit());

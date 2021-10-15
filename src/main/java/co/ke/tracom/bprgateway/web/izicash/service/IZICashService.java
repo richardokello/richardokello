@@ -39,7 +39,7 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class IZICashService {
-    private final Long AGENT_DEPOSIT_TRANSACTION_LIMIT_ID=9L;
+    private final Long IZI_CASH_TRANSACTION_LIMIT_ID=9L;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService branchService;
     private final TransactionService transactionService;
@@ -47,7 +47,7 @@ public class IZICashService {
 
     private final XSwitchParameterService xSwitchParameterService;
     private final IZICashTxnLogsRepository iziCashTxnLogsRepository;
-    TransactionLimitManagerService limitManagerService;
+    private final TransactionLimitManagerService limitManagerService;
 
 
     @SneakyThrows
@@ -63,7 +63,7 @@ public class IZICashService {
         try {
 
             IZICashResponse responses=new IZICashResponse();
-            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_DEPOSIT_TRANSACTION_LIMIT_ID, request.getAmount());
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(IZI_CASH_TRANSACTION_LIMIT_ID, request.getAmount());
             if (!limitValid.isValid()) {
                 responses.setStatus("061");
                 responses.setMessage("Amount limit exceeded ");

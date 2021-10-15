@@ -1,14 +1,12 @@
 package co.ke.tracom.bprgateway.web.izicash.data.response;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Data
 @Builder
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class IZICashResponse {
     private String status;
     private String message;

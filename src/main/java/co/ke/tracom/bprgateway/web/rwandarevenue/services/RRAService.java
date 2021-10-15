@@ -72,6 +72,7 @@ public class RRAService {
 
         HttpPost httpPost = null;
         try {
+
             String rrasoapurl = xSwitchParameterService.fetchXSwitchParamValue("RRASOAPURL");
             Boolean exists = findPendingRRAPaymentOnQueueByRRATIN(request.getRrareferenceNo());
 
