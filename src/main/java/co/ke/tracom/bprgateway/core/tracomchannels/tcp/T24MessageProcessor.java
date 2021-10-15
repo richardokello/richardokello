@@ -70,7 +70,11 @@ public class T24MessageProcessor {
                 response.setCustomerSector(enquiryResponseArray[12]);
             }
         }
-        response.setStatus(HttpStatus.SC_OK);
+        if(response.getAccountName() == null || response.getAccountName().isEmpty()) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+        } else {
+            response.setStatus(HttpStatus.SC_OK);
+        }
         log.info("Account validation processing: " + response.toString());
         return response;
     }

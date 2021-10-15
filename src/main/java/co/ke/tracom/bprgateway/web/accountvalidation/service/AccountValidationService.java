@@ -45,7 +45,7 @@ public class AccountValidationService {
                     .status(
                             bankAccountValidationResponse.getStatus() == HttpStatus.SC_OK ? "00" : String.valueOf(bankAccountValidationResponse.getStatus())
                     )
-                    .message("Account validation successful")
+                    .message(bankAccountValidationResponse.getStatus() == HttpStatus.SC_OK ? "Account validation successful" : "Account not valid")
                     .accountName(bankAccountValidationResponse.getAccountName())
                     .rrn(RRNGenerator.getInstance("AV").getRRN())
                     .build();

@@ -46,6 +46,7 @@ public class DepositMoneyService {
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials());
 
         try {
+<<<<<<< HEAD
 
             TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(DEPOSIT_TRANSACTION_LIMIT_ID, (long) depositMoneyRequest.getAmount());
             if (!limitValid.isValid()) {
@@ -54,6 +55,8 @@ public class DepositMoneyService {
                 return response;
             }
 
+=======
+>>>>>>> 26dcd2bb556430606b5ad3d54814d84def49e7c4
             // Validate agent credentials
            DepositMoneyResultData depositMoneyResultData = DepositMoneyResultData.builder().build();
             depositMoneyResultData.setUsername(authenticateAgentResponse.getData().getUsername());
