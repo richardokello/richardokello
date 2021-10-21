@@ -14,6 +14,6 @@ public class AgentTransactionRequest {
     private MerchantAuthInfo credentials;
 //    private MerchantInfoDeposit depositCredentials;
 
-//   private String customerAgentPass;
+  private String customerAgentPass;
 
 }

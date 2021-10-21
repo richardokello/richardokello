@@ -38,7 +38,7 @@ public class TransactionService {
                         .setDebitAccountNo(tot24.getDebitacctno())
                         .setT24PosRef(tot24.getGatewayref()) // RRN
                         .setT24Reference(tot24.getT24reference())
-                        .setT24ResponseCode(processingStatus);
+                       .setT24ResponseCode(processingStatus);
 
         allTransactionsRepository.save(allTransactions);
     }

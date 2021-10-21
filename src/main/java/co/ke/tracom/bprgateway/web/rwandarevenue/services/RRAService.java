@@ -317,6 +317,7 @@ public class RRAService {
 
     @SneakyThrows
     public RRAPaymentResponse processRRAPayment(RRAPaymentRequest request, String transactionRRN) {
+        T24TXNQueue tot24 = new T24TXNQueue();
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
 
@@ -339,6 +340,10 @@ public class RRAService {
             String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
             BPRBranches branch = bprBranchService.fetchBranchAccountsByBranchCode(agentFloatAccount);
             if (branch.getCompanyName() == null) {
+                transactionService.updateT24TransactionDTO(tot24);
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                        request.getAmountToPay(), "065",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 log.info("Agent float deposit transaction [" + transactionRRN + "] failed. Error: Agent branch details could not be verified.");
                 RRAPaymentResponseData datas = RRAPaymentResponseData.builder()
                         .rrn(transactionRRN)
@@ -351,6 +356,10 @@ public class RRAService {
 
             String agentBranchId = branch.getId();
             if (agentBranchId.isEmpty()) {
+                transactionService.updateT24TransactionDTO(tot24);
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                        request.getAmountToPay(), "065",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                         .rrn(transactionRRN)
                         .build();
@@ -364,7 +373,10 @@ public class RRAService {
             log.info("Fet balance success >>> is greater {}", (agentFloatBalance > AMOUNT_TO_PAY));
             if (agentFloatBalance < AMOUNT_TO_PAY) {
 
-
+                transactionService.updateT24TransactionDTO(tot24);
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                        request.getAmountToPay(), "065",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 return RRAPaymentResponse.builder()
                         .status("065")
                         .message("Insufficient agent float balance.")
@@ -416,7 +428,7 @@ public class RRAService {
             log.info("channel :" + channel);
             log.info("tid :" + tid);
 
-            T24TXNQueue tot24 = new T24TXNQueue();
+
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
             tot24.setTxnchannel(channel);
@@ -466,6 +478,10 @@ public class RRAService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            transactionService.updateT24TransactionDTO(tot24);
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                    request.getAmountToPay(), "118",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                     .rrn(transactionRRN)
                     .build();

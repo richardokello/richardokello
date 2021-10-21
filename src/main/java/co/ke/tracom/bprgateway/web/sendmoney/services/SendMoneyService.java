@@ -69,15 +69,28 @@ public class SendMoneyService {
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
-
         log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + transactionRRN + "] processing begins. Request " + request);
 
         Data agentAuthData = authenticateAgentResponse.getData();
 
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
-
+        T24TXNQueue toT24= new T24TXNQueue();
         try {
 
+
+
+
+            SendMoneyResponse responses=new SendMoneyResponse();
+
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(SENDMONEY_TRANSACTION_LIMIT_ID, (long) request.getAmount());
+            if (!limitValid.isValid()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, SEND_MONEY_LABEL, "1200",
+                        request.getAmount(), "061",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                responses.setStatus("061");
+                responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
+                return responses;
+            }
 
 
             BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(agentAuthData.getAccountNumber());
@@ -93,14 +106,6 @@ public class SendMoneyService {
             String receiverMobile = request.getRecipientMobileNo().trim();
 
 
-            SendMoneyResponse responses=new SendMoneyResponse();
-
-            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(SENDMONEY_TRANSACTION_LIMIT_ID, (long) request.getAmount());
-            if (!limitValid.isValid()) {
-                responses.setStatus("061");
-                responses.setMessage("Amount limit exceeded ");
-                return responses;
-            }
 
 
             compareSenderRecipientMobileNumbers(transactionRRN, receiverMobile.equalsIgnoreCase(senderMobileNo));
@@ -146,6 +151,10 @@ public class SendMoneyService {
             w.printStackTrace();
             log.info("Send money transaction error : " + w.getMessage());
         }
+        transactionService.saveCardLessTransactionToAllTransactionTable(toT24, SEND_MONEY_LABEL, "1200",
+                request.getAmount(), "116",
+                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
         return SendMoneyResponse.builder()
                 .status("116")
                 .message("Transaction processing failed. Please try again")
@@ -228,6 +237,9 @@ public class SendMoneyService {
             } else {
                 System.err.println(
                         "Card less vcard generation error for rrn " + transactionRRN);
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
+                        request.getAmount(), "118",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 return SendMoneyResponse.builder()
                         .status("118")
                         .message("Transaction failed. Unable to generate virtual card. Please try again.")
@@ -237,6 +249,9 @@ public class SendMoneyService {
         } catch (Exception e) {
             e.printStackTrace();
             log.info("=================================================" + e.getMessage());
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
+                    request.getAmount(), "118",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             return SendMoneyResponse.builder()
                     .status("118")
                     .message("Transaction failed. Please try again.")
@@ -386,6 +401,7 @@ public class SendMoneyService {
         sendMoneyResponseData.setNames(agentAuthData.getNames());
         sendMoneyResponseData.setBusinessName(agentAuthData.getBusinessName());
         sendMoneyResponseData.setLocation(agentAuthData.getLocation());
+
 
         return SendMoneyResponse.builder()
                 .status("098")
@@ -645,12 +661,16 @@ public class SendMoneyService {
 
     @SneakyThrows
     public SendMoneyResponse processReceiveMoneyRequest(ReceiveMoneyRequest request, String transactionRRN) {
-
+        T24TXNQueue tot24 = new T24TXNQueue();
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
 
         if (agentFloatAccountBalance < request.getAmount()) {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "098",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
             return SendMoneyResponse.builder()
                     .status("098")
                     .message("Insufficient agent account balance")
@@ -660,10 +680,14 @@ public class SendMoneyService {
 
         SendMoneyResponse responses=new SendMoneyResponse();
 
-        TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(RECEIVEMONEY_TRANSACTION_LIMIT_ID, (long) request.getAmount());
+        TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService. isLimitValid(RECEIVEMONEY_TRANSACTION_LIMIT_ID, (long) request.getAmount());
         if (!limitValid.isValid()) {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "061",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
             responses.setStatus("061");
-            responses.setMessage("Amount limit exceeded ");
+            responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
             return responses;
         }
 
@@ -672,6 +696,10 @@ public class SendMoneyService {
 
         // this must be set
         if (sendMoneySuspense.isEmpty()) {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "098",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
             return SendMoneyResponse.builder()
                     .status("098")
                     .message("Missing send money suspense account")
@@ -686,9 +714,14 @@ public class SendMoneyService {
         BPRBranches branch =
                 branchService.fetchBranchAccountsByBranchCode(sendMoneySuspense);
         if (null == branch.getCompanyName()) {
+
             System.err.println(
                     "Receive money suspense account details could not be verified for account "
                             + sendMoneySuspense);
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "065",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
             return SendMoneyResponse.builder()
                     .status("065")
                     .message("Transaction failed. Missing receive money suspense account information. Contact BPR")
@@ -698,6 +731,10 @@ public class SendMoneyService {
 
         String accountbranchid = branch.getId();
         if (accountbranchid.isEmpty()) {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "065",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
             return SendMoneyResponse.builder()
                     .status("065")
                     .message("Transaction failed. Missing receive money suspense account information. Contact BPR")
@@ -714,6 +751,10 @@ public class SendMoneyService {
             Optional<MoneySend> optionalMoneySend = getSendMoneyTxn(recipientPhoneNo, passcode);
 
             if (optionalMoneySend.isEmpty()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                        request.getAmount(), "139",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
                 return SendMoneyResponse.builder()
                         .status("139")
                         .message("Transaction failed. Missing original send money record.")
@@ -734,6 +775,10 @@ public class SendMoneyService {
 
             if (Double.parseDouble(sendMoneyTxn.getAmount()) != request.getAmount()) {
                 log.info("Wrong receive amount entered, original {} - current {} ", sendMoneyTxn.getAmount(), request.getAmount());
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                        request.getAmount(), "139",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
                 return SendMoneyResponse.builder()
                         .status("139")
                         .message("Transaction failed. Incorrect amount was entered.")
@@ -742,6 +787,10 @@ public class SendMoneyService {
             }
 
             if (compareRequestTokenWithStoredToken(request, transactionRRN, sendMoneyTxn)) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                        request.getAmount(), "116",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
                 return SendMoneyResponse.builder()
                         .status("116")
                         .message("Transaction failed. Invalid vCard. Please try again.")
@@ -787,7 +836,7 @@ public class SendMoneyService {
 
             String tot24str = String.format("%04d", smwOFS.length()) + smwOFS;
 
-            T24TXNQueue tot24 = new T24TXNQueue();
+
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
             tot24.setTxnchannel(channel);

@@ -45,14 +45,8 @@ public class AgentTransactionService {
         AgentTransactionResponse response = new AgentTransactionResponse();
         // Validate agent credentials
         AuthenticateAgentResponse authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
-
+        T24TXNQueue tot24 = new T24TXNQueue();
         // validate amount limits
-        TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_DEPOSIT_TRANSACTION_LIMIT_ID, agentTransactionRequest.getAmount());
-        if (!limitValid.isValid()) {
-            response.setStatus("061");
-            response.setMessage("Amount limit exceeded ");
-            return response;
-        }
 
         response.setUsername(authenticateAgentDepositResponse.getData().getUsername());
         response.setNames(authenticateAgentDepositResponse.getData().getNames());
@@ -68,11 +62,29 @@ public class AgentTransactionService {
         long depositAmount = agentTransactionRequest.getAmount();
 
         if (POSAgentFloatBalance < depositAmount) {
+
+            transactionService.saveCardLessTransactionToAllTransactionTable(
+                    tot24, "AGENT FLOAT DEPOSIT", "1200",
+                    agentTransactionRequest.getAmount(), "117",
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
             log.info(
                     "Agent Float Deposit:[Failed] Transaction " + transactionReferenceNo + " failed. Error message: Insufficient agent balance %n");
             response.setStatus("117");
             response.setMessage("Insufficient agent balance");
             return response;
+        }
+
+        TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_DEPOSIT_TRANSACTION_LIMIT_ID, agentTransactionRequest.getAmount());
+
+        if (!limitValid.isValid()) {
+
+            transactionService.saveCardLessTransactionToAllTransactionTable(
+                    tot24, "AGENT FLOAT DEPOSIT", "1200",
+                    agentTransactionRequest.getAmount(), "061",
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
+            response.setStatus("061");
+            response.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
+            return response ;
         }
 
         MerchantcustomerInfoDeposit customerAgent = MerchantcustomerInfoDeposit.builder()
@@ -94,6 +106,11 @@ public class AgentTransactionService {
 
         BPRBranches bprBranches = bprBranchService.fetchBranchAccountsByBranchCode(POSAgentAccount);
         if (null == bprBranches.getCompanyName()) {
+
+            transactionService.saveCardLessTransactionToAllTransactionTable(
+                    tot24, "AGENT FLOAT DEPOSIT", "1200",
+                    agentTransactionRequest.getAmount(), "065",
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
             log.info("Agent float deposit transaction [" + transactionReferenceNo + "] failed. Error: Agent branch details could not be verified.");
 
             response.setStatus("065");
@@ -103,6 +120,14 @@ public class AgentTransactionService {
 
         String accountBranchId = bprBranches.getId();
         if (accountBranchId.isEmpty()) {
+
+
+
+            transactionService.saveCardLessTransactionToAllTransactionTable(
+                    tot24, "AGENT FLOAT DEPOSIT", "1200",
+                    agentTransactionRequest.getAmount(), "003",
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
+
             System.out.printf(
                     "Agent Float Deposit:[Failed] Transaction %s failed. Error message: Missing branch details for recipient agent. %n",
                     transactionReferenceNo);
@@ -142,7 +167,7 @@ public class AgentTransactionService {
                         thirdPaymentDetails.trim());
         String tot24str = String.format("%04d", agentFloatDepositOFS.length()) + agentFloatDepositOFS;
 
-        T24TXNQueue tot24 = new T24TXNQueue();
+       // T24TXNQueue tot24 = new T24TXNQueue();
         tot24.setRequestleg(tot24str);
         tot24.setStarttime(System.currentTimeMillis());
 
@@ -200,23 +225,29 @@ public class AgentTransactionService {
             response.setStatus("00");
             response.setMessage("Transaction processed successful");
             return response;
-        } else {
+        }
+
+        else {
             transactionService.saveCardLessTransactionToAllTransactionTable(
                     tot24, "AGENT FLOAT DEPOSIT", "1200",
-                    agentTransactionRequest.getAmount(), "908",
+                    agentTransactionRequest.getAmount(), ""+response.getStatus()+"",
                     authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
             System.out.printf(
                     "Agent Float Deposit:[Error] Transaction %s processing failed. Error message: Transaction failed at T24 %n",
                     transactionReferenceNo);
 
-            response.setStatus("908");
+            response.setStatus(response.getStatus());
             response.setTransactionCharges(0.0);
             response.setT24Reference(response.getT24Reference());
             response.setMessage((tot24.getT24failnarration() == null || tot24.getT24failnarration().isEmpty())
                     ? "TRANSACTION FAILED. SYSTEM FAILURE"
                     : tot24.getT24failnarration());
         }
+
+
+
         return response;
+
     }
 
     public Long fetchAgentAccountBalanceOnly(String agentAccount) {
@@ -262,6 +293,7 @@ public class AgentTransactionService {
     @SneakyThrows
     public AgentTransactionResponse processAgentFloatWithdrawal(AgentTransactionRequest request, String transactionReferenceNo) {
         AgentTransactionResponse response = AgentTransactionResponse.builder().build();
+        T24TXNQueue tot24 = new T24TXNQueue();
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
 
@@ -275,7 +307,7 @@ public class AgentTransactionService {
         response.setMid(authenticateAgentResponse.getData().getMid());
 
         MerchantAuthInfo customerAgent = MerchantAuthInfo.builder()
-                // .password(request.getCustomerAgentPass())
+                .password(request.getCustomerAgentPass())
                 .username(request.getCustomerAgentId()).build();
 
         AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentUsernamePassword(customerAgent);
@@ -290,6 +322,10 @@ public class AgentTransactionService {
 
 
         if (POSAgentAccountBalance < request.getAmount()) {
+
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
+                    request.getAmount(), "117",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             System.out.printf(
                     "Agent Float Withdrawal:[Failed] Transaction %s failed. Error message: Insufficient balance for POS Agent. %n",
                     transactionReferenceNo);
@@ -302,14 +338,21 @@ public class AgentTransactionService {
 
         TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(AGENT_WITHDRAWAL_TRANSACTION_LIMIT_ID, request.getAmount());
         if (!limitValid.isValid()) {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
+                    request.getAmount(), "061",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             response.setStatus("061");
-            response.setMessage("Amount limit exceeded ");
+            response.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
             return response;
         }
 
         BPRBranches recipientAgentBankBranch =
                 bprBranchService.fetchBranchAccountsByBranchCode(recipientAgentAccountNo);
         if (null == recipientAgentBankBranch.getCompanyName()) {
+
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
+                    request.getAmount(), "003",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             System.out.printf(
                     "Agent Float Withdrawal:[Failed] Transaction %s failed. Error message: Missing branch details for recipient agent. %n",
                     transactionReferenceNo);
@@ -365,7 +408,7 @@ public class AgentTransactionService {
                         thirdPaymentDetails.trim());
 
         String tot24str = String.format("%04d", agentFloatWithdrawalOFS.length()) + agentFloatWithdrawalOFS;
-        T24TXNQueue tot24 = new T24TXNQueue();
+        //T24TXNQueue tot24 = new T24TXNQueue();
         tot24.setRequestleg(tot24str);
         tot24.setStarttime(System.currentTimeMillis());
 

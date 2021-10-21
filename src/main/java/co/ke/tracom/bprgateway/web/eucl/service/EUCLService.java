@@ -39,14 +39,17 @@ public class EUCLService {
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
         // Validate agent credentials
         AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
-
+        T24TXNQueue tot24 = new T24TXNQueue();
         try {
 MeterNoValidationResponse responses=new MeterNoValidationResponse();
 
             TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, request.getAmount());
             if (!limitValid.isValid()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                        Double.valueOf(request.getAmount()), "061",
+                        optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
                 responses.setStatus("061");
-                responses.setMessage("Amount limit exceeded ");
+                responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
                 return responses;
             }
 
@@ -73,7 +76,7 @@ MeterNoValidationResponse responses=new MeterNoValidationResponse();
 
 
             // create a table or function to generate T24 messages
-            T24TXNQueue tot24 = new T24TXNQueue();
+
             tot24.setMeterno(meterNo);
             // base 64 encode request in db
             tot24.setRequestleg(tot24str);
@@ -117,6 +120,9 @@ MeterNoValidationResponse responses=new MeterNoValidationResponse();
                         .rrn(referenceNo)
                         .build();
                 log.info("EUCL Validation failed. Transaction [" + referenceNo + "] " + tot24.getT24failnarration().replace("\"", ""));
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                        Double.valueOf(request.getAmount()), "198",
+                        optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
                 MeterNoValidationResponse response = MeterNoValidationResponse
                         .builder()
                         .status("198")
@@ -128,6 +134,9 @@ MeterNoValidationResponse responses=new MeterNoValidationResponse();
 
         } catch (Exception e) {
             e.printStackTrace();
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                    Double.valueOf(request.getAmount()), "098",
+                    optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
             MeterNoData data = MeterNoData.builder()
                     .rrn(referenceNo)
                     .build();
@@ -146,7 +155,7 @@ MeterNoValidationResponse responses=new MeterNoValidationResponse();
     @SneakyThrows
     public EUCLPaymentResponse purchaseEUCLTokens(EUCLPaymentRequest request, String transactionReferenceNo) {
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
-
+        T24TXNQueue tot24 = new T24TXNQueue();
         EUCLElectricityTxnLogs elecTxnLogs = new EUCLElectricityTxnLogs();
         try {
 
@@ -207,7 +216,7 @@ MeterNoValidationResponse responses=new MeterNoValidationResponse();
             String tot24str = String.format("%04d", t24.length()) + t24;
             System.out.println("String to t24==>" + tot24str);
 
-            T24TXNQueue tot24 = new T24TXNQueue();
+
             tot24.setMeterno(meterNo);
             // base 64 encode request in db
             tot24.setRequestleg(tot24str);
@@ -308,6 +317,9 @@ MeterNoValidationResponse responses=new MeterNoValidationResponse();
 
                     .setRrn(transactionReferenceNo);
             e.printStackTrace();
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                    Double.valueOf(request.getAmount()), "098",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             log.info("EUCL transaction [" + transactionReferenceNo + "] failed. Error " + e.getMessage());
             return EUCLPaymentResponse.builder()
                     .status("098")

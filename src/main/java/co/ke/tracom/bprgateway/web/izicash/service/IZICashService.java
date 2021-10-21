@@ -56,6 +56,7 @@ public class IZICashService {
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         IZICashTxnLogs iziCashTxnLogs = new IZICashTxnLogs();
+        T24TXNQueue toT24=new T24TXNQueue();
         /*
          * 01 IZI Request from external system 00 Success 06 Failure 43 Not
          * Valid Mobile Number 45 Unknown Error
@@ -65,8 +66,11 @@ public class IZICashService {
             IZICashResponse responses=new IZICashResponse();
             TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(IZI_CASH_TRANSACTION_LIMIT_ID, request.getAmount());
             if (!limitValid.isValid()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                        request.getAmount(), "061",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 responses.setStatus("061");
-                responses.setMessage("Amount limit exceeded ");
+                responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
                 return responses;
             }
 
@@ -83,6 +87,11 @@ public class IZICashService {
             String accountBranchID = branch.getId();
 
             if (request.getMobileNo().length() < 5) {
+
+
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                        request.getAmount(), "091",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 return IZICashResponse.builder()
                         .status("091")
                         .message("Transaction processing failed. Invalid mobile no length.")
@@ -220,6 +229,7 @@ public class IZICashService {
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;
                     } else {
+
                         System.out.printf(
                                 "IZI Cash: [Failed] Transaction %s failed processing at T24. Reconciliation to reverse IZI Cash transaction required!",
                                 transactionRRN);
@@ -252,6 +262,10 @@ public class IZICashService {
                     iziCashTxnLogs.setPassCode("*****");
                     iziCashTxnLogsRepository.save(iziCashTxnLogs);
 
+
+                    transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                            request.getAmount(), "118",
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                     return IZICashResponse.builder()
                             .data(null)
                             .status("118")
@@ -262,6 +276,9 @@ public class IZICashService {
                 iziCashTxnLogs.setGatewayT24PostingStatus("5");
                 iziCashTxnLogs.setPassCode("*****");
                 iziCashTxnLogsRepository.save(iziCashTxnLogs);
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                        request.getAmount(), "092",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 return IZICashResponse.builder()
                         .data(null)
                         .status("092")
@@ -273,6 +290,9 @@ public class IZICashService {
                     "IZI Cash: [Error] An error occurred processing transaction [%s] : Error message %s %n",
                     transactionRRN, e.getMessage());
             e.printStackTrace();
+            transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                    request.getAmount(), "908",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             return IZICashResponse.builder()
                     .data(null)
                     .status("908")
