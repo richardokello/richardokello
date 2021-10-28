@@ -6,6 +6,7 @@ import co.ke.tracom.bprgateway.web.exceptions.custom.InterServiceCommunicationEx
 import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.transactionLimits.entity.TransactionLimitManager;
 import co.ke.tracom.bprgateway.web.transactionLimits.repository.TransactionLimitManagerRepository;
+import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.ResponseCodes;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.util.data.MerchantcustomerInfoDeposit;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class BaseServiceProcessor {
+    private final TransactionService transactionService;
 
 
     @Value("${merchant.account.validation}")
@@ -47,6 +49,7 @@ public class BaseServiceProcessor {
         } catch (Exception e) {
             e.printStackTrace();
             throw new InterServiceCommunicationException("Inter-service communication error. Please try again!");
+
         }
 
         // Objects.requireNonNull(stringResponseEntity, "Inter-service communication error. Please try again------>that!");
@@ -63,6 +66,7 @@ public class BaseServiceProcessor {
             return authenticateAgentResponse;
         } else {
             throw new InvalidAgentCredentialsException("Agent credentials validation failed");
+
         }
     }
 

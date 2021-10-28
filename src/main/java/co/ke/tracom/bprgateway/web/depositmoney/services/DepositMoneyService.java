@@ -43,8 +43,22 @@ public class DepositMoneyService {
     @SneakyThrows
     public DepositMoneyResult processCustomerDepositMoneyTnx(DepositMoneyRequest depositMoneyRequest, String transactionRRN) {
         DepositMoneyResult response = DepositMoneyResult.builder().build();
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials());
+       AuthenticateAgentResponse authenticateAgentResponse = null;
         T24TXNQueue tot24 = new T24TXNQueue();
+        try{
+            authenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials());
+        }catch (InvalidAgentCredentialsException e)
+        {
+
+            System.out.println("--------------------------");
+            System.out.println(authenticateAgentResponse);
+
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",depositMoneyRequest.getCredentials().getUsername(),
+        "AgentValidation","FAILED","ipAddress");
+             response.setMessage(e.getMessage());
+           return response;
+        }
+
         try {
 
 
@@ -73,9 +87,18 @@ public class DepositMoneyService {
             String customerAccount = depositMoneyRequest.getAccountNumber();
 
             // Todo check the payment details required
-            String firstDetails = depositMoneyRequest.getAccountName() + " " + depositMoneyRequest.getAccountNumber() +" "+ depositMoneyRequest.getNarration();
+            String firstDetails =
+                    //depositMoneyRequest.getAccountName() + " " + depositMoneyRequest.getAccountNumber() +" "+
+                    depositMoneyRequest.getNarration();
+            String overflow = "";
+            if(firstDetails.length() > 34) {
+                overflow = firstDetails.substring(34);
+            }
+              //  firstDetails= firstDetails.substring(0,34);
+
             firstDetails =
                     firstDetails.length() > 34 ? firstDetails.substring(0, 34) : firstDetails;
+
 
             BPRBranches branch = getBranchDetailsFromAccount(agentFloatAccount);
             if ( branch.getCompanyName()==null) {
@@ -129,7 +152,7 @@ public class DepositMoneyService {
                             + utilityService.sanitizePaymentDetails(firstDetails, "Customer Deposit")
                            // +""+ depositMoneyRequest.getNarration()
                             + ",PAYMENT.DETAILS:2:="
-                            + secondDetails.trim()+depositMoneyRequest.getNarration()
+                            + secondDetails.trim()+overflow
                             + ",PAYMENT.DETAILS:3:="
                             + thirdDetails.trim();
 

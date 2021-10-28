@@ -3,6 +3,7 @@ package co.ke.tracom.bprgateway.web.izicash.service;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.izicash.data.request.IZICashRequest;
 import co.ke.tracom.bprgateway.web.izicash.data.response.IZICashResponse;
 import co.ke.tracom.bprgateway.web.izicash.data.response.IZICashResponseData;
@@ -53,7 +54,15 @@ public class IZICashService {
     @SneakyThrows
     public IZICashResponse processWithdrawMoneyTnx(IZICashRequest request, String transactionRRN) {
         // Validate agent credentials
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse authenticateAgentResponse =null;
+        try{
+            authenticateAgentResponse =  baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }catch (InvalidAgentCredentialsException e)
+        {
+         transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+                 "AgentValidation","FAILED","ipAddress");
+        }
+
 
         IZICashTxnLogs iziCashTxnLogs = new IZICashTxnLogs();
         T24TXNQueue toT24=new T24TXNQueue();

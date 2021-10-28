@@ -9,6 +9,7 @@ import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.entities.EUCLElectricityTxnLogs;
 import co.ke.tracom.bprgateway.web.eucl.repository.EUCLElectricityTxnLogsRepository;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
@@ -38,10 +39,19 @@ public class EUCLService {
     @SneakyThrows
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
         // Validate agent credentials
-        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = null;
         T24TXNQueue tot24 = new T24TXNQueue();
+        try{optionalAuthenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+
+        }
+        catch (InvalidAgentCredentialsException e)
+        {
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+                    "AgentValidation","FAILED","ipAddress");
+        }
+
         try {
-MeterNoValidationResponse responses=new MeterNoValidationResponse();
+         MeterNoValidationResponse responses=new MeterNoValidationResponse();
 
             TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, request.getAmount());
             if (!limitValid.isValid()) {
@@ -154,7 +164,16 @@ MeterNoValidationResponse responses=new MeterNoValidationResponse();
 
     @SneakyThrows
     public EUCLPaymentResponse purchaseEUCLTokens(EUCLPaymentRequest request, String transactionReferenceNo) {
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse authenticateAgentResponse = null;
+        try{
+            authenticateAgentResponse= baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }
+        catch(InvalidAgentCredentialsException e){
+          transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+                  "AgentValidation","FAILED","ipAddress");
+        }
+
+
         T24TXNQueue tot24 = new T24TXNQueue();
         EUCLElectricityTxnLogs elecTxnLogs = new EUCLElectricityTxnLogs();
         try {

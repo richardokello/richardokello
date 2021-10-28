@@ -4,6 +4,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAg
 import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests.RRAPaymentRequest;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests.RRATINValidationRequest;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAData;
@@ -68,7 +69,13 @@ public class RRAService {
 
     @SneakyThrows
     public RRATINValidationResponse validateCustomerTIN(RRATINValidationRequest request, String transactionRRN) {
-        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = null;
+        try {
+            optionalAuthenticateAgentResponse= baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }catch (InvalidAgentCredentialsException e){
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+                    "AgentValidation","FAILED","ipAddress");
+        }
 
         HttpPost httpPost = null;
         try {

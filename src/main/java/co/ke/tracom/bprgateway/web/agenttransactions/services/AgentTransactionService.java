@@ -6,6 +6,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AgentTransacti
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
@@ -43,23 +44,33 @@ public class AgentTransactionService {
     @SneakyThrows
     public AgentTransactionResponse processAgentFloatDeposit(AgentTransactionRequest agentTransactionRequest) {
         AgentTransactionResponse response = new AgentTransactionResponse();
-        // Validate agent credentials
-        AuthenticateAgentResponse authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
-        T24TXNQueue tot24 = new T24TXNQueue();
+        // Validate agent credentialsa
+        AuthenticateAgentResponse authenticateAgentDepositResponse=null;
+  T24TXNQueue tot24 = new T24TXNQueue();
         // validate amount limits
+        try {
 
-        response.setUsername(authenticateAgentDepositResponse.getData().getUsername());
-        response.setNames(authenticateAgentDepositResponse.getData().getNames());
-        response.setBusinessName(authenticateAgentDepositResponse.getData().getBusinessName());
-        response.setLocation(authenticateAgentDepositResponse.getData().getLocation());
-        response.setTid(authenticateAgentDepositResponse.getData().getTid());
-        response.setMid(authenticateAgentDepositResponse.getData().getMid());
+            authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
 
-        String transactionReferenceNo = RRNGenerator.getInstance("AD").getRRN();
-        String POSAgentAccount = authenticateAgentDepositResponse.getData().getAccountNumber();
+        } catch (InvalidAgentCredentialsException e){
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",agentTransactionRequest.getCredentials().getUsername(),
+                    "AgentValidation","FAILED","ipAddress");
+            response.setMessage(e.getMessage());
+            return response;
 
-        long POSAgentFloatBalance = fetchAgentAccountBalanceOnly(POSAgentAccount);
-        long depositAmount = agentTransactionRequest.getAmount();
+        }
+            response.setUsername(authenticateAgentDepositResponse.getData().getUsername());
+            response.setNames(authenticateAgentDepositResponse.getData().getNames());
+            response.setBusinessName(authenticateAgentDepositResponse.getData().getBusinessName());
+            response.setLocation(authenticateAgentDepositResponse.getData().getLocation());
+            response.setTid(authenticateAgentDepositResponse.getData().getTid());
+            response.setMid(authenticateAgentDepositResponse.getData().getMid());
+
+            String transactionReferenceNo = RRNGenerator.getInstance("AD").getRRN();
+            String POSAgentAccount = authenticateAgentDepositResponse.getData().getAccountNumber();
+
+            long POSAgentFloatBalance = fetchAgentAccountBalanceOnly(POSAgentAccount);
+            long depositAmount = agentTransactionRequest.getAmount();
 
         if (POSAgentFloatBalance < depositAmount) {
 
@@ -294,10 +305,17 @@ public class AgentTransactionService {
     public AgentTransactionResponse processAgentFloatWithdrawal(AgentTransactionRequest request, String transactionReferenceNo) {
         AgentTransactionResponse response = AgentTransactionResponse.builder().build();
         T24TXNQueue tot24 = new T24TXNQueue();
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+                AuthenticateAgentResponse authenticateAgentResponse = null;
 
 
-
+        try{
+            authenticateAgentResponse= baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }
+        catch (InvalidAgentCredentialsException e)
+        {
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+                    "AgentValidation","FAILED","ipAddress");
+        }
 
         response.setUsername(authenticateAgentResponse.getData().getUsername());
         response.setNames(authenticateAgentResponse.getData().getNames());

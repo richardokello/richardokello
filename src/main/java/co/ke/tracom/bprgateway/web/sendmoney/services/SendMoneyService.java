@@ -7,6 +7,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionSe
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
 import co.ke.tracom.bprgateway.web.exceptions.custom.InsufficientAccountBalanceException;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidMobileNumberException;
 import co.ke.tracom.bprgateway.web.sendmoney.data.requests.ReceiveMoneyRequest;
 import co.ke.tracom.bprgateway.web.sendmoney.data.requests.SendMoneyRequest;
@@ -67,14 +68,27 @@ public class SendMoneyService {
 
     @SneakyThrows
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        T24TXNQueue toT24= new T24TXNQueue();
 
+        AuthenticateAgentResponse authenticateAgentResponse = null;
+
+        try {
+            authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }catch (InvalidAgentCredentialsException e){
+//            transactionService.saveFailedPasswordTransactions(toT24, "SEND_MONEY_LABEL", "1200",request.getAmount(),
+//                   "117");
+            return new SendMoneyResponse("117",e.getMessage(), SendMoneyResponseData.builder().build());
+
+        }
         log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + transactionRRN + "] processing begins. Request " + request);
 
-        Data agentAuthData = authenticateAgentResponse.getData();
+    Data agentAuthData = authenticateAgentResponse.getData();
+
+
+
 
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
-        T24TXNQueue toT24= new T24TXNQueue();
+
         try {
 
 
@@ -135,17 +149,11 @@ public class SendMoneyService {
 
             processSendMoneyTransaction(tot24);
 
-
-
-
-
-
-
             if ((tot24.getT24responsecode().equalsIgnoreCase("1"))) {
                 return processSuccessfulSendMoneyT24Transaction(request, transactionRRN, agentAuthData, branchAccountID,
                         paymentDetails, nationalIdDocumentName, tid, tot24, authenticateAgentResponse);
             } else {
-                return processFailedSendMoneyT24Transaction(transactionRRN, agentAuthData, tot24.getT24reference());
+                return processFailedSendMoneyT24Transaction(request,transactionRRN, agentAuthData, tot24.getT24reference());
             }
         } catch (Exception w) {
             w.printStackTrace();
@@ -161,7 +169,7 @@ public class SendMoneyService {
                 .data(null)
                 .build();
     }
-
+@SneakyThrows
     private SendMoneyResponse processSuccessfulSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN,
                                                                        Data agentAuthData, String branchAccountID,
                                                                        String[] paymentDetails,
@@ -390,7 +398,11 @@ public class SendMoneyService {
         moneySendRepository.save(ms);
     }
 
-    private SendMoneyResponse processFailedSendMoneyT24Transaction(String transactionRRN, Data agentAuthData, String t24Reference) {
+    @SneakyThrows
+    private SendMoneyResponse processFailedSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN, Data agentAuthData, String t24Reference) {
+        T24TXNQueue tot24 = new T24TXNQueue();
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+
         SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
                 .T24Reference(t24Reference)
                 .charges(0)
@@ -401,7 +413,9 @@ public class SendMoneyService {
         sendMoneyResponseData.setNames(agentAuthData.getNames());
         sendMoneyResponseData.setBusinessName(agentAuthData.getBusinessName());
         sendMoneyResponseData.setLocation(agentAuthData.getLocation());
-
+        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
+                request.getAmount(), "098",
+                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
         return SendMoneyResponse.builder()
                 .status("098")
@@ -662,7 +676,13 @@ public class SendMoneyService {
     @SneakyThrows
     public SendMoneyResponse processReceiveMoneyRequest(ReceiveMoneyRequest request, String transactionRRN) {
         T24TXNQueue tot24 = new T24TXNQueue();
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse authenticateAgentResponse = null;
+        try {
+            authenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }catch(InvalidAgentCredentialsException e) {
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+                    "AgentValidation","FAILED","ipAddress");
+        }
 
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
 
