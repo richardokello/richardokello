@@ -41,21 +41,32 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
 
     @Override
     public ResponseEntity<ResponseWrapper<UfsBanks>> create(@Valid @RequestBody UfsBanks ufsBanks) {
-        ResponseEntity response = super.create(ufsBanks);
-        if ((!response.getStatusCode().equals(HttpStatus.CREATED)) || ufsBanks.getUfsBankBins().size() < 0 || Objects.isNull(ufsBanks.getUfsBankBins())) {
-            return response;
+        ResponseWrapper response = new ResponseWrapper();
+        UfsBanks bank = bankService.findByNameOrCode(ufsBanks.getBankName(),ufsBanks.getBankCode());
+        if (bank != null ) {
+            response.setCode(HttpStatus.CONFLICT.value());
+            response.setMessage(bank.getBankName()+" Bank Name or "+bank.getBankCode()+" Bank Code already exist");
+
+            return new ResponseEntity(response, HttpStatus.CONFLICT);
+        }
+        ResponseEntity responseEntity = super.create(ufsBanks);
+        if ((!responseEntity.getStatusCode().equals(HttpStatus.CREATED))) {
+            return responseEntity;
         }
 
-        List<UfsBankBins> bins = new ArrayList<>();
-        ufsBanks.getUfsBankBins().forEach(bin -> {
-            UfsBankBins bankBins = new UfsBankBins();
-            bankBins.setBinType(bin.getBinType());
-            bankBins.setBankIds(ufsBanks.getId());
-            bankBins.setValue(bin.getValue());
-            bins.add(bankBins);
-        });
-        bankService.saveAllBins(bins);
-        return response;
+        if(ufsBanks.getUfsBankBins() != null){
+            List<UfsBankBins> bins = new ArrayList<>();
+            ufsBanks.getUfsBankBins().forEach(bin -> {
+                UfsBankBins bankBins = new UfsBankBins();
+                bankBins.setBinType(bin.getBinType());
+                bankBins.setBankIds(ufsBanks.getId());
+                bankBins.setValue(bin.getValue());
+                bins.add(bankBins);
+            });
+            bankService.saveAllBins(bins);
+        }
+
+        return responseEntity;
     }
 
     /*Getting Bank Bins */
@@ -75,7 +86,7 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
 
     @Override
     @Transactional
-    public ResponseEntity<ResponseWrapper> approveActions(@Valid ActionWrapper<Long> actions) throws ExpectationFailed {
+    public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
 
         for(Long id: actions.getIds()){
             Optional<UfsBanks> b = ufsBankRepository.findById(id);

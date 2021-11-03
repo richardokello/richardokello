@@ -4,8 +4,8 @@ import ke.axle.chassis.utils.AppConstants;
 import ke.axle.chassis.utils.LoggerService;
 import ke.axle.chassis.utils.SharedMethods;
 import ke.tra.ufs.webportal.entities.*;
-import ke.tra.ufs.webportal.repository.TmsDeviceRepository;
-import ke.tra.ufs.webportal.repository.WhitelistRepository;
+import ke.tra.ufs.webportal.entities.wrapper.MenuFileRequest;
+import ke.tra.ufs.webportal.repository.*;
 import ke.tra.ufs.webportal.service.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -13,8 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,8 +27,21 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     private final NotifyService notifyService;
     private final WhitelistRepository whitelistRepo;
     private final ContactPersonService contactPersonService;
+    private final TmsDeviceTidRepository tmsDeviceTidRepository;
+    private final TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository;
+    private final ParGlobalMasterProfileService parGlobalMasterProfileService;
+    private final ParFileMenuService parFileMenuService;
+    private final ParFileConfigService parFileConfigService;
+    private final CustomerConfigFileService customerConfigFileService;
+    private final ParDeviceSelectedOptionsService parDeviceSelectedOptionsService;
+    private final SchedulerService schedulerService;
+    private final UfsCustomerOutletService outletService;
+    private final UfsContactPersonRepository contactPersonRepository;
+    private final UfsCustomerOutletRepository customerOutletRepository;
+    private final UfsPosUserRepository ufsPosUserRepository;
+    private final DeviceTaskRepository deviceTaskRepository;
 
-    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService) {
+    public TmsDeviceServiceTemplate(TmsDeviceRepository tmsDeviceRepository, LoggerService loggerService, PosUserService posUserService, PasswordEncoder encoder, SysConfigService configService, NotifyService notifyService, WhitelistRepository whitelistRepo, ContactPersonService contactPersonService, TmsDeviceTidRepository tmsDeviceTidRepository, TmsDeviceTidCurrencyRepository tmsDeviceTidCurrencyRepository, ParGlobalMasterProfileService parGlobalMasterProfileService, ParFileMenuService parFileMenuService, ParFileConfigService parFileConfigService, CustomerConfigFileService customerConfigFileService, ParDeviceSelectedOptionsService parDeviceSelectedOptionsService, SchedulerService schedulerService, UfsCustomerOutletService outletService, UfsContactPersonRepository contactPersonRepository, UfsCustomerOutletRepository customerOutletRepository, UfsPosUserRepository ufsPosUserRepository, DeviceTaskRepository deviceTaskRepository) {
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.loggerService = loggerService;
         this.posUserService = posUserService;
@@ -38,6 +50,19 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
         this.notifyService = notifyService;
         this.whitelistRepo = whitelistRepo;
         this.contactPersonService = contactPersonService;
+        this.tmsDeviceTidRepository = tmsDeviceTidRepository;
+        this.tmsDeviceTidCurrencyRepository = tmsDeviceTidCurrencyRepository;
+        this.parGlobalMasterProfileService = parGlobalMasterProfileService;
+        this.parFileMenuService = parFileMenuService;
+        this.parFileConfigService = parFileConfigService;
+        this.customerConfigFileService = customerConfigFileService;
+        this.parDeviceSelectedOptionsService = parDeviceSelectedOptionsService;
+        this.schedulerService = schedulerService;
+        this.outletService = outletService;
+        this.contactPersonRepository = contactPersonRepository;
+        this.customerOutletRepository = customerOutletRepository;
+        this.ufsPosUserRepository = ufsPosUserRepository;
+        this.deviceTaskRepository = deviceTaskRepository;
     }
 
     @Override
@@ -48,6 +73,16 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     @Override
     public List<TmsDevice> findByOutletIds(List<BigDecimal> outletIds) {
         return tmsDeviceRepository.findByOutletIdsInAndIntrash(outletIds, AppConstants.NO);
+    }
+
+    @Override
+    public List<TmsDeviceTids> findByDeviceIds(Long deviceIds) {
+        return tmsDeviceTidRepository.findAllByDeviceIds(deviceIds);
+    }
+
+    @Override
+    public List<TmsDeviceTidCurrency> findByDeviceIds(TmsDevice deviceIds) {
+        return tmsDeviceTidCurrencyRepository.findAllByDeviceId(deviceIds);
     }
 
     @Override
@@ -111,18 +146,16 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
                         String message = "Your username is " + savedUser.getUsername() + ". Use password :" + randomPin + " to login to POS terminal";
                         if (cntper.getEmail() != null) {
                             notifyService.sendEmail(cntper.getEmail(), "Login Credentials", message);
+                            notifyService.sendSms(cntper.getPhoneNumber(),  message);
                             loggerService.log("Sent login credentials for " + cntper.getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                     ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, ke.tra.ufs.webportal.utils.AppConstants.STATUS_COMPLETED, "Sent login credentials");
-
                         } else {
                             if (cntper.getPhoneNumber() != null) {
                                 // send sms
-                                posUserService.sendSmsMessage(cntper.getPhoneNumber(), message);
+                                notifyService.sendSms(cntper.getPhoneNumber(), message);
                                 loggerService.log("Sent login credentials for " + cntper.getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                         ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, ke.tra.ufs.webportal.utils.AppConstants.STATUS_COMPLETED, "Sent login credentials");
-
                             } else {
-
                                 loggerService.log("Failed to send login credentials for " + cntper.getName(), UfsPosUser.class.getName(), savedUser.getPosUserId(),
                                         ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, ke.tra.ufs.webportal.utils.AppConstants.STATUS_FAILED_STRING, "No valid email or phone number.");
 
@@ -137,12 +170,14 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
 
     @Override
     @Async
-    public void updateDeviceOwnerByOutletId(List<Long> customerOutlets, String customerOwnerName) {
+    public void updateDeviceOwnerByOutletId(List<Long> customerOutlets) {
         List<TmsDevice> devices = findByOutletIds(customerOutlets.stream().map(BigDecimal::new).collect(Collectors.toList()));
         for (TmsDevice device : devices) {
-            device.setCustomerOwnerName(customerOwnerName);
-            device.setDeviceFieldName(customerOwnerName);
-            tmsDeviceRepository.save(device);
+            if (device.getOutletIds() != null) {
+                UfsCustomerOutlet outlet = customerOutletRepository.findById(device.getOutletIds().longValue()).get();
+                device.setDeviceFieldName(outlet.getOutletName());
+                tmsDeviceRepository.save(device);
+            }
         }
     }
 
@@ -157,10 +192,166 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
     }
 
     @Override
+<<<<<<< HEAD
     public void saveDevice(TmsDevice device) {
         tmsDeviceRepository.save(device);
     }
 
+=======
+    public void addDevicesTaskByOutletsIds(List<Long> outletsIds) {
+        String rootPath = configService.fetchSysConfigById(new BigDecimal(24)).getValue();
+        List<BigDecimal> outletsFiltered = outletsIds.stream().filter(outletId -> {
+            UfsCustomerOutlet outlet = outletService.findById(outletId);
+            if (outlet.getAction().equals(AppConstants.ACTIVITY_UPDATE) && outlet.getActionStatus().equals(AppConstants.STATUS_APPROVED)) {
+                return true;
+            }
+            return false;
+        }).map(BigDecimal::new).collect(Collectors.toList());
+
+        List<TmsDevice> devices = findByOutletIds(outletsFiltered);
+        devices.parallelStream().forEach(device -> {
+            TmsDeviceTask dtk = findTopByDeviceIdOrderByTaskIdDesc(device);
+            if (dtk == null) {
+                processAddTaskTodevice(device, rootPath, "/devices/" + device.getDeviceId() + "/");
+            } else {
+                TmsScheduler sched = dtk.getScheduleId();
+                if (sched.getScheduleType().equals("Manual") && dtk.getDownloadStatus().equals("PENDING")) {
+                    sched.setNoFiles(sched.getNoFiles() + 1L);
+                    schedulerService.saveSchedule(sched);
+                    processAddTaskTodeviceToPendingTask(device, rootPath, sched.getDirPath());
+                } else {
+                    processAddTaskTodevice(device, rootPath, "/devices/" + device.getDeviceId() + "/");
+                }
+
+            }
+        });
+    }
+
+
+    @Override
+    @Async
+    public void deActivateDevicesByOutlets(List<UfsCustomerOutlet> customerOutlets, String notes) {
+        List<BigDecimal> outletIds = customerOutlets.stream().map(x -> new BigDecimal(x.getId())).collect(Collectors.toList());
+        List<TmsDevice> devices = findByOutletIds(outletIds);
+
+        List<TmsDevice> updateDevices = devices.stream().peek(x -> {
+            x.setActionStatus(AppConstants.STATUS_DECLINED);
+            x.setStatus(AppConstants.STATUS_INACTIVE);
+            x.setIntrash(AppConstants.YES);
+        }).collect(Collectors.toList());
+
+        tmsDeviceRepository.saveAll(updateDevices);
+        tmsDeviceTidRepository.deleteAllByDeviceId(updateDevices.stream().map(x -> x.getDeviceId().longValue()).collect(Collectors.toList()));
+
+    }
+
+    @Override
+    @Async
+    public void delineContactPersons(Long id, String notes) {
+        List<UfsContactPerson> contactPerson = this.contactPersonService.getAllContactPersonByCustomerId(BigDecimal.valueOf(id));
+        List<UfsContactPerson> contactPersonUpdate = contactPerson.stream().peek(x -> {
+            x.setActionStatus(AppConstants.STATUS_DECLINED);
+            x.setIntrash(AppConstants.YES);
+        }).collect(Collectors.toList());
+        contactPersonRepository.saveAll(contactPersonUpdate);
+    }
+
+    @Override
+    @Async
+    public void updateDeviceOwnersByContactPersons(List<Long> contactPersonId) {
+        List<UfsContactPerson> cntPerson = contactPersonRepository.findByIdInAndIntrash(contactPersonId, AppConstants.NO);
+        for (UfsContactPerson person : cntPerson) {
+            List<UfsPosUser> posUsers = ufsPosUserRepository.findByContactPersonIdAndIntrash(person.getId(), AppConstants.NO);
+            List<BigDecimal> devices = posUsers.stream().map(UfsPosUser::getTmsDeviceId).collect(Collectors.toList());
+            List<TmsDevice> deviceModel = tmsDeviceRepository.findByDeviceIdInAndIntrash(devices, AppConstants.NO);
+            deviceModel.forEach(dv -> {
+                processUpdateDeviceDetails(dv, person.getName());
+            });
+
+        }
+    }
+
+    @Override
+    public Integer findByMidCount(String mid) {
+        return tmsDeviceTidCurrencyRepository.findByMid(mid);
+    }
+
+    @Override
+    public Integer findByListMidCount(Set<String> mid) {
+        return tmsDeviceTidCurrencyRepository.findByMidIn(mid);
+    }
+
+
+    private void processUpdateDeviceDetails(TmsDevice device, String customername) {
+        device.setCustomerOwnerName(customername);
+        device.setDeviceFieldName(customername);
+        tmsDeviceRepository.save(device);
+    }
+
+    public void processAddTaskTodevice(TmsDevice device, String rootPath, String path) {
+        long filecount = 1;
+
+        TmsScheduler scheduler = new TmsScheduler();
+        scheduler.setAction(AppConstants.ACTIVITY_CREATE);
+        scheduler.setActionStatus(AppConstants.STATUS_APPROVED);
+        scheduler.setModelId(device.getModelId());
+        scheduler.setDirPath(path);
+        scheduler.setScheduleType("Manual");
+        scheduler.setStatus(AppConstants.STATUS_NEW);
+        scheduler.setNoFiles(filecount);
+        scheduler.setDownloadType("Files");
+        scheduler.setIntrash(AppConstants.NO);
+        scheduler.setScheduledTime(new Date());
+        scheduler.setProductId(device.getEstateId().getUnitId().getProductId());
+
+        //save the manual schedule
+        schedulerService.saveSchedule(scheduler);
+
+        TmsDeviceTask deviceTask = new TmsDeviceTask();
+        deviceTask.setDeviceId(device);
+        deviceTask.setScheduleId(scheduler);
+        deviceTask.setDownloadStatus("PENDING");
+        deviceTask.setIntrash(AppConstants.NO);
+
+        //persist the device task
+        schedulerService.saveDeviceTask(deviceTask);
+
+        rootPath = rootPath + path + deviceTask.getTaskId() + "/";
+        scheduler.setDirPath(path + deviceTask.getTaskId() + "/");
+        schedulerService.saveSchedule(scheduler);
+        transferAndCopyFiles(device, rootPath);
+    }
+
+    private void processAddTaskTodeviceToPendingTask(TmsDevice device, String rootPath, String path) {
+        rootPath = rootPath + path;
+        transferAndCopyFiles(device, rootPath);
+    }
+
+    private void transferAndCopyFiles(TmsDevice tmsDevice, String rootPath) {
+        if (tmsDevice.getMasterProfileId() != null) {
+            Optional<ParGlobalMasterProfile> optionalMaster = parGlobalMasterProfileService.findById(tmsDevice.getMasterProfileId());
+            if (optionalMaster.isPresent()) {
+                ParGlobalMasterProfile parGlobalMasterProfile = optionalMaster.get();
+
+                // generate menu profile
+                parFileMenuService.generateMenuFileAsync(new MenuFileRequest(tmsDevice.getModelId().getModelId(), parGlobalMasterProfile.getMenuProfileId()), rootPath);
+
+                // generate all global configs related to master profile
+                for (ParGlobalMasterChildProfile config : parGlobalMasterProfile.getChildProfiles()) {
+                    parFileConfigService.generateGlobalConfigFileAsync(config.getConfigProfile(), tmsDevice.getModelId().getModelId(), rootPath);
+                }
+            }
+            customerConfigFileService.generateCustomerFile(tmsDevice.getDeviceId(), rootPath);
+            //loggerService.log("Saving new App Files", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, "");
+
+
+        }
+    }
+
+    public TmsDeviceTask findTopByDeviceIdOrderByTaskIdDesc(TmsDevice deviceId) {
+        return deviceTaskRepository.findTopByDeviceIdOrderByTaskIdDesc(deviceId);
+    }
+>>>>>>> brb-webportal
 
     private void processApproveNew(TmsDevice entity, String notes) {
         entity.setActionStatus(AppConstants.STATUS_APPROVED);
@@ -185,12 +376,13 @@ public class TmsDeviceServiceTemplate implements TmsDeviceService {
 
                 if (customerOwner.getDirectorEmailAddress() != null) {
                     notifyService.sendEmail(customerOwner.getDirectorEmailAddress(), "Login Credentials", message);
+                    notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
                     loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                             posUser.getPosUserId(), ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, notes);
                 } else {
                     if (customerOwner.getDirectorPrimaryContactNumber() != null) {
                         // send sms
-                        posUserService.sendSmsMessage(customerOwner.getDirectorPrimaryContactNumber(), message);
+                        notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
                         loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                                 posUser.getPosUserId(), ke.tra.ufs.webportal.utils.AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, notes);
                     } else {

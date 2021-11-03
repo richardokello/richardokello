@@ -11,12 +11,18 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 
+import java.util.concurrent.Executor;
+
 @SpringBootApplication
 @EnableEurekaClient
+@EnableScheduling
 public class WebportalApplication {
 
     @Value("${baseUrl}")
@@ -39,6 +45,17 @@ public class WebportalApplication {
 //        MappingJackson2HttpMessageConverter converter
 //                = new MappingJackson2HttpMessageConverter(mapper);
         return new MappingJackson2HttpMessageConverter(mapper);
+    }
+
+    @Bean
+    public Executor asyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(2);
+        executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("BSS-THREAD");
+        executor.initialize();
+        return executor;
     }
 
     @Primary

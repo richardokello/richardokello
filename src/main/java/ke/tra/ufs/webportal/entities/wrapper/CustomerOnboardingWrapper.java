@@ -7,15 +7,12 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class CustomerOnboardingWrapper {
-
-    /*Customer Bio Information*/
     @NotNull
     private BigDecimal customerTypeId;
-    @NotNull
     private BigInteger customerClassId;
     private Long businessTypeId;
     @NotNull
@@ -28,21 +25,15 @@ public class CustomerOnboardingWrapper {
     private String address;
     private Long commercialActivityId;
     private BigDecimal estateId;
-
-    /*Business Location*/
     @NotNull
     private String businessPrimaryContactNo;
     private String businessSecondaryContactNo;
     private String businessEmailAddress;
-
-    /*Business Directors*/
-    private List<BusinessDirectorsWrapper> directors;
-
-    /*Business Outlets Information*/
-    private List<OutletsInformationWrapper> outletsInfo;
-
-
-
-
-
+    private Set<BusinessDirectorsWrapper> directors;
+    private Set<OutletsInformationWrapper> outletsInfo;
+    private String mid;
+    @NotNull
+    private BigDecimal mccIds;
+    @NotNull
+    private Long mainBank;
 }

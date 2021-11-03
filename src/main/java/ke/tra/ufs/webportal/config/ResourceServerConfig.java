@@ -44,6 +44,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                         "/swagger-resources/**", "/v2/api-docs/**", "/images/**",
                         "/spring-security-rest/api/swagger-ui.html", "/encrypt").permitAll()
+                .antMatchers(HttpMethod.POST, "/banks").hasAuthority("CREATE_BANK")
+                .antMatchers(HttpMethod.GET, "/banks/{bankId}/changes").hasAuthority("VIEW_BANK")
+                .antMatchers(HttpMethod.GET, "/banks/{bankId}").hasAuthority("VIEW_BANK")
+                .antMatchers(HttpMethod.GET, "/banks").hasAuthority("VIEW_BANK")
+                .antMatchers(HttpMethod.PUT, "/banks").hasAuthority("UPDATE_BANK")
+                .antMatchers(HttpMethod.PUT, "/banks/approve-actions", "/banks/decline-actions").hasAuthority("APPROVE_BANK")
+                .antMatchers(HttpMethod.DELETE, "/banks").hasAuthority("DELETE_BANK")
+                .antMatchers(HttpMethod.GET, "/banks/deleted").hasAuthority("VIEW_BANK")
                 .antMatchers(HttpMethod.POST, "/bank-branches").hasAuthority("CREATE_BANK_BRANCH")
                 .antMatchers(HttpMethod.GET, "/bank-branches/{bankBranchId}/changes").hasAuthority("VIEW_BANK_BRANCHES")
                 .antMatchers(HttpMethod.GET, "/bank-branches/{bankBranchId}").hasAuthority("VIEW_BANK_BRANCHES")
@@ -145,7 +153,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/gls/approve-actions", "/gls/decline-actions").hasAuthority("APPROVE_GLS")
                 .antMatchers(HttpMethod.DELETE, "/gls").hasAuthority("DELETE_GLS")
                 .antMatchers(HttpMethod.GET, "/gls/deleted").hasAuthority("VIEW_GLS")
-                .antMatchers(HttpMethod.POST, "/mcc").hasAuthority("CREATE_MCC")
+                .antMatchers(HttpMethod.POST, "/mcc", "/mcc/upload").hasAuthority("CREATE_MCC")
                 .antMatchers(HttpMethod.GET, "/mcc/{id}/changes").hasAuthority("VIEW_MCC")
                 .antMatchers(HttpMethod.GET, "/mcc/{id}").hasAuthority("VIEW_MCC")
                 .antMatchers(HttpMethod.GET, "/mcc").hasAuthority("VIEW_MCC")
@@ -241,6 +249,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/account-opening-details/{id}").hasAuthority("VIEW_ACCOUNT_OPENED")
 
                 // customers
+<<<<<<< HEAD
                 .antMatchers(HttpMethod.POST, "/customers/onboard").hasAuthority("CREATE_CUSTOMER")
                 .antMatchers(HttpMethod.GET, "/customers/{id}/changes", "/customers/{id}", "/customers", "/customers/terminated-agents").hasAuthority("VIEW_CUSTOMER")
                 .antMatchers(HttpMethod.PUT, "/customers").hasAuthority("UPDATE_CUSTOMER")
@@ -248,6 +257,15 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/customers/reactivate").hasAuthority("REACTIVATE_CUSTOMER")
                 .antMatchers(HttpMethod.PUT, "/customers/terminate").hasAuthority("SUSPEND_CUSTOMER")
                 .antMatchers(HttpMethod.DELETE, "/customers").hasAuthority("DELETE_CUSTOMER")
+=======
+                .antMatchers(HttpMethod.POST, "/customers", "/customers/onboard").hasAuthority("CREATE_MERCHANTS")
+                .antMatchers(HttpMethod.GET, "/customers/{id}/changes", "/customers/{id}", "/customers", "/customers/terminated-agents","/customers/deleted").hasAuthority("VIEW_MERCHANTS")
+                .antMatchers(HttpMethod.PUT, "/customers","/customers/update-mid").hasAuthority("UPDATE_MERCHANTS")
+                .antMatchers(HttpMethod.PUT, "/customers/approve-actions").hasAuthority("APPROVE_MERCHANTS")
+                .antMatchers(HttpMethod.PUT, "/customers/decline-actions").hasAuthority("DECLINE_MERCHANTS")
+                .antMatchers(HttpMethod.PUT, "/customers/terminate").hasAuthority("TERMINATE_MERCHANTS")
+                .antMatchers(HttpMethod.DELETE, "/customers").hasAuthority("DELETE_MERCHANTS")
+>>>>>>> brb-webportal
 
                 .antMatchers("/**").fullyAuthenticated()
                 .and()
@@ -260,6 +278,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     }
 
 
+<<<<<<< HEAD
     /*@Bean
     CorsConfigurationSource corsConfig() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -277,5 +296,24 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         source.registerCorsConfiguration("/**", corsConfig);
         return source;
     }*/
+=======
+//    @Bean
+//    CorsConfigurationSource corsConfig() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration corsConfig = new CorsConfiguration();
+//        corsConfig.applyPermitDefaultValues();
+//        corsConfig.addAllowedHeader("Access-Control-Allow-Origin");
+//        corsConfig.addExposedHeader("Access-Control-Allow-Origin");
+//        corsConfig.addAllowedMethod(HttpMethod.GET);
+//        corsConfig.addAllowedMethod(HttpMethod.POST);
+//        corsConfig.addAllowedMethod(HttpMethod.PUT);
+//        corsConfig.addAllowedMethod(HttpMethod.OPTIONS);
+//        corsConfig.addAllowedMethod(HttpMethod.DELETE);
+//        corsConfig.addAllowedMethod(HttpMethod.HEAD);
+//        corsConfig.addAllowedOrigin("*");
+//        source.registerCorsConfiguration("/**", corsConfig);
+//        return source;
+//    }
+>>>>>>> brb-webportal
 }
 

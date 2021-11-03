@@ -88,9 +88,9 @@ public class UfsCustomerTransfer implements Serializable {
     @Column(name = "CUSTOMER_ID")
     private BigDecimal customerIds;
 
-    @Transient
+    @Column(name = "OUTLET_ID")
     @ModifiableField
-    private BigDecimal outletIds;
+    private Long outletIds;
 
     public UfsCustomerTransfer() {
     }
@@ -204,11 +204,11 @@ public class UfsCustomerTransfer implements Serializable {
         this.customerIds = customerIds;
     }
 
-    public BigDecimal getOutletIds() {
+    public Long getOutletIds() {
         return outletIds;
     }
 
-    public void setOutletIds(BigDecimal outletIds) {
+    public void setOutletIds(Long outletIds) {
         this.outletIds = outletIds;
     }
 

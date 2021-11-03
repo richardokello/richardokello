@@ -16,10 +16,9 @@ import ke.tra.ufs.webportal.repository.CustomerRepository;
 import ke.tra.ufs.webportal.service.*;
 import ke.tra.ufs.webportal.utils.AppConstants;
 import ke.tra.ufs.webportal.utils.CodeGenerator;
-import ke.tra.ufs.webportal.utils.UniqueStringGenerator;
 import ke.tra.ufs.webportal.wrappers.AgentTerminationWrapper;
 import ke.tra.ufs.webportal.wrappers.LogExtras;
-import org.apache.commons.lang3.RandomStringUtils;
+import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +40,7 @@ import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping(value = "/customers")
+@CommonsLog
 public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEdittedRecord> {
 
     private final CustomerService customerService;
@@ -51,10 +51,11 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     private final CustomerRepository customerRepository;
     private final AuthenticationRepository urepo;
     private final LogExtras logExtras;
+    private final PosUserIdGenerator posUserIdGenerator;
 
 
     public CustomerResource(LoggerService loggerService, EntityManager entityManager, CustomerService customerService, TmsDeviceService deviceService,
-                            CustomerOwnersService ownersService, UfsCustomerOutletService outletService, ContactPersonService contactPersonService, CustomerRepository customerRepository, AuthenticationRepository urepo, LogExtras logExtras) {
+                            CustomerOwnersService ownersService, UfsCustomerOutletService outletService, ContactPersonService contactPersonService, CustomerRepository customerRepository, AuthenticationRepository urepo, LogExtras logExtras, PosUserIdGenerator posUserIdGenerator) {
         super(loggerService, entityManager);
         this.customerService = customerService;
         this.deviceService = deviceService;
@@ -64,6 +65,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         this.customerRepository = customerRepository;
         this.urepo = urepo;
         this.logExtras = logExtras;
+        this.posUserIdGenerator = posUserIdGenerator;
     }
 
     /**
@@ -91,49 +93,56 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
-
-        //BusinessLicenceNumber check
-        if (Objects.nonNull(customerOnboarding.getBusinessLicenseNumber())) {
-            if (customerRepository.findByBusinessLicenceNumberAndIntrash(customerOnboarding.getBusinessLicenseNumber(), AppConstants.INTRASH_NO).isPresent()) {
-                response.setMessage("Business Licence Already Exists");
+        if (customerOnboarding.getMid() != null) {
+            if (customerService.findIfMidIsActive(customerOnboarding.getMid(), AppConstants.INTRASH_NO)) {
+                loggerService.log("MID already Exists",
+                        UfsCustomer.class.getSimpleName(), null, AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Creating new customer category failed due to MID already Exists");
+                response.setMessage("MID already Exists");
                 response.setCode(HttpStatus.BAD_REQUEST.value());
+                response.setData(SharedMethods.getFieldMapErrors(validation));
                 return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
 
         //check business name
-        if (Objects.nonNull(customerOnboarding.getBusinessName())) {
+        if (customerOnboarding.getBusinessName() != null) {
             if (customerRepository.findByBusinessNameAndIntrash(customerOnboarding.getBusinessName(), AppConstants.INTRASH_NO).isPresent()) {
+                loggerService.log("Business Name Already Exists",
+                        UfsCustomer.class.getSimpleName(), null, AppConstants.ACTIVITY_CREATE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, "Creating new customer category failed due to Business Name Already Exists");
                 response.setMessage("Business Name Already Exists");
                 response.setCode(HttpStatus.BAD_REQUEST.value());
+                response.setData(SharedMethods.getFieldMapErrors(validation));
                 return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
 
-        // check Local registration number
-        if (Objects.nonNull(customerOnboarding.getLocalRegistrationNumber())) {
-            if (customerRepository.findByLocalRegistrationNumberAndIntrash(customerOnboarding.getLocalRegistrationNumber(), AppConstants.INTRASH_NO).isPresent()) {
-                response.setMessage("Local Registration Already Exists");
-                response.setCode(HttpStatus.BAD_REQUEST.value());
-                return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
-            }
+        String[] usernames = customerOnboarding.getDirectors().stream().map(BusinessDirectorsWrapper::getDirectorName).findFirst().get().split("\\s+");
+
+        //generate username
+        String username = null;
+        if (usernames.length > 0) {
+            username = (usernames.length == 1) ? posUserIdGenerator.generateUsername(new PosUserWrapper(usernames[0])) : posUserIdGenerator.generateUsername(new PosUserWrapper(usernames[0], usernames[1]));
+        } else {
+            String[] businessName = customerOnboarding.getBusinessName().split("\\s+");
+            username = posUserIdGenerator.generateUsername(new PosUserWrapper(businessName[0]));
         }
 
         UfsAuthentication userAuth = urepo.findByusernameIgnoreCase(a.getName());
         String fullName = userAuth.getUser().getFullName();
-
-        //Errors Occurred While Onboarding Customer
-        ArrayList<String> errors = new ArrayList<>();
 
         //saving customer Info
         UfsCustomer customer = new UfsCustomer();
         customer.setBusinessPrimaryContactNo(customerOnboarding.getBusinessPrimaryContactNo());
         customer.setDateIssued(customerOnboarding.getDateIssued());
         customer.setValidTo(customerOnboarding.getValidTo());
+        customer.setMccIds(customerOnboarding.getMccIds());
+        customer.setMainBank(customerOnboarding.getMainBank());
         customer.setBusinessLicenceNumber(customerOnboarding.getBusinessLicenseNumber());
         customer.setLocalRegistrationNumber(customerOnboarding.getLocalRegistrationNumber());
         customer.setBusinessName(customerOnboarding.getBusinessName());
-        customer.setCustomerClassId(customerOnboarding.getCustomerClassId());
+        if (customerOnboarding.getCustomerClassId() != null) {
+            customer.setCustomerClassId(customerOnboarding.getCustomerClassId());
+        }
         customer.setAddress(customerOnboarding.getAddress());
         customer.setBusinessEmailAddress(customerOnboarding.getBusinessEmailAddress());
         customer.setPinNumber(customerOnboarding.getPinNumber());
@@ -142,28 +151,16 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         customer.setCustomerTypeId(customerOnboarding.getCustomerTypeId());
         customer.setCommercialActivityId(customerOnboarding.getCommercialActivityId());
         customer.setEstateId(customerOnboarding.getEstateId());
+        customer.setMid(customerOnboarding.getMid());
         customer.setCreatedBy(fullName);
         UfsCustomer ufsCustomer = customerService.saveCustomer(customer);
 
-        loggerService.log("Created Record successfully ", UfsCustomer.class.getSimpleName(), ufsCustomer.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
+        loggerService.log("Created Customer successfully ", UfsCustomer.class.getSimpleName(), ufsCustomer.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
 
         //saving directors
         if (!customerOnboarding.getDirectors().isEmpty()) {
             for (BusinessDirectorsWrapper director : customerOnboarding.getDirectors()) {
                 int c = 0;
-                if (director.getUserName() == null || director.getUserName().length() == 0) {
-                    director.setUserName(null);
-                } else {
-                    c += 1;
-                }
-                if (director.getUserName() != null) {
-                    UfsCustomerOwners customerOwners = ownersService.findByUsername(director.getUserName());
-                    if (Objects.nonNull(customerOwners)) {
-                        errors.add(director.getUserName());
-                        continue;
-                    }
-                }
-
                 if (director.getDirectorName() != null && director.getDirectorName().length() != 0) {
                     c += 1;
                 }
@@ -192,7 +189,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                     dir.setDirectorPrimaryContactNumber(director.getDirectorPrimaryContactNumber());
                     dir.setDirectorSecondaryContactNumber(director.getDirectorSecondaryContactNumber());
                     dir.setDirectorIdNumber(director.getDirectorIdNumber());
-                    dir.setUserName(director.getUserName());
+                    dir.setUserName(username);
                     UfsCustomerOwners ufsCustomerOwners = ownersService.saveOwner(dir);
 
                     loggerService.log("Created Record successfully ", UfsCustomerOwners.class.getSimpleName(), ufsCustomerOwners.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
@@ -204,7 +201,8 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
         //saving outlets
         if (!customerOnboarding.getOutletsInfo().isEmpty()) {
-            customerOnboarding.getOutletsInfo().stream().forEach(outlet -> {
+            String finalUsername = username;
+            customerOnboarding.getOutletsInfo().forEach(outlet -> {
                 UfsCustomerOutlet custOutlet = new UfsCustomerOutlet();
                 custOutlet.setCustomerIds(BigDecimal.valueOf(customer.getId()));
                 custOutlet.setBankBranchIds(outlet.getBankBranchId());
@@ -227,23 +225,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 if (!outlet.getContactPerson().isEmpty()) {
                     for (OutletContactPerson outletContactPerson : outlet.getContactPerson()) {
                         int count = 0;
-                        if (outletContactPerson.getUserName() == null || outletContactPerson.getUserName().length() == 0) {
-                            outletContactPerson.setUserName(null);
-                        } else {
-                            count += 1;
-                        }
-
-
-                        if (outletContactPerson.getUserName() != null) {
-                            System.out.println("CONTACT PERSON USERNAME++++++");
-                            UfsContactPerson contactPersonCheck = contactPersonService.findByUsername(outletContactPerson.getUserName());
-                            if (Objects.nonNull(contactPersonCheck)) {
-                                errors.add(outletContactPerson.getUserName());
-                                continue;
-                            }
-                        }
-
-
                         if (outletContactPerson.getContactPersonName() != null && outletContactPerson.getContactPersonName().length() != 0) {
                             count += 1;
                         }
@@ -268,7 +249,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                             person.setEmail(outletContactPerson.getContactPersonEmail());
                             person.setPhoneNumber(outletContactPerson.getContactPersonTelephone());
                             person.setCustomerOutletId(custOutlet.getId());
-                            person.setUserName(outletContactPerson.getUserName());
+                            person.setUserName(finalUsername);
                             UfsContactPerson ufsContactPerson = contactPersonService.saveContactPerson(person);
 
                             loggerService.log("Created Record successfully ", UfsContactPerson.class.getSimpleName(), ufsContactPerson.getId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED, null);
@@ -278,18 +259,43 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
             });
 
         }
-        if (errors.size() > 0) {
-            response.setCode(HttpStatus.MULTI_STATUS.value());
-            response.setMessage("Agent Owner/Contact Person Username Already Exists:" + errors);
-            response.setData(errors);
-            return new ResponseEntity(response, HttpStatus.MULTI_STATUS);
-        } else {
-            response.setCode(201);
-            response.setMessage("Customer Onboarded successfully");
-            response.setData(customer);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+        response.setCode(201);
+        response.setMessage("Customer Onboarded successfully");
+        response.setData(customer);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
+
+    private boolean validateUsernames(CustomerOnboardingWrapper customerOnboarding) {
+        final Set<String> usernames = new LinkedHashSet<>();
+
+        if (customerOnboarding.getDirectors() != null) {
+            customerOnboarding.getDirectors().forEach(director -> {
+                usernames.add(director.getUserName());
+            });
         }
 
+        List<UfsCustomerOwners> customerOwners = ownersService.findByUsernameIn(usernames);
+
+        if (customerOnboarding.getOutletsInfo() != null) {
+            for (OutletsInformationWrapper outlet : customerOnboarding.getOutletsInfo()) {
+                if (outlet.getContactPerson() != null) {
+                    outlet.getContactPerson().forEach(person -> {
+                        if (person.getUserName() != null) {
+                            usernames.add(person.getUserName());
+                        }
+                    });
+                }
+            }
+        }
+        List<UfsContactPerson> contactPeople = contactPersonService.findByUsernameIn(usernames);
+        return customerOwners.size() > 0 || contactPeople.size() > 0;
+    }
+
+    private boolean validateUsernameList(Set<String> usernames) {
+        List<UfsCustomerOwners> customerOwners = ownersService.findByUsernameIn(usernames);
+        List<UfsContactPerson> contactPeople = contactPersonService.findByUsernameIn(usernames);
+        return customerOwners.size() > 0 || contactPeople.size() > 0;
     }
 
 
@@ -391,17 +397,16 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
     @Override
     @Transactional
     public ResponseEntity<ResponseWrapper> approveActions(@Valid @RequestBody ActionWrapper<Long> actions) throws ExpectationFailed {
-
         ResponseWrapper response = new ResponseWrapper<>();
         List<Long> errors = new ArrayList<>();
         Arrays.stream(actions.getIds()).forEach(id -> {
             UfsCustomer customer = this.customerService.findByCustomerId(id);
 
-            if ((customer.getAction().equals(AppConstants.ACTIVITY_UPDATE)&&loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_UPDATE)) ||
-                    (customer.getAction().equals(AppConstants.ACTIVITY_CREATE)&&loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_CREATE)) ||
-                    (customer.getAction().equals(AppConstants.ACTIVITY_ACTIVATION)&&loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_ACTIVATION)) ||
-                    (customer.getAction().equals(AppConstants.ACTIVITY_TERMINATION)&&loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION) )||
-                    (customer.getAction().equals(AppConstants.ACTIVITY_DELETE)&& loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_DELETE))
+            if ((customer.getAction().equals(AppConstants.ACTIVITY_UPDATE) && loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_UPDATE)) ||
+                    (customer.getAction().equals(AppConstants.ACTIVITY_CREATE) && loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_CREATE)) ||
+                    (customer.getAction().equals(AppConstants.ACTIVITY_ACTIVATION) && loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_ACTIVATION)) ||
+                    (customer.getAction().equals(AppConstants.ACTIVITY_TERMINATION) && loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_TERMINATION)) ||
+                    (customer.getAction().equals(AppConstants.ACTIVITY_DELETE) && loggerService.isInitiator(UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_DELETE))
 
             ) {
                 loggerService.log("Failed to approve customer. Maker can't approve their own record",
@@ -412,7 +417,7 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
             if (Objects.nonNull(customer)) {
                 String action = customer.getAction();
-                String actionStatus= customer.getActionStatus();
+                String actionStatus = customer.getActionStatus();
                 //approving customer owner
                 List<UfsCustomerOwners> customerOwners = this.ownersService.findOwnersByCustomerIds(new BigDecimal(id));
                 //approving customer outlet
@@ -422,7 +427,10 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                 if ((action.equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
                         (action.equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))
                 ) {
+<<<<<<< HEAD
                     customer.setStatus(AppConstants.STATUS_ACTIVE_STRING);
+=======
+>>>>>>> brb-webportal
                     customer.setActionStatus(AppConstants.STATUS_APPROVED);
                     this.customerService.saveCustomer(customer);
                     loggerService.log("Successfully Approved Customer",
@@ -439,10 +447,8 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
                 }
 
-                System.out.println("Customers Action==>"+action+"   and actionStatus==>"+actionStatus);
 
-                if(action.equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
-                    System.out.println("Approving customer owner");
+                if (action.equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
                     if (!customerOwners.isEmpty()) {
                         for (UfsCustomerOwners customerOwner : customerOwners) {
                             if ((customerOwner.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customerOwner.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
@@ -464,8 +470,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                             }
                         }
                     }
-
-                    System.out.println("Approving customer outlet");
                     if (!customerOutlets.isEmpty()) {
                         for (UfsCustomerOutlet customerOutlet : customerOutlets) {
                             if ((customerOutlet.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && customerOutlet.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
@@ -507,9 +511,14 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                         customer.setValidTo(entity.getValidTo());
                         customer.setAddress(entity.getAddress());
                         customer.setCommercialActivityId(entity.getCommercialActivityId());
-                        customer.setCustomerClassId(entity.getCustomerClassId());
+                        if (entity.getCustomerClassId() != null) {
+                            customer.setCustomerClassId(entity.getCustomerClassId());
+                        }
+                        customer.setMccIds(entity.getMccIds());
+                        customer.setMainBank(entity.getMainBank());
                         customer.setCustomerTypeId(entity.getCustomerTypeId());
                         customer.setEstateId(entity.getEstateId());
+                        customer.setMid(entity.getMid());
                         customer.setActionStatus(AppConstants.STATUS_APPROVED);
                         this.customerService.saveCustomer(customer);
                         loggerService.log("Successfully Approved Customer Update",
@@ -517,14 +526,12 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
 
                         // update device owner name
                         List<Long> outletids = customerOutlets.stream().map(UfsCustomerOutlet::getId).collect(Collectors.toList());
-                        deviceService.updateDeviceOwnerByOutletId(outletids, entity.getBusinessName());
+                        // deviceService.updateDeviceOwnerByOutletId(outletids, entity.getBusinessName());
 
                         //update director contact, Contact person details
                         deviceService.updateContactPersonsDetails(entity);
 
-
-
-
+                        deviceService.addDevicesTaskByOutletsIds(outletids);
 
                     } catch (IOException | IllegalAccessException e) {
                         e.printStackTrace();
@@ -540,10 +547,6 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
                                 UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_COMPLETED, actions.getNotes());
                     }
 
-                } else {
-
-                    loggerService.log("Failed To Approve Customer",
-                            UfsCustomer.class.getSimpleName(), id, ke.axle.chassis.utils.AppConstants.ACTIVITY_APPROVE, ke.axle.chassis.utils.AppConstants.STATUS_FAILED, actions.getNotes());
                 }
             } else {
 
@@ -575,21 +578,48 @@ public class CustomerResource extends ChasisResource<UfsCustomer, Long, UfsEditt
         }
         Arrays.stream(actions.getIds()).forEach(id -> {
             UfsCustomer customer = this.customerService.findByCustomerId(id);
+            String action = customer.getAction();
+            String actionStatus = customer.getActionStatus();
 
             //terminating customer
-            if ((customer.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && customer.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
+            if ((action.equalsIgnoreCase(AppConstants.ACTIVITY_TERMINATION) && actionStatus.equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
                 customer.setStatus(AppConstants.STATUS_ACTIVE_STRING);
                 customer.setActionStatus(AppConstants.STATUS_REJECTED);
                 this.customerService.saveCustomer(customer);
                 loggerService.log("Successfully Declined Customer Termination",
                         UfsCustomer.class.getSimpleName(), id, AppConstants.ACTIVITY_APPROVE, AppConstants.STATUS_REJECTED, actions.getNotes());
+            }
+            if (action.equals(AppConstants.ACTIVITY_CREATE) && actionStatus.equals(AppConstants.STATUS_REJECTED)) {
+                //approving customer owner
+                List<UfsCustomerOwners> customerOwners = this.ownersService.findOwnersByCustomerIds(new BigDecimal(id));
+                //approving customer outlet
+                List<UfsCustomerOutlet> customerOutlets = this.customerService.findOutletsByCustomerIds(new BigDecimal(id));
+                deviceService.deActivateDevicesByOutlets(customerOutlets, actions.getNotes());
+                ownersService.deactivateByOwnersList(customerOwners);
+                deviceService.delineContactPersons(id, actions.getNotes());
+                outletService.deleteByCustomerId(new BigDecimal(id));
+            }
+        });
 
+        return resp;
+    }
+
+    @PutMapping(value = "/update-mid")
+    public ResponseEntity<ResponseWrapper> updateMids(@Valid @RequestBody ActionWrapper<Long> actions) {
+        ResponseWrapper response = new ResponseWrapper<>();
+        Arrays.stream(actions.getIds()).forEach(id -> {
+            UfsCustomer customer = this.customerService.findByCustomerId(id);
+            if (customer != null) {
+                if (customer.getMid() == null) {
+                    this.customerService.updateCustomerMidPerId(customer);
+                }
             }
 
         });
 
-
-        return resp;
+        response.setCode(200);
+        response.setMessage("Customer MID updated Successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @RequestMapping(value = "/terminated-agents", method = RequestMethod.GET)

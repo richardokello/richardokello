@@ -25,45 +25,29 @@ public class LogExtras {
     private String clientId;
     @Autowired
     AuthenticationRepository urepo;
-
     String fullName = null;
-
-    //    Authentication auth;
     private final HttpServletRequest request;
 
 
     public LogExtras(HttpServletRequest request) {
         this.request = request;
-
     }
 
-    /*
-    source - source of the request eg, browser, postman
-     */
     public String getSource() {
         String source = org.thymeleaf.util.StringUtils.abbreviate(request.getHeader("user-agent"), 100);
         return source;
     }
 
-    /*
-    - IP Address of the machine making the request
-     */
+
     public String getIpAddress() {
         String ipAddress = request.getRemoteAddr();
         return ipAddress;
     }
 
-    /*
-    -client id is the oauth2 client id assigned to the maker of the request
-     */
     public String getClientId() {
         return clientId;
     }
 
-    /*
-    - id of the currently logged in user
-    - id of maker
-     */
     public Long getUserId() {
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -73,8 +57,6 @@ public class LogExtras {
         } else {
             username = principal.toString();
         }
-
-        System.out.println("LOGGED IN USER : " + username);
         UfsAuthentication userAuth = urepo.findByusernameIgnoreCase(username);
         fullName = userAuth.getUser().getFullName();
         return userAuth.getUserId();

@@ -13,7 +13,15 @@ public interface UfsCustomerOutletService {
 
     UfsCustomerOutlet saveOutlet(UfsCustomerOutlet outlet);
 
+<<<<<<< HEAD
     List<UfsCustomerOutlet> findByCustomerIdIn(List<BigDecimal> customerId, String intrash);
+=======
+    public UfsCustomerOutlet findByOutletId(Long id);
+>>>>>>> brb-webportal
 
     List<UfsCustomerOutlet> findByCustomerId(BigDecimal customerId, String intrash);
+
+    List<UfsCustomerOutlet> findByCustomerIdIn(List<BigDecimal> customerId, String intrash);
+
+    void deleteByCustomerId(BigDecimal customerId);
 }

@@ -8,6 +8,7 @@ package ke.tra.ufs.webportal.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ke.axle.chassis.annotations.ModifiableField;
 import ke.axle.chassis.annotations.Searchable;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
@@ -27,18 +28,12 @@ import ke.axle.chassis.annotations.Filter;
  * @author ojuma
  */
 @Entity
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "UFS_BANK_BRANCHES")
-@XmlRootElement
-@NamedQueries({
-        @NamedQuery(name = "UfsBankBranches.findAll", query = "SELECT u FROM UfsBankBranches u")
-        , @NamedQuery(name = "UfsBankBranches.findById", query = "SELECT u FROM UfsBankBranches u WHERE u.id = :id")
-        , @NamedQuery(name = "UfsBankBranches.findByBranchId", query = "SELECT u FROM UfsBankBranches u WHERE u.id = :id")
-        , @NamedQuery(name = "UfsBankBranches.findByName", query = "SELECT u FROM UfsBankBranches u WHERE u.name = :name")
-        , @NamedQuery(name = "UfsBankBranches.findByCode", query = "SELECT u FROM UfsBankBranches u WHERE u.code = :code")
-        , @NamedQuery(name = "UfsBankBranches.findByAction", query = "SELECT u FROM UfsBankBranches u WHERE u.action = :action")
-        , @NamedQuery(name = "UfsBankBranches.findByActionStatus", query = "SELECT u FROM UfsBankBranches u WHERE u.actionStatus = :actionStatus")
-        , @NamedQuery(name = "UfsBankBranches.findByCreatedAt", query = "SELECT u FROM UfsBankBranches u WHERE u.createdAt = :createdAt")
-        , @NamedQuery(name = "UfsBankBranches.findByIntrash", query = "SELECT u FROM UfsBankBranches u WHERE u.intrash = :intrash")})
 public class UfsBankBranches implements Serializable {
 
     @Basic(optional = false)
@@ -79,6 +74,13 @@ public class UfsBankBranches implements Serializable {
     @Filter
     @ModifiableField
     private String tenantIds;
+    @JoinColumn(name = "BANK_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne(optional = true)
+    private UfsBanks ufsBanks;
+    @Column(name = "BANK_ID")
+    @Filter
+    @ModifiableField
+    private Long ufsBankId;
 
 
     private static final long serialVersionUID = 1L;
@@ -114,6 +116,7 @@ public class UfsBankBranches implements Serializable {
     @ModifiableField
     private BigDecimal geographicalRegionIds;
 
+<<<<<<< HEAD
     public UfsBankBranches() {
     }
 
@@ -271,4 +274,6 @@ public class UfsBankBranches implements Serializable {
     }
 
 
+=======
+>>>>>>> brb-webportal
 }

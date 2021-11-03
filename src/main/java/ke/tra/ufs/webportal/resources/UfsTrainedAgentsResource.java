@@ -61,8 +61,6 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
     }
 
 
-
-
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @Transactional
     @ApiOperation(value = "Creating Training Report")
@@ -73,7 +71,7 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
            if(Objects.nonNull(this.customerService.findByCustomerId(trainedAgent.getCustomerId()))){
             ufsTrainedAgents.setAgentName(this.customerService.findByCustomerId(trainedAgent.getCustomerId()).getBusinessName());
            }else{
-               throw  new NotFoundException("Customer Does Not Exist in The System");
+               throw  new NotFoundException("Merchant Does Not Exist in The System");
            }
 
            if(Objects.nonNull(this.geographicalRegionService.findByGeographicalId(trainedAgent.getGeographicalRegionId()))){
@@ -82,8 +80,9 @@ public class UfsTrainedAgentsResource extends ChasisResource<UfsTrainedAgents,Lo
                throw  new NotFoundException("Region Does Not Exist in The System");
            }
 
-           if(Objects.nonNull(this.customerOutletService.findByCustomerId(new BigDecimal(trainedAgent.getCustomerId())))){
-               ufsTrainedAgents.setOutletName(this.customerOutletService.findByCustomerId(new BigDecimal(trainedAgent.getCustomerId())).getOutletName());
+           UfsCustomerOutlet outlet = this.customerOutletService.findById(trainedAgent.getCustomerOutletId().longValue());
+           if(Objects.nonNull(outlet)){
+               ufsTrainedAgents.setOutletName(outlet.getOutletName());
            }else{
                throw  new NotFoundException("Outlet Does Not Exist in The System");
            }

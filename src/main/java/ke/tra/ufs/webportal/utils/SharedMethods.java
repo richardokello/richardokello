@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import ke.axle.chassis.utils.LoggerService;
+import ke.tra.ufs.webportal.entities.wrapper.MccWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -73,6 +75,34 @@ public class SharedMethods {
         return eString;
     }
 
+    public boolean generateParamField(String content, String fileName, String filePath) {
+        try {
+            File dir = new File(filePath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            //overwrite existing file
+            File exists = new File(filePath + fileName);
+            if (exists.exists()) {
+                deleteFile(exists);
+            }
+
+            FileOutputStream out = new FileOutputStream(filePath + fileName);
+            out.write(content.getBytes());
+            out.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Problem writing to the file " + filePath + fileName);
+            //log.error(AppConstants.AUDIT_LOG, "Creating new Device Task failed", e);
+            /* loggerService.logCreate("Creating new Device Task failed. This may be "
+                    + "due to  msg:" + e.getMessage(), SharedMethods.getEntityName(TmsDeviceTask.class), null,
+                    AppConstants.STATUS_FAILED);*/
+            return false;
+        }
+    }
+
     /**
      * Used to fetch current date. At a later stage it may be to a relevant
      * timezone
@@ -119,8 +149,13 @@ public class SharedMethods {
         }
 
         String fileUrl = uploadPath + generatedFileName;
-
         log.info("Path  " + fileUrl);
+
+        //overwrite existing file
+        File exists = new File(fileUrl);
+        if (exists.exists()) {
+            deleteFile(exists);
+        }
 
         BufferedOutputStream stream
                 = new BufferedOutputStream(new FileOutputStream(new File(fileUrl)));
@@ -284,6 +319,35 @@ public class SharedMethods {
                     }
                 });
                 System.out.println();
+            });
+        });
+        return ts;
+    }
+
+    public <T> Set<T> convertXlsMcc(Class<T> entity, File file) throws IOException, InvalidFormatException {
+        Set<T> ts = new HashSet<>();
+        Workbook workbook = WorkbookFactory.create(file);
+        DataFormatter dataFormatter = new DataFormatter();
+        workbook.forEach(sheet -> {
+            sheet.forEach(row -> {
+                String[] rowData = new String[2];
+                int count = 0;
+                for (Cell cell : row) {
+                    String cellValue = dataFormatter.formatCellValue(cell);
+                    if (!cellValue.equals("MCC") && count == 0) {
+                        rowData[0] = cellValue;
+                    }
+                    if (!cellValue.equals("MCC Title") && count == 1) {
+                        rowData[1] = cellValue;
+                    }
+                    count++;
+                }
+                if (count > 0) {
+                    MccWrapper mcc = new MccWrapper();
+                    mcc.setMcc(rowData[0]);
+                    mcc.setMccTitle(rowData[1]);
+                    ts.add((T) mcc);
+                }
             });
         });
         return ts;

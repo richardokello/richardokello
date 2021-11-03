@@ -8,6 +8,7 @@ import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tra.ufs.webportal.entities.UfsCustomerOutlet;
 import ke.tra.ufs.webportal.entities.UfsEdittedRecord;
 import ke.tra.ufs.webportal.service.TmsDeviceService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,11 +37,15 @@ public class UfsCustomerOutletResource extends ChasisResource<UfsCustomerOutlet,
     @Transactional
     public ResponseEntity<ResponseWrapper> approveActions(@RequestBody @Valid ActionWrapper<Long> actions) throws ExpectationFailed {
         ResponseEntity<ResponseWrapper> resp = super.approveActions(actions);
-
-        // approve devices by outlet Ids
-        List<Long> outletsIds = Arrays.stream(actions.getIds()).collect(Collectors.toList());
-        deviceService.activateDevicesByOutletsIds(outletsIds, actions.getNotes());
-
+        if (!resp.getStatusCode().equals(HttpStatus.OK)) {
+            return resp;
+        } else {
+            // approve devices by outlet Ids
+            List<Long> outletsIds = Arrays.stream(actions.getIds()).collect(Collectors.toList());
+            deviceService.activateDevicesByOutletsIds(outletsIds, actions.getNotes());
+            deviceService.addDevicesTaskByOutletsIds(outletsIds);
+            deviceService.updateDeviceOwnerByOutletId(outletsIds);
+        }
         return resp;
     }
 }

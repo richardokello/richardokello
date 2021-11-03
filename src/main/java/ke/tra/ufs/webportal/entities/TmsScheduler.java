@@ -6,6 +6,7 @@
 package ke.tra.ufs.webportal.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -41,7 +42,16 @@ public class TmsScheduler implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @SequenceGenerator(name = "TMS_SCHEDULER_SEQ", sequenceName = "TMS_SCHEDULER_SEQ")
+    @GenericGenerator(
+            name = "TMS_SCHEDULER_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "TMS_SCHEDULER_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
     @GeneratedValue(generator = "TMS_SCHEDULER_SEQ")
     @Basic(optional = false)//
     @Column(name = "SCHEDULE_ID")

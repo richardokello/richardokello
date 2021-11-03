@@ -6,6 +6,7 @@
 package ke.tra.ufs.webportal.entities;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -68,7 +69,16 @@ public class TmsEstateItem implements Serializable {
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
-    @SequenceGenerator(name = "TMS_BUSINESS_UNIT_ITEM_SEQ", sequenceName = "TMS_BUSINESS_UNIT_ITEM_SEQ")
+    @GenericGenerator(
+            name = "TMS_BUSINESS_UNIT_ITEM_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "TMS_BUSINESS_UNIT_ITEM_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
     @GeneratedValue(generator = "TMS_BUSINESS_UNIT_ITEM_SEQ")
     @Basic(optional = false)
     @Column(name = "UNIT_ITEM_ID")//
