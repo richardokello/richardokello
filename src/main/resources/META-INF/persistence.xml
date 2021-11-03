@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="ke.tra.ufs_webportal_jar_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerType</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerTypeRuleMap</class>
+    <class>ke.tra.ufs.webportal.entities.UfsTieredCommissionAmount</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerTypeRules</class>
+    <class>ke.tra.ufs.webportal.entities.UfsRevenueEntities</class>
+    <class>ke.tra.ufs.webportal.entities.UfsOrganizationUnits_1</class>
+    <class>ke.tra.ufs.webportal.entities.UfsRevenueEntities_1</class>
+    <class>ke.tra.ufs.webportal.entities.UfsOrganizationHierarchy_1</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerClass</class>
+    <class>ke.tra.ufs.webportal.entities.UfsBanks</class>
+    <class>ke.tra.ufs.webportal.entities.UfsBankBranches</class>
+    <class>ke.tra.ufs.webportal.entities.UfsBankBins</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCountries</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomer</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerClass_1</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerOutlet</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerOwners</class>
+    <class>ke.tra.ufs.webportal.entities.CustomerOwnersCrime</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomer_1</class>
+    <class>ke.tra.ufs.webportal.entities.UfsGeographicalRegion_1</class>
+    <class>ke.tra.ufs.webportal.entities.UfsGls</class>
+    <class>ke.tra.ufs.webportal.entities.UfsAssignedSimdetails</class>
+    <class>ke.tra.ufs.webportal.entities.UfsDeviceType</class>
+    <class>ke.tra.ufs.webportal.entities.UfsAssignedDevice</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerTransfer</class>
+    <class>ke.tra.ufs.webportal.entities.UfsDeviceModel</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerHistory</class>
+    <class>ke.tra.ufs.webportal.entities.UfsDeviceMake</class>
+    <class>ke.tra.ufs.webportal.entities.UfsMno</class>
+    <class>ke.tra.ufs.webportal.entities.VwAlltxnsFailed</class>
+    <class>ke.tra.ufs.webportal.entities.VwOnlineActivitySuccess</class>
+    <class>ke.tra.ufs.webportal.entities.VwAlltxnsSuccessfailed</class>
+    <class>ke.tra.ufs.webportal.entities.UfsGlsBatch</class>
+    <class>ke.tra.ufs.webportal.entities.UfsTrainedAgents</class>
+    <class>ke.tra.ufs.webportal.entities.UfsCustomerComplaints</class>
+    <class>ke.tra.ufs.webportal.entities.UfsMcc</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.1.172:1521:trcm"/>
+      <property name="javax.persistence.jdbc.user" value="UFS_SMART_SUITE"/>
+      <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+      <property name="javax.persistence.jdbc.password" value="pass123"/>
+    </properties>
+  </persistence-unit>
+</persistence>
