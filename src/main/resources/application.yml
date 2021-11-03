@@ -1,0 +1,33 @@
+#appication parameters
+app:
+    params:
+        security:
+            ui-client: user_client
+            ui-secret: Gakd#394Ewok.
+            ui-bank-client: bank_client
+            ui-bank-secret: Gab8498#kddo@.
+        baseUrl: http://localhost:8082/tms/api/v1
+        application:
+            description: TMS Web API
+            version: 1.0.7-SNAPSHOT
+        scapi:
+            systemCode: 2
+            scapiKey: Smartxdhi10#
+            username: ScapiUSER
+            password: password123
+#            url: http://localhost/gab/test.php
+            url: http://10.10.1.52:81/Business/Smartcollections.asmx
+        sms-getway:
+            url: http://xxx.xxx.xx.xxx:xxxx/gabpesa/api/Messages/Send 
+            username: sms
+            password: GabSms2017
+    email:
+        from: atyourservice@tracom.co.ke
+    template:
+        tempPath: /home/tracom9/Documents/GAB Project/gulf-gab/templates/files/
+#        tempPath: D:\CODE\Java\WorkSpace\gulf bank\gulf-gab\templates/
+        tempFileName: EmailTemplate.docx
+        uploadPath: /home/tracom9/Documents/GAB Project/gulf-gab/templates/uploaded files/
+#        uploadPath: D:\CODE\Java\WorkSpace\gulf bank\gulf-gab\templates/
+    apis:
+        currencyApi: https://query.yahooapis.com/v1/public/yql

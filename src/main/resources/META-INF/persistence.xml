@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="ke.co.tra_TMS_war_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>ke.co.tra.ufs.tms.entities.OauthAccessToken</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsPosUser</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsEntityPermission</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsEntity</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsUserRole</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsAuditLog</class>
+    <class>ke.co.tra.ufs.tms.entities.OauthClientToken</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsAuthOtp</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsUser</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsUserRoleMap</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsSysConfig</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsPasswordHistory</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsProduct</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsVoidedDevice</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceFileExt</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceStatus</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsDepartment</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsDeviceMake</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsMno</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsWhitelist</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsApp</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsEstateItem</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsDeviceType</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceSimcard</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsCurrency</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsParamDefinition</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsDeviceModel</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsModifiedRecord</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDevice</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsEstateHierarchy</class>
+    <class>ke.co.tra.ufs.tms.entities.UfsRolePermissionMap</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsScheduleEstate</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsScheduleFile</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceHeartbeat</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsProductModelRepo</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceTask</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsWhitelistBatch</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceParam</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceLevelParent</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsScheduler</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsWhitelistBatch</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceCurrency</class>
+    <class>ke.co.tra.ufs.tms.entities.DeviceCustomerDetails</class>
+    <class>ke.co.tra.ufs.tms.entities.ParMenuGroup</class>
+    <class>ke.co.tra.ufs.tms.entities.ParBinProfile</class>
+    <class>ke.co.tra.ufs.tms.entities.ParMenuItems</class>
+    <class>ke.co.tra.ufs.tms.entities.ParBinConfig</class>
+    <class>ke.co.tra.ufs.tms.entities.ParMenuProfile</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceTidsMids</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDeviceMids</class>
+      <class>ke.co.tra.ufs.tms.entities.TmsDevDEv</class>
+    <class>ke.co.tra.ufs.tms.entities.TmsDev</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.1.152:1521:trcm"/>
+      <property name="javax.persistence.jdbc.user" value="UFS_SMART_SUITE"/>
+      <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+      <property name="javax.persistence.jdbc.password" value="pass123"/>
+    </properties>
+  </persistence-unit>
+</persistence>
