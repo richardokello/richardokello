@@ -65,10 +65,10 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
         ResponseWrapper response = new ResponseWrapper();
 
         Arrays.stream(actions.getIds()).forEach(id->{
-          UfsBankBranches bankBranch = this.bankBranchesService.findByBranchId(id);
-           if(bankBranch == null){
-               throw new ItemNotFoundException("Sorry Bank Branch Not Found");
-           }
+            UfsBankBranches bankBranch = this.bankBranchesService.findByBranchId(id);
+            if(bankBranch == null){
+                throw new ItemNotFoundException("Sorry Bank Branch Not Found");
+            }
 
             if(bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
                 throw new UnapprovedActionsException("Sorry resource contains unapproved actions");
@@ -133,7 +133,7 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
                 errors.add(id);
                 return;
             }
-                //Activity create,activate,suspend
+            //Activity create,activate,suspend
             if((bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_ACTIVATION) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
                     (bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) ||
                     (bankBranch.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_SUSPEND) && bankBranch.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED))) {
@@ -162,9 +162,9 @@ public class BankBranchesResources extends ChasisResource<UfsBankBranches, Long,
 
 
                 } catch (IOException e) {
-                        e.printStackTrace();
+                    e.printStackTrace();
                 } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                    e.printStackTrace();
                 }
 
 

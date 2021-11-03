@@ -82,7 +82,7 @@ public class UfsCustomerTransferResource extends ChasisResource<UfsCustomerTrans
                     }
                 }
             }
-         });
+        });
 
         return response;
     }
