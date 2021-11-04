@@ -44,13 +44,14 @@ public class AgentTransactionService {
     @SneakyThrows
     public AgentTransactionResponse processAgentFloatDeposit(AgentTransactionRequest agentTransactionRequest) {
         AgentTransactionResponse response = new AgentTransactionResponse();
-        // Validate agent credentialsa
+        // Validate agent credentials
         AuthenticateAgentResponse authenticateAgentDepositResponse=null;
+
   T24TXNQueue tot24 = new T24TXNQueue();
         // validate amount limits
         try {
 
-            authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
+           authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
 
         } catch (InvalidAgentCredentialsException e){
             transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",agentTransactionRequest.getCredentials().getUsername(),
@@ -288,7 +289,8 @@ public class AgentTransactionService {
         transactionService.updateT24TransactionDTO(T24Transaction);
 
         if ((T24Transaction.getResponseleg() != null)) {
-            if (T24Transaction.getBaladvise().trim().isEmpty()) {
+
+            if (T24Transaction.getBaladvise()==null) {
                 return 0L;
             } else {
 

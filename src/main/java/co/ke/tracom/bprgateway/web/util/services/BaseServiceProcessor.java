@@ -31,11 +31,13 @@ public class BaseServiceProcessor {
     private final TransactionService transactionService;
 
 
-    @Value("${merchant.account.validation}")
+   // @Value("${merchant.account.validation}")
+    @Value("http://localhost:8787/authenticate/password-validation")
     private String agentValidationUrl;
 
 
-    @Value("http://192.168.24.30:8787/authenticate/agent-deposit")
+  //  @Value("http://192.168.24.30:8787/authenticate/agent-deposit")
+    @Value("http://localhost:8787/authenticate/agent-deposit")
     private String agentDepositValidationUrl;
 
     private final TransactionLimitManagerRepository transactionLimitManagerRepository;
@@ -49,8 +51,7 @@ public class BaseServiceProcessor {
         } catch (Exception e) {
             e.printStackTrace();
             throw new InterServiceCommunicationException("Inter-service communication error. Please try again!");
-
-        }
+          }
 
         // Objects.requireNonNull(stringResponseEntity, "Inter-service communication error. Please try again------>that!");
 
@@ -59,12 +60,14 @@ public class BaseServiceProcessor {
         try {
             authenticateAgentResponse = new ObjectMapper().readValue(body, AuthenticateAgentResponse.class);
         } catch (JsonProcessingException e) {
-            throw new InvalidAgentCredentialsException("Agent credentials validation failed");
+            e.printStackTrace();
+            throw new InvalidAgentCredentialsException("Agent credentials validation failed.");
         }
 
         if (authenticateAgentResponse.getCode() == 200 && stringResponseEntity.getStatusCode().value() == 200) {
             return authenticateAgentResponse;
         } else {
+            System.out.println("authenticateAgentResponse = " + authenticateAgentResponse);
             throw new InvalidAgentCredentialsException("Agent credentials validation failed");
 
         }
@@ -78,7 +81,7 @@ public class BaseServiceProcessor {
             log.info("Response status from URL[" + agentDepositValidationUrl + " ] and the status is {}" + responseEntity.getBody());
         } catch (Exception j) {
             j.printStackTrace();
-            throw new InterServiceCommunicationException("Inter-service communication error service validation failed. Please try again!");
+            throw new InterServiceCommunicationException("++++++++++++++++++++Inter-service communication error service validation failed. Please try again!");
 
         }
         //Objects.requireNonNull(responseEntity,"Inter-service communication error. Please try to use use non null again!");
