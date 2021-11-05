@@ -73,14 +73,14 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
     @RequestMapping(value = "/bank-bins/{id}", method = RequestMethod.GET)
     public ResponseEntity<ResponseWrapper> typeRules(@PathVariable("id") Long id) {
         ResponseWrapper response = new ResponseWrapper();
-         List<UfsBankBins> bankBins = bankBinsRepository.findAllByBankIds(id);
+        List<UfsBankBins> bankBins = bankBinsRepository.findAllByBankIds(id);
 
         if (bankBins.isEmpty()) {
 
             response.setData(bankBins);
             return ResponseEntity.ok(response);
         }
-       response.setData(bankBins);
+        response.setData(bankBins);
         return ResponseEntity.ok(response);
     }
 
@@ -93,73 +93,73 @@ public class BanksResource extends ChasisResource<UfsBanks, Long, UfsEdittedReco
 
             if(b.isPresent()){
                 if(b.get().getAction().equalsIgnoreCase(AppConstants.ACTIVITY_UPDATE) && b.get().getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)){
-                        try {
-                            UfsBanks entity = supportRepo.mergeChanges(id, b.get());
+                    try {
+                        UfsBanks entity = supportRepo.mergeChanges(id, b.get());
 
-                            List<UfsBankBins> existingBankBins = new ArrayList<>();
-                            List<UfsBankBins> newBankBins = entity.getUfsBankBins();
-
-
-                             /*Getting the existing bankbins from the database and add them to existingBankBins list*/
-                            bankBinsRepository.findAllByBankIds(id).forEach(bankBinFromDb->{
-                                existingBankBins.add(bankBinFromDb);
-                            });
-
-                            List<UfsBankBins> isPresentObject = new ArrayList<>();
-                            List<UfsBankBins> toDeleteObject = new ArrayList<>();
-                            List<UfsBankBins> toCreateObject = new ArrayList<>();
+                        List<UfsBankBins> existingBankBins = new ArrayList<>();
+                        List<UfsBankBins> newBankBins = entity.getUfsBankBins();
 
 
+                        /*Getting the existing bankbins from the database and add them to existingBankBins list*/
+                        bankBinsRepository.findAllByBankIds(id).forEach(bankBinFromDb->{
+                            existingBankBins.add(bankBinFromDb);
+                        });
 
-                            /*Using objects*/
-                            existingBankBins.forEach(obj->{
-                                if(newBankBins.contains(obj)){
-                                    isPresentObject.add(obj);
-                                }
+                        List<UfsBankBins> isPresentObject = new ArrayList<>();
+                        List<UfsBankBins> toDeleteObject = new ArrayList<>();
+                        List<UfsBankBins> toCreateObject = new ArrayList<>();
 
-                                if(!newBankBins.contains(obj)){
-                                    toDeleteObject.add(obj);
-                                }
-                            });
 
-                            /*Ids of the bankBins to delete*/
-                            List<Long> toDelete = new ArrayList<>();
-                            for(UfsBankBins deleteBankBin : toDeleteObject){
-                                toDelete.add(deleteBankBin.getId());
+
+                        /*Using objects*/
+                        existingBankBins.forEach(obj->{
+                            if(newBankBins.contains(obj)){
+                                isPresentObject.add(obj);
                             }
 
-                            /*getting new bankBins object to create*/
-                            newBankBins.forEach(obj -> {
-                                if (!isPresentObject.contains(obj) && !toDeleteObject.contains(obj)) {
-                                    toCreateObject.add(obj);
-                                }
-                            });
-
-                            if (!toDeleteObject.isEmpty()) {
-                                List<UfsBankBins> waitingDeletion = bankBinsRepository.findAllByBankIdsAndIdIn(id,toDelete);
-                                log.info(" >>>>>>>>>>>>>>>>>>>>>>>>> size {}", waitingDeletion.size());
-                                bankBinsRepository.deleteAll(waitingDeletion);
+                            if(!newBankBins.contains(obj)){
+                                toDeleteObject.add(obj);
                             }
+                        });
 
-                            if (!toCreateObject.isEmpty()) {
-                                List<UfsBankBins> items = new ArrayList<>();
-
-                                toCreateObject.forEach(obj -> {
-                                    UfsBankBins map = new UfsBankBins();
-                                    map.setBankIds(id);
-                                    map.setValue(obj.getValue());
-                                    map.setBinType(obj.getBinType());
-
-                                    items.add(map);
-                                });
-
-                                bankBinsRepository.saveAll(items);
-                            }
-
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        /*Ids of the bankBins to delete*/
+                        List<Long> toDelete = new ArrayList<>();
+                        for(UfsBankBins deleteBankBin : toDeleteObject){
+                            toDelete.add(deleteBankBin.getId());
                         }
+
+                        /*getting new bankBins object to create*/
+                        newBankBins.forEach(obj -> {
+                            if (!isPresentObject.contains(obj) && !toDeleteObject.contains(obj)) {
+                                toCreateObject.add(obj);
+                            }
+                        });
+
+                        if (!toDeleteObject.isEmpty()) {
+                            List<UfsBankBins> waitingDeletion = bankBinsRepository.findAllByBankIdsAndIdIn(id,toDelete);
+                            log.info(" >>>>>>>>>>>>>>>>>>>>>>>>> size {}", waitingDeletion.size());
+                            bankBinsRepository.deleteAll(waitingDeletion);
+                        }
+
+                        if (!toCreateObject.isEmpty()) {
+                            List<UfsBankBins> items = new ArrayList<>();
+
+                            toCreateObject.forEach(obj -> {
+                                UfsBankBins map = new UfsBankBins();
+                                map.setBankIds(id);
+                                map.setValue(obj.getValue());
+                                map.setBinType(obj.getBinType());
+
+                                items.add(map);
+                            });
+
+                            bankBinsRepository.saveAll(items);
+                        }
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
