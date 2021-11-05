@@ -21,12 +21,12 @@ import java.math.BigDecimal;
 @Table(name = "TMS_DEVICE_SIMCARD")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "TmsDeviceSimcard.findAll", query = "SELECT t FROM TmsDeviceSimcard t")
-    , @NamedQuery(name = "TmsDeviceSimcard.findById", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.id = :id")
-    , @NamedQuery(name = "TmsDeviceSimcard.findByDeviceId", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.deviceId = :deviceId")
-    , @NamedQuery(name = "TmsDeviceSimcard.findByMnoId", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.mnoId = :mnoId")
-    , @NamedQuery(name = "TmsDeviceSimcard.findByMsisdn", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.msisdn = :msisdn")
-    , @NamedQuery(name = "TmsDeviceSimcard.findBySerialNo", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.serialNo = :serialNo")})
+        @NamedQuery(name = "TmsDeviceSimcard.findAll", query = "SELECT t FROM TmsDeviceSimcard t")
+        , @NamedQuery(name = "TmsDeviceSimcard.findById", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.id = :id")
+        , @NamedQuery(name = "TmsDeviceSimcard.findByDeviceId", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.deviceId = :deviceId")
+        , @NamedQuery(name = "TmsDeviceSimcard.findByMnoId", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.mnoId = :mnoId")
+        , @NamedQuery(name = "TmsDeviceSimcard.findByMsisdn", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.msisdn = :msisdn")
+        , @NamedQuery(name = "TmsDeviceSimcard.findBySerialNo", query = "SELECT t FROM TmsDeviceSimcard t WHERE t.serialNo = :serialNo")})
 public class TmsDeviceSimcard implements Serializable {
 
     @JoinColumn(name = "DEVICE_ID", referencedColumnName = "DEVICE_ID")

@@ -24,19 +24,19 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "UFS_CUSTOMER_TRANSFER")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsCustomerTransfer.findAll", query = "SELECT u FROM UfsCustomerTransfer u"),
-    @NamedQuery(name = "UfsCustomerTransfer.findById", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.id = :id"),
-    @NamedQuery(name = "UfsCustomerTransfer.findByReason", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.reason = :reason"),
-    @NamedQuery(name = "UfsCustomerTransfer.findByAction", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.action = :action"),
-    @NamedQuery(name = "UfsCustomerTransfer.findByActionStatus", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.actionStatus = :actionStatus"),
-    @NamedQuery(name = "UfsCustomerTransfer.findByCreatedAt", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.createdAt = :createdAt"),
-    @NamedQuery(name = "UfsCustomerTransfer.findByIntrash", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.intrash = :intrash")})
+        @NamedQuery(name = "UfsCustomerTransfer.findAll", query = "SELECT u FROM UfsCustomerTransfer u"),
+        @NamedQuery(name = "UfsCustomerTransfer.findById", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.id = :id"),
+        @NamedQuery(name = "UfsCustomerTransfer.findByReason", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.reason = :reason"),
+        @NamedQuery(name = "UfsCustomerTransfer.findByAction", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.action = :action"),
+        @NamedQuery(name = "UfsCustomerTransfer.findByActionStatus", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.actionStatus = :actionStatus"),
+        @NamedQuery(name = "UfsCustomerTransfer.findByCreatedAt", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.createdAt = :createdAt"),
+        @NamedQuery(name = "UfsCustomerTransfer.findByIntrash", query = "SELECT u FROM UfsCustomerTransfer u WHERE u.intrash = :intrash")})
 public class UfsCustomerTransfer implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-                @GenericGenerator(
+    @GenericGenerator(
             name = "UFS_CUSTOMER_TRANSFER_SEQ",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
@@ -84,7 +84,7 @@ public class UfsCustomerTransfer implements Serializable {
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne(optional = false)
     private UfsCustomer customerId;
-    
+
     @Column(name = "CUSTOMER_ID")
     private BigDecimal customerIds;
 
@@ -236,5 +236,5 @@ public class UfsCustomerTransfer implements Serializable {
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerTransfer[ id=" + id + " ]";
     }
-    
+
 }

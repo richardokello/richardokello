@@ -25,15 +25,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "UFS_CUSTOMER_COMPLAINTS")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UfsCustomerComplaints.findAll", query = "SELECT u FROM UfsCustomerComplaints u"),
-    @NamedQuery(name = "UfsCustomerComplaints.findById", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.id = :id"),
-    @NamedQuery(name = "UfsCustomerComplaints.findByComplaintNature", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.complaintNature = :complaintNature"),
-    @NamedQuery(name = "UfsCustomerComplaints.findByComplaints", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.complaints = :complaints"),
-    @NamedQuery(name = "UfsCustomerComplaints.findByAgentComplained", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.agentComplained = :agentComplained"),
-    @NamedQuery(name = "UfsCustomerComplaints.findByAgentPhonenumber", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.agentPhonenumber = :agentPhonenumber"),
-    @NamedQuery(name = "UfsCustomerComplaints.findByAgentLocation", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.agentLocation = :agentLocation"),
-    @NamedQuery(name = "UfsCustomerComplaints.findByDateOfOccurence", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.dateOfOccurence = :dateOfOccurence"),
-    @NamedQuery(name = "UfsCustomerComplaints.findByRemedialActions", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.remedialActions = :remedialActions")})
+        @NamedQuery(name = "UfsCustomerComplaints.findAll", query = "SELECT u FROM UfsCustomerComplaints u"),
+        @NamedQuery(name = "UfsCustomerComplaints.findById", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.id = :id"),
+        @NamedQuery(name = "UfsCustomerComplaints.findByComplaintNature", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.complaintNature = :complaintNature"),
+        @NamedQuery(name = "UfsCustomerComplaints.findByComplaints", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.complaints = :complaints"),
+        @NamedQuery(name = "UfsCustomerComplaints.findByAgentComplained", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.agentComplained = :agentComplained"),
+        @NamedQuery(name = "UfsCustomerComplaints.findByAgentPhonenumber", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.agentPhonenumber = :agentPhonenumber"),
+        @NamedQuery(name = "UfsCustomerComplaints.findByAgentLocation", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.agentLocation = :agentLocation"),
+        @NamedQuery(name = "UfsCustomerComplaints.findByDateOfOccurence", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.dateOfOccurence = :dateOfOccurence"),
+        @NamedQuery(name = "UfsCustomerComplaints.findByRemedialActions", query = "SELECT u FROM UfsCustomerComplaints u WHERE u.remedialActions = :remedialActions")})
 public class UfsCustomerComplaints implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -256,5 +256,5 @@ public class UfsCustomerComplaints implements Serializable {
     public String toString() {
         return "ke.tra.ufs.webportal.entities.UfsCustomerComplaints[ id=" + id + " ]";
     }
-    
+
 }
