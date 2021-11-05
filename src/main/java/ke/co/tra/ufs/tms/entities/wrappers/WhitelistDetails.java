@@ -20,7 +20,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(value = {"", " "})
 public class WhitelistDetails {
-    
+
     @JsonProperty(value = "Serial Number")
     @ExportField(name = "Serial Number")
     @NotNull

@@ -110,7 +110,7 @@ public class WhitelistResource extends ChasisResourceLocal<TmsWhitelist> {
                     AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_UNAPPROVED, AppConstants.NO, payload.getPurchaseDate(), payload.getProductNo(),
                     payload.getLocation(), payload.getDeliveredBy(), payload.getReceivedBy(), payload.getUfsBankId()));
 
-             this.terminalHistoryService.saveHistory(new UfsTerminalHistory(payload.getSerialNo(),AppConstants.ACTIVITY_CREATE,"Terminal Whitelisted Successfully",loggerService.getUser(),AppConstants.STATUS_UNAPPROVED,loggerService.getFullName()));
+            this.terminalHistoryService.saveHistory(new UfsTerminalHistory(payload.getSerialNo(),AppConstants.ACTIVITY_CREATE,"Terminal Whitelisted Successfully",loggerService.getUser(),AppConstants.STATUS_UNAPPROVED,loggerService.getFullName()));
 
             loggerService.logCreate("Whitelisted Device (Serial number: " + payload.getSerialNo() + ")",
                     TmsWhitelist.class.getSimpleName(), device.getId(), AppConstants.STATUS_COMPLETED);
@@ -247,8 +247,8 @@ public class WhitelistResource extends ChasisResourceLocal<TmsWhitelist> {
 
     @ApiOperation(value = "Fetch all Deleted Records",notes = "")
     @ApiImplicitParams({@ApiImplicitParam( name = "size",dataType = "integer",required = false,value = "Pagination size e.g 20",paramType = "query"),
-    @ApiImplicitParam(name = "page",dataType = "integer",required = false,value = "Page number e.g 0", paramType = "query"),
-    @ApiImplicitParam(name = "sort",dataType = "string",required = false,value = "Field name e.g actionStatus,asc/desc",paramType = "query")})
+            @ApiImplicitParam(name = "page",dataType = "integer",required = false,value = "Page number e.g 0", paramType = "query"),
+            @ApiImplicitParam(name = "sort",dataType = "string",required = false,value = "Field name e.g actionStatus,asc/desc",paramType = "query")})
     @RequestMapping(method = RequestMethod.GET, value = "/deleted")
     public ResponseEntity<ResponseWrapper<Page<TmsWhitelist>>> findAllDeleted(@Valid WhitelistFilter filter, Pageable pg){
         ResponseWrapper response = new ResponseWrapper();
@@ -264,10 +264,10 @@ public class WhitelistResource extends ChasisResourceLocal<TmsWhitelist> {
         List<String> errors = new ArrayList<>();
 
         for (BigDecimal id:actions.getIds() ) {
-          TmsWhitelist tmsWhitelist = deviceService.getWhitelistById(id);
-          if(tmsWhitelist.getAssignStr().equalsIgnoreCase("1")){
-              errors.add(tmsWhitelist.getSerialNo());
-          }
+            TmsWhitelist tmsWhitelist = deviceService.getWhitelistById(id);
+            if(tmsWhitelist.getAssignStr().equalsIgnoreCase("1")){
+                errors.add(tmsWhitelist.getSerialNo());
+            }
 
         }
         if (errors.isEmpty()) {

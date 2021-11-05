@@ -266,7 +266,7 @@ public class TmsWhitelist implements Serializable {
         this.receivedBy = receivedBy;
     }
 
-   public Short getAssigned() {
+    public Short getAssigned() {
         return assigned;
     }
 
