@@ -65,7 +65,6 @@ public class UfsBanks implements Serializable {
     @ModifiableField
     @Column(name = "SETTLEMENT_ACCOUNT")
     private String settlementAccount;
-    @Basic(optional = false)
     @Size(min = 1, max = 20)
     @ModifiableField
     @Column(name = "BANK_TYPE")

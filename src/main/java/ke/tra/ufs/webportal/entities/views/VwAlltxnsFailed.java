@@ -17,7 +17,7 @@ import java.util.Date;
  * @author Kenny
  */
 @Entity
-@Table(name = "VW_ALLTXNS_FAILED")
+@Table(name = "VW_ALLTXNS_FAILED_ONLINEACT")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "VwAlltxnsFailed.findAll", query = "SELECT v FROM VwAlltxnsFailed v"),
