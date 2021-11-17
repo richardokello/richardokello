@@ -72,7 +72,8 @@ import org.hibernate.annotations.Parameter;
                         ,
                         @StoredProcedureParameter(
                                 name = "RESULT",
-                                type = String.class,
+//                                type = String.class,
+                                type = Boolean.class,
                                 mode = ParameterMode.OUT)})
 })
 public class UfsAuditLog implements Serializable {
