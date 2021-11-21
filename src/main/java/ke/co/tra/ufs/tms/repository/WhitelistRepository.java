@@ -38,6 +38,23 @@ public interface WhitelistRepository extends CrudRepository<TmsWhitelist, BigDec
      */
     public TmsWhitelist findByIdAndIntrash(BigDecimal id, String intrash);
 
+//    /**
+//     * Filter whitelist
+//     *
+//     * @param actionStatus
+//     * @param modelId
+//     * @param from
+//     * @param to
+//     * @param needle       should be lowercase
+//     * @param intrash
+//     * @param pg
+//     * @return
+//     */
+//    @Query("SELECT u FROM #{#entityName} u WHERE u.actionStatus like ?1% "
+//            + "AND STR(COALESCE(u.modelId, -1)) LIKE ?2% AND u.creationDate BETWEEN ?3 AND ?4 AND "
+//            + "(lower(u.serialNo) LIKE %?5% ) AND lower(u.intrash) = lower(?6) AND u.serialNo like ?7% AND u.assignStr LIKE ?8% AND STR(COALESCE(u.ufsBankId, -1)) LIKE ?9%")
+//    public Page<TmsWhitelist> findAll(String actionStatus, String modelId, Date from, Date to, String needle, String intrash, String serialNo, String assignStr,String ufsBankId, Pageable pg);
+
     /**
      * Filter whitelist
      *
@@ -52,8 +69,8 @@ public interface WhitelistRepository extends CrudRepository<TmsWhitelist, BigDec
      */
     @Query("SELECT u FROM #{#entityName} u WHERE u.actionStatus like ?1% "
             + "AND STR(COALESCE(u.modelId, -1)) LIKE ?2% AND u.creationDate BETWEEN ?3 AND ?4 AND "
-            + "(lower(u.serialNo) LIKE %?5% ) AND lower(u.intrash) = lower(?6) AND u.serialNo like ?7% AND u.assignStr LIKE ?8% AND STR(COALESCE(u.ufsBankId, -1)) LIKE ?9%")
-    public Page<TmsWhitelist> findAll(String actionStatus, String modelId, Date from, Date to, String needle, String intrash, String serialNo, String assignStr,String ufsBankId, Pageable pg);
+            + "(lower(u.serialNo) LIKE %?5% ) AND lower(u.intrash) = lower(?6) AND u.serialNo like ?7% AND STR(COALESCE(u.assigned, -1)) LIKE ?8% AND STR(COALESCE(u.ufsBankId, -1)) LIKE ?9%")
+    public Page<TmsWhitelist> findAll(String actionStatus, String modelId, Date from, Date to, String needle, String intrash, String serialNo, String assigned,String ufsBankId, Pageable pg);
 
 
     /**

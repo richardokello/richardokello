@@ -57,9 +57,9 @@ public class TmsWhitelist implements Serializable {
     @Column(name = "ASSIGNED", insertable = false)
     private Short assigned;
 
-    @Filter
-    @Column(name = "ASSIGNED", updatable = false, insertable = false)
-    private String assignStr;
+//    @Filter
+//    @Column(name = "ASSIGNED", updatable = false, insertable = false)
+//    private String assignStr;
 
     @ModifiableField
     @Column(name = "MODEL_ID")
@@ -274,13 +274,13 @@ public class TmsWhitelist implements Serializable {
         this.assigned = assigned;
     }
 
-    public String getAssignStr() {
-        return assignStr;
-    }
-
-    public void setAssignStr(String assignStr) {
-        this.assignStr = assignStr;
-    }
+//    public String getAssignStr() {
+//        return assignStr;
+//    }
+//
+//    public void setAssignStr(String assignStr) {
+//        this.assignStr = assignStr;
+//    }
 
     @Override
     public int hashCode() {

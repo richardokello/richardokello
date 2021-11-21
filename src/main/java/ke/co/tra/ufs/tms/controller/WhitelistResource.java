@@ -265,7 +265,13 @@ public class WhitelistResource extends ChasisResourceLocal<TmsWhitelist> {
 
         for (BigDecimal id:actions.getIds() ) {
             TmsWhitelist tmsWhitelist = deviceService.getWhitelistById(id);
-            if(tmsWhitelist.getAssignStr().equalsIgnoreCase("1")){
+            /*if(tmsWhitelist.getAssignStr().equalsIgnoreCase("1")){
+                errors.add(tmsWhitelist.getSerialNo());
+            }*/
+            Integer assignedValueInt = 1;
+            Short assignedValue = assignedValueInt.shortValue();
+            int result = Short.compare(tmsWhitelist.getAssigned(), assignedValue);
+            if(result > 0 || result == 0){
                 errors.add(tmsWhitelist.getSerialNo());
             }
 
