@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.zaxxer.hikari.HikariDataSource;
 import ke.tracom.ufs.config.FileStorageProperties;
+import ke.tracom.ufs.config.ParseJsonFile;
 import ke.tracom.ufs.config.multitenancy.MultiTenantDynamicTenantAwareRoutingSource;
 import ke.tracom.ufs.config.multitenancy.TenantAwareRoutingSource;
+import ke.tracom.ufs.utils.AppConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -85,15 +87,29 @@ public class UfsApplication {
      * @throws IOException
      */
     @Bean
-    public DataSource dataSource() throws IOException {
-
-        File resource = new ClassPathResource("tenant.json").getFile();
-        String tenantJson = new String(Files.readAllBytes(resource.toPath()));
-        MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(tenantJson);
-        Map<Object, Object> tenants = routingSource.getTenants();
+    public DataSource dataSource() {
+        ParseJsonFile parser =  new ParseJsonFile();
         AbstractRoutingDataSource dataSource = new TenantAwareRoutingSource();
-        dataSource.setTargetDataSources(tenants);
-        dataSource.afterPropertiesSet();
+        String tenantJson = null;
+        try {
+            tenantJson = parser.parseJsonFile(AppConstants.TENANT_JSON_FILE_NAME).toString();
+            if (tenantJson == null){
+                System.out.printf(tenantJson);
+                System.err.printf("An error occurred on datasource configuration, tenant json file is null after passing file");
+            }
+            MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(tenantJson);
+            Map<Object, Object> tenants = routingSource.getTenants();
+
+            dataSource.setTargetDataSources(tenants);
+            dataSource.afterPropertiesSet();
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.printf(tenantJson);
+            System.err.printf("An error occurred on datasource configuration");
+            System.exit(0);
+
+        }
+
 
         return dataSource;
     }

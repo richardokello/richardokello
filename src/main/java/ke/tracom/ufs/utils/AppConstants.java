@@ -119,5 +119,6 @@ public class AppConstants {
     public static final String USER_AGENT_SUPERVISOR= "Agent Supervisor";
     public static final String USER_HOD = "Head Of Distribution";
     public static final String USER_BRANCH_MANAGER= "Branch Manager";
-
+    public static final String TENANT_JSON_FILE_NAME = "tenant.json";
+    public static final String TENANT_INFORMATION_FILENAME = "tenant-info.json";
 }

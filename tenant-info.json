@@ -1,0 +1,17 @@
+[
+  {
+    "name": "TANZANIA",
+    "tenantid": "0",
+    "language": "en"
+  },
+  {
+    "name": "BURUNDI",
+    "tenantid": "1",
+    "language": "fr"
+  },
+  {
+    "name": "CONGO",
+    "tenantid": "2",
+    "language": "fr"
+  }
+]
