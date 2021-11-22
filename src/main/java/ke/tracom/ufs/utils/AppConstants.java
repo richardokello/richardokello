@@ -121,4 +121,5 @@ public class AppConstants {
     public static final String USER_BRANCH_MANAGER= "Branch Manager";
     public static final String TENANT_JSON_FILE_NAME = "tenant.json";
     public static final String TENANT_INFORMATION_FILENAME = "tenant-info.json";
+    public static final String SUCCESSFUL_REQUEST = "response.message";
 }

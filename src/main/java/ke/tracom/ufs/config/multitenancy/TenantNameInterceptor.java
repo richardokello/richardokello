@@ -17,13 +17,15 @@ public class TenantNameInterceptor extends HandlerInterceptorAdapter {
         // parse a JWT and extract the Tenant Name from the Claims in the Token. In the
         // example code we are just extracting a Header value:
         String tenantName = request.getHeader("X-TenantID");
+        String language = request.getHeader("X-Language");
         System.err.println("Tenant Name: " + tenantName);
+        System.err.println("^^^^^^^^ Language choosen"+language);
 
         // Always set the Tenant Name, so we avoid leaking Tenants between Threads even in the scenario, when no
         // Tenant is given. I do this because if somehow the afterCompletion Handler isn't called the Tenant Name
         // could still be persisted within the ThreadLocal:
         ThreadLocalStorage.setTenantName(tenantName);
-
+        ThreadLocalStorage.setLanguage(language);
         return true;
     }
 
