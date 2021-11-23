@@ -87,7 +87,7 @@ public class TmsApp implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date releaseDate;
     @Size(max = 10)
-    @Column(name = "\"ACTION\"")
+    @Column(name = "ACTION")
     private String action;
     @Size(max = 10)
     @Column(name = "ACTION_STATUS")
