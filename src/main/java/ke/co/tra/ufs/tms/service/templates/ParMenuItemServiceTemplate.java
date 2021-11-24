@@ -5,11 +5,14 @@ import ke.co.tra.ufs.tms.entities.ParMenuItems;
 import ke.co.tra.ufs.tms.repository.ParMenuItemRepository;
 import ke.co.tra.ufs.tms.service.ParMenuItemService;
 import lombok.extern.apachecommons.CommonsLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,4 +73,9 @@ public class ParMenuItemServiceTemplate implements ParMenuItemService {
             }
         }
    }
+
+    @Override
+    public Page<ParMenuItems> getMenuItemByCustomertype(String actionStatus, String customerTypeId,String menuLevel, Date from, Date to, String needle, Pageable pg) {
+        return repository.findAllMenuItemsByCustomerType(actionStatus,customerTypeId,menuLevel,from,to,needle.toLowerCase(), AppConstants.NO,  pg);
+    }
 }

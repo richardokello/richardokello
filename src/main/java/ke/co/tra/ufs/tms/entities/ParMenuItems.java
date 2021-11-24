@@ -126,16 +126,16 @@ public class ParMenuItems implements Serializable {
     private short menuLevel;
 
 
-    //    @Filter
+    @Filter
     @NotNull
     @ModifiableField
     @Column(name = "CUSTOMER_TYPE")
     private BigDecimal customerTypeId;
 
 
-    @Filter
+    /*@Filter
     @Column(name = "CUSTOMER_TYPE", updatable = false, insertable = false)
-    private String type;
+    private String type;*/
 
     @JoinColumn(name = "CUSTOMER_TYPE", referencedColumnName = "ID", updatable = false, insertable = false)
     @ManyToOne
@@ -289,13 +289,13 @@ public class ParMenuItems implements Serializable {
         this.customerType = customerType;
     }
 
-    public String getType() {
+    /*public String getType() {
         return type;
     }
 
     public void setType(String type) {
         this.type = type;
-    }
+    }*/
 
     @Override
     public int hashCode() {

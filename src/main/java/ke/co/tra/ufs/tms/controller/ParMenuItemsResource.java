@@ -1,5 +1,8 @@
 package ke.co.tra.ufs.tms.controller;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import ke.axle.chassis.ChasisResource;
 import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.utils.AppConstants;
@@ -8,13 +11,17 @@ import ke.axle.chassis.wrappers.ActionWrapper;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.co.tra.ufs.tms.entities.ParMenuItems;
 import ke.co.tra.ufs.tms.entities.UfsEdittedRecord;
+import ke.co.tra.ufs.tms.entities.wrappers.filters.ParCommonFilter;
 import ke.co.tra.ufs.tms.repository.ParMenuItemRepository;
 import ke.co.tra.ufs.tms.service.ParMenuItemService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
@@ -71,6 +78,23 @@ public class ParMenuItemsResource extends ChasisResource<ParMenuItems, BigDecima
         Map<String, Object> map = (Map<String, Object>) Objects.requireNonNull(response.getBody()).getData();
         parMenuItemService.updateParents((List<BigDecimal>) map.get("success"));
         return response;
+    }
+
+    @ApiOperation(value = "Fetch menu items belonging to a certain customer type")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "size", dataType = "int", required = false, value = "Pagination size e.g 20", paramType = "query")
+            ,
+            @ApiImplicitParam(name = "page", dataType = "int", required = false, value = "Page number e.g 0", paramType = "query")
+            ,
+            @ApiImplicitParam(name = "sort", dataType = "string", required = false, value = "status,desc", paramType = "query")
+    })
+    @RequestMapping(value = "/customer-type", method = RequestMethod.GET)
+    public ResponseEntity<ResponseWrapper<Page<ParMenuItems>>> getMenuItemByCustomertype(@Valid ParCommonFilter filter, Pageable pg) {
+        ResponseWrapper response = new ResponseWrapper();
+        response.setData(this.parMenuItemService.getMenuItemByCustomertype(filter.getActionStatus(),
+                filter.getCustomerTypeId(),filter.getMenuLevel(),filter.getFrom(), filter.getTo(),filter.getNeedle(), pg));
+        return ResponseEntity.ok(response);
+
     }
 
 }

@@ -46,9 +46,9 @@ public class ParGlobalConfigFormValues {
     @JoinColumn(name = "TYPE", insertable = false, updatable = false)
     private ParGlobalFileConfigType configType;
 
-    @Filter
+    /*@Filter
     @Column(name = "TYPE", insertable = false, updatable = false)
-    private String type;
+    private String type;*/
 
     @ModifiableField
     @Column(name = "FORM_VALUES")

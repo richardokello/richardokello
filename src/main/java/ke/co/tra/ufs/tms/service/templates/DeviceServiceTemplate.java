@@ -310,6 +310,9 @@ public class DeviceServiceTemplate implements DeviceService {
     public Page<TmsDevice> getDevicesByCustomerId(BigDecimal customerId, String action, String actionStatus, Date from, Date to, String needle, String status, Pageable pg) {
         List<UfsCustomerOutlet> customerOutlets = customerOutletRepository.findOutletsByCustomerIdsAndIntrash(customerId, AppConstants.NO);
         List<BigDecimal> outletIds = customerOutlets.stream().map(outlet -> BigDecimal.valueOf(outlet.getId())).collect(Collectors.toList());
+        if(outletIds.size()<0 || outletIds.isEmpty()){
+            outletIds.add(BigDecimal.valueOf(0L));
+        }
         return deviceRepository.findAllbyOutletIds(action, actionStatus, needle, from, to, AppConstants.NO, status, outletIds, pg);
     }
 
