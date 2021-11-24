@@ -2,8 +2,11 @@ package ke.tra.ufs.webportal.service;
 
 import ke.tra.ufs.webportal.entities.CustomerOwnersCrime;
 import ke.tra.ufs.webportal.entities.UfsCustomerOwners;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -23,5 +26,5 @@ public interface CustomerOwnersService {
 
     void deactivateByOwnersList(List<UfsCustomerOwners> customerOwners);
 
-
+    public Page<UfsCustomerOwners> getOwnersByCustomerId(String actionStatus, String customerIds, String needle, Pageable pg);
 }

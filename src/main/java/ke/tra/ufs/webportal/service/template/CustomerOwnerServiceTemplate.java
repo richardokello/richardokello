@@ -6,10 +6,13 @@ import ke.tra.ufs.webportal.repository.UfsCustomerOwnerCrimeRepository;
 import ke.tra.ufs.webportal.repository.UfsCustomerOwnerRepository;
 import ke.tra.ufs.webportal.service.CustomerOwnersService;
 import ke.tra.ufs.webportal.utils.AppConstants;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,6 +67,12 @@ public class CustomerOwnerServiceTemplate implements CustomerOwnersService {
             x.setIntrash(AppConstants.YES);
         }).collect(Collectors.toList());
         ownerRepository.saveAll(ownersList);
+    }
+
+    @Override
+    public Page<UfsCustomerOwners> getOwnersByCustomerId(String actionStatus, String customerIds, String needle, Pageable pg) {
+        return this.ownerRepository.findAllByCustomerId(actionStatus, customerIds, needle.toLowerCase(), AppConstants.NO,  pg);
+
     }
 
 

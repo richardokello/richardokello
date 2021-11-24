@@ -4,9 +4,12 @@ import ke.axle.chassis.utils.AppConstants;
 import ke.tra.ufs.webportal.entities.UfsCustomerOutlet;
 import ke.tra.ufs.webportal.repository.UfsCustomerOutletRepository;
 import ke.tra.ufs.webportal.service.UfsCustomerOutletService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,5 +60,11 @@ public class UfsCustomerOutletServiceTempl implements UfsCustomerOutletService {
             x.setIntrash(AppConstants.NO);
         }).collect(Collectors.toList());
         customerOutletRepository.saveAll(customerOutletsUpdated);
+    }
+
+    @Override
+    public Page<UfsCustomerOutlet> getOutletByCustomerId(String actionStatus, String customerIds, Date from, Date to, String needle, Pageable pg) {
+        return this.customerOutletRepository.findAllByCustomerId(actionStatus, customerIds,from,to, needle.toLowerCase(), AppConstants.NO,  pg);
+
     }
 }

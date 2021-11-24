@@ -7,18 +7,14 @@ package ke.tra.ufs.webportal.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.ModifiableField;
 import ke.axle.chassis.annotations.Searchable;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -113,14 +109,11 @@ public class UfsCustomerOwners implements Serializable {
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID",insertable = false,updatable = false)
     @ManyToOne(optional = true)
     private UfsCustomer customerId;
+
     @Column(name = "CUSTOMER_ID")
     @ModifiableField
-    private BigDecimal customerIds;
-
     @Filter
-    @Column(name = "CUSTOMER_ID",insertable = false,updatable = false)
-    private String customerIdsStr;
-
+    private BigDecimal customerIds;
 
     @Transient
     private CustomerOwnersCrime ownersCrime;
@@ -207,13 +200,6 @@ public class UfsCustomerOwners implements Serializable {
         this.ownersCrime = ownersCrime;
     }
 
-    public String getCustomerIdsStr() {
-        return customerIdsStr;
-    }
-
-    public void setCustomerIdsStr(String customerIdsStr) {
-        this.customerIdsStr = customerIdsStr;
-    }
 
     public UfsBusinessDesignations getDesignation() {
         return designation;
