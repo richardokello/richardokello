@@ -235,4 +235,5 @@ public class AppConstants {
     public static final String CRDB_CUSTOMER_OUTLET_KEY_NAME = "outletName";
 
 
+    public static final String TENANT_JSON_FILE_NAME = "tenant.json";
 }

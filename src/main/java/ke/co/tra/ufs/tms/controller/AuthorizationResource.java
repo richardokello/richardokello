@@ -43,8 +43,8 @@ public class AuthorizationResource {
     private final ConfigService configService;
     private final SchedulerService schedulerService;
 
-    @Autowired
-    private TokenStore tokenStore;
+//    @Autowired
+//    private TokenStore tokenStore;
 
     private final TmsDeviceHeartbeatService deviceHeartbeatService;
     private final DeviceService deviceService;

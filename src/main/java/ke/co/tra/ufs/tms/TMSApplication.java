@@ -8,7 +8,11 @@ package ke.co.tra.ufs.tms;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import ke.co.tra.ufs.tms.config.multitenancy.MultiTenantDynamicTenantAwareRoutingSource;
+import ke.co.tra.ufs.tms.config.multitenancy.ParseJsonFile;
+import ke.co.tra.ufs.tms.config.multitenancy.TenantAwareRoutingSource;
 import ke.co.tra.ufs.tms.service.SysConfigService;
+import ke.co.tra.ufs.tms.utils.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.TaskScheduler;
@@ -36,6 +41,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 import javax.sql.DataSource;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
@@ -48,8 +54,8 @@ import java.util.concurrent.Executor;
 @EnableEurekaClient
 public class TMSApplication {
 
-    @Autowired
-    private DataSource dataSource;
+//    @Autowired
+//    private DataSource dataSource;
     @Value("${baseUrl}")
     private String baseUrl;
 
@@ -59,6 +65,33 @@ public class TMSApplication {
         SpringApplication.run(TMSApplication.class, args);
     }
 
+    @Bean
+    public DataSource dataSource() {
+        ParseJsonFile parser =  new ParseJsonFile();
+        AbstractRoutingDataSource dataSource = new TenantAwareRoutingSource();
+        String tenantJson = null;
+        try {
+            tenantJson = parser.parseJsonFile(AppConstants.TENANT_JSON_FILE_NAME).toString();
+            if (tenantJson == null){
+                System.out.printf(tenantJson);
+                System.err.printf("An error occurred on datasource configuration, tenant json file is null after passing file");
+            }
+            MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(tenantJson);
+            Map<Object, Object> tenants = routingSource.getTenants();
+
+            dataSource.setTargetDataSources(tenants);
+            dataSource.afterPropertiesSet();
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.printf(tenantJson);
+            System.err.printf("An error occurred on datasource configuration");
+            System.exit(0);
+
+        }
+
+
+        return dataSource;
+    }
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         final JwtAccessTokenConverter accessTokenConverter = new JwtAccessTokenConverter();
@@ -76,11 +109,11 @@ public class TMSApplication {
         return new InMemoryTokenStore();
     }
 
-    @Bean
-    @Primary
-    public TokenStore jdbcTokenStore() {
-        return new JdbcTokenStore(dataSource);
-    }
+//    @Bean
+//    @Primary
+//    public TokenStore jdbcTokenStore() {
+//        return new JdbcTokenStore(dataSource);
+//    }
 
     @Bean
     @Primary
