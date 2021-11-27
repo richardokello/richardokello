@@ -332,8 +332,9 @@ public class BusinessUnitResource {
         TmsEstateHierarchy bunit = businessUnitService.getUnit(unitItemWrapper.getUnitId()).get();
         log.debug("level Passed " + bunit.getLevelNo());
         
-        TmsEstateHierarchy businessUnit = businessUnitService.findByLevelNo(bunit.getLevelNo().add(BigInteger.ONE), bunit.getProductId());
-        
+//        TmsEstateHierarchy businessUnit = businessUnitService.findByLevelNo(bunit.getLevelNo().add(BigInteger.ONE), bunit.getProductId());
+        TmsEstateHierarchy businessUnit = businessUnitService.findByLevelNo(bunit.getLevelNo(), bunit.getProductId());
+
         if (businessUnit == null) {
             loggerService.logCreate("Not allowed to add an Estate, You have reached your Hierarchy limit, kindly Update your organization hierarchy before proceeding ", SharedMethods.getEntityName(TmsEstateHierarchy.class), bunit.getUnitId(), AppConstants.STATUS_FAILED);
             response.setCode(403);
