@@ -2,6 +2,9 @@ FROM openjdk:8-jdk-alpine
 VOLUME /tmp
 EXPOSE 8000
 COPY target/ufs-1.0.0.jar app.jar
+COPY tenant.json /tenant.json
+COPY tenant-info.json /tenant-info.json
+COPY src/main/resources/ /resources
 ENV TZ=Africa/Nairobi
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
