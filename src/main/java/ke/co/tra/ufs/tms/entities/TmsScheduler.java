@@ -97,10 +97,10 @@ public class TmsScheduler implements Serializable {
     @Size(max = 150)
     @Column(name = "DIR_PATH")
     private String dirPath;
-    @Size(max = 10)
+    @Size(max = 15)
     @Column(name = "ACTION")
     private String action;
-    @Size(max = 10)
+    @Size(max = 15)
     @Column(name = "ACTION_STATUS")
     private String actionStatus;
     @Size(max = 5)

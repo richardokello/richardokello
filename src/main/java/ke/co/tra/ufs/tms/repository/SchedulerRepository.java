@@ -62,7 +62,7 @@ public interface SchedulerRepository extends CrudRepository<TmsScheduler, BigDec
      */
     @Query("SELECT u FROM #{#entityName} u WHERE u.actionStatus LIKE ?1% AND u.status LIKE ?2% AND u.action LIKE ?3% "
             + "AND u.downloadType LIKE %?4% AND u.scheduleType LIKE %?5% AND lower(u.intrash) = lower(?6) AND u.dateTime BETWEEN ?7 AND ?8  AND " +
-            " (u.downloadType LIKE %?9% OR u.scheduleType LIKE %?9% OR u.appId LIKE %?9%)")
+            " (u.downloadType LIKE %?9% OR u.scheduleType LIKE %?9% OR STR(COALESCE(u.appId, -1)) LIKE %?9%)")
     Page<TmsScheduler> findAllByDateTime(String actionStatus, String status, String action, String downloadType, String scheduleType, String intrash,Date from, Date to,String needle, Pageable pg);
 
     /**

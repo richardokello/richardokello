@@ -52,8 +52,8 @@ public interface DeviceTaskRepository extends CrudRepository<TmsDeviceTask, BigD
      * @return
      */
     @Query("SELECT u FROM #{#entityName} u WHERE u.downloadStatus LIKE ?1% AND STR(COALESCE(u.deviceId, -1)) LIKE ?4% AND "
-            + "STR(COALESCE(u.scheduleId, -1)) LIKE ?5% AND COALESCE(u.startDownloadTime, sysdate) BETWEEN ?2 AND ?3 AND lower(u.intrash) = lower(?6) AND "
-            + "(u.downloadStatus LIKE %?7% OR u.deviceId LIKE %?7% OR u.scheduleId LIKE %?7% OR u.deviceId.serialNo LIKE %?7%)")
+            + "STR(COALESCE(u.scheduleId, -1)) LIKE ?5% AND COALESCE(u.startDownloadTime, current_date) BETWEEN ?2 AND ?3 AND lower(u.intrash) = lower(?6) AND "
+            + "(u.downloadStatus LIKE %?7% OR STR(COALESCE(u.deviceId, -1)) LIKE %?7% OR STR(COALESCE(u.scheduleId, -1)) LIKE %?7% OR u.deviceId.serialNo LIKE %?7%)")
     public Page<TmsDeviceTask> findAll(String downloadStatus, Date from, Date to, String deviceId, String scheduleId, String intrash,String needle, Pageable pg);
 
     /**
