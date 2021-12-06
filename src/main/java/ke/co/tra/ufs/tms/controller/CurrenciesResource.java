@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
+
+import ke.co.tra.ufs.tms.config.messageSource.Message;
 import ke.co.tra.ufs.tms.entities.UfsCurrency;
 import ke.co.tra.ufs.tms.entities.wrappers.ActionWrapper;
 import ke.co.tra.ufs.tms.entities.wrappers.filters.ProductFilter;
@@ -44,10 +46,12 @@ public class CurrenciesResource {
 
     private final LoggerServiceLocal loggerService;
     private final CurrencyService currencyService;
+    private final Message message;
 
-    public CurrenciesResource(LoggerServiceLocal loggerService, CurrencyService currencyService) {
+    public CurrenciesResource(LoggerServiceLocal loggerService, CurrencyService currencyService, Message message) {
         this.loggerService = loggerService;
         this.currencyService = currencyService;
+        this.message = message;
     }
 
     @ApiOperation(value = "Create Currency", notes = "used to create a product within the system")
@@ -64,7 +68,7 @@ public class CurrenciesResource {
         if (validation.hasErrors()) {
             loggerService.logCreate("Creating new Currency failed due to validation errors", SharedMethods.getEntityName(UfsCurrency.class), currency.getId(), AppConstants.STATUS_FAILED);
             response.setCode(400);
-            response.setMessage("Creating new Currency failed due to validation errors");
+            response.setMessage(message.setMessage(AppConstants.VALIDATION_ERROR));
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
@@ -96,7 +100,7 @@ public class CurrenciesResource {
             if (currencyService.findByCurrencyCode(currency.getCode()) != null) {
                 loggerService.logCreate("Creating new Currency failed due to the provided"
                         + " Currency Code exists (Code: " + currency.getCode() + ")", SharedMethods.getEntityName(UfsCurrency.class), currency.getId(), AppConstants.STATUS_FAILED);
-                throw new GeneralBadRequest("Currency Code is already in use", HttpStatus.CONFLICT);
+                throw new GeneralBadRequest(message.setMessage(AppConstants.CURRENCY_CODE_IN_USE), HttpStatus.CONFLICT);
             }
         }
     }
@@ -203,12 +207,12 @@ public class CurrenciesResource {
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
 
-        UfsCurrency dbUser = currencyService.findCurrency(currency.getId()).get();
-        if (dbUser == null) {
+        UfsCurrency ufsCurrency = currencyService.findCurrency(currency.getId()).get();
+        if (ufsCurrency == null) {
             loggerService.logUpdate("Updating Currency (Currency id: " + currency.getId()
                     + ") failed due to currency not found", SharedMethods.getEntityName(UfsCurrency.class), currency.getId(), AppConstants.STATUS_FAILED);
             response.setCode(HttpStatus.NOT_FOUND.value());
-            response.setMessage("Sorry failed to locate product with the specified id");
+            response.setMessage(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND));
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
 
@@ -275,7 +279,7 @@ public class CurrenciesResource {
             if (dbMake == null) {
                 loggerService.logDelete("Failed to delete UfsCurrency (id " + id + "). Failed to locate make with specified id",
                         UfsCurrency.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("UfsCurrency with id " + id + " doesn't exist");
+                errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND) +" " + id);
             } else {
                 dbMake.setAction(AppConstants.ACTIVITY_DELETE);
                 dbMake.setActionStatus(AppConstants.STATUS_UNAPPROVED);

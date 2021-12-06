@@ -263,4 +263,20 @@ public class AppConstants {
     public static final String CONTACT_ADMIN = "CONTACT_ADMIN";
     public static final String DECLINE_FAIL_CONTACT_ADMIN = "DECLINE_FAIL_CONTACT_ADMIN";
     public static final String ENTITY_LACKS_ID = "ENTITY_LACKS_ID";
+    public static final String CURRENCY_CODE_IN_USE = "CURRENCY_CODE_IN_USE";
+    public static final String RECORD_WITH_SIMILAR_NAME_EXIST = "RECORD_WITH_SIMILAR_NAME_EXIST";
+    public static final String RECORD_NOT_MODIFIED = "RECORD_NOT_MODIFIED";
+    public static final String SOME_RECORDS_ID_NOT_FOUND = "SOME_RECORDS_ID_NOT_FOUND";
+    public static final String MAKER_CANNOT_DECLINE_OWN_RECORD = "MAKER_CANNOT_DECLINE_OWN_RECORD";
+    public static final String SUCCESS_STRING = "SUCCESS_STRING";
+    public static final String RECORD_HAS_ALREADY_BEEN = "RECORD_HAS_ALREADY_BEEN";
+    public static final String YOUR_USERNAME = "YOUR_USERNAME";
+    public static final String USER_PASSWORD = "USER_PASSWORD";
+    public static final String TO_LOGIN_TO_POS = "TO_LOGIN_TO_POS";
+    public static final String DEVICE_HAS_UNAPPROVED_ACTION = "DEVICE_HAS_UNAPPROVED_ACTION";
+    public static final String DEVICE_HAS_BEEN_RELEASED = "DEVICE_HAS_BEEN_RELEASED";
+    public static final String NO_APPROPRIATE_SERIAL_NO = "NO_APPROPRIATE_SERIAL_NO";
+    public static final String AGENT_WRAPPER_WITH_SIMILAR_TID = "AGENT_WRAPPER_WITH_SIMILAR_TID";
+    public static final String CUSTOMER_DETAILS_AGENT_NOT_FOUND = "CUSTOMER_DETAILS_AGENT_NOT_FOUND";
+    public static final String DATA_NOT_FOUND = "DATA_NOT_FOUND";
 }

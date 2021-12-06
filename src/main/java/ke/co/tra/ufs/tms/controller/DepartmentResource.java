@@ -17,10 +17,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
+
+import ke.co.tra.ufs.tms.config.messageSource.Message;
 import ke.co.tra.ufs.tms.entities.UfsDepartment;
-import ke.co.tra.ufs.tms.entities.UfsDeviceMake;
 import ke.co.tra.ufs.tms.entities.UfsModifiedRecord;
-import ke.co.tra.ufs.tms.entities.UfsUserRole;
 import ke.co.tra.ufs.tms.entities.wrappers.ActionWrapper;
 import ke.co.tra.ufs.tms.entities.wrappers.filters.CommonFilter;
 import ke.co.tra.ufs.tms.repository.SupportRepository;
@@ -56,10 +56,12 @@ public class DepartmentResource{
     private final LoggerServiceLocal loggerService;
     private final MasterRecordService recordService;
     private final SupportRepository supportRepo;
+    private final Message message;
     
-    public DepartmentResource(LoggerServiceLocal loggerService, MasterRecordService recordService,SupportRepository supportRepo) {
+    public DepartmentResource(LoggerServiceLocal loggerService, MasterRecordService recordService, SupportRepository supportRepo, Message message) {
         this.loggerService = loggerService;
         this.recordService = recordService;
+        this.message = message;
         this.log = LoggerFactory.getLogger(this.getClass());
         this.supportRepo = supportRepo;
     }
@@ -72,7 +74,7 @@ public class DepartmentResource{
         UfsDepartment dbDeprt = recordService.getDepartment(department.getDepartmentName());
         if (dbDeprt != null) {
             response.setCode(409);
-            response.setMessage("Department with similar name exists");
+            response.setMessage(message.setMessage(AppConstants.RECORD_WITH_SIMILAR_NAME_EXIST));
             return new ResponseEntity(response, HttpStatus.CONFLICT);
         }
         department.setId(null);
@@ -114,7 +116,7 @@ public class DepartmentResource{
             loggerService.logUpdate("Updating department failed. Department with specified id ( "
                     + department.getId() + ") doesn't exist", SharedMethods.getEntityName(UfsDepartment.class), department.getId(), AppConstants.STATUS_FAILED);
             response.setCode(404);
-            response.setMessage("Department with specified id doesn't exist");
+            response.setMessage(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND));
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
         /*dbDepartment.setAction(AppConstants.ACTIVITY_UPDATE);
@@ -133,7 +135,7 @@ public class DepartmentResource{
         supportRepo.setMapping(UfsDepartment.class);
         if (supportRepo.handleEditRequest(department, UfsModifiedRecord.class) == false) {
             response.setCode(HttpStatus.EXPECTATION_FAILED.value());
-            response.setMessage("Sorry department has not been modified");
+            response.setMessage(message.setMessage(AppConstants.RECORD_NOT_MODIFIED));
             return new ResponseEntity(response, HttpStatus.EXPECTATION_FAILED);
         } else {
             response.setData(department);
@@ -168,7 +170,7 @@ public class DepartmentResource{
         }
         if (errors.size() > 0) {
             response.setCode(HttpStatus.MULTI_STATUS.value());
-            response.setMessage("Some department id(s) could not be located: " + errors.toString());
+            response.setMessage(message.setMessage(AppConstants.SOME_RECORDS_ID_NOT_FOUND)+" " + errors.toString());
             response.setData(errors);
             return new ResponseEntity(response, HttpStatus.MULTI_STATUS);
         } else {
@@ -186,10 +188,10 @@ public class DepartmentResource{
             if (department == null) {
                 loggerService.logUpdate("Failed to approve department (id " + id + "). Failed to locate department with specified id",
                         UfsDepartment.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("Department make with id " + id + " doesn't exist");
+                errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND) + " "+ id);
                 continue;
             } else if (loggerService.isInitiator(SharedMethods.getEntityName(UfsDepartment.class), id, department.getAction())) {
-                errors.add("Failed to approve department (id " + id + "). You can't approve your own record");
+                errors.add(message.setMessage(AppConstants.MAKER_CANNOT_APPROVE_RECORD_WITH_ID) + " " + id);
                 loggerService.logApprove("Failed to approve department (" + id + "). You can't approve your own record", UfsDepartment.class.getSimpleName(), id, AppConstants.STATUS_FAILED, action.getNotes());
                 continue;
             }else if (department.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)
@@ -205,7 +207,7 @@ public class DepartmentResource{
 
                 loggerService.logUpdate("Failed to approve record (" + department.getDepartmentName()+ "). Record doesn't have approve actions",
                         SharedMethods.getEntityName(UfsDepartment.class), id, AppConstants.STATUS_FAILED);
-                errors.add("Record doesn't have approve actions");
+                errors.add(message.setMessage(AppConstants.NO_APPROPRIATE_ACTION));
 
             }
 
@@ -233,10 +235,10 @@ public class DepartmentResource{
                 if (department == null) {
                     loggerService.logDelete("Failed to decline department (id " + id + ") actions. Failed to locate department with specified id",
                             UfsDepartment.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                    errors.add("Device make with id " + id + " doesn't exist");
+                    errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND)+" " + id);
                     continue;
                 } else if (loggerService.isInitiator(UfsDepartment.class.getSimpleName(), id, department.getAction())) {
-                    errors.add("Sorry maker can't decline their own record (" + department.getDepartmentName()+ ")");
+                    errors.add(message.setMessage(AppConstants.MAKER_CANNOT_DECLINE_OWN_RECORD));
                     loggerService.logUpdate("Failed to decline department (" + department.getDepartmentName() + "). Maker can't decline their own record", SharedMethods.getEntityName(UfsDepartment.class), id, AppConstants.STATUS_FAILED);
                     continue;
                 } else if (department.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)
@@ -251,7 +253,7 @@ public class DepartmentResource{
                 } else {
                     loggerService.logUpdate("Failed to decline record (" + department.getDepartmentName() + "). Record doesn't have approve actions",
                             SharedMethods.getEntityName(UfsDepartment.class), id, AppConstants.STATUS_FAILED);
-                    errors.add("Record doesn't have approve actions");
+                    errors.add(message.setMessage(AppConstants.NO_APPROPRIATE_ACTION));
                 }
             } catch (ExpectationFailed ex) {
                 errors.add(ex.getMessage());
@@ -303,11 +305,11 @@ public class DepartmentResource{
         try {
             supportRepo.setMapping(UfsDepartment.class);
             if ((UfsDepartment) supportRepo.mergeChanges(entity.getId(), UfsModifiedRecord.class) == null) {
-                throw new ExpectationFailed("Failed to approve Department (" + entity.getDepartmentName() + "). Changes not found");
+                throw new ExpectationFailed(message.setMessage(AppConstants.FAILED_TO_APPROVE) + " "+ entity.getDepartmentName());
             }
         } catch (IOException | IllegalArgumentException | IllegalAccessException ex) {
             log.error(AppConstants.AUDIT_LOG, "Failed to approve record changes", ex);
-            throw new ExpectationFailed("Failed to approve record changes please contact the administrator for more help");
+            throw new ExpectationFailed(message.setMessage(AppConstants.CONTACT_ADMIN));
         }
         entity.setActionStatus(AppConstants.STATUS_APPROVED);
         this.recordService.saveDepartment(entity);
@@ -352,7 +354,7 @@ public class DepartmentResource{
             entity = (UfsDepartment) supportRepo.declineChanges(entity, UfsModifiedRecord.class);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             log.error(AppConstants.AUDIT_LOG, "Failed to decline record changes", ex);
-            throw new ExpectationFailed("Failed to decline record changes please contact the administrator for more help");
+            throw new ExpectationFailed(message.setMessage(AppConstants.CONTACT_ADMIN));
         }
         entity.setActionStatus(AppConstants.STATUS_DECLINED);
         this.recordService.saveDepartment(entity);

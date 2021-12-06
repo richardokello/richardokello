@@ -2,6 +2,7 @@ package ke.co.tra.ufs.tms.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
+import ke.co.tra.ufs.tms.config.messageSource.Message;
 import ke.co.tra.ufs.tms.entities.*;
 import ke.co.tra.ufs.tms.entities.wrappers.ActionWrapper;
 import ke.co.tra.ufs.tms.entities.wrappers.AssignDeviceWrapper;
@@ -67,11 +68,12 @@ public class DevicesResource {
     private final SysConfigService configService;
     private final NotifyService notifyService;
     private final TmsDeviceTidMidRepository tidMidRepository;
+    private final Message message;
 
     public DevicesResource(DeviceService deviceService, PosUserServiceTemplate userServiceTemplate, LoggerServiceLocal loggerService, SupportRepository supportRepo,
                            SchedulerService schedulerService, ProductService productService, SupportService supportService, SharedMethods sharedMethods, TmsDeviceParamService deviceParamService, RestTemplateClient restTemplateClient, ObjectMapper mapper,
                            UfsTerminalHistoryService terminalHistoryService, PosUserService posUserService, PasswordEncoder encoder,
-                           SysConfigService configService, NotifyService notifyService, TmsDeviceTidMidRepository tidMidRepository) {
+                           SysConfigService configService, NotifyService notifyService, TmsDeviceTidMidRepository tidMidRepository, Message message) {
         this.deviceService = deviceService;
         this.userServiceTemplate = userServiceTemplate;
         this.loggerService = loggerService;
@@ -89,6 +91,7 @@ public class DevicesResource {
         this.configService = configService;
         this.notifyService = notifyService;
         this.tidMidRepository = tidMidRepository;
+        this.message = message;
     }
 
     @ApiOperation(value = "Fetch Devices")
@@ -122,7 +125,7 @@ public class DevicesResource {
         if (validation.hasErrors()) {
             log.error("Error=>", SharedMethods.getFieldMapErrors(validation));
             response.setCode(400);
-            response.setMessage("Creating new Device failed due to validation errors");
+            response.setMessage(message.setMessage(AppConstants.VALIDATION_ERROR));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         log.error("Saving devices with size {}", onboardWrapper.size());
@@ -141,7 +144,7 @@ public class DevicesResource {
         Optional<TmsDevice> optional = deviceService.getDevice(id);
         if (!optional.isPresent()) {
             response.setCode(HttpStatus.NOT_FOUND.value());
-            response.setMessage("Device not found");
+            response.setMessage(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND + " "+ id));
 
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 
@@ -150,7 +153,7 @@ public class DevicesResource {
         TmsDevice tmsDevice = optional.get();
         response.setData(tmsDevice);
         response.setCode(HttpStatus.OK.value());
-        response.setMessage("success");
+        response.setMessage(AppConstants.SUCCESS_STRING);
         return ResponseEntity.ok(response);
 
     }
@@ -176,16 +179,16 @@ public class DevicesResource {
                 if (dbMake == null) {
                     loggerService.logApprove("Failed to approve device  (id " + id + "). Failed to locate make with specified id",
                             TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                    errors.add("Device make with id " + id + " doesn't exist");
+                    errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND)+" " + id );
                     continue;
                 } else if (dbMake.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)
                         && dbMake.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_APPROVED)) {
                     loggerService.logApprove("Failed to approve device  (id " + id + "). Record has already been approved",
                             TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                    errors.add("Failed to approve device  (id " + id + "). Record has already been approved");
+                    errors.add(message.setMessage(AppConstants.RECORD_HAS_ALREADY_BEEN)+" (" + id + ")");
                     continue;
                 } else if (loggerService.isInitiator(TmsDevice.class.getSimpleName(), id, dbMake.getAction())) {
-                    errors.add("Sorry maker can't approve their own record (" + dbMake.getSerialNo() + ")");
+                    errors.add(message.setMessage(AppConstants.MAKER_CANNOT_APPROVE_RECORD)+" (" + dbMake.getSerialNo() + ")");
                     loggerService.logUpdate("Failed to approve device (" + dbMake.getSerialNo() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsDevice.class), id, AppConstants.STATUS_FAILED);
                     continue;
                 } else if (dbMake.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_CREATE)
@@ -227,7 +230,7 @@ public class DevicesResource {
                 } else {
                     loggerService.logUpdate("Failed to approve record (" + dbMake.getSerialNo() + "). Record doesn't have approve actions",
                             SharedMethods.getEntityName(TmsDevice.class), id, AppConstants.STATUS_FAILED);
-                    errors.add("Record doesn't have approve actions");
+                    errors.add(message.setMessage(AppConstants.NO_APPROPRIATE_ACTION));
                 }
                 deviceService.saveDevice(dbMake);
             } catch (ExpectationFailed ex) {
@@ -265,20 +268,20 @@ public class DevicesResource {
             if (customerOwner != null) {
                 String cutomerRandomPin = RandomStringUtils.random(Integer.parseInt(configService.findByEntityAndParameter(AppConstants.ENTITY_POS_CONFIGURATION,
                         AppConstants.PARAMETER_POS_PIN_LENGTH).getValue()), false, true);
-                String message = "Your username is " + posUser.getUsername() + ". Use password " + cutomerRandomPin + " to login to POS terminal";
+                String messageS = message.setMessage(AppConstants.YOUR_USERNAME) +" " + posUser.getUsername() + ". "+message.setMessage(AppConstants.USER_PASSWORD) + cutomerRandomPin + " " + message.setMessage(AppConstants.TO_LOGIN_TO_POS);
                 posUser.setPin(encoder.encode(cutomerRandomPin));
                 posUser.setActionStatus(AppConstants.ACTION_STATUS_APPROVED);
                 posUserService.savePosUser(posUser);
 
                 if (customerOwner.getDirectorEmailAddress() != null) {
-                    notifyService.sendEmail(customerOwner.getDirectorEmailAddress(), "Login Credentials", message);
-                    notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
+                    notifyService.sendEmail(customerOwner.getDirectorEmailAddress(), "Login Credentials", messageS);
+                    notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), messageS);
                     loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                             posUser.getPosUserId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED);
                 } else {
                     if (customerOwner.getDirectorPrimaryContactNumber() != null) {
                         // send sms
-                        notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), message);
+                        notifyService.sendSms(customerOwner.getDirectorPrimaryContactNumber(), messageS);
                         loggerService.log("Sent login credentials for " + customerOwner.getDirectorName(), UfsPosUser.class.getSimpleName(),
                                 posUser.getPosUserId(), AppConstants.ACTIVITY_CREATE, AppConstants.STATUS_COMPLETED);
                     } else {
@@ -309,11 +312,11 @@ public class DevicesResource {
         try {
             supportRepo.setMapping(UfsDeviceMake.class);
             if ((UfsDeviceMake) supportRepo.mergeChanges(entity.getDeviceId(), UfsModifiedRecord.class) == null) {
-                throw new ExpectationFailed("Failed to approve Device (" + entity.getSerialNo() + "). Changes not found");
+                throw new ExpectationFailed(message.setMessage(AppConstants.FAILED_TO_APPROVE));
             }
         } catch (IOException | IllegalArgumentException | IllegalAccessException ex) {
             log.error(AppConstants.AUDIT_LOG, "Failed to approve record changes", ex);
-            throw new ExpectationFailed("Failed to approve record changes please contact the administrator for more help");
+            throw new ExpectationFailed(message.setMessage(AppConstants.CONTACT_ADMIN));
         }
         loggerService.logApprove("Done approving Device  (" + entity.getSerialNo() + ") changes",
                 SharedMethods.getEntityName(UfsUserRole.class), entity.getDeviceId(),
@@ -402,7 +405,7 @@ public class DevicesResource {
     public ResponseEntity<ResponseWrapper> releaseDevice(@RequestBody @Valid ReleaseDeviceAction action) {
         ResponseWrapper response = new ResponseWrapper();
         if (!(action.getStatus().equals(AppConstants.STATUS_REPAIR) || action.getStatus().equals(AppConstants.STATUS_REALLOCATE))) {
-            response.setMessage("Validation error occured. Expects status to be " + AppConstants.STATUS_REPAIR + " or " + AppConstants.STATUS_REALLOCATE);
+            response.setMessage(message.setMessage(AppConstants.VALIDATION_ERROR)+" " + AppConstants.STATUS_REPAIR + " or " + AppConstants.STATUS_REALLOCATE);
             response.setCode(400);
             return ResponseEntity.badRequest().body(response);
         }
@@ -413,17 +416,17 @@ public class DevicesResource {
             if (device == null) {
                 loggerService.logUpdate("Failed to release device  (id " + id + "). Failed to locate device with specified id",
                         TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("Device with id " + id + " doesn't exist");
+                errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND+ " " + id));
                 continue;
             } else if (device.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
                 loggerService.logUpdate("Failed to release device  (Serial Number: " + device.getSerialNo() + "). Device has unapproved actions (action: " + device.getAction() + ")",
                         TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("Device (Serial Number: " + device.getSerialNo() + ") has Unapproved actions");
+                errors.add(message.setMessage(AppConstants.DEVICE_HAS_UNAPPROVED_ACTION)+" " + device.getSerialNo() );
                 continue;
             } else if (device.getStatus().equalsIgnoreCase(AppConstants.STATUS_REPAIR) || device.getStatus().equalsIgnoreCase(AppConstants.STATUS_REALLOCATE)) {
                 loggerService.logUpdate("Failed to release device  (Serial Number: " + device.getSerialNo() + "). Device has already been released",
                         TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("Device (Serial Number: " + device.getSerialNo() + ") has already been released");
+                errors.add(message.setMessage(AppConstants.DEVICE_HAS_BEEN_RELEASED)+" "+ device.getSerialNo());
                 continue;
             }
 //            String data = "{\"status"
@@ -458,10 +461,10 @@ public class DevicesResource {
                 if (device == null) {
                     loggerService.logDelete("Failed to decline device (id " + id + ") actions. Failed to locate device with specified id",
                             UfsDeviceMake.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                    errors.add("Device with id " + id + " doesn't exist");
+                    errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND + " " + id));
                     continue;
                 } else if (loggerService.isInitiator(TmsDevice.class.getSimpleName(), id, device.getAction())) {
-                    errors.add("Sorry maker can't decline their own record (Serial Number: " + device.getSerialNo() + ")");
+                    errors.add(message.setMessage(AppConstants.MAKER_CANNOT_APPROVE_RECORD) + " "+device.getSerialNo());
                     loggerService.logUpdate("Failed to decline device (Serial Number: " + device.getSerialNo() + "). Maker can't decline their own record", SharedMethods.getEntityName(TmsDevice.class), id, AppConstants.STATUS_FAILED);
                     continue;
                 } else if (device.getAction().equalsIgnoreCase(AppConstants.ACTIVITY_RELEASE)
@@ -484,7 +487,7 @@ public class DevicesResource {
                 } else {
                     loggerService.logUpdate("Failed to decline record (Serial Number: " + device.getSerialNo() + "). Record doesn't have approve actions",
                             SharedMethods.getEntityName(UfsDeviceMake.class), id, AppConstants.STATUS_FAILED);
-                    errors.add("Record doesn't have approve actions");
+                    errors.add(message.setMessage(AppConstants.NO_APPROPRIATE_ACTION));
                 }
                 device.setActionStatus(AppConstants.STATUS_DECLINED);
                 deviceService.saveDevice(device);
@@ -548,11 +551,11 @@ public class DevicesResource {
             if (device == null) {
                 loggerService.logDelete("Failed to decommission device (id: " + id + "). Failed to locate device with specified id",
                         TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("Device with id " + id + " doesn't exist");
+                errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND) + id);
             } else if (device.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
                 loggerService.logDelete("Failed to decommission device(Serial No. " + device.getSerialNo() + "). Record has unapproved actions",
                         TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("Record (Serial No. " + device.getSerialNo() + ") has unapproved actions");
+                errors.add(message.setMessage(AppConstants.NO_APPROPRIATE_SERIAL_NO)+ " " + device.getSerialNo());
             } else {
                 device.setAction(AppConstants.ACTIVITY_DECOMMISSION);
                 device.setActionStatus(AppConstants.STATUS_UNAPPROVED);
@@ -582,11 +585,11 @@ public class DevicesResource {
             if (device == null) {
                 loggerService.logDelete("Failed to delete device (id: " + id + "). Failed to locate device with specified id",
                         TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("Device with id " + id + " doesn't exist");
+                errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND + " " + id));
             } else if (device.getActionStatus().equalsIgnoreCase(AppConstants.STATUS_UNAPPROVED)) {
                 loggerService.logDelete("Failed to delete device(Serial No. " + device.getSerialNo() + "). Record has unapproved actions",
                         TmsDevice.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("Record (Serial No. " + device.getSerialNo() + ") has unapproved actions");
+                errors.add(message.setMessage(AppConstants.NO_APPROPRIATE_SERIAL_NO)+" " + device.getSerialNo() );
             } else {
                 device.setAction(AppConstants.ACTIVITY_DELETE);
                 device.setActionStatus(AppConstants.STATUS_UNAPPROVED);
@@ -620,7 +623,7 @@ public class DevicesResource {
             if (dbMake == null) {
                 loggerService.logUpdate("Failed to Device Task  (id " + id + "). Failed to locate Device Task with specified id",
                         TmsScheduler.class.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                errors.add("Device Task with id " + id + " doesn't exist");
+                errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND) + " " + id);
                 continue;
             }
             dbMake.setDownloadStatus("CANCELLED");
@@ -677,7 +680,7 @@ public class DevicesResource {
         if (validation.hasErrors()) {
             loggerService.logCreate("Creating new AgentWrapper details failed due to validation errors", SharedMethods.getEntityName(DeviceCustomerDetails.class), customerDetails.getAgentMerchantId(), AppConstants.STATUS_FAILED);
             response.setCode(400);
-            response.setMessage("Creating new AgentWrapper details failed due to validation errors");
+            response.setMessage(message.setMessage(AppConstants.VALIDATION_ERROR));
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
@@ -686,7 +689,7 @@ public class DevicesResource {
         DeviceCustomerDetails dbDeprt = deviceService.findByAgentMerchantId(customerDetails.getAgentMerchantId());
         if (dbDeprt != null) {
             response.setCode(409);
-            response.setMessage("AgentWrapper Details with similar TID exists");
+            response.setMessage(message.setMessage(AppConstants.AGENT_WRAPPER_WITH_SIMILAR_TID));
             return new ResponseEntity(response, HttpStatus.CONFLICT);
         }
         customerDetails.setDeviceCustomerId(null);
@@ -709,7 +712,7 @@ public class DevicesResource {
         DeviceCustomerDetails dbDeprt = deviceService.findByAgentMerchantId(customerDetails.getAgentMerchantId());
         if (dbDeprt == null) {
             response.setCode(409);
-            response.setMessage("Customer Details with similar Merchant ID / AgentWrapper Id not Found");
+            response.setMessage(message.setMessage(AppConstants.CUSTOMER_DETAILS_AGENT_NOT_FOUND));
             return new ResponseEntity(response, HttpStatus.CONFLICT);
         }
         dbDeprt.setFormValues(customerDetails.getFormValues());
@@ -760,7 +763,7 @@ public class DevicesResource {
                 ResponseWrapper responseWrapper = restTemplateClient.getForEntity(ResponseWrapper.class, tidUrl, new String[]{agentMerchantId});
                 return ResponseEntity.ok(responseWrapper);
             } catch (Exception e) {
-                response.setMessage("Data not found");
+                response.setMessage(message.setMessage(AppConstants.DATA_NOT_FOUND));
                 return ResponseEntity.ok(response);
             }
         }

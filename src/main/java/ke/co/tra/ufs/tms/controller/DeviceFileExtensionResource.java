@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javax.validation.Valid;
+
+import ke.co.tra.ufs.tms.config.messageSource.Message;
 import ke.co.tra.ufs.tms.entities.TmsDeviceFileExt;
 import ke.co.tra.ufs.tms.repository.TmsDeviceFileExtRepository;
 import ke.co.tra.ufs.tms.service.LoggerServiceLocal;
@@ -37,10 +39,12 @@ public class DeviceFileExtensionResource {
 
     private final TmsDeviceFileExtRepository deviceFileExtRepository;
     private final LoggerServiceLocal loggerService;
+    private final Message message;
 
-    public DeviceFileExtensionResource(TmsDeviceFileExtRepository deviceFileExtRepository, LoggerServiceLocal loggerService) {
+    public DeviceFileExtensionResource(TmsDeviceFileExtRepository deviceFileExtRepository, LoggerServiceLocal loggerService, Message message) {
         this.deviceFileExtRepository = deviceFileExtRepository;
         this.loggerService = loggerService;
+        this.message = message;
     }
 
     @ApiOperation(value = "Create Device Model Extension", notes = "used to create a product within the system")
@@ -57,7 +61,7 @@ public class DeviceFileExtensionResource {
         if (validation.hasErrors()) {
             loggerService.logCreate("Creating new Model extension failed due to validation errors", SharedMethods.getEntityName(TmsDeviceFileExt.class), deviceFileExt.getId(), AppConstants.STATUS_FAILED);
             response.setCode(400);
-            response.setMessage("Creating new Model extension failed due to validation errors");
+            response.setMessage(message.setMessage(AppConstants.VALIDATION_ERROR));
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
