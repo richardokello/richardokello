@@ -17,6 +17,7 @@ import java.util.zip.ZipFile;
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
 
+import ke.co.tra.ufs.tms.config.messageSource.Message;
 import ke.co.tra.ufs.tms.entities.TmsApp;
 import ke.co.tra.ufs.tms.entities.UfsDeviceModel;
 import ke.co.tra.ufs.tms.entities.wrappers.ActionWrapper;
@@ -29,6 +30,7 @@ import ke.co.tra.ufs.tms.service.SysConfigService;
 import ke.co.tra.ufs.tms.utils.AppConstants;
 import ke.co.tra.ufs.tms.utils.SharedMethods;
 import ke.co.tra.ufs.tms.wrappers.ResponseWrapper;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -46,11 +48,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/app-management")
 @Api(value = "Application Management Resource")
+
 public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
 
     private final AppManagementService appManagementService;
     private final SharedMethods sharedMethods;
     private final SysConfigService configService;
+    private final Message message;
 
     @ApiOperation(value = "Fetch Applications", notes = "Used to fetch all Applications by Model ID")
 //    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
@@ -71,9 +75,10 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
 
     public AppManagementResource(AppManagementService appManagementService, LoggerServiceLocal loggerService,
                                  EntityManager entityManager, SupportRepository supportRepo, SharedMethods sharedMethods,
-                                 SysConfigService configService) {
+                                 SysConfigService configService, Message message) {
         super(loggerService, entityManager, supportRepo);
         this.appManagementService = appManagementService;
+        this.message = message;
         this.loggerService = loggerService;
         this.sharedMethods = sharedMethods;
         this.configService = configService;
@@ -84,6 +89,12 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
     public ResponseEntity<ResponseWrapper<TmsApp>> create(@Valid @RequestBody TmsApp entity) {
         throw new UnsupportedOperationException("Sorry not used (Used to silence super method)");
     }
+    @RequestMapping(value = "/tests", method = RequestMethod.GET)
+    public ResponseEntity getS(){
+        ResponseWrapper rs = new ResponseWrapper();
+        rs.setMessage(message.setMessage("TEST"));
+        return ResponseEntity.status(200).body(rs);
+    }
 
     @RequestMapping(method = RequestMethod.POST)
     @Transactional
@@ -92,7 +103,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
         String rootPath = configService.fetchSysConfigById(new BigDecimal(24)).getValue();
         if (entity.getApplication() == null) {
             response.setCode(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("Error!, Application not attached, Please attach a valid application file");
+            response.setMessage(message.setMessage(AppConstants.APPLICATION_NOT_ATTACHED));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
@@ -102,7 +113,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
         TmsApp tmsApp = appManagementService.findTmsAppByAppName(entity.getAppName());
         if (tmsApp != null) {
             response.setCode(HttpStatus.CONFLICT.value());
-            response.setMessage("Error!, Application name already exist");
+            response.setMessage(message.setMessage(AppConstants.APPLICATION_NAME_ALREADY_EXIST));
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
 
@@ -111,7 +122,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
         //if (!entity.getApplication().getContentType().equalsIgnoreCase("application/x-zip-compressed")) {
         if (!entity.getApplication().getOriginalFilename().substring(entity.getApplication().getOriginalFilename().lastIndexOf(".") + 1).equals("zip")) {
             response.setCode(HttpStatus.FAILED_DEPENDENCY.value());
-            response.setMessage("File extension is not supported, Only .Zip Extensions supported");
+            response.setMessage(message.setMessage(AppConstants.FILE_NAME_NOT_SUPPORTED));
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body(response);
         }
 
@@ -120,7 +131,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
         while (zipEntries.hasMoreElements()) {
             if (((ZipEntry) zipEntries.nextElement()).getName().contains("/")) {
                 response.setCode(HttpStatus.FAILED_DEPENDENCY.value());
-                response.setMessage("Zip file should not contain a  sub directory, should be files only");
+                response.setMessage(message.setMessage(AppConstants.ZIP_FILE_NOT_CONTAIN_SUB_DIRECTORY));
                 return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body(response);
             }
         }
@@ -140,7 +151,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
                     SharedMethods.getEntityName(TmsApp.class),
                     null, AppConstants.STATUS_FAILED);
             response.setCode(500);
-            response.setMessage("An internal server error occured while uploading device whitelist file");
+            response.setMessage(message.setMessage(AppConstants.UPLOAD_SYSTEM_ERROR));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -152,14 +163,14 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
         String rootPath = configService.fetchSysConfigById(new BigDecimal(24)).getValue();
         if (appWrapper.getApplication() == null) {
             response.setCode(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("Error!, Application not attached, Please attach a valid application file");
+            response.setMessage(message.setMessage(AppConstants.APPLICATION_NOT_ATTACHED));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         TmsApp entity = appManagementService.findTmsApp(appWrapper.getAppId()).get();
         if (entity == null) {
             response.setCode(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("Error!,  App ID not found");
+            response.setMessage(message.setMessage(AppConstants.APP_ID_NOT_FOUND));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
@@ -168,7 +179,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
         //if (!entity.getApplication().getContentType().equalsIgnoreCase("application/x-zip-compressed")) {
         if (!appWrapper.getApplication().getOriginalFilename().substring(appWrapper.getApplication().getOriginalFilename().lastIndexOf(".") + 1).equals("zip")) {
             response.setCode(HttpStatus.FAILED_DEPENDENCY.value());
-            response.setMessage("File extension is not supported, Only .Zip Extensions supported");
+            response.setMessage(message.setMessage(AppConstants.FILE_EXTENSION_NOT_SUPPORTED));
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body(response);
         }
 
@@ -177,7 +188,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
         while (zipEntries.hasMoreElements()) {
             if (((ZipEntry) zipEntries.nextElement()).getName().contains("/")) {
                 response.setCode(HttpStatus.FAILED_DEPENDENCY.value());
-                response.setMessage("Zip file should not contain a  sub directory, should be files only");
+                response.setMessage(message.setMessage(AppConstants.ZIP_FILE_NOT_CONTAIN_SUB_DIRECTORY));
                 return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body(response);
             }
         }
@@ -200,7 +211,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
             entity.setActionStatus(AppConstants.STATUS_UNAPPROVED);
             appManagementService.saveTmsApp(entity);
             response.setCode(200);
-            response.setMessage("Successfully Updated");
+            response.setMessage(message.setMessage(AppConstants.SUCCESS));
             response.setData(entity);
 
 
@@ -216,7 +227,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
                     SharedMethods.getEntityName(TmsApp.class),
                     null, AppConstants.STATUS_FAILED);
             response.setCode(500);
-            response.setMessage("An internal server error occured while uploading device whitelist file");
+            response.setMessage(message.setMessage(AppConstants.UPLOAD_SYSTEM_ERROR));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -248,7 +259,7 @@ public class AppManagementResource extends ChasisResourceLocal<TmsApp> {
         for (BigDecimal id : actions.getIds()) {
             TmsApp tmsApp = appManagementService.findTmsAppById(id);
             if (loggerService.isInitiator(TmsApp.class.getSimpleName(), id, tmsApp.getAction())) {
-                errors.add("Maker cannot approve own records with Id[" + id + "]");
+                errors.add(message.setMessage(AppConstants.MAKER_CANNOT_APPROVE_RECORD_WITH_ID) + " [" + id + "]");
                 continue;
             }
 

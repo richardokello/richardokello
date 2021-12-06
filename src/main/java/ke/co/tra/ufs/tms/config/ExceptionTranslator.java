@@ -5,6 +5,8 @@
  */
 package ke.co.tra.ufs.tms.config;
 
+import ke.co.tra.ufs.tms.config.messageSource.MessageSourceConfig;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +36,11 @@ import org.springframework.web.multipart.MultipartException;
  * json structures.
  */
 @ControllerAdvice
+@RequiredArgsConstructor
 public class ExceptionTranslator {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final MessageSourceConfig messageSourceConfig;
 
     @ExceptionHandler(org.springframework.orm.jpa.JpaObjectRetrievalFailureException.class)
     public ResponseEntity<ResponseWrapper> entityRetriavalFailure(org.springframework.orm.jpa.JpaObjectRetrievalFailureException ex) {

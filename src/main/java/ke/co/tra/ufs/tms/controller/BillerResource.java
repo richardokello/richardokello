@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import ke.axle.chassis.wrappers.ResponseWrapper;
+import ke.co.tra.ufs.tms.config.messageSource.Message;
 import ke.co.tra.ufs.tms.entities.wrappers.ActionWrapper;
 import ke.co.tra.ufs.tms.entities.wrappers.BillerUploadDetails;
 import ke.co.tra.ufs.tms.entities.wrappers.Billers;
 import ke.co.tra.ufs.tms.entities.wrappers.filters.CommonFilter;
+import ke.co.tra.ufs.tms.utils.AppConstants;
 import ke.co.tra.ufs.tms.utils.RestTemplateClient;
 import ke.co.tra.ufs.tms.utils.exceptions.ExpectationFailed;
 import ke.co.tra.ufs.tms.utils.exports.CsvFlexView;
@@ -32,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @RequestMapping("/billers")
 @Controller
@@ -40,14 +43,16 @@ public class BillerResource {
 
     private final RestTemplateClient restTemplateClient;
     private final ObjectMapper mapper;
+    private final Message message;
     @Value("${app.tid.url}")
     private String tidUrl;
     @Value("${app.biller.url}")
     private String billerUrl;
 
-    public BillerResource(RestTemplateClient restTemplateClient, ObjectMapper mapper) {
+    public BillerResource(RestTemplateClient restTemplateClient, ObjectMapper mapper, Message message) {
         this.restTemplateClient = restTemplateClient;
         this.mapper = mapper;
+        this.message = message;
     }
 
 
@@ -62,7 +67,7 @@ public class BillerResource {
                     || payload.getFile().getContentType().equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))) {
                 ResponseWrapper response = new ResponseWrapper();
                 response.setCode(400);
-                response.setMessage("Unsupported file type. Expects a CSV / Excel file");
+                response.setMessage(message.setMessage(AppConstants.CSV_OR_EXCEL_REQUIRED));
                 return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
             }
         }
@@ -80,6 +85,7 @@ public class BillerResource {
                 };
                 body.add("file", contentsAsResource);
                 ResponseWrapper responseWrapper = restTemplateClient.postMultipartEntity(ResponseWrapper.class, billerUrl + "/upload", body);
+
                 return new ResponseEntity(responseWrapper, HttpStatus.CREATED);
             } else {
                 payload.setId(null);

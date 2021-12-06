@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 
-import ke.co.tra.ufs.tms.entities.TmsDevice;
+import ke.co.tra.ufs.tms.config.messageSource.Message;
 import ke.co.tra.ufs.tms.entities.TmsEstateHierarchy;
 import ke.co.tra.ufs.tms.entities.TmsEstateItem;
 import ke.co.tra.ufs.tms.entities.UfsProduct;
@@ -61,14 +61,16 @@ public class BusinessUnitResource {
     private final BusinessUnitService businessUnitService;
     private final Logger log;
     private final DeviceService deviceService;
+    private final Message messageLocale;
     
-    public BusinessUnitResource(LoggerServiceLocal loggerService, SupportRepository supportRepo, ConfigService configService, MasterRecordService recordService, ProductService productService, BusinessUnitService businessUnitService, DeviceService deviceService) {
+    public BusinessUnitResource(LoggerServiceLocal loggerService, SupportRepository supportRepo, ConfigService configService, MasterRecordService recordService, ProductService productService, BusinessUnitService businessUnitService, DeviceService deviceService, Message messageLocale) {
         this.loggerService = loggerService;
         this.supportRepo = supportRepo;
         this.configService = configService;
         this.recordService = recordService;
         this.productService = productService;
         this.businessUnitService = businessUnitService;
+        this.messageLocale = messageLocale;
         log = LoggerFactory.getLogger(this.getClass());
         this.deviceService = deviceService;
     }
@@ -128,7 +130,7 @@ public class BusinessUnitResource {
             if (businessUnitService.findByLevelNo(businessUnit.getLevelNo(), businessUnit.getProductId()) != null) {
                 loggerService.logCreate("Creating new Business Unit failed due to the provided"
                         + " Business Unit level exists (Name: " + businessUnit.getLevelNo() + ")", SharedMethods.getEntityName(TmsEstateHierarchy.class), businessUnit.getUnitId(), AppConstants.STATUS_FAILED);
-                throw new GeneralBadRequest("Unit Level is already in use", HttpStatus.CONFLICT);
+                throw new GeneralBadRequest(AppConstants.UNIT_LEVEL_IN_USE, HttpStatus.CONFLICT);
             }
         }
     }
@@ -151,14 +153,14 @@ public class BusinessUnitResource {
             loggerService.logApprove("Approving a Unit  (Id: " + id + ")",
                     SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_PENDING, action.getNotes());
             if (businessUnit == null) {
-                String message = "Failed to approve Unit (unit id: " + id + "). Unit doesn't exist";
-                loggerService.logApprove(message,
+                String messageR = "Failed to approve Unit (unit id: " + id + "). Unit doesn't exist";
+                loggerService.logApprove(messageR,
                         SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_FAILED, action.getNotes());
-                errors.add(message);
+                errors.add(messageLocale.setMessage(AppConstants.FAILED_TO_APPROVE_UNIT) + " (unit id: " + id + ")");
                 continue;
             }
             if(loggerService.isInitiator(TmsEstateHierarchy.class.getSimpleName(), id, businessUnit.getAction())) {
-                errors.add("Sorry maker can't approve their own record (" + businessUnit.getUnitName() + ")");
+                errors.add(messageLocale.setMessage(AppConstants.MAKER_CANNOT_APPROVE_RECORD_WITH_ID)+" (" + businessUnit.getUnitName() + ")");
                 loggerService.logUpdate("Failed to approve Estate hierarchy (" + businessUnit.getUnitName() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_FAILED);
                 continue;
             }
@@ -199,7 +201,7 @@ public class BusinessUnitResource {
                 String message = "Failed to reject hierarchy (unit id: " + id + "). unit doesn't exist";
                 loggerService.logDeactivate(message,
                         SharedMethods.getEntityName(TmsEstateHierarchy.class), id, AppConstants.STATUS_FAILED, action.getNotes());
-                errors.add(message);
+                errors.add(messageLocale.setMessage(AppConstants.FAILED_TO_REJECT_HIERARCHY)+ " (unit id: " + id + ")");
                 continue;
             }
             if(loggerService.isInitiator(TmsEstateHierarchy.class.getSimpleName(), id, businessUnit.getAction())) {
@@ -237,7 +239,7 @@ public class BusinessUnitResource {
             @Valid @RequestBody TmsEstateHierarchy businessUnit, BindingResult validation) {
         ResponseWrapper response = new ResponseWrapper();
         if (validation.hasErrors()) {
-            loggerService.logUpdate("Upating Business unit failed due to validation errors", SharedMethods.getEntityName(TmsEstateHierarchy.class), businessUnit.getUnitId(), AppConstants.STATUS_FAILED);
+            loggerService.logUpdate("Updating Business unit failed due to validation errors", SharedMethods.getEntityName(TmsEstateHierarchy.class), businessUnit.getUnitId(), AppConstants.STATUS_FAILED);
             response.setCode(400);
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
@@ -248,7 +250,7 @@ public class BusinessUnitResource {
             loggerService.logUpdate("Updating Business Unit (unit id: " + businessUnit.getUnitId()
                     + ") failed due to unit not found", SharedMethods.getEntityName(TmsEstateHierarchy.class), businessUnit.getUnitId(), AppConstants.STATUS_FAILED);
             response.setCode(HttpStatus.NOT_FOUND.value());
-            response.setMessage("Sorry failed to locate business unit with the specified id");
+            response.setMessage(messageLocale.setMessage(AppConstants.BUSINESS_WITH_ID_NOT_FOUND));
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
         
@@ -324,7 +326,7 @@ public class BusinessUnitResource {
         if (validation.hasErrors()) {
             loggerService.logCreate("Creating new Estate due to validation errors", SharedMethods.getEntityName(TmsEstateHierarchy.class), unitItemWrapper.getUnitId(), AppConstants.STATUS_FAILED);
             response.setCode(400);
-            response.setMessage("Creating new Estate due to validation errors");
+            response.setMessage(messageLocale.setMessage(AppConstants.VALIDATION_ERROR));
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
@@ -337,7 +339,7 @@ public class BusinessUnitResource {
         if (businessUnit == null) {
             loggerService.logCreate("Not allowed to add an Estate, You have reached your Hierarchy limit, kindly Update your organization hierarchy before proceeding ", SharedMethods.getEntityName(TmsEstateHierarchy.class), bunit.getUnitId(), AppConstants.STATUS_FAILED);
             response.setCode(403);
-            response.setMessage("Not allowed to add an Estate, You have reached your Hierarchy limit, kindly Update your organization hierarchy before proceeding ");
+            response.setMessage(messageLocale.setMessage(AppConstants.HIERARCHY_LIMIT_REACHED));
             return new ResponseEntity(response, HttpStatus.FORBIDDEN);
         }
         
@@ -377,7 +379,7 @@ public class BusinessUnitResource {
             if (businessUnitService.findByLevelAndName(businessUnitItem.getUnitId(), businessUnitItem.getName()) != null) {
                 loggerService.logCreate("Creating new Estate failed due to the provided"
                         + " Estate name exists (Name: " + businessUnitItem.getName() + ")", SharedMethods.getEntityName(TmsEstateItem.class), businessUnitItem.getUnitItemId(), AppConstants.STATUS_FAILED);
-                throw new GeneralBadRequest("Estate Name is already in use", HttpStatus.CONFLICT);
+                throw new GeneralBadRequest(messageLocale.setMessage(AppConstants.ESTATE_NAME_IN_USE), HttpStatus.CONFLICT);
             }            
         }
     }
@@ -404,7 +406,7 @@ public class BusinessUnitResource {
             loggerService.logUpdate("Updating Business Unit Item (unit id: " + unitItemWrapper.getUnitId()
                     + ") failed due to unit not found", SharedMethods.getEntityName(TmsEstateItem.class), unitItemWrapper.getUnitItemId(), AppConstants.STATUS_FAILED);
             response.setCode(HttpStatus.NOT_FOUND.value());
-            response.setMessage("Sorry failed to locate business unit with the specified id");
+            response.setMessage(messageLocale.setMessage(AppConstants.BUSINESS_WITH_ID_NOT_FOUND));
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
         }
         //check if user has pending approvals
@@ -463,7 +465,7 @@ public class BusinessUnitResource {
             }
 
             if(loggerService.isInitiator(TmsEstateItem.class.getSimpleName(), id, businessUnitItem.getAction())) {
-                errors.add("Sorry maker can't approve their own record (" + businessUnitItem.getName() + ")");
+                errors.add(messageLocale.setMessage(AppConstants.MAKER_CANNOT_APPROVE_RECORD)+" (" + businessUnitItem.getName() + ")");
                 loggerService.logUpdate("Failed to approve Estate (" + businessUnitItem.getName() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsEstateItem.class), id, AppConstants.STATUS_FAILED);
                 continue;
             }
@@ -507,11 +509,11 @@ public class BusinessUnitResource {
             if (businessUnitItem == null) {
                 loggerService.logDeactivate("Failed to reject Estate (unit id: " + id + "). unit item doesn't exist",
                         SharedMethods.getEntityName(TmsEstateItem.class), id, AppConstants.STATUS_FAILED, action.getNotes());
-                errors.add("Failed to reject Business Unit item (unit id: " + id + "). unit item doesn't exist");
+                errors.add(messageLocale.setMessage(AppConstants.FAILED_TO_REJECT_BUSINESS_UNIT_ITEM)+ " (unit id: " + id + ")");
                 continue;
             }
             if(loggerService.isInitiator(TmsEstateItem.class.getSimpleName(), id, businessUnitItem.getAction())) {
-                errors.add("Sorry maker can't approve their own record (" + businessUnitItem.getName() + ")");
+                errors.add(messageLocale.setMessage(AppConstants.MAKER_CANNOT_APPROVE_RECORD)+" (" + businessUnitItem.getName() + ")");
                 loggerService.logUpdate("Failed to approve Estate (" + businessUnitItem.getName() + "). Maker can't approve their own record", SharedMethods.getEntityName(TmsEstateItem.class), id, AppConstants.STATUS_FAILED);
                 continue;
             }

@@ -236,4 +236,31 @@ public class AppConstants {
 
 
     public static final String TENANT_JSON_FILE_NAME = "tenant.json";
+    public static final String APPLICATION_NOT_ATTACHED = "APPLICATION_NOT_ATTACHED";
+    public static final String APPLICATION_NAME_ALREADY_EXIST = "APPLICATION_NAME_ALREADY_EXIST";
+    public static final String FILE_NAME_NOT_SUPPORTED = "FILE_NAME_NOT_SUPPORTED";
+    public static final String ZIP_FILE_NOT_CONTAIN_SUB_DIRECTORY = "ZIP_FILE_NOT_CONTAIN_SUB_DIRECTORY";
+    public static final String UPLOAD_SYSTEM_ERROR = "UPLOAD_SYSTEM_ERROR";
+    public static final String APP_ID_NOT_FOUND = "APP_ID_NOT_FOUND";
+    public static final String FILE_EXTENSION_NOT_SUPPORTED = "FILE_EXTENSION_NOT_SUPPORTED";
+    public static final String SUCCESS = "SUCCESS";
+    public static final String MAKER_CANNOT_APPROVE_RECORD = "MAKER_CANNOT_APPROVE_RECORD";
+    public static final String CSV_OR_EXCEL_REQUIRED = "CSV_OR_EXCEL_REQUIRED";
+    public static final String UNIT_LEVEL_IN_USE = "UNIT_LEVEL_IN_USE";
+    public static final String FAILED_TO_APPROVE_UNIT = "FAILED_TO_APPROVE_UNIT";
+    public static final String MAKER_CANNOT_APPROVE_RECORD_WITH_ID = "MAKER_CANNOT_APPROVE_RECORD_WITH_ID";
+    public static final String FAILED_TO_REJECT_HIERARCHY = "FAILED_TO_REJECT_HIERARCHY";
+    public static final String BUSINESS_WITH_ID_NOT_FOUND = "BUSINESS_WITH_ID_NOT_FOUND";
+    public static final String VALIDATION_ERROR = "VALIDATION_ERROR";
+    public static final String HIERARCHY_LIMIT_REACHED = "HIERARCHY_LIMIT_REACHED";
+    public static final String ESTATE_NAME_IN_USE = "ESTATE_NAME_IN_USE";
+    public static final String FAILED_TO_REJECT_BUSINESS_UNIT_ITEM = "FAILED_TO_REJECT_BUSINESS_UNIT_ITEM";
+    public static final String RECORD_WITH_ID_NOT_FOUND = "RECORD_WITH_ID_NOT_FOUND";
+    public static final String DEVICE_MAKE_NOT_MODIFIED = "DEVICE_MAKE_NOT_MODIFIED";
+    public static final String NO_APPROPRIATE_ACTION = "NO_APPROPRIATE_ACTION";
+    public static final String CHECKER_ERROR = "CHECKER_ERROR";
+    public static final String FAILED_TO_APPROVE = "FAILED_TO_APPROVE";
+    public static final String CONTACT_ADMIN = "CONTACT_ADMIN";
+    public static final String DECLINE_FAIL_CONTACT_ADMIN = "DECLINE_FAIL_CONTACT_ADMIN";
+    public static final String ENTITY_LACKS_ID = "ENTITY_LACKS_ID";
 }

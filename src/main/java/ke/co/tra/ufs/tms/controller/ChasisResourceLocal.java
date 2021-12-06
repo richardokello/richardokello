@@ -16,6 +16,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.validation.Valid;
+
+import ke.co.tra.ufs.tms.config.messageSource.Message;
 import ke.co.tra.ufs.tms.entities.UfsModifiedRecord;
 import ke.co.tra.ufs.tms.entities.wrappers.ActionWrapper;
 import ke.co.tra.ufs.tms.repository.SupportRepository;
@@ -24,6 +26,7 @@ import ke.co.tra.ufs.tms.utils.AppConstants;
 import ke.co.tra.ufs.tms.utils.ErrorList;
 import ke.co.tra.ufs.tms.utils.SharedMethods;
 import ke.co.tra.ufs.tms.wrappers.ResponseWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +55,7 @@ public class ChasisResourceLocal<T> {
     protected EntityManager entityManager;
     protected SupportRepository supportRepo;
     protected Logger log = LoggerFactory.getLogger(this.getClass());
+    @Autowired private Message message;
 
     public ChasisResourceLocal(LoggerServiceLocal loggerService, EntityManager entityManager,
                                SupportRepository supportRepo) {
@@ -87,7 +91,7 @@ public class ChasisResourceLocal<T> {
                                 response.setMessage(nickName.name() + " with id " + id + " doesn't exist");
                             } else {
                                 this.loggerService.logCreate("Record with id " + id + " doesn't exist", t.getClass().getSimpleName(), null, AppConstants.STATUS_FAILED);
-                                response.setMessage("Record with id " + id + " doesn't exist");
+                                response.setMessage(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND) + " "+ id);
                             }
                             response.setCode(404);
                             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -134,7 +138,7 @@ public class ChasisResourceLocal<T> {
             loggerService.logUpdate("Updating " + recordName + " failed due to record doesn't exist", t.getClass().getSimpleName(),
                     null, AppConstants.STATUS_FAILED);
             response.setCode(HttpStatus.NOT_FOUND.value());
-            response.setMessage("Sorry failed to locate record with the specified id");
+            response.setMessage(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND));
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
         PropertyAccessor accessor = PropertyAccessorFactory.forBeanPropertyAccess(dbT);
@@ -152,7 +156,7 @@ public class ChasisResourceLocal<T> {
         this.supportRepo.setMapping(t.getClass());
         if (supportRepo.handleEditRequest(t, UfsModifiedRecord.class) == false) {
             response.setCode(HttpStatus.EXPECTATION_FAILED.value());
-            response.setMessage("Sorry device make has not been modified");
+            response.setMessage(message.setMessage(AppConstants.DEVICE_MAKE_NOT_MODIFIED));
             return new ResponseEntity(response, HttpStatus.EXPECTATION_FAILED);
         } else {
             response.setData(t);
@@ -177,7 +181,7 @@ public class ChasisResourceLocal<T> {
             if (t == null) {
                 loggerService.logDelete("Deleting " + recordName + " failed due to record doesn't exist", clazz.getSimpleName(),
                         null, AppConstants.STATUS_FAILED);
-                errors.add(recordName + " with id " + id + " doesn't exist");
+                errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND+" "+id));
                 continue;
             }
             PropertyAccessor accessor = PropertyAccessorFactory.forBeanPropertyAccess(t);
@@ -226,7 +230,7 @@ public class ChasisResourceLocal<T> {
                 if (t == null) {
                     loggerService.logApprove("Failed to approve " + recordName + ". Failed to locate record with specified id",
                             clazz.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                    errors.add(recordName + " with id " + id + " doesn't exist");
+                    errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND) + " "+ id);
                     continue;
                 }
 
@@ -236,7 +240,7 @@ public class ChasisResourceLocal<T> {
 //                log.debug("==================> Proccessing entity action {} and status {}", action, actionStatus);
 
                 if (loggerService.isInitiator(clazz.getSimpleName(), id, action) && !actionStatus.equalsIgnoreCase("Unconfirmed")) {
-                    errors.add("Sorry maker can't approve their own record ");
+                    errors.add(message.setMessage(AppConstants.MAKER_CANNOT_APPROVE_RECORD));
                     loggerService.logApprove("Failed to approve " + recordName + ". Maker can't approve their own record",
                             SharedMethods.getEntityName(clazz), id, AppConstants.STATUS_FAILED);
                     continue;
@@ -259,7 +263,7 @@ public class ChasisResourceLocal<T> {
                 } else {
                     loggerService.logApprove("Failed to approve " + recordName + ". Record doesn't have approve actions",
                             clazz.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                    errors.add("Record doesn't have approve actions");
+                    errors.add(message.setMessage(AppConstants.NO_APPROPRIATE_ACTION));
                 }
                 this.entityManager.merge(t);
             } catch (ExpectationFailed ex) {
@@ -271,7 +275,7 @@ public class ChasisResourceLocal<T> {
         } else {
             response.setCode(HttpStatus.MULTI_STATUS.value());
             response.setData(errors);
-            response.setMessage(AppConstants.CHECKER_GENERAL_ERROR);
+            response.setMessage(message.setMessage(AppConstants.CHECKER_ERROR));
             return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
         }
     }
@@ -299,11 +303,11 @@ public class ChasisResourceLocal<T> {
         try {
             supportRepo.setMapping(entity.getClass());
             if (supportRepo.mergeChanges(id, UfsModifiedRecord.class) == null) {
-                throw new ExpectationFailed("Failed to approve " + nickName + ". Changes not found");
+                throw new ExpectationFailed(message.setMessage(AppConstants.FAILED_TO_APPROVE) + " "+ nickName);
             }
         } catch (IOException | IllegalArgumentException | IllegalAccessException ex) {
             log.error(AppConstants.AUDIT_LOG, "Failed to approve record changes", ex);
-            throw new ExpectationFailed("Failed to approve record changes please contact the administrator for more help");
+            throw new ExpectationFailed(message.setMessage(AppConstants.CONTACT_ADMIN));
         }
         loggerService.logApprove("Done approving " + nickName + " changes",
                 entity.getClass().getSimpleName(), id, AppConstants.STATUS_COMPLETED, notes);
@@ -348,7 +352,7 @@ public class ChasisResourceLocal<T> {
                 if (t == null) {
                     loggerService.logApprove("Failed to decline " + recordName + ". Failed to locate record with specified id",
                             clazz.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                    errors.add(recordName + " with id " + id + " doesn't exist");
+                    errors.add(message.setMessage(AppConstants.RECORD_WITH_ID_NOT_FOUND) +" "+ id);
                     continue;
                 }
 
@@ -357,7 +361,7 @@ public class ChasisResourceLocal<T> {
                 String actionStatus = accessor.getPropertyValue("actionStatus").toString();
 
                 if (loggerService.isInitiator(clazz.getSimpleName(), id, action) && !action.equalsIgnoreCase("Unconfirmed")) {
-                    errors.add("Sorry maker can't approve their own record ");
+                    errors.add(message.setMessage(AppConstants.MAKER_CANNOT_APPROVE_RECORD));
                     loggerService.logApprove("Failed to approve " + recordName + ". Maker can't approve their own record",
                             SharedMethods.getEntityName(clazz), id, AppConstants.STATUS_FAILED);
                     continue;
@@ -381,7 +385,7 @@ public class ChasisResourceLocal<T> {
                 } else {
                     loggerService.logApprove("Failed to decline " + recordName + ". Record doesn't have approve actions",
                             clazz.getSimpleName(), id, AppConstants.STATUS_FAILED);
-                    errors.add("Record doesn't have approve actions");
+                    errors.add(message.setMessage(AppConstants.NO_APPROPRIATE_ACTION));
                 }
                 this.entityManager.merge(t);
             } catch (ExpectationFailed ex) {
@@ -393,7 +397,7 @@ public class ChasisResourceLocal<T> {
         } else {
             response.setCode(HttpStatus.MULTI_STATUS.value());
             response.setData(errors);
-            response.setMessage(AppConstants.CHECKER_GENERAL_ERROR);
+            response.setMessage(message.setMessage(AppConstants.CHECKER_ERROR));
             return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
         }
     }
@@ -423,7 +427,7 @@ public class ChasisResourceLocal<T> {
             supportRepo.declineChanges(entity, UfsModifiedRecord.class);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             log.error(AppConstants.AUDIT_LOG, "Failed to decline record changes", ex);
-            throw new ExpectationFailed("Failed to decline record changes please contact the administrator for more help");
+            throw new ExpectationFailed(message.setMessage(AppConstants.DECLINE_FAIL_CONTACT_ADMIN));
         }
         loggerService.logApprove("Done declining " + nickName + " changes",
                 entity.getClass().getSimpleName(), id, AppConstants.STATUS_COMPLETED, notes);
@@ -442,7 +446,7 @@ public class ChasisResourceLocal<T> {
     }
 
     private void processDeclineConfirmation(Object id, T entity, String notes, String nickName) throws ExpectationFailed {
-        loggerService.logApprove("Declined ocnfirmation " + nickName + ".",
+        loggerService.logApprove("Declined confirmation " + nickName + ".",
                 entity.getClass().getSimpleName(), id, AppConstants.STATUS_COMPLETED, notes);
     }
 
@@ -478,7 +482,7 @@ public class ChasisResourceLocal<T> {
         }
 
         if (fieldId == null) {
-            throw new RuntimeException("Entity doesn't have an id field");
+            throw new RuntimeException(message.setMessage(AppConstants.ENTITY_LACKS_ID));
         }
 
         CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
