@@ -51,15 +51,12 @@
     <class>ke.co.tra.ufs.tms.entities.ParBinConfig</class>
     <class>ke.co.tra.ufs.tms.entities.ParMenuProfile</class>
     <class>ke.co.tra.ufs.tms.entities.TmsDeviceTidsMids</class>
-    <class>ke.co.tra.ufs.tms.entities.TmsDeviceMids</class>
-      <class>ke.co.tra.ufs.tms.entities.TmsDevDEv</class>
-    <class>ke.co.tra.ufs.tms.entities.TmsDev</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@192.168.1.152:1521:trcm"/>
-      <property name="javax.persistence.jdbc.user" value="UFS_SMART_SUITE"/>
-      <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
-      <property name="javax.persistence.jdbc.password" value="pass123"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://41.215.130.247:2345/TRCM_BRB"/>
+      <property name="javax.persistence.jdbc.user" value="postgres"/>
+      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="postgres"/>
     </properties>
   </persistence-unit>
 </persistence>

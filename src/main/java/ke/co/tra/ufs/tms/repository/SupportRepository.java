@@ -438,7 +438,8 @@ public class SupportRepository<T, E> {
             } else if (field.isAnnotationPresent(EditEntityId.class)) {
 //                c.add(Restrictions.eq(field.getName(), id));
                 if (field.getType().isAssignableFrom(String.class)) {
-                    c.add(Restrictions.eq(field.getName(), id.toString()));
+                    //Converted to bigInteger to eliminate the double zeros due to postgres issue
+                    c.add(Restrictions.eq(field.getName(), id.toBigInteger().toString()));
                 } else {
                     c.add(Restrictions.eq(field.getName(), id));
                 }
@@ -490,7 +491,8 @@ public class SupportRepository<T, E> {
                 c.add(Restrictions.eq(field.getName(), t.getClass().getSimpleName()));
             } else if (field.isAnnotationPresent(EditEntityId.class)) {
                 if (field.getType().isAssignableFrom(String.class)) {
-                    c.add(Restrictions.eq(field.getName(), id.toString()));
+                    //Converted to bigInteger to eliminate the double zeros due to postgres issue
+                    c.add(Restrictions.eq(field.getName(), id.toBigInteger().toString()));
                 } else {
                     c.add(Restrictions.eq(field.getName(), id));
                 }
@@ -552,7 +554,8 @@ public class SupportRepository<T, E> {
                 c.add(Restrictions.eq(field.getName(), t.getClass().getSimpleName()));
             } else if (field.isAnnotationPresent(EditEntityId.class)) {
                 if (field.getType().isAssignableFrom(String.class)) {
-                    c.add(Restrictions.eq(field.getName(), id.toString()));
+                    //Converted to bigInteger to eliminate the double zeros due to postgres issue
+                    c.add(Restrictions.eq(field.getName(), id.toBigInteger().toString()));
                 } else {
                     c.add(Restrictions.eq(field.getName(), id));
                 }
@@ -634,7 +637,8 @@ public class SupportRepository<T, E> {
                 c.add(Restrictions.eq(field.getName(), t.getClass().getSimpleName()));
             } else if (field.isAnnotationPresent(EditEntityId.class)) {
                 if (field.getType().isAssignableFrom(String.class)) {
-                    c.add(Restrictions.eq(field.getName(), id.toString()));
+                    //Converted to bigInteger to eliminate the double zeros due to postgres issue
+                    c.add(Restrictions.eq(field.getName(), id.toBigInteger().toString()));
                 } else {
                     c.add(Restrictions.eq(field.getName(), id));
                 }
