@@ -5,12 +5,14 @@ public class ParCommonFilter extends CommonFilter{
     private String customerTypeId;
     private String menuLevel;
     private String type;
+    private String profile;
 
     public ParCommonFilter() {
 
         this.customerTypeId = "";
         this.menuLevel = "";
         this.type = "";
+        this.profile = "";
     }
 
     public String getCustomerTypeId() {
@@ -35,5 +37,13 @@ public class ParCommonFilter extends CommonFilter{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 }

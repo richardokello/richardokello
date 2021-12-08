@@ -49,11 +49,11 @@ public class ParGlobalConfig implements Serializable {
     @ModifiableField
     @Column(name = "PROFILE")
     private BigDecimal profileId;
-
     @Filter
-    @Column(name = "PROFILE", insertable = false, updatable = false)
-    @ModifiableField
-    private String profile;
+//    @Column(name = "PROFILE", insertable = false, updatable = false)
+//    @ModifiableField
+//    private String profile;
+//
 
     @Column(name = "DESCRIPTION")
     @ModifiableField
