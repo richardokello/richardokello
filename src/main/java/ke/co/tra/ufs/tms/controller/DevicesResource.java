@@ -353,7 +353,7 @@ public class DevicesResource {
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
         deviceService.deleteAllByDeviceId(entity.getSerialNo());
         loggerService.logApprove("Done approving device (Serial no: " + entity.getSerialNo() + ") decommission.",
-                SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
+                SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(),
                 AppConstants.STATUS_COMPLETED, notes);
     }
 
@@ -370,7 +370,7 @@ public class DevicesResource {
 
         deviceService.deleteAllByDeviceId(entity.getSerialNo());
         loggerService.logApprove("Done approving device (Serial no: " + entity.getSerialNo() + ") decommission.",
-                SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
+                SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(),
                 AppConstants.STATUS_COMPLETED, notes);
     }
 
@@ -393,7 +393,7 @@ public class DevicesResource {
         //set Whitelisted device to unassigned
         deviceService.updateReleaseWhitelistBySerialSync(entity.getSerialNo());
         loggerService.logApprove("Done approving device (" + entity.getSerialNo() + ") release.",
-                SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
+                SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(),
                 AppConstants.STATUS_COMPLETED, notes);
     }
 
@@ -512,7 +512,7 @@ public class DevicesResource {
         entity.setStatus(mRecord.getValues());
         supportService.delete(mRecord);
         loggerService.logApprove("Done declining device (" + entity.getSerialNo() + ") Changes.",
-                SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
+                SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(),
                 AppConstants.STATUS_COMPLETED, notes);
     }
 
@@ -521,7 +521,7 @@ public class DevicesResource {
         entity.setStatus(mRecord.getValues());
         supportService.delete(mRecord);
         loggerService.logApprove("Done declining device (" + entity.getSerialNo() + ") release.",
-                SharedMethods.getEntityName(TmsDevice.class), entity.getSerialNo(),
+                SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(),
                 AppConstants.STATUS_COMPLETED, notes);
     }
 
