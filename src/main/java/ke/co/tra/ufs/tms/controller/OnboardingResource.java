@@ -717,13 +717,13 @@ public class OnboardingResource {
         if (onboardWrapper.getOutletIds() != null) {
             Set<String> mids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getMid).collect(Collectors.toSet());
             boolean exist = deviceService.checkIfMidExistsOnOtherCustomer(mids, onboardWrapper.getOutletIds());
-            if (!exist) {
-                if (!isUpdate) {
-                    return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
-                } else {
-                    return deviceService.checkIfMidExistsWithMultipleCurrenciesWithDeviceId(onboardWrapper.getTmsDeviceTidsMids(), device.getDeviceId());
-                }
-            }
+//            if (!exist) {
+//                if (!isUpdate) {
+//                    return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
+//                } else {
+//                    return deviceService.checkIfMidExistsWithMultipleCurrenciesWithDeviceId(onboardWrapper.getTmsDeviceTidsMids(), device.getDeviceId());
+//                }
+//            }
             return exist;
         }
         return false;
@@ -733,9 +733,9 @@ public class OnboardingResource {
         if (onboardWrapper.getTmsDeviceTidsMids() != null) {
             Set<String> mids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getMid).collect(Collectors.toSet());
             boolean exist = deviceService.checkIfMidExistsOnOtherCustomerByCustomerId(mids, onboardWrapper.getCustomerId());
-            if (!exist) {
-                return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
-            }
+//            if (!exist) {
+//                return deviceService.checkIfMidExistsWithMultipleCurrencies(onboardWrapper.getTmsDeviceTidsMids(), mids);
+//            }
             return exist;
         }
         return false;

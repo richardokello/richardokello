@@ -998,6 +998,7 @@ public class DeviceServiceTemplate implements DeviceService {
         if (customerIds.size() > 1) {
             return true;
         }
+
         return !customerIds.contains(customerId);
     }
 
@@ -1026,6 +1027,7 @@ public class DeviceServiceTemplate implements DeviceService {
     @Override
     public boolean checkIfMidExistsOnOtherCustomerByCustomerId(Set<String> mid, Long customer) {
         BigDecimal customerId = new BigDecimal(customer);
+        customerId = customerId.setScale(2, BigDecimal.ROUND_HALF_UP);
 
         List<TmsDeviceTidsMids> midQuery = tmsDeviceTidRepository.findAllByMidIn(mid);
         if (midQuery.size() < 1) {

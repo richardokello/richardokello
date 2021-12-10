@@ -252,10 +252,16 @@ public class LoggerServiceVersion implements LoggerServiceLocal, LoggerService {
 
     @Override
     public void log(String description, String Entity, Object entityId, String activity, String activityStatus) {
-        String ipAddress = request.getRemoteAddr();
-        String source = org.thymeleaf.util.StringUtils.abbreviate(request.getHeader("user-agent"), 100);
-        this.persistLog(description, Entity, (entityId == null) ? null : entityId.toString(), activity, activityStatus, null, this.getUser(), ipAddress, source);
-
+//        String ipAddress = request.getRemoteAddr();
+//        String source = org.thymeleaf.util.StringUtils.abbreviate(request.getHeader("user-agent"), 100);
+//        this.persistLog(description, Entity, (entityId == null) ? null : entityId.toString(), activity, activityStatus, null, this.getUser(), ipAddress, source);
+        RequestAttributes attribs = RequestContextHolder.getRequestAttributes();
+        if (attribs instanceof NativeWebRequest) {
+            HttpServletRequest request = (HttpServletRequest) ((NativeWebRequest) attribs).getNativeRequest();
+            String ipAddress =  request.getRemoteAddr();
+            String source =  org.thymeleaf.util.StringUtils.abbreviate(request.getHeader("user-agent"), 100);
+            this.persistLog(description, Entity, (entityId == null) ? null : entityId.toString(), activity, activityStatus, null, this.getUser(), ipAddress, source);
+        }
     }
 
     @Override
