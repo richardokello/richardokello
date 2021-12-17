@@ -54,6 +54,7 @@ public class ParGlobalConfigProfileServiceTemplate implements ParGlobalConfigPro
         profile.setDescription(request.getDescription());
         profile.setAction(AppConstants.ACTIVITY_UPDATE);
         profile.setActionStatus(AppConstants.STATUS_UNAPPROVED);
+        parGlobalConfigProfileRepository.save(profile);
 
         parGlobalConfigRepository.deleteAllByProfileId(profile.getId());
 

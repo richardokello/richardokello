@@ -42,7 +42,6 @@ public class WhitelistWrapper {
     private String location;
     private String deliveredBy;
     private String receivedBy;
-    @NotNull
     private Long ufsBankId;
 
 

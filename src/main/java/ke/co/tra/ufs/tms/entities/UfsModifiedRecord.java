@@ -61,7 +61,7 @@ public class UfsModifiedRecord implements Serializable {
     @EditEntityId
     private String entityId;
     @Size(max = 4000)
-    @Column(name = "VALUES")
+    @Column(name = "\"VALUES\"")
     @EditDataWrapper
     private String values;
     @Column(name = "EDITTED_ON", insertable = false, updatable = false)
