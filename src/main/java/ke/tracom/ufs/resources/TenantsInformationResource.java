@@ -5,6 +5,7 @@ import com.google.gson.JsonParseException;
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tracom.ufs.config.messageSource.MessageSourceConfig;
 import ke.tracom.ufs.config.multitenancy.ThreadLocalStorage;
+import ke.tracom.ufs.utils.MessageParser;
 import ke.tracom.ufs.wrappers.TenantInfoWrapper;
 import ke.tracom.ufs.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 @RequestMapping("/tenant-info")
 public class TenantsInformationResource {
-
-    private final MessageSourceConfig messageSourceConfig;
+    private final MessageParser messageParser;
 
     @GetMapping()
     public ResponseEntity<ResponseWrapper<List<TenantInfoWrapper>>> fetchTenantsInfo(){
@@ -38,7 +38,7 @@ public class TenantsInformationResource {
             response.setCode(500);
             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.setMessage(messageSourceConfig.message().getMessage(AppConstants.SUCCESSFUL_REQUEST,null,new Locale(ThreadLocalStorage.getLanguage())));
+        response.setMessage(messageParser.parse(AppConstants.SUCCESSFUL_REQUEST));
         response.setData(tenantinfo);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }

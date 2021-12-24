@@ -5,6 +5,7 @@ import ke.tracom.ufs.entities.UfsAuthentication;
 import ke.tracom.ufs.entities.UfsOtpCategory;
 import ke.tracom.ufs.entities.UfsUser;
 import ke.tracom.ufs.repositories.UserRepository;
+import ke.tracom.ufs.services.AuthTokenReplication;
 import ke.tracom.ufs.services.SysConfigService;
 import ke.tracom.ufs.services.template.LoggerServiceTemplate;
 import ke.tracom.ufs.services.template.NotifyServiceTemplate;
@@ -23,11 +24,14 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -44,11 +48,12 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
     private final LoggerServiceTemplate loggerService;
     private final UserDetailsService userDetailsService;
     private final SysConfigService configService;
+    private final AuthTokenReplication authTokenReplicationService;
 
     public AppAuthenticationProvider(@Qualifier("userDetailsServiceTemplate") UserDetailsService userDetailsService,
                                      AuthenticationRepository authRepository, PasswordEncoder passwordEncoder,
                                      UserRepository userRepository, OTPRepository otpRepository, @Qualifier("commonUserService") CustomUserService userService, NotifyServiceTemplate notifyService,
-                                     LoggerServiceTemplate loggerService, SysConfigService configService) {
+                                     LoggerServiceTemplate loggerService,AuthTokenReplication authTokenReplicationService, SysConfigService configService) {
         super();
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
@@ -60,6 +65,7 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
         this.userService = userService;
         this.notifyService = notifyService;
         this.loggerService = loggerService;
+        this.authTokenReplicationService = authTokenReplicationService;
     }
 
     @Override
@@ -70,6 +76,23 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
         try {
             Authentication auth = super.authenticate(authentication);
             log.info("Done Authenticating user using AppAuthenticationProvider");
+
+            // check that the user has multi-tenancy permission and if yes, then replicate the
+            // authentication token to all the other schemas. This ensures that the user is not
+            // de-authenticated when selecting a different schema.
+            boolean isSuperUser = auth.getAuthorities().contains(new SimpleGrantedAuthority("MULTITENANCY PERMISSION"));
+
+            if (isSuperUser){
+
+                System.err.printf(">>>>>>>>>>>> Multitenant Superuser found!");
+                System.err.print("******************\n Replicating user token to other schemas \n *****************");
+
+                // fetch the username for the current logged in user
+                String username = ((UserDetails)auth.getPrincipal()).getUsername();
+                // replicate the authentication token to other schemas
+                authTokenReplicationService.replicateAuthToken(username);
+            }
+
             //reset login attempts
             dbAuth.setLoginAttempts((short) 0);
             dbAuth.setLastLogin(new Date());
