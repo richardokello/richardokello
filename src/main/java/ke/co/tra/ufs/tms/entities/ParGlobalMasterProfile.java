@@ -52,15 +52,6 @@ public class ParGlobalMasterProfile {
     @JoinColumn(name = "MENU_PROFILE", insertable = false, updatable = false)
     private ParMenuProfile menuProfile;
 
-    @ModifiableField
-    @Column(name = "RECEIPT_PROFILE")
-    private BigDecimal receiptProfileId;
-
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "RECEIPT_PROFILE", insertable = false, updatable = false)
-    private ParMenuProfile receiptProfile;
-
-
     @Column(name = "DATE_CREATED", insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
