@@ -20,6 +20,7 @@ import ke.tracom.ufs.entities.wrapper.OtpConfigWrapper;
 import ke.tracom.ufs.repositories.*;
 import ke.tracom.ufs.security.CustomUserDetails;
 import ke.tracom.ufs.security.OtpOAuth2AccessToken;
+import ke.tracom.ufs.services.AuthTokenReplication;
 import ke.tracom.ufs.services.CustomUserService;
 import ke.tracom.ufs.services.UserService;
 import ke.tracom.ufs.services.template.FileStorageService;
@@ -40,6 +41,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -82,6 +85,8 @@ public class AuthorizationResource {
     UfsUserTypeRepository typeRepository;
     @Autowired
     FileStorageService sservice;
+    @Autowired
+    private AuthTokenReplication authTokenReplicationService;
 
     public AuthorizationResource(TokenStore tokenStore, @Qualifier("mainUserService") UserService userService,
                                  UserRepository userRepository, LoggerServiceTemplate loggerService, PasswordEncoder encoder, CustomUserService customUserService, AuthenticationRepository authRepository,
@@ -137,7 +142,20 @@ public class AuthorizationResource {
             tokenStore.removeAccessToken(token);
             tokenStore.storeAccessToken(otpToken, a);
 
+            // check that the user has multi-tenancy permission and if yes, then replicate the
+            // authentication token to all the other schemas. This ensures that the user is not
+            // de-authenticated when selecting a different schema on the UI.
 
+            // check for multi-tenant superuser role.
+            boolean isSuperUser = a.getAuthorities().contains(new SimpleGrantedAuthority("MULTITENANCY PERMISSION"));
+
+            if (isSuperUser){
+                System.err.println("** found multi-tenant superuser. Replicating authentication token...");
+                // get the username of the authenticated user.
+                String username = ((UserDetails)a.getPrincipal()).getUsername();
+                // replicate the authentication token to other schemas
+                authTokenReplicationService.replicateAuthToken(username);
+            }
             OtpResponse data = new OtpResponse();
             data.permissions = a.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
             data.userDetails = user;
