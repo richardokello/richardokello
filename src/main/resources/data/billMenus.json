@@ -3,10 +3,12 @@
     {
       "name": "Academic Bridge",
       "hasSubMenu": true,
+      "svcCode": "01",
       "submenu": [
         {
           "name": "Check Payment Status",
           "hasSubMenu": false,
+          "svcCode": "01.1",
           "submenu": [],
           "fields": [
             {
