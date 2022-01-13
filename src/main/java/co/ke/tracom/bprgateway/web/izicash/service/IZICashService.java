@@ -59,7 +59,7 @@ public class IZICashService {
             authenticateAgentResponse =  baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
         }catch (InvalidAgentCredentialsException e)
         {
-         transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+         transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
                  "AgentValidation","FAILED","ipAddress");
         }
 
@@ -70,7 +70,7 @@ public class IZICashService {
          * 01 IZI Request from external system 00 Success 06 Failure 43 Not
          * Valid Mobile Number 45 Unknown Error
          */
-        try {
+
 
             IZICashResponse responses=new IZICashResponse();
             TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(IZI_CASH_TRANSACTION_LIMIT_ID, request.getAmount());
@@ -82,7 +82,8 @@ public class IZICashService {
                 responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
                 return responses;
             }
-
+try
+{
             //TODO Clarify
             String transactionTerminalID = "PC";
             iziCashTxnLogs.setTid(transactionTerminalID);

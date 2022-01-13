@@ -42,13 +42,16 @@ public class TransactionService {
                         .setDebitAccountNo(tot24.getDebitacctno())
                         .setT24PosRef(tot24.getGatewayref()) // RRN
                         .setT24Reference(tot24.getT24reference())
-                        .setT24ResponseCode(processingStatus);
+                        .setT24ResponseCode(processingStatus)
+                        .setTxnType("Pc Module");
 
         allTransactionsRepository.save(allTransactions);
     }
 
     public void saveFailedUserPasswordTransactions( String description, String entityName, String userId, String activity, String activityStatus, String ipAddress)
     {
+        Date date=new Date();
+
         String bprMlkAuditLogsLast =  auditLogsRepository.findLast();
         int new_log_id = Integer.parseInt(bprMlkAuditLogsLast);
         BprMlkAuditLogs bprMlkAuditLogs=new BprMlkAuditLogs().
@@ -58,6 +61,7 @@ public class TransactionService {
                 .setStatus(activityStatus)
                 .setEntityName(entityName)
                 .set_userId(userId)
+                .setOccurenceTime(date)
                 .setClientId("bpr-service")
                 .setIpAddress(ipAddress);
         auditLogsRepository.save(bprMlkAuditLogs);

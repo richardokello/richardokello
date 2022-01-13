@@ -73,7 +73,7 @@ public class RRAService {
         try {
             optionalAuthenticateAgentResponse= baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
         }catch (InvalidAgentCredentialsException e){
-            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
                     "AgentValidation","FAILED","ipAddress");
         }
 

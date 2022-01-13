@@ -21,6 +21,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
 
@@ -46,7 +48,7 @@ public class EUCLService {
         }
         catch (InvalidAgentCredentialsException e)
         {
-            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
                     "AgentValidation","FAILED","ipAddress");
         }
 
@@ -126,17 +128,22 @@ public class EUCLService {
                 return response;
 
             } else {
+                String tot24Isnull = Objects.isNull(tot24.getT24failnarration())==true?"response has no fail narration":tot24.getT24failnarration().replace("\"", "");
                 MeterNoData data = MeterNoData.builder()
                         .rrn(referenceNo)
                         .build();
-                log.info("EUCL Validation failed. Transaction [" + referenceNo + "] " + tot24.getT24failnarration().replace("\"", ""));
+
+                    log.info("EUCL Validation failed. Transaction [" + referenceNo + "] " + tot24Isnull);
+
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
                         Double.valueOf(request.getAmount()), "198",
                         optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
-                MeterNoValidationResponse response = MeterNoValidationResponse
+
+                MeterNoValidationResponse response;
+                response = MeterNoValidationResponse
                         .builder()
                         .status("198")
-                        .message(tot24.getT24failnarration().replace("\"", ""))
+                        .message(tot24Isnull)
                         .data(data)
                         .build();
                 return response;
@@ -169,7 +176,7 @@ public class EUCLService {
             authenticateAgentResponse= baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
         }
         catch(InvalidAgentCredentialsException e){
-          transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+          transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
                   "AgentValidation","FAILED","ipAddress");
         }
 
