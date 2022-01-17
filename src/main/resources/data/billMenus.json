@@ -68,15 +68,17 @@
     {
       "name": "WASAC",
       "hasSubMenu": true,
+      "svcCode": "02",
       "submenu": [
         {
           "name": "Get Customer Profile",
           "hasSubMenu": false,
+          "svcCode": "02.1",
           "submenu": [],
           "fields": [
             {
-              "label": "Enter customer ID",
-              "type": "string",
+              "label": "Customer ID",
+              "type": "alphanumeric",
               "length": 15,
               "validated": true,
               "order": 1
@@ -86,6 +88,7 @@
         {
           "name": "Make Payment",
           "hasSubMenu": false,
+          "svcCode": "02.2",
           "submenu": [],
           "fields": [
             {
@@ -111,10 +114,83 @@
             },
             {
               "label": "Description",
-              "type": "string",
+              "type": "alphanumeric",
               "length": 160,
               "validated": false,
               "order": 10
+            }
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "name": "EUCL",
+      "hasSubMenu": true,
+      "svcCode": "03",
+      "submenu": [
+        {
+          "name": "Validate Meter Number",
+          "hasSubMenu": false,
+          "svcCode": "03.1",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Meter number",
+              "type": "alphanumeric",
+              "length": 20,
+              "validated": true,
+              "order": 1
+            },
+            {
+              "label": "Phone number",
+              "type": "numeric",
+              "length": 12,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": 12,
+              "validated": true,
+              "order": 3
+            }
+          ]
+        },
+        {
+          "name": "Make Payment",
+          "hasSubMenu": false,
+          "svcCode": "03.2",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Meter number",
+              "type": "alphanumeric",
+              "length": 20,
+              "validated": true,
+              "order": 1
+            },
+            {
+              "label": "Phone number",
+              "type": "numeric",
+              "length": 12,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": 12,
+              "validated": true,
+              "order": 3
+            },
+            {
+              "label": "Meter location",
+              "type": "alphanumeric",
+              "length": 30,
+              "validated": false,
+              "order": 4
             }
           ]
         }

@@ -12,6 +12,7 @@ import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
+import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.Response;
@@ -79,16 +80,37 @@ public class BillRequestHandler {
 
     public void validation(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
-
         CustomObjectMapper mapper = new CustomObjectMapper();
+
         ValidationRequest genericRequest = mapper.readValue(requestString, ValidationRequest.class);
         log.info("Validation REQUEST OBJECT: {}", genericRequest);
 
         List<TransactionData> data = genericRequest.getData();
+        System.out.println(""+data.get(0).getValue());
 
-        CustomerProfileResponse customerProfileResponse =
-                wasacService.fetchCustomerProfile(
-                        CustomerProfileRequest.builder().customerId(data.get(0).getValue()).build());
+        CustomerProfileResponse customerProfileResponse = null;
+
+        switch (genericRequest.getSvcCode()){
+            case "01.1":
+                customerProfileResponse = null;
+                break;
+
+            case "02.1":
+                 customerProfileResponse =
+                        wasacService.fetchCustomerProfile(
+                                CustomerProfileRequest.builder().customerId(/*data.get(0).getValue()*/"").credentials(
+                                        new MerchantAuthInfo(genericRequest.getCredentials().getUsername()
+                                                ,genericRequest.getCredentials().getPassword())).build());
+                break;
+
+            case "03.1":
+                customerProfileResponse = null;
+                break;
+
+
+        }
+
+
 
         Response validationResponse = customerProfileResponse.getData();
 
@@ -105,9 +127,8 @@ public class BillRequestHandler {
         validationData.add(
                 TransactionData.builder()
                         .name("Client Post Name")
-                        .value(validationResponse.getPostname())
-                        .build());
-        validationData.add(
+                        .value("POSTest").build());
+       /* validationData.add(
                 TransactionData.builder().name("Name").value(validationResponse.getName()).build());
         validationData.add(
                 TransactionData.builder().name("Zone").value(validationResponse.getZone()).build());
@@ -117,22 +138,32 @@ public class BillRequestHandler {
                 TransactionData.builder().name("Email").value(validationResponse.getEmail()).build());
         validationData.add(
                 TransactionData.builder().name("Phone").value(validationResponse.getPhone()).build());
+        validationData.add(*/
+
+        validationData.add(
+                TransactionData.builder().name("Name").value("wanjohi").build());
+        validationData.add(
+                TransactionData.builder().name("Zone").value("Nairobi").build());
+        validationData.add(
+                TransactionData.builder().name("Mobile No").value("0712890098").build());
+        validationData.add(
+                TransactionData.builder().name("Email").value("test@gmail.com").build());
+        validationData.add(
+                TransactionData.builder().name("Phone").value("123654878").build());
         validationData.add(
                 TransactionData.builder()
                         .name("National ID")
-                        .value(validationResponse.getPersonnalid())
-                        .build());
+                        .value("03214569").build());
         validationData.add(
-                TransactionData.builder().name("Branch").value(validationResponse.getBranch()).build());
+                TransactionData.builder().name("Branch").value("tracom").build());
         validationData.add(
-                TransactionData.builder().name("Balance").value(validationResponse.getBalance()).build());
+                TransactionData.builder().name("Balance").value("120").build());
         validationData.add(
-                TransactionData.builder().name("Meter No").value(validationResponse.getMeterid()).build());
+                TransactionData.builder().name("Meter No").value("0002222111555").build());
         validationData.add(
                 TransactionData.builder()
                         .name("Customer Id")
-                        .value(validationResponse.getCustomerid())
-                        .build());
+                        .value("02315").build());
 
         AcademicBridgeValidation response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
         writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
@@ -158,8 +189,20 @@ public class BillRequestHandler {
 
     public void billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
+        //Accadermic bill payment
+        BillPaymentResponse billPaymentResponse = null;
+        //kelvin
+        /*switch(requestString){
+            case 01.1:
+                billPaymentResponse = getBillPaymentResponse();
+                break;
 
-        BillPaymentResponse billPaymentResponse = getBillPaymentResponse();
+            case 01.2:
+                billPaymentResponse = getBillPaymentResponse();
+                break;
+        }*/
+
+
 
         Buffer outBuffer = Buffer.buffer();
         CustomObjectMapper mapper = new CustomObjectMapper();

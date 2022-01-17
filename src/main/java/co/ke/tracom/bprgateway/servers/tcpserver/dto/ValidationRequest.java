@@ -25,4 +25,7 @@ public class ValidationRequest {
 
   @JsonProperty("data")
   private List<TransactionData> data = new ArrayList<>();
+
+  @JsonProperty("svcCode")
+  private String svcCode;
 }
