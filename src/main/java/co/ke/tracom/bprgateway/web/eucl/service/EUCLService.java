@@ -21,8 +21,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
 
@@ -128,22 +126,22 @@ public class EUCLService {
                 return response;
 
             } else {
-                String tot24Isnull = Objects.isNull(tot24.getT24failnarration())==true?"response has no fail narration":tot24.getT24failnarration().replace("\"", "");
+                String tot24narration=tot24.getT24failnarration()==null?"no response":tot24.getT24failnarration().replace("\"", "");
+                //String tot24Isnull = Objects.isNull(tot24.getT24failnarration())?"response has no fail narration":tot24.getT24failnarration().replace("\"", "");
                 MeterNoData data = MeterNoData.builder()
                         .rrn(referenceNo)
                         .build();
 
-                    log.info("EUCL Validation failed. Transaction [" + referenceNo + "] " + tot24Isnull);
+                    log.info("EUCL Validation failed. Transaction [" + referenceNo + "] " + tot24narration);
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
                         Double.valueOf(request.getAmount()), "198",
                         optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
 
-                MeterNoValidationResponse response;
-                response = MeterNoValidationResponse
+                MeterNoValidationResponse response = MeterNoValidationResponse
                         .builder()
                         .status("198")
-                        .message(tot24Isnull)
+                        .message(tot24narration)
                         .data(data)
                         .build();
                 return response;

@@ -92,6 +92,21 @@ public class SendMoneyService {
 
         try {
 
+
+            long agentFloatAccountBalances = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
+
+            if (agentFloatAccountBalance < request.getAmount()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "RECEIVE MONEY", "1200",
+                        request.getAmount(), "098",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
+                return SendMoneyResponse.builder()
+                        .status("098")
+                        .message("Insufficient agent account balance")
+                        .data(null)
+                        .build();
+            }
+
             SendMoneyResponse responses=new SendMoneyResponse();
 
             TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(SENDMONEY_TRANSACTION_LIMIT_ID, (long) request.getAmount());
