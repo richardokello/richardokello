@@ -1,8 +1,11 @@
 package co.ke.tracom.bprgateway.web.wasac.controller;
 
+import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.ValidationRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
-import co.ke.tracom.bprgateway.web.wasac.data.payment.WasacPaymentRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.payment.WasacPaymentResponse;
 import co.ke.tracom.bprgateway.web.wasac.service.WASACService;
 import io.swagger.annotations.ApiOperation;
@@ -13,12 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-
 @Slf4j
 @RestController
 @RequestMapping(
-    name = "/api/wasac",
+    value = "/api/wasac",
     produces = {"application/json"})
 @RequiredArgsConstructor
 public class WasacController {
@@ -28,9 +29,8 @@ public class WasacController {
   @ApiOperation(
       value = "Get the customer profile details from WASAC given a customer ID",
       response = CustomerProfileResponse.class)
-  @GetMapping("/customer/{customerId}")
-  public ResponseEntity<?> getCustomerProfile(
-          @RequestBody CustomerProfileRequest request) {
+  @GetMapping("/customer")
+  public ResponseEntity<?> getCustomerProfile(@RequestBody CustomerProfileRequest request) {
 
     log.info("WASAC REQUEST DATA - CUSTOMER REQUEST: {}", request);
     CustomerProfileResponse responseEntity = wasacService.fetchCustomerProfile(request);
@@ -43,10 +43,21 @@ public class WasacController {
   @PostMapping("/payment")
   public ResponseEntity<?> creditAccount(
       @ApiParam(value = "Payment details", required = true) @RequestBody
-          WasacPaymentRequest request) {
+              BillPaymentRequest request) {
 
     log.info("WASAC REQUEST DATA - PAYMENT: {}", request);
-    WasacPaymentResponse responseEntity = wasacService.payWaterBill(request);
+    BillPaymentResponse responseEntity = wasacService.payWaterBill(request);
+    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+  }
+
+  @ApiOperation(
+          value = "Validate Water Account. Username and password needed for authentication",
+          response = WasacPaymentResponse.class)
+  @GetMapping("/validate")
+  public ResponseEntity<?> validateWaterAccount(@RequestBody
+                                                        ValidationRequest validationRequest){
+    log.info("WASAC REQUEST DATA - PAYMENT: {}", validationRequest);
+    AcademicBridgeValidation responseEntity = wasacService.validateWaterAccount(validationRequest, "PC");
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
 }
