@@ -41,4 +41,6 @@
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>
+
+    <logger name="io.vertx.core.impl.BlockedThreadChecker" level="OFF" />
 </configuration>

@@ -8,6 +8,7 @@ import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBri
 import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.ValidationRequest;
 import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeService;
+import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeT24;
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
@@ -32,6 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BillRequestHandler {
     private final WASACService wasacService;
+    private  final AcademicBridgeT24 academicBridgeT24Service;
 
     public void menu(String requestString, BillMenusService billMenusService, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
@@ -85,26 +87,34 @@ public class BillRequestHandler {
         ValidationRequest genericRequest = mapper.readValue(requestString, ValidationRequest.class);
         log.info("Validation REQUEST OBJECT: {}", genericRequest);
 
-        List<TransactionData> data = genericRequest.getData();
-        System.out.println(""+data.get(0).getValue());
+        //List<TransactionData> data = genericRequest.getCredentials().getData();
+        String data = genericRequest.getCredentials().getData();
 
-        CustomerProfileResponse customerProfileResponse = null;
 
-        switch (genericRequest.getSvcCode()){
+        CustomerProfileResponse customerProfileResponse = new CustomerProfileResponse();
+
+        customerProfileResponse.setMessage("Success");
+        customerProfileResponse.setStatus("200");
+        customerProfileResponse.setData(null);
+        switch (genericRequest.getCredentials().getSvcCode()){
             case "01.1":
-                customerProfileResponse = null;
+                String res = ( academicBridgeT24Service.validateStudentId(genericRequest.getCredentials().getSerialNumber()));
+                System.out.println("In case 01.1");
+                System.out.println("T24 response is : "+res);
                 break;
 
             case "02.1":
-                 customerProfileResponse =
-                        wasacService.fetchCustomerProfile(
-                                CustomerProfileRequest.builder().customerId(/*data.get(0).getValue()*/"").credentials(
+                System.out.println("In case 02.1");
+                 customerProfileResponse = null;
+                        /*wasacService.fetchCustomerProfile(
+                                CustomerProfileRequest.builder().customerId(data.get(0).getValue()).credentials(
                                         new MerchantAuthInfo(genericRequest.getCredentials().getUsername()
-                                                ,genericRequest.getCredentials().getPassword())).build());
+                                                ,genericRequest.getCredentials().getPassword())).build());*/
                 break;
 
             case "03.1":
-                customerProfileResponse = null;
+                System.out.println("In case 03.1");
+               // customerProfileResponse = null;
                 break;
 
 

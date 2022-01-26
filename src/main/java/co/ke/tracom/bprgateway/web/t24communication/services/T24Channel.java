@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.springframework.stereotype.Service;
+import co.ke.tracom.bprgateway.core.tracomchannels.tcp.T24TCPClient;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,8 +34,12 @@ public class  T24Channel {
 
     private static void parseT24EuclElecInquiry(T24TXNQueue t24TXNQueue, String gatewayref) {
         String t24Response = t24TXNQueue.getResponseleg();
+        System.out.println(t24Response.isEmpty());//kelvin to do
         t24TXNQueue.setPostedstatus("1");
         String[] output = t24Response.split(",");
+        System.out.println("Output length is : " +output.length);//kelvin to do
+        System.out.println("Output message is" +
+                " : " +output[0]);//kelvin to do
 
         if (output.length > 0) {
             if (output[0].equals("0112")) {
@@ -43,6 +49,8 @@ public class  T24Channel {
                 t24TXNQueue.setCustomerName(customerName);
                 t24TXNQueue.setMeterLocation(meterLocation);
             } else {
+                System.out.println("In else of parse t24 elec inquiry");
+                System.out.println("Output length is : " +output.length);//kelvin to do
                 System.out.println("Error=>" + output[3]);
                 t24TXNQueue.setT24failnarration(output[3].replace("\"", ""));
             }
@@ -374,6 +382,7 @@ public class  T24Channel {
         log.info(
                 "Processing initialization for Transaction RRN [{}] at [{}] OFS Request: [{}]",
                 transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), t24RequestOFS);
+        System.out.println("Pcode is : "+transactionPendingProcessing.getProcode());
 
         TelnetClient telnetClient = new TelnetClient();
         try {
@@ -410,10 +419,20 @@ public class  T24Channel {
             log.info("Formatted OFS Message String: {}", formattedOFSMessageString);
 
             telnetClient.connect(t24ip, t24port);
+            if(!telnetClient.isConnected()){
+                //log that connection has failed
+                //retun
+                //to do waweru
+            }
             log.info("Connection established >>>> {}", telnetClient.isConnected());
             boolean sent = send(telnetClient, formattedOFSMessageString.trim(), transactionRRN);
             log.info("Transaction sent to t24");
             String T24ResponseOFS = receive(telnetClient, transactionPendingProcessing);
+           // String T24ResponseOFS = receive2(telnetClient);
+           // String T24ResponseOFS = "yolo";
+            System.out.println("####################################################################");
+            System.out.println("Response from t24 is :> "+T24ResponseOFS);
+            System.out.println("####################################################################");
 
             log.info(
                     "T24 response received for Transaction RRN [{}] at [{}] :: Response [{}]",
@@ -429,6 +448,7 @@ public class  T24Channel {
                 transactionPendingProcessing.setPostedstatus("4");
                 transactionPendingProcessing.setT24failnarration("UNEXPECTED RESPONSE FROM REMOTE SYSTEM");
             } else {
+                System.out.println("Pcode in else is : "+transactionPendingProcessing.getProcode());
                 try {
                     switch (transactionPendingProcessing.getProcode() == null ? "" : transactionPendingProcessing.getProcode()) {
                         case "460001":
@@ -539,9 +559,15 @@ public class  T24Channel {
             byte[] buf = new byte[4096];
             int len = 0;
 
-            // Thread.sleep(100L);
+             Thread.sleep(100L);
             int datalen = -1;
             log.info("the data recieved from T24 is {}"+ len);
+
+            System.out.println("thread is : "+client.getReaderThread());
+
+
+           // System.out.println(client.getInputStream().read(buf) >1);
+
 
             while ((len = client.getInputStream().read(buf)) != 0) {
                 strBuffer.append(new String(buf, 0, len));
@@ -568,6 +594,37 @@ public class  T24Channel {
             lastpostedTxns.setT24failnarration(e.getMessage());
             e.printStackTrace();
         }
+        return "";
+    }
+
+    public  String receive2(TelnetClient client) {
+        StringBuffer strBuffer;
+        try {
+
+            strBuffer = new StringBuffer();
+            byte[] buf = new byte[4096];
+            int len = 0, datalen = -1;
+
+            while ((len = client.getInputStream().read(buf)) != 0) {
+                strBuffer.append(new String(buf, 0, len));
+                // if length of received data is greater than four ... store the
+                // data length if its not set yet
+                Thread.sleep(20L);
+                if (datalen == -1 && strBuffer.toString().length() > 4) {
+                    datalen = Integer.parseInt(strBuffer.toString().substring(0, 4));
+                }
+                if (client.getInputStream().available() == 0) {
+                    break;
+                }
+                if (strBuffer.length() == datalen) {
+                    break;
+                }
+            }
+            return strBuffer.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return "";
     }
 }
