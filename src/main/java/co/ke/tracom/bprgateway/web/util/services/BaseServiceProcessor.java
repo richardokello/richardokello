@@ -31,17 +31,17 @@ public class BaseServiceProcessor {
     private final TransactionService transactionService;
 
 
-   // @Value("${merchant.account.validation}")
-    @Value("http://localhost:8787/authenticate/password-validation")
+ @Value("${merchant.account.validation}")
+// @Value("http://localhost:8787/authenticate/password-validation")
     private String agentValidationUrl;
 
 
-  //  @Value("http://192.168.24.30:8787/authenticate/agent-deposit")
-    @Value("http://localhost:8787/authenticate/agent-deposit")
+ @Value("http://192.168.24.30:8787/authenticate/agent-deposit")
+  //@Value("http://localhost:8787/authenticate/agent-deposit")
     private String agentDepositValidationUrl;
 
     private final TransactionLimitManagerRepository transactionLimitManagerRepository;
-    private final RestHTTPService restHTTPService;
+    public final RestHTTPService restHTTPService;
 
     public AuthenticateAgentResponse authenticateAgentUsernamePassword(MerchantAuthInfo merchantAuthInfo) throws InvalidAgentCredentialsException, InterServiceCommunicationException {
         ResponseEntity<String> stringResponseEntity = null;
@@ -81,7 +81,7 @@ public class BaseServiceProcessor {
             log.info("Response status from URL[" + agentDepositValidationUrl + " ] and the status is {}" + responseEntity.getBody());
         } catch (Exception j) {
             j.printStackTrace();
-            throw new InterServiceCommunicationException("++++++++++++++++++++Inter-service communication error service validation failed. Please try again!");
+            throw new InterServiceCommunicationException("Inter-service communication =========error service validation failed. Please try again!");
 
         }
         //Objects.requireNonNull(responseEntity,"Inter-service communication error. Please try to use use non null again!");

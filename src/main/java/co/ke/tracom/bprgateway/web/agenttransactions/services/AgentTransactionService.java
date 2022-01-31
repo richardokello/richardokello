@@ -43,16 +43,22 @@ public class AgentTransactionService {
 
     @SneakyThrows
     public AgentTransactionResponse processAgentFloatDeposit(AgentTransactionRequest agentTransactionRequest) {
+        T24TXNQueue tot24 = new T24TXNQueue();
         AgentTransactionResponse response = new AgentTransactionResponse();
         // Validate agent credentials
         AuthenticateAgentResponse authenticateAgentDepositResponse=null;
 
-  T24TXNQueue tot24 = new T24TXNQueue();
+
         // validate amount limits
         try {
+  // Setting Agent username and password.
+           // MerchantcustomerInfoDeposit authData = new MerchantcustomerInfoDeposit();
+            MerchantAuthInfo authData=new MerchantAuthInfo();
+            authData.setUsername(agentTransactionRequest.getCredentials().getUsername());
+            authData.setPassword(agentTransactionRequest.getCredentials().getPassword());
 
-           authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentUsernamePassword(agentTransactionRequest.getCredentials());
-
+// We auntheticate the agent password and username
+            authenticateAgentDepositResponse=baseServiceProcessor.authenticateAgentUsernamePassword(authData);
         } catch (InvalidAgentCredentialsException e){
             transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",agentTransactionRequest.getCredentials().getUsername(),
                     "AgentValidation","FAILED","ipAddress");
@@ -95,14 +101,27 @@ public class AgentTransactionService {
                     agentTransactionRequest.getAmount(), "061",
                     authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
             response.setStatus("061");
-            response.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
+            response.setMessage("Amount should be between "+ limitValid.getLower()+ " and " + limitValid.getUpper());
             return response ;
         }
-
+// agent customer username and password.
         MerchantcustomerInfoDeposit customerAgent = MerchantcustomerInfoDeposit.builder()
-                .username(agentTransactionRequest.getCustomerAgentId()).build();
+                .password(null)
+               .username(agentTransactionRequest.getCustomerAgentId()).build();
+//      //  MerchantAuthInfo customerAgent= MerchantAuthInfo.builder().username(agentTransactionRequest.getCustomerAgentId()).build();
+        AuthenticateAgentResponse customerAgentData;
+        try {
 
-        AuthenticateAgentResponse customerAgentData = baseServiceProcessor.authenticateAgentDepositUsername(customerAgent);
+            customerAgentData = baseServiceProcessor.authenticateAgentDepositUsername(customerAgent);
+
+        } catch (InvalidAgentCredentialsException e){
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins PC Module transactions","Agent logins",agentTransactionRequest.getCredentials().getUsername(),
+                    "AgentValidation","FAILED","ipAddress");
+            response.setMessage(e.getMessage());
+            return response;
+
+        }
+
 
         String customerAgentAccountNo = customerAgentData.getData().getAccountNumber();
         String customerAgentName = customerAgentData.getData().getNames();
@@ -293,11 +312,15 @@ public class AgentTransactionService {
             if (T24Transaction.getBaladvise()==null) {
                 return 0L;
             } else {
+                try {
+                    System.out.printf(
+                            "Agent Balance [Success]: Transaction %s processing completed. Agent balance %d %n",
+                            transactionReferenceNo, Long.parseLong(T24Transaction.getBaladvise()));
+                    return Long.parseLong(T24Transaction.getBaladvise());
+                }catch (NumberFormatException n){
+                   // n.printStackTrace();
+                }
 
-                System.out.printf(
-                        "Agent Balance [Success]: Transaction %s processing completed. Agent balance %d %n",
-                        transactionReferenceNo, Long.parseLong(T24Transaction.getBaladvise()));
-                return Long.parseLong(T24Transaction.getBaladvise());
             }
         }
         return 0L;
@@ -315,7 +338,7 @@ public class AgentTransactionService {
         }
         catch (InvalidAgentCredentialsException e)
         {
-            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
                     "AgentValidation","FAILED","ipAddress");
         }
 

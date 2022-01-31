@@ -49,11 +49,11 @@ public class DepositMoneyService {
             authenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(depositMoneyRequest.getCredentials());
         }catch (InvalidAgentCredentialsException e)
         {
+//
+//            System.out.println("--------------------------");
+//            System.out.println(authenticateAgentResponse);
 
-            System.out.println("--------------------------");
-            System.out.println(authenticateAgentResponse);
-
-            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",depositMoneyRequest.getCredentials().getUsername(),
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",depositMoneyRequest.getCredentials().getUsername(),
         "AgentValidation","FAILED","ipAddress");
              response.setMessage(e.getMessage());
            return response;
@@ -93,6 +93,10 @@ public class DepositMoneyService {
             String overflow = "";
             if(firstDetails.length() > 34) {
                 overflow = firstDetails.substring(34);
+            }else{
+               String mids=authenticateAgentResponse.getData().getMid();
+               String tids=authenticateAgentResponse.getData().getTid();
+               overflow=mids+tids;
             }
               //  firstDetails= firstDetails.substring(0,34);
 
@@ -112,7 +116,9 @@ public class DepositMoneyService {
             }
 
             //TODO fetch the payment details (Terminal ID and Merchant ID)
-            String secondDetails = agentMerchantId;  // From merchant validation request
+            String secondDetails ="";
+            secondDetails=secondDetails+agentMerchantId;
+                   // agentMerchantId;  // From merchant validation request
             String thirdDetails = "CUSTOMER DEPOSIT AT AGENT";
             String accountBranchId = branch.getId();
 
@@ -212,7 +218,6 @@ public class DepositMoneyService {
                             tot24.getT24reference(),
                             "440000");
                 }
-
 
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
@@ -327,7 +332,6 @@ public class DepositMoneyService {
         tot24.setPostedstatus("0");
         tot24.setProcode(proCode);
         tot24.setTid(tid);
-
         final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
         final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
         t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
