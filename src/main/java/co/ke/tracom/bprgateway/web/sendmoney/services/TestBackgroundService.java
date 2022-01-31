@@ -23,7 +23,7 @@ public class TestBackgroundService {
     }
 
 
-    @Scheduled(fixedRate = (1 * 6 * 1000))
+    @Scheduled(fixedRate = (20 * 60 * 1000), cron = ("0 0 8-17 * * *"))
     private void checkTokenExpiryTime() throws ExecutionException, InterruptedException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd h:m:sZ");
         log.info("The time is now {}", format.format(new Date()));

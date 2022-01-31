@@ -54,7 +54,7 @@ public class MoneySendTokenExpiryTimeService {
     public CompletableFuture<List<MoneySend>> check() {
 
         //Optional<List<MoneySend>> optionalMoneySendList = repository.findBySendmoneytokenexpiretimeBeforeAndFulfilmentstatusEquals(/*new Date().getTime()*/0, 0);
-        Optional<List<MoneySend>> optionalMoneySendList = repository.findByFulfilmentstatusEquals(0, 30);
+        Optional<List<MoneySend>> optionalMoneySendList = repository.findByFulfilmentstatusEquals(0, Instant.now().toEpochMilli(),30);
         List<MoneySend> moneySendList = new ArrayList<>();
         optionalMoneySendList.ifPresent(moneySends -> moneySends.forEach(
 
@@ -71,31 +71,20 @@ public class MoneySendTokenExpiryTimeService {
                     // request.setAmount(amount);
 
                     //Generate new cno and update the record
-                    /*String virtualBIN = xSwitchParameterService.fetchXSwitchParamValue("CARDLESSTXNBIN");
+                    String virtualBIN = xSwitchParameterService.fetchXSwitchParamValue("CARDLESSTXNBIN");
                     String CARDLESS_TXN_BIN = "123456";
                     String virtualCardBIN = virtualBIN.equals("") ? CARDLESS_TXN_BIN : virtualBIN;
                     String vCardNo = bprCreditCardNumberGenerator.generate(virtualCardBIN, 12);
-                    String generatedCardNo = desUtil.encryptPlainText(vCardNo);*/
-                       /* if (generatedCardNo != null) {
+                    String generatedCardNo = desUtil.encryptPlainText(vCardNo);
+                        if (generatedCardNo != null) {
                             Random generator = new Random();
                             String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
+                            System.out.println();
 
-
-                            //SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, receiverMobile, senderMobileNo, vCardNo);
                             SMSRequest senderMessage2 = saveSenderMessage2(amount, transactionRRN, receiverMobile, senderMobileNo, passCode, vCardNo);
-
-//                            String fdiSMSAPIAuthToken = null;
-//                            SMSResponse recipientResponse;
-//                            SMSResponse senderResponse;
-
-                            //SMSResponse recipientResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, recipientMessage);
-                            //log.info("Recipient SMS Response[" + transactionRRN + "]: " + recipientResponse.toString());
-                            //SMSResponse senderResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, senderMessage);
-                            //log.info("Sender SMS Response[" + transactionRRN + "]: " + senderResponse.toString());
 
                             try {
                                 String fdiSMSAPIAuthToken = smsService.getFDISMSAPIAuthToken();
-                                //recipientResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, recipientMessage);
                                 SMSResponse senderResponse = smsService.sendFDISMSRequest(fdiSMSAPIAuthToken, senderMessage2);
                                 log.info("Sender SMS Response[" + transactionRRN + "]: " + senderResponse.toString());
 
@@ -112,7 +101,7 @@ public class MoneySendTokenExpiryTimeService {
                             } catch (JsonProcessingException e) {
                                 e.printStackTrace();
                             }
-                        }*/
+                        }
                     //});
                     System.out.println(l.toString());
 
@@ -121,52 +110,6 @@ public class MoneySendTokenExpiryTimeService {
         ));
         return CompletableFuture.completedFuture(moneySendList);
 
-    }
-
-    private SMSRequest saveRecipientMessage(SendMoneyRequest request, String transactionRRN,
-                                            String receiverMobile, String senderMobile, String vCardNo) {
-
-        String recipientMessage = recipientMessage(request, senderMobile, vCardNo);
-
-        SMSRequest fdismsRequest = getFDISMSRequest(recipientMessage, receiverMobile, SMS_FUNCTION_RECEIVER);
-
-        while (recipientMessage.length() > 0) {
-            ScheduledSMS scheduledSMSTransaction = new ScheduledSMS();
-            scheduledSMSTransaction.setSentstatus(1);
-            scheduledSMSTransaction.setAttempts(0);
-            scheduledSMSTransaction.setReceiverphone(receiverMobile);
-            scheduledSMSTransaction.setTxnref(transactionRRN);
-
-            if (recipientMessage.length() <= 160) {
-                scheduledSMSTransaction.setMessage(utilityService.encryptSensitiveData(recipientMessage));
-                recipientMessage = "";
-            } else {
-                scheduledSMSTransaction.setMessage(
-                        utilityService.encryptSensitiveData(recipientMessage.substring(0, 160)));
-                recipientMessage = recipientMessage.substring(160);
-            }
-            scheduledSMSRepository.save(scheduledSMSTransaction);
-        }
-//        SMSRequest smsObject = getNewSMSRequest(request, senderMobileNo, receiverMobile, passCode, vCardNo, SMS_FUNCTION_RECEIVER);
-        return fdismsRequest;
-    }
-
-    private SMSRequest saveSenderMessage(SendMoneyRequest request, String transactionRRN,
-                                         String recipientMobile, String senderMobileNo, String passCode) {
-
-        String senderMessage = senderMessage(request, recipientMobile, passCode);
-        SMSRequest fdismsRequest = getFDISMSRequest(senderMessage, senderMobileNo, SMS_FUNCTION_SENDER);
-        // Insert Second SMS
-        String SMSContent = utilityService.encryptText(senderMessage);
-        ScheduledSMS scheduledSMS = new ScheduledSMS();
-        scheduledSMS.setSentstatus(1);
-        scheduledSMS.setAttempts(0);
-        scheduledSMS.setMessage(SMSContent);
-        scheduledSMS.setReceiverphone(senderMobileNo);
-        scheduledSMS.setTxnref(transactionRRN);
-        scheduledSMSRepository.save(scheduledSMS);
-
-        return fdismsRequest;
     }
 
     private SMSRequest saveSenderMessage2(double amount, String transactionRRN,
@@ -183,6 +126,8 @@ public class MoneySendTokenExpiryTimeService {
         scheduledSMS.setReceiverphone(senderMobileNo);
         scheduledSMS.setTxnref(transactionRRN);
         scheduledSMSRepository.save(scheduledSMS);
+        System.out.println("00000000000000000000000000000000000000");
+        System.err.println(utilityService.decryptText(scheduledSMS.getMessage()));
 
         return fdismsRequest;
     }
@@ -195,26 +140,6 @@ public class MoneySendTokenExpiryTimeService {
                 .SMSFunction(smsFunctionReceiver)
                 .message(message)
                 .build();
-    }
-
-    private String recipientMessage(SendMoneyRequest request, String sendMobile, String cardNo) {
-        return "You have received RWF"
-                + request.getAmount()
-                + " from "
-                + sendMobile
-                + " to withdraw at a BPR agent. Provide VCARD no: "
-                + cardNo
-                + " ,Sender will share the passcode. MURAKOZE";
-    }
-
-    private String senderMessage(SendMoneyRequest request, String recipientMobile, String passCode) {
-        return "You have successfully sent RWF"
-                + request.getAmount()
-                + " to "
-                + recipientMobile
-                + " via BPR Cardless transfer. Kindly share passcode with the recipient. Passcode: "
-                + passCode
-                + ". Thanks for banking with us.";
     }
 
     private String senderMessage2(double amount, String recipientMobile, String passCode, String cardNo) {

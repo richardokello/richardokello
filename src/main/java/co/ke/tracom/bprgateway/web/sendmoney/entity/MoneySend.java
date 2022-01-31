@@ -27,7 +27,9 @@ public class MoneySend {
     private String fulfilmentchannel; //pos .. web
     private String fulfilmentdate; // ese
     private String fulfilmentagentid; // fulfilment agentid
+    @Column(name = "SENDMONEYTOKENSTARTTIME")
     private Long sendmoneytokenstarttime;
+    @Column(name = "SENDMONEYTOKENEXPIRETIME")
     private Long sendmoneytokenexpiretime;
     private String sendernationalid;
     private  String typeofid;
