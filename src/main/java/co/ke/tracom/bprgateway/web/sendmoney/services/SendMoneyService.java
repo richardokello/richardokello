@@ -33,6 +33,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -85,14 +86,26 @@ public class SendMoneyService {
     Data agentAuthData = authenticateAgentResponse.getData();
 
 
-
-
+        System.out.println("agentAuthData ===>>>>>>>>>>>>>>> " + agentAuthData);
+        System.out.println("agentAuthData.getAccountNumber() ==========>>>>>>>" + agentAuthData.getAccountNumber());
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
 
         try {
 
 
+            long agentFloatAccountBalances = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
 
+            if (agentFloatAccountBalance < request.getAmount()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "RECEIVE MONEY", "1200",
+                        request.getAmount(), "117",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
+                return SendMoneyResponse.builder()
+                        .status("117")
+                        .message("Transaction could not be processed. Insufficient Float balance")
+                        .data(null)
+                        .build();
+            }
 
             SendMoneyResponse responses=new SendMoneyResponse();
 
@@ -106,7 +119,6 @@ public class SendMoneyService {
                 return responses;
             }
 
-
             BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(agentAuthData.getAccountNumber());
             String branchAccountID = branch.getId();
             System.out.println(" agent authentication data = " + agentAuthData);
@@ -118,19 +130,8 @@ public class SendMoneyService {
             validateMobileNumberLength(transactionRRN, senderMobileNo.length());
 
             String receiverMobile = request.getRecipientMobileNo().trim();
-
-
-
-
             compareSenderRecipientMobileNumbers(transactionRRN, receiverMobile.equalsIgnoreCase(senderMobileNo));
-
             String configuredSendMoneySuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue(SEND_MONEY_SUSPENSE_ACC);
-
-
-
-
-
-
             String[] paymentDetails = new String[3];
 
             paymentDetails[0] = senderMobileNo + "/" + receiverMobile;
@@ -144,9 +145,7 @@ public class SendMoneyService {
 
             String nationalIdDocumentName = request.getSenderNationalIDType().equals("0") ? "NID" : "OTHERS";
             String tid = "PC";
-
             T24TXNQueue tot24 = prepareT24Transaction(transactionRRN, agentAuthData, configuredSendMoneySuspenseAccount, tot24str, tid);
-
             processSendMoneyTransaction(tot24);
 
             if ((tot24.getT24responsecode().equalsIgnoreCase("1"))) {
@@ -572,12 +571,13 @@ public class SendMoneyService {
             System.err.printf(
                     "Send Money Charges Request : Transaction %s has been queued for T24 Processing. %n",
                     validationReferenceNo);
-
+if(Objects.nonNull(tot24.getT24responsecode())){
             if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
 
                 return extractChargesFromResponse(validationReferenceNo, tot24);
 
             }
+}
 
         } catch (Exception w) {
             System.err.printf(
@@ -691,7 +691,7 @@ public class SendMoneyService {
         try {
             authenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
         }catch(InvalidAgentCredentialsException e) {
-            transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",request.getCredentials().getUsername(),
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
                     "AgentValidation","FAILED","ipAddress");
         }
 
@@ -699,12 +699,12 @@ public class SendMoneyService {
 
         if (agentFloatAccountBalance < request.getAmount()) {
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
-                    request.getAmount(), "098",
+                    request.getAmount(), "117",
                     authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
             return SendMoneyResponse.builder()
-                    .status("098")
-                    .message("Insufficient agent account balance")
+                    .status("117")
+                    .message("Transaction could not be processed. Insufficient Float balance")
                     .data(null)
                     .build();
         }
