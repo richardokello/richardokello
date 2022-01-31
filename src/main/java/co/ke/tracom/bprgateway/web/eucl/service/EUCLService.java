@@ -126,6 +126,7 @@ public class EUCLService {
                 return response;
 
             } else {
+                MeterNoValidationResponse response;
                 String tot24narration=tot24.getT24failnarration()==null?"no response":tot24.getT24failnarration().replace("\"", "");
                 //String tot24Isnull = Objects.isNull(tot24.getT24failnarration())?"response has no fail narration":tot24.getT24failnarration().replace("\"", "");
                 MeterNoData data = MeterNoData.builder()
@@ -135,12 +136,13 @@ public class EUCLService {
                     log.info("EUCL Validation failed. Transaction [" + referenceNo + "] " + tot24narration);
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
-                        Double.valueOf(request.getAmount()), "198",
+                        Double.valueOf(request.getAmount()), "98",
                         optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
 
-                MeterNoValidationResponse response = MeterNoValidationResponse
+
+                response = MeterNoValidationResponse
                         .builder()
-                        .status("198")
+                        .status("98")
                         .message(tot24narration)
                         .data(data)
                         .build();

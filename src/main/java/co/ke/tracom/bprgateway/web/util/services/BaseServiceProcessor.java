@@ -36,8 +36,8 @@ public class BaseServiceProcessor {
     private String agentValidationUrl;
 
 
-  @Value("http://192.168.24.30:8787/authenticate/agent-deposit")
-   //@Value("http://localhost:8787/authenticate/agent-deposit")
+ @Value("http://192.168.24.30:8787/authenticate/agent-deposit")
+  //@Value("http://localhost:8787/authenticate/agent-deposit")
     private String agentDepositValidationUrl;
 
     private final TransactionLimitManagerRepository transactionLimitManagerRepository;

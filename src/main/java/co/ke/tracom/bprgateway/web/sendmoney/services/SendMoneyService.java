@@ -97,12 +97,12 @@ public class SendMoneyService {
 
             if (agentFloatAccountBalance < request.getAmount()) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "RECEIVE MONEY", "1200",
-                        request.getAmount(), "098",
+                        request.getAmount(), "117",
                         authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
                 return SendMoneyResponse.builder()
-                        .status("098")
-                        .message("Insufficient agent account balance")
+                        .status("117")
+                        .message("Transaction could not be processed. Insufficient Float balance")
                         .data(null)
                         .build();
             }
@@ -688,12 +688,12 @@ if(Objects.nonNull(tot24.getT24responsecode())){
 
         if (agentFloatAccountBalance < request.getAmount()) {
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
-                    request.getAmount(), "098",
+                    request.getAmount(), "117",
                     authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
             return SendMoneyResponse.builder()
-                    .status("098")
-                    .message("Insufficient agent account balance")
+                    .status("117")
+                    .message("Transaction could not be processed. Insufficient Float balance")
                     .data(null)
                     .build();
         }

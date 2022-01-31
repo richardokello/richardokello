@@ -58,7 +58,6 @@ public class AgentTransactionService {
             authData.setPassword(agentTransactionRequest.getCredentials().getPassword());
 
 // We auntheticate the agent password and username
-         //  authenticateAgentDepositResponse = baseServiceProcessor.authenticateAgentDepositUsername(authData);
             authenticateAgentDepositResponse=baseServiceProcessor.authenticateAgentUsernamePassword(authData);
         } catch (InvalidAgentCredentialsException e){
             transactionService.saveFailedUserPasswordTransactions("Failed Logins","Agent logins",agentTransactionRequest.getCredentials().getUsername(),
