@@ -9,8 +9,10 @@ import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.entities.EUCLElectricityTxnLogs;
 import co.ke.tracom.bprgateway.web.eucl.repository.EUCLElectricityTxnLogsRepository;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
+import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
@@ -26,20 +28,41 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class EUCLService {
-
+    private final Long EUCL_TRANSACTION_LIMIT_ID= 8L;
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
     private final BaseServiceProcessor baseServiceProcessor;
 
     private final XSwitchParameterService xSwitchParameterService;
     private final EUCLElectricityTxnLogsRepository euclElectricityTxnLogsRepository;
-
+    private final TransactionLimitManagerService limitManagerService;
     @SneakyThrows
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
         // Validate agent credentials
-        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = null;
+        T24TXNQueue tot24 = new T24TXNQueue();
+        try{optionalAuthenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+
+        }
+        catch (InvalidAgentCredentialsException e)
+        {
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
+                    "AgentValidation","FAILED","ipAddress");
+        }
 
         try {
+         MeterNoValidationResponse responses=new MeterNoValidationResponse();
+
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, request.getAmount());
+            if (!limitValid.isValid()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                        Double.valueOf(request.getAmount()), "061",
+                        optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
+                responses.setStatus("061");
+                responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
+                return responses;
+            }
+
             String channel = "PC";
             String txnref = referenceNo;
             String tid = "PCTID";
@@ -63,7 +86,7 @@ public class EUCLService {
 
 
             // create a table or function to generate T24 messages
-            T24TXNQueue tot24 = new T24TXNQueue();
+
             tot24.setMeterno(meterNo);
             // base 64 encode request in db
             tot24.setRequestleg(tot24str);
@@ -103,14 +126,24 @@ public class EUCLService {
                 return response;
 
             } else {
+                MeterNoValidationResponse response;
+                String tot24narration=tot24.getT24failnarration()==null?"no response":tot24.getT24failnarration().replace("\"", "");
+                //String tot24Isnull = Objects.isNull(tot24.getT24failnarration())?"response has no fail narration":tot24.getT24failnarration().replace("\"", "");
                 MeterNoData data = MeterNoData.builder()
                         .rrn(referenceNo)
                         .build();
-                log.info("EUCL Validation failed. Transaction [" + referenceNo + "] " + tot24.getT24failnarration().replace("\"", ""));
-                MeterNoValidationResponse response = MeterNoValidationResponse
+
+                    log.info("EUCL Validation failed. Transaction [" + referenceNo + "] " + tot24narration);
+
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                        Double.valueOf(request.getAmount()), "98",
+                        optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
+
+
+                response = MeterNoValidationResponse
                         .builder()
-                        .status("198")
-                        .message(tot24.getT24failnarration().replace("\"", ""))
+                        .status("98")
+                        .message(tot24narration)
                         .data(data)
                         .build();
                 return response;
@@ -118,6 +151,9 @@ public class EUCLService {
 
         } catch (Exception e) {
             e.printStackTrace();
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                    Double.valueOf(request.getAmount()), "098",
+                    optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
             MeterNoData data = MeterNoData.builder()
                     .rrn(referenceNo)
                     .build();
@@ -135,8 +171,17 @@ public class EUCLService {
 
     @SneakyThrows
     public EUCLPaymentResponse purchaseEUCLTokens(EUCLPaymentRequest request, String transactionReferenceNo) {
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse authenticateAgentResponse = null;
+        try{
+            authenticateAgentResponse= baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }
+        catch(InvalidAgentCredentialsException e){
+          transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
+                  "AgentValidation","FAILED","ipAddress");
+        }
 
+
+        T24TXNQueue tot24 = new T24TXNQueue();
         EUCLElectricityTxnLogs elecTxnLogs = new EUCLElectricityTxnLogs();
         try {
 
@@ -197,7 +242,7 @@ public class EUCLService {
             String tot24str = String.format("%04d", t24.length()) + t24;
             System.out.println("String to t24==>" + tot24str);
 
-            T24TXNQueue tot24 = new T24TXNQueue();
+
             tot24.setMeterno(meterNo);
             // base 64 encode request in db
             tot24.setRequestleg(tot24str);
@@ -298,6 +343,9 @@ public class EUCLService {
 
                     .setRrn(transactionReferenceNo);
             e.printStackTrace();
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                    Double.valueOf(request.getAmount()), "098",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             log.info("EUCL transaction [" + transactionReferenceNo + "] failed. Error " + e.getMessage());
             return EUCLPaymentResponse.builder()
                     .status("098")

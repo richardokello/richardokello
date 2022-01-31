@@ -7,6 +7,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionSe
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
 import co.ke.tracom.bprgateway.web.exceptions.custom.InsufficientAccountBalanceException;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidMobileNumberException;
 import co.ke.tracom.bprgateway.web.sendmoney.data.requests.ReceiveMoneyRequest;
 import co.ke.tracom.bprgateway.web.sendmoney.data.requests.SendMoneyRequest;
@@ -21,6 +22,7 @@ import co.ke.tracom.bprgateway.web.smsscheduled.entities.ScheduledSMS;
 import co.ke.tracom.bprgateway.web.smsscheduled.repository.ScheduledSMSRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
+import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.TransactionISO8583ProcessingCode;
@@ -31,6 +33,11 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -47,7 +54,8 @@ public class SendMoneyService {
     private final String SEND_MONEY_SUSPENSE_ACC = "SENDMONEYSUSPENSE";
     private final String SEND_MONEY_LABEL = "SEND MONEY";
 
-
+    private final Long SENDMONEY_TRANSACTION_LIMIT_ID=1L;
+    private final Long RECEIVEMONEY_TRANSACTION_LIMIT_ID=2L;
     private final AgentTransactionService agentTransactionService;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService branchService;
@@ -61,18 +69,60 @@ public class SendMoneyService {
     private final XSwitchParameterService xSwitchParameterService;
     private final MoneySendRepository moneySendRepository;
     private final ScheduledSMSRepository scheduledSMSRepository;
-
+    private final TransactionLimitManagerService limitManagerService;
 
     @SneakyThrows
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        T24TXNQueue toT24= new T24TXNQueue();
 
+        AuthenticateAgentResponse authenticateAgentResponse = null;
+
+        try {
+            authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }catch (InvalidAgentCredentialsException e){
+//            transactionService.saveFailedPasswordTransactions(toT24, "SEND_MONEY_LABEL", "1200",request.getAmount(),
+//                   "117");
+            return new SendMoneyResponse("117",e.getMessage(), SendMoneyResponseData.builder().build());
+
+        }
         log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + transactionRRN + "] processing begins. Request " + request);
 
-        Data agentAuthData = authenticateAgentResponse.getData();
+    Data agentAuthData = authenticateAgentResponse.getData();
+
+
+        System.out.println("agentAuthData ===>>>>>>>>>>>>>>> " + agentAuthData);
+        System.out.println("agentAuthData.getAccountNumber() ==========>>>>>>>" + agentAuthData.getAccountNumber());
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
 
         try {
+
+
+            long agentFloatAccountBalances = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
+
+            if (agentFloatAccountBalance < request.getAmount()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "RECEIVE MONEY", "1200",
+                        request.getAmount(), "117",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
+                return SendMoneyResponse.builder()
+                        .status("117")
+                        .message("Transaction could not be processed. Insufficient Float balance")
+                        .data(null)
+                        .build();
+            }
+
+            SendMoneyResponse responses=new SendMoneyResponse();
+
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(SENDMONEY_TRANSACTION_LIMIT_ID, (long) request.getAmount());
+            if (!limitValid.isValid()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, SEND_MONEY_LABEL, "1200",
+                        request.getAmount(), "061",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                responses.setStatus("061");
+                responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
+                return responses;
+            }
+
             BPRBranches branch = branchService.fetchBranchAccountsByBranchCode(agentAuthData.getAccountNumber());
             String branchAccountID = branch.getId();
             System.out.println(" agent authentication data = " + agentAuthData);
@@ -84,11 +134,8 @@ public class SendMoneyService {
             validateMobileNumberLength(transactionRRN, senderMobileNo.length());
 
             String receiverMobile = request.getRecipientMobileNo().trim();
-
             compareSenderRecipientMobileNumbers(transactionRRN, receiverMobile.equalsIgnoreCase(senderMobileNo));
-
             String configuredSendMoneySuspenseAccount = xSwitchParameterService.fetchXSwitchParamValue(SEND_MONEY_SUSPENSE_ACC);
-
             String[] paymentDetails = new String[3];
 
             paymentDetails[0] = senderMobileNo + "/" + receiverMobile;
@@ -102,28 +149,30 @@ public class SendMoneyService {
 
             String nationalIdDocumentName = request.getSenderNationalIDType().equals("0") ? "NID" : "OTHERS";
             String tid = "PC";
-
             T24TXNQueue tot24 = prepareT24Transaction(transactionRRN, agentAuthData, configuredSendMoneySuspenseAccount, tot24str, tid);
-
             processSendMoneyTransaction(tot24);
 
             if ((tot24.getT24responsecode().equalsIgnoreCase("1"))) {
                 return processSuccessfulSendMoneyT24Transaction(request, transactionRRN, agentAuthData, branchAccountID,
                         paymentDetails, nationalIdDocumentName, tid, tot24, authenticateAgentResponse);
             } else {
-                return processFailedSendMoneyT24Transaction(transactionRRN, agentAuthData, tot24.getT24reference());
+                return processFailedSendMoneyT24Transaction(request,transactionRRN, agentAuthData, tot24.getT24reference());
             }
         } catch (Exception w) {
             w.printStackTrace();
             log.info("Send money transaction error : " + w.getMessage());
         }
+        transactionService.saveCardLessTransactionToAllTransactionTable(toT24, SEND_MONEY_LABEL, "1200",
+                request.getAmount(), "116",
+                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
         return SendMoneyResponse.builder()
                 .status("116")
                 .message("Transaction processing failed. Please try again")
                 .data(null)
                 .build();
     }
-
+@SneakyThrows
     private SendMoneyResponse processSuccessfulSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN,
                                                                        Data agentAuthData, String branchAccountID,
                                                                        String[] paymentDetails,
@@ -133,7 +182,10 @@ public class SendMoneyService {
         String receiverMobile = request.getRecipientMobileNo();
 
         SendMoneyResponseData data = SendMoneyResponseData.builder().build();
+
         try {
+
+//
             String charges = tot24.getTotalchargeamt();
             System.err.println("Charges " + charges);
             String formattedCharge = charges.replace("RWF", "");
@@ -175,7 +227,7 @@ public class SendMoneyService {
                 Random generator = new Random();
                 String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
 
-                saveSendMoneyTransaction(request, agentAuthData, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode);
+                saveSendMoneyTransaction(request, agentAuthData, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode,transactionRRN);
 
                 SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, receiverMobile, senderMobileNo, vCardNo);
                 SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, receiverMobile, senderMobileNo, passCode);
@@ -196,6 +248,9 @@ public class SendMoneyService {
             } else {
                 System.err.println(
                         "Card less vcard generation error for rrn " + transactionRRN);
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
+                        request.getAmount(), "118",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 return SendMoneyResponse.builder()
                         .status("118")
                         .message("Transaction failed. Unable to generate virtual card. Please try again.")
@@ -205,6 +260,9 @@ public class SendMoneyService {
         } catch (Exception e) {
             e.printStackTrace();
             log.info("=================================================" + e.getMessage());
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
+                    request.getAmount(), "118",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             return SendMoneyResponse.builder()
                     .status("118")
                     .message("Transaction failed. Please try again.")
@@ -321,7 +379,7 @@ public class SendMoneyService {
     }
 
     private void saveSendMoneyTransaction(SendMoneyRequest request, Data agentAuthData, String nationalIdDocumentName,
-                                          String t24Reference, String generatedCardNo, String token) {
+                                          String t24Reference, String generatedCardNo, String token, String transactionRRN) {
         String senderMobileNo = request.getSenderMobileNo();
         String receiverMobile = request.getRecipientMobileNo();
 
@@ -340,10 +398,24 @@ public class SendMoneyService {
         ms.setTypeofid(nationalIdDocumentName);
         ms.setSendmoneylegt24ref(t24Reference);
 
+        //walter
+        //Save RRN, tokenstarttime, tokenexoirytime
+        ms.setTransactionRRN(transactionRRN);
+
+        Instant now = Instant.now();
+        long timeNow = now.toEpochMilli();
+        ms.setSendmoneytokenstarttime(timeNow);
+
+        long expiryTime = now.plus(Duration.ofHours(72)).toEpochMilli();
+        ms.setSendmoneytokenexpiretime(expiryTime);
         moneySendRepository.save(ms);
     }
 
-    private SendMoneyResponse processFailedSendMoneyT24Transaction(String transactionRRN, Data agentAuthData, String t24Reference) {
+    @SneakyThrows
+    private SendMoneyResponse processFailedSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN, Data agentAuthData, String t24Reference) {
+        T24TXNQueue tot24 = new T24TXNQueue();
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+
         SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
                 .T24Reference(t24Reference)
                 .charges(0)
@@ -354,6 +426,9 @@ public class SendMoneyService {
         sendMoneyResponseData.setNames(agentAuthData.getNames());
         sendMoneyResponseData.setBusinessName(agentAuthData.getBusinessName());
         sendMoneyResponseData.setLocation(agentAuthData.getLocation());
+        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
+                request.getAmount(), "098",
+                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
 
         return SendMoneyResponse.builder()
                 .status("098")
@@ -499,12 +574,13 @@ public class SendMoneyService {
             System.err.printf(
                     "Send Money Charges Request : Transaction %s has been queued for T24 Processing. %n",
                     validationReferenceNo);
-
+if(Objects.nonNull(tot24.getT24responsecode())){
             if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
 
                 return extractChargesFromResponse(validationReferenceNo, tot24);
 
             }
+}
 
         } catch (Exception w) {
             System.err.printf(
@@ -613,17 +689,40 @@ public class SendMoneyService {
 
     @SneakyThrows
     public SendMoneyResponse processReceiveMoneyRequest(ReceiveMoneyRequest request, String transactionRRN) {
-
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        T24TXNQueue tot24 = new T24TXNQueue();
+        AuthenticateAgentResponse authenticateAgentResponse = null;
+        try {
+            authenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }catch(InvalidAgentCredentialsException e) {
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
+                    "AgentValidation","FAILED","ipAddress");
+        }
 
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
 
         if (agentFloatAccountBalance < request.getAmount()) {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "117",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
             return SendMoneyResponse.builder()
-                    .status("098")
-                    .message("Insufficient agent account balance")
+                    .status("117")
+                    .message("Transaction could not be processed. Insufficient Float balance")
                     .data(null)
                     .build();
+        }
+
+        SendMoneyResponse responses=new SendMoneyResponse();
+
+        TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService. isLimitValid(RECEIVEMONEY_TRANSACTION_LIMIT_ID, (long) request.getAmount());
+        if (!limitValid.isValid()) {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "061",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
+            responses.setStatus("061");
+            responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
+            return responses;
         }
 
         String channel = "1510";
@@ -631,6 +730,10 @@ public class SendMoneyService {
 
         // this must be set
         if (sendMoneySuspense.isEmpty()) {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "098",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
             return SendMoneyResponse.builder()
                     .status("098")
                     .message("Missing send money suspense account")
@@ -645,9 +748,14 @@ public class SendMoneyService {
         BPRBranches branch =
                 branchService.fetchBranchAccountsByBranchCode(sendMoneySuspense);
         if (null == branch.getCompanyName()) {
+
             System.err.println(
                     "Receive money suspense account details could not be verified for account "
                             + sendMoneySuspense);
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "065",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
             return SendMoneyResponse.builder()
                     .status("065")
                     .message("Transaction failed. Missing receive money suspense account information. Contact BPR")
@@ -657,6 +765,10 @@ public class SendMoneyService {
 
         String accountbranchid = branch.getId();
         if (accountbranchid.isEmpty()) {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                    request.getAmount(), "065",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
             return SendMoneyResponse.builder()
                     .status("065")
                     .message("Transaction failed. Missing receive money suspense account information. Contact BPR")
@@ -673,6 +785,10 @@ public class SendMoneyService {
             Optional<MoneySend> optionalMoneySend = getSendMoneyTxn(recipientPhoneNo, passcode);
 
             if (optionalMoneySend.isEmpty()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                        request.getAmount(), "139",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
                 return SendMoneyResponse.builder()
                         .status("139")
                         .message("Transaction failed. Missing original send money record.")
@@ -693,6 +809,10 @@ public class SendMoneyService {
 
             if (Double.parseDouble(sendMoneyTxn.getAmount()) != request.getAmount()) {
                 log.info("Wrong receive amount entered, original {} - current {} ", sendMoneyTxn.getAmount(), request.getAmount());
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                        request.getAmount(), "139",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
                 return SendMoneyResponse.builder()
                         .status("139")
                         .message("Transaction failed. Incorrect amount was entered.")
@@ -700,7 +820,49 @@ public class SendMoneyService {
                         .build();
             }
 
+            //walter
+            /* ======= start =======  */
+            // check if token expired
+            if (Instant.ofEpochMilli(sendMoneyTxn.getSendmoneytokenexpiretime()).isBefore(Instant.now())
+            /*sendMoneyTxn.getSendmoneytokenexpiretime() < Instant.now().toEpochMilli()*/) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a");
+
+                //check whether is the sender withdrawing
+                if (!request.getReceiverMobileNo().trim().equals(sendMoneyTxn.getSendernumber())) {
+                    log.info("Send money token expired at {} ", formatter.format(new Date(sendMoneyTxn.getSendmoneytokenexpiretime())));
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                            request.getAmount(), "139",
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
+                    return SendMoneyResponse.builder()
+                            .status("139")
+                            .message("Transaction failed. Token expired!")
+                            .data(null)
+                            .build();
+                }else{
+                    //check the regenerated token
+                    if (Instant.ofEpochMilli(sendMoneyTxn.getSendmoneytokenexpiretime2()).isBefore(Instant.now())
+                        /*sendMoneyTxn.getSendmoneytokenexpiretime2() < Instant.now().toEpochMilli()*/){
+                        log.info("Send money token expired at {} ", formatter.format(new Date(sendMoneyTxn.getSendmoneytokenexpiretime2())));
+                        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                                request.getAmount(), "139",
+                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
+                        return SendMoneyResponse.builder()
+                                .status("139")
+                                .message("Transaction failed. Token expired!")
+                                .data(null)
+                                .build();
+                    }
+                }
+            }
+            /* ======= end =======  */
+
             if (compareRequestTokenWithStoredToken(request, transactionRRN, sendMoneyTxn)) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                        request.getAmount(), "116",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
                 return SendMoneyResponse.builder()
                         .status("116")
                         .message("Transaction failed. Invalid vCard. Please try again.")
@@ -746,7 +908,7 @@ public class SendMoneyService {
 
             String tot24str = String.format("%04d", smwOFS.length()) + smwOFS;
 
-            T24TXNQueue tot24 = new T24TXNQueue();
+
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
             tot24.setTxnchannel(channel);
