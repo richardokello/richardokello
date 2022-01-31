@@ -1,0 +1,28 @@
+package co.ke.tracom.bprgateway.web.sendmoney.services;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
+
+//@Component
+public class TestBackgroundService {
+
+    //private final MoneySendTokenExpiryTimeService expiryTimeService;
+    private static final Logger log = LoggerFactory.getLogger(TestBackgroundService.class);
+
+   /* public TestBackgroundService(MoneySendTokenExpiryTimeService expiryTimeService) {
+        this.expiryTimeService = expiryTimeService;
+    }*/
+
+
+    //@Scheduled(fixedRate = (1 * 6 * 1000))
+    private void checkTokenExpiryTime() throws ExecutionException, InterruptedException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd h:m:sZ");
+        log.info("The time is now {}", format.format(new Date()));
+        //CompletableFuture<List<MoneySend>> listMoneySend = expiryTimeService.check();
+        //List<MoneySend> tt =listMoneySend.get();
+    }
+}

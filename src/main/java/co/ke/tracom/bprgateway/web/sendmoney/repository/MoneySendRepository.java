@@ -9,4 +9,10 @@ import java.util.Optional;
 @Repository
 public interface MoneySendRepository extends CrudRepository<MoneySend, Long> {
     Optional<MoneySend> findByRecevernumberAndMstoken(String receiverNo, String msToken);
+    //Optional<List<MoneySend>> findBySendmoneytokenexpiretimeBeforeAndFulfilmentstatusEquals(long sendmoneytokenexpiretime, int fulfilmentstatus);
+    /*@Query(nativeQuery = true,value ="select *\n" +
+            "from BPRMONEYSEND\n" +
+            "where rownum <= ?2 and FULFILMENTSTATUS=?1 order by MONEYSENDID desc")*/
+    //Optional<List<MoneySend>> findByFulfilmentstatusEquals(int i);
 }
+

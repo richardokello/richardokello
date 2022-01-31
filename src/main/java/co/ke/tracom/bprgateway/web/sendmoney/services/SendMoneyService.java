@@ -224,7 +224,7 @@ public class SendMoneyService {
                 Random generator = new Random();
                 String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
 
-                saveSendMoneyTransaction(request, agentAuthData, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode);
+                saveSendMoneyTransaction(request, agentAuthData, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode,transactionRRN);
 
                 SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, receiverMobile, senderMobileNo, vCardNo);
                 SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, receiverMobile, senderMobileNo, passCode);
@@ -376,7 +376,7 @@ public class SendMoneyService {
     }
 
     private void saveSendMoneyTransaction(SendMoneyRequest request, Data agentAuthData, String nationalIdDocumentName,
-                                          String t24Reference, String generatedCardNo, String token) {
+                                          String t24Reference, String generatedCardNo, String token, String transactionRRN) {
         String senderMobileNo = request.getSenderMobileNo();
         String receiverMobile = request.getRecipientMobileNo();
 
@@ -395,6 +395,17 @@ public class SendMoneyService {
         ms.setTypeofid(nationalIdDocumentName);
         ms.setSendmoneylegt24ref(t24Reference);
 
+        //walter
+        //Save RRN, tokenstarttime, tokenexoirytime
+        /*ms.setTransactionRRN(transactionRRN);
+
+        Instant now = Instant.now();
+        long timeNow = now.toEpochMilli();
+        ms.setSendmoneytokenstarttime(timeNow);
+
+        long expiryTime = now.plus(Duration.ofHours(72)).toEpochMilli();
+        ms.setSendmoneytokenexpiretime(expiryTime);
+*/
         moneySendRepository.save(ms);
     }
 
@@ -805,6 +816,44 @@ public class SendMoneyService {
                         .data(null)
                         .build();
             }
+
+            //walter
+            /* ======= start =======  */
+            // check if token expired
+            /*if (Instant.ofEpochMilli(sendMoneyTxn.getSendmoneytokenexpiretime()).isBefore(Instant.now())
+                *//*.getSendmoneytokenexpiretime() < Instant.now().toEpochMilli()*//*) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a");
+
+                //check whether is the sender withdrawing
+                if (!request.getReceiverMobileNo().trim().equals(sendMoneyTxn.getSendernumber())) {
+                    log.info("Send money token expired at {} ", formatter.format(new Date(sendMoneyTxn.getSendmoneytokenexpiretime())));
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                            request.getAmount(), "139",
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
+                    return SendMoneyResponse.builder()
+                            .status("139")
+                            .message("Transaction failed. Token expired!")
+                            .data(null)
+                            .build();
+                }else{
+                    //check the regenerated token
+                    if (Instant.ofEpochMilli(sendMoneyTxn.getSendmoneytokenexpiretime2()).isBefore(Instant.now())
+                        *//*sendMoneyTxn.getSendmoneytokenexpiretime2() < Instant.now().toEpochMilli()*//*){
+                        log.info("Send money token expired at {} ", formatter.format(new Date(sendMoneyTxn.getSendmoneytokenexpiretime2())));
+                        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
+                                request.getAmount(), "139",
+                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+
+                        return SendMoneyResponse.builder()
+                                .status("139")
+                                .message("Transaction failed. Token expired!")
+                                .data(null)
+                                .build();
+                    }
+                }
+            }*/
+            /* ======= end =======  */
 
             if (compareRequestTokenWithStoredToken(request, transactionRRN, sendMoneyTxn)) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
