@@ -1,40 +1,60 @@
 package co.ke.tracom.bprgateway.web.sendmoney.services;
 
+import co.ke.tracom.bprgateway.web.sendmoney.data.requests.SendMoneyRequest;
 import co.ke.tracom.bprgateway.web.sendmoney.entity.MoneySend;
 import co.ke.tracom.bprgateway.web.sendmoney.repository.MoneySendRepository;
+import co.ke.tracom.bprgateway.web.sms.dto.SMSRequest;
+import co.ke.tracom.bprgateway.web.sms.dto.SMSResponse;
+import co.ke.tracom.bprgateway.web.sms.services.SMSService;
+import co.ke.tracom.bprgateway.web.smsscheduled.entities.ScheduledSMS;
+import co.ke.tracom.bprgateway.web.smsscheduled.repository.ScheduledSMSRepository;
+import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
+import co.ke.tracom.bprgateway.web.util.services.UtilityService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
-//@Service
+import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_RECEIVER;
+import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_SENDER;
+
+@Data
+@RequiredArgsConstructor
+@Service
 public class MoneySendTokenExpiryTimeService {
     private final MoneySendRepository repository;
 
-    public MoneySendTokenExpiryTimeService(MoneySendRepository repository) {
-        this.repository = repository;
-    }
 
-    /*private final XSwitchParameterService xSwitchParameterService;
+    private final XSwitchParameterService xSwitchParameterService;
     private final BPRCreditCardNumberGenerator bprCreditCardNumberGenerator;
     private final DesUtil desUtil;
 
     private final SendMoneyService sendMoneyService;
     private final SMSService smsService;
     private final ScheduledSMSRepository scheduledSMSRepository;
-    private final UtilityService utilityService;*/
+    private final UtilityService utilityService;
 
 
-    //private static final Logger log = LoggerFactory.getLogger(MoneySendTokenExpiryTimeService.class);
-
-
+    private static final Logger log = LoggerFactory.getLogger(MoneySendTokenExpiryTimeService.class);
 
 
     @Async
     public CompletableFuture<List<MoneySend>> check() {
 
         //Optional<List<MoneySend>> optionalMoneySendList = repository.findBySendmoneytokenexpiretimeBeforeAndFulfilmentstatusEquals(/*new Date().getTime()*/0, 0);
-        /*Optional<List<MoneySend>> optionalMoneySendList = repository.findByFulfilmentstatusEquals( 0);
+        Optional<List<MoneySend>> optionalMoneySendList = repository.findByFulfilmentstatusEquals(0, 30);
         List<MoneySend> moneySendList = new ArrayList<>();
         optionalMoneySendList.ifPresent(moneySends -> moneySends.forEach(
 
@@ -44,19 +64,19 @@ public class MoneySendTokenExpiryTimeService {
                     String transactionRRN = l.getTransactionRRN();
                     double amount = Double.parseDouble(l.getAmount());
 
-                    long sendMoneyExpiryTime = l.getSendmoneytokenexpiretime();
+                    long sendMoneyExpiryTime = l.getSendmoneytokenexpiretime() == null ? 0 : l.getSendmoneytokenexpiretime();
 
 
-                        // SendMoneyRequest request = new SendMoneyRequest();
-                        // request.setAmount(amount);
+                    // SendMoneyRequest request = new SendMoneyRequest();
+                    // request.setAmount(amount);
 
-                        //Generate new cno and update the record
-                        String virtualBIN = xSwitchParameterService.fetchXSwitchParamValue("CARDLESSTXNBIN");
-                        String CARDLESS_TXN_BIN = "123456";
-                        String virtualCardBIN = virtualBIN.equals("") ? CARDLESS_TXN_BIN : virtualBIN;
-                        String vCardNo = bprCreditCardNumberGenerator.generate(virtualCardBIN, 12);
-                        String generatedCardNo = desUtil.encryptPlainText(vCardNo);
-                        if (generatedCardNo != null) {
+                    //Generate new cno and update the record
+                    /*String virtualBIN = xSwitchParameterService.fetchXSwitchParamValue("CARDLESSTXNBIN");
+                    String CARDLESS_TXN_BIN = "123456";
+                    String virtualCardBIN = virtualBIN.equals("") ? CARDLESS_TXN_BIN : virtualBIN;
+                    String vCardNo = bprCreditCardNumberGenerator.generate(virtualCardBIN, 12);
+                    String generatedCardNo = desUtil.encryptPlainText(vCardNo);*/
+                       /* if (generatedCardNo != null) {
                             Random generator = new Random();
                             String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
 
@@ -92,17 +112,17 @@ public class MoneySendTokenExpiryTimeService {
                             } catch (JsonProcessingException e) {
                                 e.printStackTrace();
                             }
-                        }
+                        }*/
                     //});
                     System.out.println(l.toString());
 
                 }
                 //System.out::println
-        ));*/
-        return CompletableFuture.completedFuture(null);
+        ));
+        return CompletableFuture.completedFuture(moneySendList);
 
     }
-/*
+
     private SMSRequest saveRecipientMessage(SendMoneyRequest request, String transactionRRN,
                                             String receiverMobile, String senderMobile, String vCardNo) {
 
@@ -209,5 +229,5 @@ public class MoneySendTokenExpiryTimeService {
                 + " and Passcode: "
                 + passCode
                 + ". Thanks for banking with us.";
-    }*/
+    }
 }

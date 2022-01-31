@@ -36,7 +36,7 @@ public class MoneySend {
     //added by walter
     //should be saved with other transaction details
     //to be used by the scheduled background service
-    /*@Column(name = "TRANSACTIONRRN")
+    @Column(name = "TRANSACTIONRRN")
     private String transactionRRN;
     @Column(name = "SECONDTOKENSTARTTIME")
     private Long sendmoneytokenstarttime2;
@@ -45,6 +45,6 @@ public class MoneySend {
     @Column(name = "SECONDMTOKEN")
     private String mstoken2;
     @Column(name = "SECONDCNO")
-    private String cno2;*/
+    private String cno2;
 
 }

@@ -33,6 +33,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
 
@@ -397,7 +401,7 @@ public class SendMoneyService {
 
         //walter
         //Save RRN, tokenstarttime, tokenexoirytime
-        /*ms.setTransactionRRN(transactionRRN);
+        ms.setTransactionRRN(transactionRRN);
 
         Instant now = Instant.now();
         long timeNow = now.toEpochMilli();
@@ -405,7 +409,6 @@ public class SendMoneyService {
 
         long expiryTime = now.plus(Duration.ofHours(72)).toEpochMilli();
         ms.setSendmoneytokenexpiretime(expiryTime);
-*/
         moneySendRepository.save(ms);
     }
 
@@ -820,8 +823,8 @@ public class SendMoneyService {
             //walter
             /* ======= start =======  */
             // check if token expired
-            /*if (Instant.ofEpochMilli(sendMoneyTxn.getSendmoneytokenexpiretime()).isBefore(Instant.now())
-                *//*.getSendmoneytokenexpiretime() < Instant.now().toEpochMilli()*//*) {
+            if (Instant.ofEpochMilli(sendMoneyTxn.getSendmoneytokenexpiretime()).isBefore(Instant.now())
+            /*sendMoneyTxn.getSendmoneytokenexpiretime() < Instant.now().toEpochMilli()*/) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss a");
 
                 //check whether is the sender withdrawing
@@ -839,7 +842,7 @@ public class SendMoneyService {
                 }else{
                     //check the regenerated token
                     if (Instant.ofEpochMilli(sendMoneyTxn.getSendmoneytokenexpiretime2()).isBefore(Instant.now())
-                        *//*sendMoneyTxn.getSendmoneytokenexpiretime2() < Instant.now().toEpochMilli()*//*){
+                        /*sendMoneyTxn.getSendmoneytokenexpiretime2() < Instant.now().toEpochMilli()*/){
                         log.info("Send money token expired at {} ", formatter.format(new Date(sendMoneyTxn.getSendmoneytokenexpiretime2())));
                         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                                 request.getAmount(), "139",
@@ -852,7 +855,7 @@ public class SendMoneyService {
                                 .build();
                     }
                 }
-            }*/
+            }
             /* ======= end =======  */
 
             if (compareRequestTokenWithStoredToken(request, transactionRRN, sendMoneyTxn)) {
