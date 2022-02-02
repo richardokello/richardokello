@@ -52,7 +52,7 @@ public class MultiTenantDynamicTenantAwareRoutingSource {
         if(configuration.getDefaultSource()){
             ThreadLocalStorage.setTenantName(configuration.getTenant());
         }
-
+        System.out.println("Building datasource here >>>>>>> ");
         return dataSource;
     }
 

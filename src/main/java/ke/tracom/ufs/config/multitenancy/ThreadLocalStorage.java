@@ -10,7 +10,8 @@ public class ThreadLocalStorage {
     }
 
     public static String getTenantName() {
-        System.err.printf("Fetching active tenant id [%s]%n", tenant.get());
+        Class<?> walker = java.lang.StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        System.err.printf("Fetching active tenant id [%s] >>> caller [%s]%n", tenant.get(), walker.getSimpleName());
         return tenant.get() == null ? "0":tenant.get();
     }
     public static void setLanguage(String lang) {

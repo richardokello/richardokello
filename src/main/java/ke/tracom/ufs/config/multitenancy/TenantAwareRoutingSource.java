@@ -8,5 +8,4 @@ public class TenantAwareRoutingSource extends AbstractRoutingDataSource {
     protected Object determineCurrentLookupKey() {
         return ThreadLocalStorage.getTenantName();
     }
-
 }
