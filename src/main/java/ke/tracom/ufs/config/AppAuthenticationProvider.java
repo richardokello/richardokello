@@ -83,10 +83,7 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
             boolean isSuperUser = auth.getAuthorities().contains(new SimpleGrantedAuthority("MULTITENANCY PERMISSION"));
 
             if (isSuperUser){
-
-                System.err.printf(">>>>>>>>>>>> Multitenant Superuser found!");
-                System.err.print("******************\n Replicating user token to other schemas \n *****************");
-
+                log.info(">>>>>>>>>>>> Multitenant Superuser found!\n******************\n Replicating user token to other schemas \n *****************");
                 // fetch the username for the current logged in user
                 String username = ((UserDetails)auth.getPrincipal()).getUsername();
                 // replicate the authentication token to other schemas
@@ -98,7 +95,7 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
             dbAuth.setLastLogin(new Date());
             otpRepository.deleteByuserIdAndOtpCategory(dbAuth.getUser().getUserId().toString(), UfsOtpCategory.AUTH_OTP);
             String code = userService.generateOTP(dbAuth.getUser(), UfsOtpCategory.AUTH_OTP);
-            System.out.println("OTP >>>>>>"+code);
+            System.out.println("OTP >>>>>> "+code);
 
             this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
             this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(),  "OTP: " + code);

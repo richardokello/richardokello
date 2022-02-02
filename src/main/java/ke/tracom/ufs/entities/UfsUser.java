@@ -171,12 +171,14 @@ public class UfsUser implements Serializable {
     @Column(name = "COUNTY_ID")
     private String countyId;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<UfsUserRegionMap> ufsUserRegionMapSet;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<UfsUserAgentSupervisor> ufsUserAgentSupervisorSet;
-
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<UfsUserBranchManagers> ufsUserBranchManagersSet;
 
