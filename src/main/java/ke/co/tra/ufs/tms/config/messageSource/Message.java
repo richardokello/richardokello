@@ -11,7 +11,7 @@ import java.util.Locale;
 public class Message {
   private final MessageSourceConfig messageSourceConfig;
   public String setMessage(String msgKey){
-      String lang = ThreadLocalStorage.getLocalLanguage();
+      String lang = ThreadLocalStorage.getLanguage();
       return messageSourceConfig.messageSource().getMessage(msgKey,new Object[0], new Locale(lang));
   }
 }

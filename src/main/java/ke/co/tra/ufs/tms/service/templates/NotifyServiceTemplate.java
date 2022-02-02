@@ -19,10 +19,16 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class NotifyServiceTemplate implements NotifyService {
 
+    private final RestTemplate restTemplate;
+
     @Value("${baseUrl}")
     public String baseUrl;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    public NotifyServiceTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
 
     @Override
@@ -37,7 +43,6 @@ public class NotifyServiceTemplate implements NotifyService {
         log.info("Sending email notification to remote client (Email Address: {}, Title: {}, Message: {})", emailAddress, title, message);
         // TODO Auto-generated method stub
         //           call send email code  here
-        RestTemplate template = new RestTemplate();
         HttpEntity<EmailBody> request = new HttpEntity<>(email);
 
 
@@ -45,8 +50,7 @@ public class NotifyServiceTemplate implements NotifyService {
 
         try {
 
-            template.exchange(baseUrl + "ufs-communication-service/communication/send-email", HttpMethod.POST, request, EmailBody.class
-            );
+            restTemplate.exchange(baseUrl + "ufs-communication-service/communication/send-email", HttpMethod.POST, request, EmailBody.class);
         } catch (HttpClientErrorException e) {
             System.out.println("Communication service is unreachable ...");
         }
@@ -62,11 +66,10 @@ public class NotifyServiceTemplate implements NotifyService {
         email.setMessage(message);
         email.setSendTo(phone);
         email.setMessageType(MessageType.SMS);
-        RestTemplate template = new RestTemplate();
         HttpEntity<EmailBody> request = new HttpEntity<>(email);
         System.out.println("Sending SMS..." + email.getMessage().toString());
         try {
-            template.exchange(baseUrl + "ufs-communication-service/communication/smpp/send-sms", HttpMethod.POST, request, EmailBody.class);
+            restTemplate.exchange(baseUrl + "ufs-communication-service/communication/smpp/send-sms", HttpMethod.POST, request, EmailBody.class);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Communication service is unreachable ...");

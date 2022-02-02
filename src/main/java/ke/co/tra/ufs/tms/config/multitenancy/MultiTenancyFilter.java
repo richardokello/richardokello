@@ -1,6 +1,8 @@
 package ke.co.tra.ufs.tms.config.multitenancy;
 
 import com.google.common.net.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -14,8 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Configuration
-@Order(Integer.MIN_VALUE)
-public class MultiTenancyFilter extends OncePerRequestFilter{
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class MultiTenancyFilter extends OncePerRequestFilter {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
@@ -35,7 +38,6 @@ public class MultiTenancyFilter extends OncePerRequestFilter{
             // example code we are just extracting a Header value:
             System.err.println("== Calling multi-tenant filter ==");
             String tenantName = httpServletRequest.getHeader("X-TenantID");
-
             String language = httpServletRequest.getHeader("X-Language");
 
             // Always set the Tenant Name, so we avoid leaking Tenants between Threads even in the scenario, when no
@@ -45,8 +47,6 @@ public class MultiTenancyFilter extends OncePerRequestFilter{
             ThreadLocalStorage.setLanguage(language);
 
             filterChain.doFilter(httpServletRequest, httpServletResponse);
-            System.err.println("== Calling multi-tenant filter == completed request " + ThreadLocalStorage.getTenantName() +
-                    " >>> lang >>> " + ThreadLocalStorage.getLocalLanguage());
         }
     }
 }

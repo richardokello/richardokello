@@ -28,7 +28,7 @@ public class MultiTenantDynamicTenantAwareRoutingSource {
         // Now create a Lookup Table:
         return Arrays
                 .stream(configurations)
-                .collect(Collectors.toMap(x -> x.getTenant(), x -> buildDataSource(x)));
+                .collect(Collectors.toMap(MultiTenantDatabaseConfiguration::getTenant, this::buildDataSource));
     }
 
     private MultiTenantDatabaseConfiguration[] getDatabaseConfigurations() {
@@ -42,7 +42,7 @@ public class MultiTenantDynamicTenantAwareRoutingSource {
     private HikariDataSource buildDataSource(MultiTenantDatabaseConfiguration configuration) {
         HikariDataSource dataSource = new HikariDataSource();
 
-        dataSource.setInitializationFailTimeout(3);
+        dataSource.setInitializationFailTimeout(0);
         dataSource.setMaximumPoolSize(5);
         dataSource.setJdbcUrl(configuration.getUrl());
         dataSource.setUsername(configuration.getUser());

@@ -1,6 +1,8 @@
 package ke.co.tra.ufs.tms.config.multitenancy;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class TenantNameInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -17,9 +20,9 @@ public class TenantNameInterceptor extends HandlerInterceptorAdapter {
         // parse a JWT and extract the Tenant Name from the Claims in the Token. In the
         // example code we are just extracting a Header value:
         String tenantName = request.getHeader("X-TenantID");
-        System.err.println("Tenant Name: TenantNameInterceptor");
-
         String language = request.getHeader("X-Language");
+
+        System.err.println("^^^^^^^^ Language choosen"+language);
 
         // Always set the Tenant Name, so we avoid leaking Tenants between Threads even in the scenario, when no
         // Tenant is given. I do this because if somehow the afterCompletion Handler isn't called the Tenant Name

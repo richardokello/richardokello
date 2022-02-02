@@ -8,9 +8,10 @@ package ke.co.tra.ufs.tms;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import ke.co.tra.ufs.tms.config.multitenancy.MultiTenantDynamicTenantAwareRoutingSource;
 import ke.co.tra.ufs.tms.config.ParseJsonFile;
+import ke.co.tra.ufs.tms.config.multitenancy.MultiTenantDynamicTenantAwareRoutingSource;
 import ke.co.tra.ufs.tms.config.multitenancy.TenantAwareRoutingSource;
+import ke.co.tra.ufs.tms.config.multitenancy.ThreadLocalStorage;
 import ke.co.tra.ufs.tms.service.SysConfigService;
 import ke.co.tra.ufs.tms.utils.AppConstants;
 import org.slf4j.Logger;
@@ -21,6 +22,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -37,8 +40,11 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -52,7 +58,7 @@ import java.util.concurrent.Executor;
 @EnableEurekaClient
 public class TMSApplication {
 
-//    @Autowired
+    //    @Autowired
 //    private DataSource dataSource;
     @Value("${baseUrl}")
     private String baseUrl;
@@ -65,31 +71,28 @@ public class TMSApplication {
 
     @Bean
     public DataSource dataSource() {
-        ParseJsonFile parser =  new ParseJsonFile();
+        ParseJsonFile parser = new ParseJsonFile();
         AbstractRoutingDataSource dataSource = new TenantAwareRoutingSource();
         String tenantJson = null;
         try {
             tenantJson = parser.parseJsonFile(AppConstants.TENANT_JSON_FILE_NAME).toString();
-            if (tenantJson == null){
+            if (tenantJson == null) {
                 System.out.printf(tenantJson);
                 System.err.printf("An error occurred on datasource configuration, tenant json file is null after passing file");
             }
             MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(tenantJson);
             Map<Object, Object> tenants = routingSource.getTenants();
-
             dataSource.setTargetDataSources(tenants);
             dataSource.afterPropertiesSet();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.printf(tenantJson);
             System.err.printf("An error occurred on datasource configuration");
             System.exit(0);
-
         }
-
-
         return dataSource;
     }
+
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         final JwtAccessTokenConverter accessTokenConverter = new JwtAccessTokenConverter();
@@ -179,12 +182,34 @@ public class TMSApplication {
     }
 
     @Primary
-    @Bean
+    @Bean()
     public RemoteTokenServices tokenService() {
         RemoteTokenServices tokenService = new RemoteTokenServices();
         tokenService.setCheckTokenEndpointUrl(baseUrl + "ufs-common-modules/api/v1/oauth/check_token");
         tokenService.setClientId("common_module_client");
         tokenService.setClientSecret("secret");
+        tokenService.setRestTemplate(restTemplate());
         return tokenService;
+    }
+
+    @Bean
+    @Primary
+    public RestTemplate restTemplate() {
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+        interceptors.add((request, body, execution) -> {
+            HttpHeaders headers = request.getHeaders();
+            headers.add("X-TenantID", ThreadLocalStorage.getTenantName());
+            headers.add("X-Language", ThreadLocalStorage.getTenantName());
+            return execution.execute(request, body);
+        });
+
+        interceptors.add((request, body, execution) -> {
+            HttpHeaders headers = request.getHeaders();
+            headers.forEach((key, value) -> System.out.println("Rest Template Header " + key + " : " + value));
+            return execution.execute(request, body);
+        });
+        RestTemplate template = new RestTemplate();
+        template.setInterceptors(interceptors);
+        return template;
     }
 }

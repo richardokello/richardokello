@@ -7,9 +7,6 @@
 package ke.co.tra.ufs.tms.config;
 
 import com.google.common.base.Predicates;
-import static com.google.common.collect.Lists.newArrayList;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,14 +16,15 @@ import springfox.documentation.builders.OAuthBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
 import springfox.documentation.schema.ModelRef;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ClientCredentialsGrant;
-import springfox.documentation.service.GrantType;
-import springfox.documentation.service.ResourceOwnerPasswordCredentialsGrant;
-import springfox.documentation.service.SecurityScheme;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  *

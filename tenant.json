@@ -1,4 +1,18 @@
 [
-  {"tenant":"0","dataSourceClassName":"org.hibernate.dialect.oracle10gdialect","url":"jdbc:oracle:thin:@41.215.130.247:5097:trcm","user":"UFS_CRDB_UAT","password":"pass123","defaultSource":true},
-  {"tenant":"1","dataSourceClassName":"org.hibernate.dialect.oracle10gdialect","url":"jdbc:oracle:thin:@41.215.130.247:5097:trcm","user":"UFS_SMART_SUITE","password":"pass123","defaultSource":false}
+  {
+    "tenant": "0",
+    "dataSourceClassName": "org.hibernate.dialect.oracle10gdialect",
+    "url": "jdbc:oracle:thin:@41.215.130.247:5097:trcm",
+    "user": "UFS_CRDB_UAT",
+    "password": "pass123",
+    "defaultSource": true
+  },
+  {
+    "tenant": "1",
+    "dataSourceClassName": "org.hibernate.dialect.oracle10gdialect",
+    "url": "jdbc:oracle:thin:@41.215.130.247:5097:trcm",
+    "user": "UFS_SMART_SUITE",
+    "password": "pass123",
+    "defaultSource": false
+  }
 ]
