@@ -13,21 +13,23 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAg
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.Data;
 import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
+import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
+import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
+import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
-import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.Response;
+import co.ke.tracom.bprgateway.web.wasac.data.payment.WasacPaymentRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.payment.WasacPaymentResponse;
 import co.ke.tracom.bprgateway.web.wasac.data.WascWaterTxnLog;
 import co.ke.tracom.bprgateway.web.wasac.repository.WascWaterTxnLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,9 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.*;
-import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -67,8 +67,10 @@ public class WASACService {
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
 
-    @Autowired
-    private  final WascWaterTxnLogRepository repository;
+
+    private final WascWaterTxnLogRepository repository;
+
+    private final UtilityService utilityService;
 
     /**
      * Fetch customer data given Customer ID from remote API. URL:
@@ -122,29 +124,29 @@ public class WASACService {
 
 
     @SneakyThrows
-    public BillPaymentResponse payWaterBill(BillPaymentRequest request)  {
+    public BillPaymentResponse payWaterBill(BillPaymentRequest request) {
         WascWaterTxnLog waterTxnLog = new WascWaterTxnLog();
         WasacPaymentResponse paymentResponse =
-            new WasacPaymentResponse()
-                    .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
+                new WasacPaymentResponse()
+                        .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
         BillPaymentResponse billPaymentResponse;
         List<TransactionData> transactionData = new ArrayList<>();
         //try {
-            //payment impl
-            AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
-                    new MerchantAuthInfo(request.getCredentials().getUsername(),request.getCredentials().getPassword()));
+        //payment impl
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
+                new MerchantAuthInfo(request.getCredentials().getUsername(), request.getCredentials().getPassword()));
 
-            if (authenticateAgentResponse.getCode() != 200) {
-                WasacPaymentResponse wasacPaymentResponse = new WasacPaymentResponse();
-                wasacPaymentResponse.setStatus("Invalid credentials");
-                billPaymentResponse = getPaymentResponse(wasacPaymentResponse);
-                return billPaymentResponse;
-            }
-            Data agentAuthData = authenticateAgentResponse.getData();
-            long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
+        if (authenticateAgentResponse.getCode() != 200) {
+            WasacPaymentResponse wasacPaymentResponse = new WasacPaymentResponse();
+            wasacPaymentResponse.setStatus("Invalid credentials");
+            billPaymentResponse = getPaymentResponse(wasacPaymentResponse);
+            return billPaymentResponse;
+        }
+        Data agentAuthData = authenticateAgentResponse.getData();
+        long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
 
-            String waitTime = xSwitchParameterService.fetchXSwitchParamValue("T24_INQUIRY_WAIT_TIME_MILLISECONDS");
-            waitTime = waitTime.isEmpty() ? "30000" : waitTime;
+        String waitTime = xSwitchParameterService.fetchXSwitchParamValue("T24_INQUIRY_WAIT_TIME_MILLISECONDS");
+        waitTime = waitTime.isEmpty() ? "30000" : waitTime;
             /*profileResponse1 = fetchCustomerProfile(
                     CustomerProfileRequest.builder()
                         .customerId("CUSTOMER_ID")
@@ -154,83 +156,83 @@ public class WASACService {
                                     .password(request.getCredentials().getPassword()
                                 ).build()
                     ).build());*/
-            //Response profileResponse1Data = profileResponse1.getData();
+        //Response profileResponse1Data = profileResponse1.getData();
 
-            //extracting data from the request payload
-            List<TransactionData> transactionDataList = request.getData();
-            //List<TransactionData> transactionDataList = request.getCredentials().getData();
-            long customerId;
-            String account;
-            Long amount;
-            String description;
-            if (transactionDataList != null && transactionDataList.size() > 0) {
-                customerId = Long.parseLong(transactionDataList.get(0).getValue());
-                account = transactionDataList.get(1).getValue();
-                amount = Long.parseLong(transactionDataList.get(2).getValue());
-                description = transactionDataList.get(3).getValue();
-            }else {
-                customerId = 89565565;
-                account = agentAuthData.getAccountNumber();
-                amount = 1500L;
-            }
+        //extracting data from the request payload
+        List<TransactionData> transactionDataList = request.getData();
+        //List<TransactionData> transactionDataList = request.getCredentials().getData();
+        long customerId;
+        String account;
+        Long amount;
+        String description;
+        if (transactionDataList != null && transactionDataList.size() > 0) {
+            customerId = Long.parseLong(transactionDataList.get(0).getValue());
+            account = transactionDataList.get(1).getValue();
+            amount = Long.parseLong(transactionDataList.get(2).getValue());
+            description = transactionDataList.get(3).getValue();
+        } else {
+            customerId = 89565565;
+            account = agentAuthData.getAccountNumber();
+            amount = 1500L;
+        }
 
-            String RRN = RRNGenerator.getInstance("BP").getRRN();
+        String RRN = RRNGenerator.getInstance("BP").getRRN();
 
-            String meterNo = "211610021";
+        String meterNo = "211610021";
 
-            waterTxnLog.setAmount(String.valueOf(amount));
-            waterTxnLog.setCustomerName(agentAuthData.getNames());
-            waterTxnLog.setMeterNo(/*profileResponse1Data.getMeterid()*/meterNo);
-            waterTxnLog.setPosRef(RRN);
-            waterTxnLog.setMid(agentAuthData.getMid());
-            waterTxnLog.setTid(agentAuthData.getTid());
+        waterTxnLog.setAmount(String.valueOf(amount));
+        waterTxnLog.setCustomerName(agentAuthData.getNames());
+        waterTxnLog.setMeterNo(/*profileResponse1Data.getMeterid()*/meterNo);
+        waterTxnLog.setPosRef(RRN);
+        waterTxnLog.setMid(agentAuthData.getMid());
+        waterTxnLog.setTid(agentAuthData.getTid());
 
-            String tot24str = getT24OFS(/*profileResponse1Data.getMeterid()*/meterNo, account, amount,
-                    /*profileResponse1Data.getName()*/agentAuthData.getNames(),request.getCredentials().getTid(),
-                    agentAuthData.getMid(), agentFloatAccountBalance);
-
-
-            T24TXNQueue tot24 = new T24TXNQueue();
-
-            tot24.setMeterno(/*profileResponse1Data.getMeterid()*/meterNo);
-            // base 64 encode request in db
-            tot24.setRequestleg(tot24str);
-            tot24.setStarttime(System.currentTimeMillis());
-            //tot24.setTxnmti(isomsg.getMTI());
-            tot24.setTxnchannel("PC");
-            tot24.setGatewayref(RRN);
-            tot24.setPostedstatus("0");
-            //tot24.setProcode(isomsg.getString(3));
-            tot24.setTid(agentAuthData.getTid());
-            tot24.setDebitacctno(account);
-            tot24.setTotalchargeamt("0.0");
-
-        final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
-        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
-
-            t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
-
-            transactionService.updateT24TransactionDTO(tot24);
+        String tot24str = getT24OFS(/*profileResponse1Data.getMeterid()*/meterNo, account, amount,
+                /*profileResponse1Data.getName()*/agentAuthData.getNames(), request.getCredentials().getTid(),
+                agentAuthData.getMid(), agentFloatAccountBalance);
 
 
-            //todo to be continued
+        T24TXNQueue tot24 = new T24TXNQueue();
 
-            System.out.println(".Gateway ref.. " + RRN + " txn queued for t24 posting !!");
+        tot24.setMeterno(/*profileResponse1Data.getMeterid()*/meterNo);
+        // base 64 encode request in db
+        tot24.setRequestleg(tot24str);
+        tot24.setStarttime(System.currentTimeMillis());
+        //tot24.setTxnmti(isomsg.getMTI());
+        tot24.setTxnchannel("PC");
+        tot24.setGatewayref(RRN);
+        tot24.setPostedstatus("0");
+        //tot24.setProcode(isomsg.getString(3));
+        tot24.setTid(agentAuthData.getTid());
+        tot24.setDebitacctno(account);
+        tot24.setTotalchargeamt("0.0");
 
-            String accname = tot24.getCustomerName() == null ? "" : tot24.getCustomerName();
-            String errorMessage =
-                    tot24.getT24failnarration() == null ? "" : tot24.getT24failnarration();
-            if (errorMessage.isEmpty()) {
-                if (tot24.getT24responsecode().equals("3")) {
-                    //isomsg.set(60, "Transaction failed due to timeout");
-                    //isomsg.set(61, "");
-                    //isomsg.set(39, "098");
+        final String t24Ip = getT24Ip();
+        final String t24Port = getT24Port();
 
-                    transactionData.add(addValidationResponse("Transaction failure","Transaction failed due to timeout"));
-                    transactionData.add(addValidationResponse("Action code","098"));
-                    billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
-                            AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
-                } else {
+        t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
+
+        transactionService.updateT24TransactionDTO(tot24);
+
+
+        //todo to be continued
+
+        System.out.println(".Gateway ref.. " + RRN + " txn queued for t24 posting !!");
+
+        String accname = tot24.getCustomerName() == null ? "" : tot24.getCustomerName();
+        String errorMessage =
+                tot24.getT24failnarration() == null ? "" : tot24.getT24failnarration();
+        if (errorMessage.isEmpty()) {
+            if (tot24.getT24responsecode().equals("3")) {
+                //isomsg.set(60, "Transaction failed due to timeout");
+                //isomsg.set(61, "");
+                //isomsg.set(39, "098");
+
+                transactionData.add(addValidationResponse("Transaction failure", "Transaction failed due to timeout"));
+                transactionData.add(addValidationResponse("Action code", "098"));
+                billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
+                        AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
+            } else {
 
              /*       isomsg.set(60, f60);
                     //                    isomsg.set(
@@ -251,39 +253,39 @@ public class WASACService {
                     isomsg.set(39, "000");
                     isomsg.set(5, tot24.getTotalchargeamt());*/
 
-                    waterTxnLog.setGatewayT24PostingStatus("1");
-                    // todo set token respondent elecTxnLogs.setToken_no(tot24.getTokenNo());
-                    insertWascTxnLogs(waterTxnLog);
+                waterTxnLog.setGatewayT24PostingStatus("1");
+                // todo set token respondent elecTxnLogs.setToken_no(tot24.getTokenNo());
+                insertWascTxnLogs(waterTxnLog);
 
-                    transactionData.add(addValidationResponse("T24 Reference",RRN));
-                    transactionData.add(addValidationResponse("Reference No",RRN));
-                    transactionData.add(addValidationResponse("name",agentAuthData.getNames()));
-                    transactionData.add(addValidationResponse("Phone",/*profileResponse1Data.getPhone()*/ "0710101010"));
-                    transactionData.add(addValidationResponse("Token No",tot24.getTokenNo()));
-                    transactionData.add(addValidationResponse("Units",tot24.getUnitsKw()));
-                    transactionData.add(addValidationResponse("Meter No",/*profileResponse1Data.getMeterid()*/meterNo));
-                    transactionData.add(addValidationResponse("Customer Id", Long.toString(customerId)));
+                transactionData.add(addValidationResponse("T24 Reference", RRN));
+                transactionData.add(addValidationResponse("Reference No", RRN));
+                transactionData.add(addValidationResponse("name", agentAuthData.getNames()));
+                transactionData.add(addValidationResponse("Phone",/*profileResponse1Data.getPhone()*/ "0710101010"));
+                transactionData.add(addValidationResponse("Token No", tot24.getTokenNo()));
+                transactionData.add(addValidationResponse("Units", tot24.getUnitsKw()));
+                transactionData.add(addValidationResponse("Meter No",/*profileResponse1Data.getMeterid()*/meterNo));
+                transactionData.add(addValidationResponse("Customer Id", Long.toString(customerId)));
 
-                    transactionData.add(addValidationResponse("Action code","000"));
-                    transactionData.add(addValidationResponse("Charge amount",tot24.getTotalchargeamt()));
+                transactionData.add(addValidationResponse("Action code", "000"));
+                transactionData.add(addValidationResponse("Charge amount", tot24.getTotalchargeamt()));
 
-                    billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
-                            AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
-                }
-            } else {
-                transactionData.add(addValidationResponse("t24 fail narration",tot24.getT24failnarration()));
-                transactionData.add(addValidationResponse("Action code","135"));
-                billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(),
-                        AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.getReasonPhrase());
-                //isomsg.set(60, tot24.getT24failnarration().replace("\"", ""));
-                //isomsg.set(39, "135");
-
-                waterTxnLog.setGatewayT24PostingStatus("0");
+                billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
+                        AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
             }
-            tot24.setT24reference(tot24.getT24reference());
+        } else {
+            transactionData.add(addValidationResponse("t24 fail narration", tot24.getT24failnarration()));
+            transactionData.add(addValidationResponse("Action code", "135"));
+            billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(),
+                    AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.getReasonPhrase());
+            //isomsg.set(60, tot24.getT24failnarration().replace("\"", ""));
+            //isomsg.set(39, "135");
 
-            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, request.getTnxType(), "0200",amount ,tot24.getPostedstatus() ,
-                    agentAuthData.getTid(), agentAuthData.getMid());
+            waterTxnLog.setGatewayT24PostingStatus("0");
+        }
+        tot24.setT24reference(tot24.getT24reference());
+
+        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, request.getTnxType(), "0200", amount, tot24.getPostedstatus(),
+                agentAuthData.getTid(), agentAuthData.getMid());
 
        /* } catch (Exception e) {
             e.printStackTrace();
@@ -309,11 +311,12 @@ public class WASACService {
 
     //construct t24 OFS message string
     private String getT24OFS(String meterNo, String agentFloatAccount, Long Amount, String customerName, String terminalId,
-                             String mid, long _balance){
-        String t24UserName="RAJ001";//########U
-        String t24Password = "123456";//########A
-        String euclBankBranch = "";//BPRFunctions.getParambyName("DEFAULT_EUCL_BRANCH");
-        String euclBankBranch1 = xSwitchParameterService.fetchXSwitchParamValue("DEFAULT_EUCL_BRANCH");
+                             String mid, long _balance) {
+
+
+        String t24UserName = getT24UserName();
+        String t24Password = getT24Password();
+        String euclBankBranch = getDefaultBranch();
 
         String waterBankBranch = "RW0010593"; // todo get from bpr functions
         String accountDetails = "22"; // todo get bank branch == is same as bank branch from enquiry leg
@@ -326,7 +329,7 @@ public class WASACService {
                         + "/"
                         + t24Password
                         + "/"
-                        + euclBankBranch1
+                        + euclBankBranch
                         + ",,"
                         + "TRANSACTION.TYPE::=ACWB,BPR.ID.NUMBER::="
                         + meterNo
@@ -358,13 +361,21 @@ public class WASACService {
                         + " "
                         + mid
                         + " "
-                        + /*waterBankBranch*/"RW0010593";
+                        + waterBankBranch;
 
-                        String t24str ="0000AFUNDS.TRANSFER,BPR.WASAC.PAYMENT.AGB/I/PROCESS,RAJ001/123456/RW0010593,,TRANSACTION.TYPE::=ACWB,BPR.ID.NUMBER::=202213074,DEBIT.ACCT.NO::=408102653810194,DEBIT.CURRENCY::=RWF,ORDERING.BANK::=BNK,DEBIT.VALUE.DATE::=20210831,DEBIT.AMOUNT::=11000,INVOICE.DETAILS::=22.0,AB.SCHOOL.ID::=22,AB.STU.NAME::=UWIMANA LIBERATHA,CREDIT.CURRENCY::=RWF,PAYMENT.DETAILS:1:1=WATER BILL PAYMENT,PAYMENT.DETAILS:2:1=PO400003 000000 RW001000";
-        return String.format("%04d", t24.length()) + t24str;
+        String t24str = "0000AFUNDS.TRANSFER,BPR.WASAC.PAYMENT.AGB/I/PROCESS," +
+                "RAJ001/123456/RW0010593,," +
+                "TRANSACTION.TYPE::=ACWB,BPR.ID.NUMBER::=202213074," +
+                "DEBIT.ACCT.NO::=408102653810194,DEBIT.CURRENCY::=RWF,ORDERING.BANK::=BNK," +
+                "DEBIT.VALUE.DATE::=20210831," +
+                "DEBIT.AMOUNT::=11000,INVOICE.DETAILS::=22.0," +
+                "AB.SCHOOL.ID::=22,AB.STU.NAME::=UWIMANA LIBERATHA," +
+                "CREDIT.CURRENCY::=RWF,PAYMENT.DETAILS:1:1=WATER BILL PAYMENT," +
+                "PAYMENT.DETAILS:2:1=PO400003 000000 RW001000";
+        return String.format("%04d", t24.length()) + t24;
     }
 
-    private static String getFormattedDate(String pattern ) {
+    private static String getFormattedDate(String pattern) {
         pattern = pattern.isEmpty() ? "yyyyMMdd" : pattern;
         SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
         return dateFormat.format(new Date());
@@ -394,12 +405,12 @@ public class WASACService {
             waitTime = waitTime.isEmpty() ? "30000" : waitTime;
             //Response profileResponse1Data = profileResponse1.getData();
 
-            String t24usn = "TRUSER1";//########U
-            String t24pwd = "123456";//########A
+            String t24usn = getT24UserName();
+            String t24pwd = getT24Password();
 
-            String euclBankBranch = "RW0010593";//xSwitchParameterService.fetchXSwitchParamValue("DEFAULT_EUCL_BRANCH");
+            String euclBankBranch = getDefaultBranch();
 
-            String meterNo ="213315124"; //"202213074";
+            String meterNo = "213315124"; //"202213074";
 
             //if transaction data has been sent
             if (validationRequest.getData().size() > 0) {
@@ -435,8 +446,8 @@ public class WASACService {
             //tot24.setTxnmti("1100");
             tot24.setTid(/*validationRequest.getCredentials().getTid() agentAuthData.getTid()*/ channel);
 
-            final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
-            final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
+            final String t24Ip = getT24Ip();
+            final String t24Port = getT24Port();
 
             //long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
 
@@ -448,41 +459,59 @@ public class WASACService {
 
 
             //todo to be continued
-            
+
 
             String accname = tot24.getCustomerName() == null ? "" : tot24.getCustomerName();
             System.out.println("transaction response >>>>>> " + tot24);
-            if (!accname.isEmpty()) {
-                validationData.add(addValidationResponse("Client post name",/*profileResponse1Data.getPostname()*/ tot24.getAccountname()));
-                validationData.add(addValidationResponse("name",/*profileResponse1Data.getName()*/ tot24.getCustomerName()));
-                validationData.add(addValidationResponse("zone",/*profileResponse1Data.getZone()*/ agentAuthData.getLocation()));
-                validationData.add(addValidationResponse("Mobile No",/*profileResponse1Data.getMobile()*/ ""));
-                validationData.add(addValidationResponse("Email",/*profileResponse1Data.getEmail()*/tot24.getCustemail()));
-                validationData.add(addValidationResponse("Phone",/*profileResponse1Data.getPhone()*/tot24.getPhone()));
-                validationData.add(addValidationResponse("National ID",/*profileResponse1Data.getPersonnalid()*/ ""));
-                validationData.add(addValidationResponse("Branch",/*profileResponse1Data.getBranch()*/ ""));
-                validationData.add(addValidationResponse("Balance",/*profileResponse1Data.getBalance()*/ tot24.getBaladvise()));
-                validationData.add(addValidationResponse("Meter No",/*profileResponse1Data.getMeterid()*/ tot24.getMeterno()));
-                validationData.add(addValidationResponse("Customer Id",/*profileResponse1Data.getCustomerid()*/ tot24.getCustid()));
+            String responseCode = tot24.getT24responsecode() == null ? "" : tot24.getT24responsecode();
+            if (tot24.getT24failnarration() == null && !responseCode.equals("3")) {
+
+                String ofsResponse =tot24.getResponseleg();
+
+                var newString = ofsResponse.replaceAll("\\p{Space}{2,}+","");
+                var responseFields = newString.split("\t");
+
+                var wasacT24ValidationResponse = new WasacT24ValidationResponse();
+                wasacT24ValidationResponse.setCustomerNo(responseFields[0].replace('"',' ').trim());
+                wasacT24ValidationResponse.setCustomerName(responseFields[1].replace('"',' ').trim());
+                wasacT24ValidationResponse.setMeterNo(responseFields[2].replace('"',' ').trim());
+                wasacT24ValidationResponse.setBranchNo(responseFields[3].replace('"',' ').trim());
+                wasacT24ValidationResponse.setOutstandingBalance(responseFields[4].replace('"',' ').trim());
+
+                validationData.add(addValidationResponse("Client post name", tot24.getAccountname()));
+                validationData.add(addValidationResponse("Name", wasacT24ValidationResponse.getCustomerName()));
+                validationData.add(addValidationResponse("Meter No", wasacT24ValidationResponse.getMeterNo()));
+                validationData.add(addValidationResponse("Branch No", wasacT24ValidationResponse.getBranchNo()));
+                validationData.add(addValidationResponse("Customer Id", wasacT24ValidationResponse.getCustomerNo()));
+                validationData.add(addValidationResponse("Balance", wasacT24ValidationResponse.getOutstandingBalance()));
+
+                //validationData.add(addValidationResponse("zone",/*profileResponse1Data.getZone()*/ agentAuthData.getLocation()));
+                //validationData.add(addValidationResponse("Mobile No",/*profileResponse1Data.getMobile()*/ ""));
+                //validationData.add(addValidationResponse("Email",/*profileResponse1Data.getEmail()*/tot24.getCustemail()));
+                //validationData.add(addValidationResponse("Phone",/*profileResponse1Data.getPhone()*/tot24.getPhone()));
+                //validationData.add(addValidationResponse("National ID",/*profileResponse1Data.getPersonnalid()*/ ""));
+                //validationData.add(addValidationResponse("Branch",/*profileResponse1Data.getBranch()*/ ""));
+                //validationData.add(addValidationResponse("Balance",/*profileResponse1Data.getBalance()*/ tot24.getBaladvise()));
+
 
                 response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
-                
+
                 /*isomsg.set(
                         60,
                         customerWASCId + "#" + phone + "#" + accname + "#" + tot24.getMeterno() + "#" + tot24.getBaladvise() + "#");
                 isomsg.set(39, "000");
                 isomsg.set(4, tot24.getBaladvise());*/
-                
+
             } else {
-                validationData.add(addValidationResponse("T24failnarration",tot24.getT24failnarration()));
-                validationData.add(addValidationResponse("Action code","135"));
+                validationData.add(addValidationResponse("T24failnarration", tot24.getT24failnarration()));
+                validationData.add(addValidationResponse("Action code", "135"));
                 response = getAcademicBridgeValidation(validationData, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.getReasonPhrase());
                 /*isomsg.set(60, tot24.getT24failnarration().replace("\"", ""));
                 isomsg.set(39, "135");*/
             }
 
             transactionService.saveCardLessTransactionToAllTransactionTable(
-                    tot24, validationRequest.getTnxType(), "WASC ACCOUNT VALIDATION",0,AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
+                    tot24, validationRequest.getTnxType(), "WASC ACCOUNT VALIDATION", 0, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -529,6 +558,52 @@ public class WASACService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private String getT24UserName() {
+        String t24USER = xSwitchParameterService.fetchXSwitchParamValue("T24USER");
+
+        if (t24USER.isEmpty()) {
+            log.info("****************************** Missing T24 User in the database. ******************************");
+            return "TRUSER1";
+        }
+        return utilityService.decryptSensitiveData(t24USER);
+    }
+
+    private String getT24Password() {
+        String t24PASS = xSwitchParameterService.fetchXSwitchParamValue("T24PASS");
+
+        if (t24PASS.isEmpty()) {
+            log.info("****************************** Missing T24 Pass in the database. ******************************");
+            return "123456";
+        }
+        return utilityService.decryptSensitiveData(t24PASS);
+    }
+
+    private String getDefaultBranch() {
+        String default_eucl_branch = xSwitchParameterService.fetchXSwitchParamValue("DEFAULT_EUCL_BRANCH");
+        if (default_eucl_branch.isEmpty()) {
+            log.info("****************************** Missing T24 Pass in the database. ******************************");
+            return "RW0010593";
+        }
+        return default_eucl_branch;
+    }
+
+    private String getT24Ip() {
+        return xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
+    }
+
+    private String getT24Port() {
+        return xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
+    }
+
+    @lombok.Data
+    class WasacT24ValidationResponse{
+        private String customerNo;
+        private String customerName;
+        private String meterNo;
+        private String branchNo;
+        private String outstandingBalance;
     }
 
 }

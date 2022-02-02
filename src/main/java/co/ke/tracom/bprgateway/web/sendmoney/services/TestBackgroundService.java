@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-@Component
+//@Component
 public class TestBackgroundService {
 
     private final MoneySendTokenExpiryTimeService expiryTimeService;
@@ -23,7 +23,7 @@ public class TestBackgroundService {
     }
 
 
-    @Scheduled(fixedRate = (20 * 60 * 1000), cron = ("0 0 8-17 * * *"))
+    //@Scheduled(fixedRate = (20 * 60 * 1000), cron = ("0 0 8-17 * * *"))
     private void checkTokenExpiryTime() throws ExecutionException, InterruptedException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd h:m:sZ");
         log.info("The time is now {}", format.format(new Date()));

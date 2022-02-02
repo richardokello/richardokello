@@ -145,7 +145,7 @@ public class BillRequestHandler {
                 if (!data.isEmpty()){
                     String  meterNo = data.get(0).getValue();
                     String phoneNo = data.get(1).getValue();
-                    String amount = data.get(2).getValue();
+                    long amount = Long.parseLong(data.get(2).getValue());
 
                     euclValidation.setAmount(amount);
                     euclValidation.setCredentials(
