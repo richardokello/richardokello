@@ -1,4 +1,4 @@
-package ke.co.tra.ufs.tms.config.multitenancy;
+package ke.co.tra.ufs.tms.config;
 
 import lombok.extern.apachecommons.CommonsLog;
 import org.json.simple.parser.JSONParser;

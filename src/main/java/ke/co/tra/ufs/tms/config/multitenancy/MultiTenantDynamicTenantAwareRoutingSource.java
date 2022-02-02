@@ -42,7 +42,7 @@ public class MultiTenantDynamicTenantAwareRoutingSource {
     private HikariDataSource buildDataSource(MultiTenantDatabaseConfiguration configuration) {
         HikariDataSource dataSource = new HikariDataSource();
 
-        dataSource.setInitializationFailTimeout(0);
+        dataSource.setInitializationFailTimeout(3);
         dataSource.setMaximumPoolSize(5);
         dataSource.setJdbcUrl(configuration.getUrl());
         dataSource.setUsername(configuration.getUser());
@@ -51,6 +51,8 @@ public class MultiTenantDynamicTenantAwareRoutingSource {
         if(configuration.getDefaultSource()){
             ThreadLocalStorage.setTenantName(configuration.getTenant());
         }
+
+        System.out.println("Building datasource here >>>>>>> ");
 
         return dataSource;
     }

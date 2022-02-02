@@ -1,9 +1,11 @@
 package ke.co.tra.ufs.tms.config.multitenancy;
 
+import com.google.common.net.HttpHeaders;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.ui.context.Theme;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.*;
@@ -12,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Integer.MIN_VALUE)
 public class MultiTenancyFilter extends OncePerRequestFilter{
 
     @Override
@@ -21,13 +23,11 @@ public class MultiTenancyFilter extends OncePerRequestFilter{
                                     FilterChain filterChain) throws ServletException, IOException {
 
         if (HttpMethod.OPTIONS.name().equalsIgnoreCase(httpServletRequest.getMethod())){
-            httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
-            httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET,PATCH, OPTIONS, DELETE");
-            httpServletResponse.setHeader("Access-Control-Allow-Headers",
-                    "X-Requested-With, X-Auth-Token,Authorization,Content-Type," +
-                            "Content-Language,X-Language,X-TenantID,Accept,X-FORWARDED-FOR,X-CSRF-TOKEN,Accept-Language,Cache-control");
-            httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
-            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+            httpServletResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS,"true");
+            httpServletResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,"Authorization, Content-Type,X-TenantID,X-Language,Accept,Accept-Language,X_FORWARDED_FOR,X-CSRF-TOKEN");
+            httpServletResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,"*");
+            httpServletResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,"POST,DELETE,GET,PUT,OPTIONS");
+            httpServletResponse.setStatus(httpServletResponse.SC_OK);
         }
         else {
             // Implement your logic to extract the Tenant Name here. Another way would be to
@@ -45,7 +45,8 @@ public class MultiTenancyFilter extends OncePerRequestFilter{
             ThreadLocalStorage.setLanguage(language);
 
             filterChain.doFilter(httpServletRequest, httpServletResponse);
-
+            System.err.println("== Calling multi-tenant filter == completed request " + ThreadLocalStorage.getTenantName() +
+                    " >>> lang >>> " + ThreadLocalStorage.getLocalLanguage());
         }
     }
 }

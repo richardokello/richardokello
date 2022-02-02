@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,5 +47,4 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
 
         return passworEncoder;
     }
-
 }

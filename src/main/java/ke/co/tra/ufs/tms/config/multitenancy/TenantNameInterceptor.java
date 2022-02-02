@@ -17,7 +17,7 @@ public class TenantNameInterceptor extends HandlerInterceptorAdapter {
         // parse a JWT and extract the Tenant Name from the Claims in the Token. In the
         // example code we are just extracting a Header value:
         String tenantName = request.getHeader("X-TenantID");
-        System.err.println("Tenant Name: " + tenantName);
+        System.err.println("Tenant Name: TenantNameInterceptor");
 
         String language = request.getHeader("X-Language");
 
