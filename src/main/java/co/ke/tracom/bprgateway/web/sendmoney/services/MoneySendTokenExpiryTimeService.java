@@ -46,6 +46,8 @@ public class MoneySendTokenExpiryTimeService {
     private final ScheduledSMSRepository scheduledSMSRepository;
     private final UtilityService utilityService;
 
+    private final TokenDurationService tokenDurationService;
+
 
     private static final Logger log = LoggerFactory.getLogger(MoneySendTokenExpiryTimeService.class);
 
@@ -91,8 +93,11 @@ public class MoneySendTokenExpiryTimeService {
                                 //then save new vcard and passcode
                                 l.setMstoken2(passCode);
                                 l.setCno2(generatedCardNo);
-                                long sendmoneytokenexpirytime2 = Instant.ofEpochMilli(sendMoneyExpiryTime).plus(Duration.ofHours(24)).toEpochMilli();
-                                l.setSendmoneytokenstarttime2(Instant.now().toEpochMilli());
+                                //todo use the exact configuration name
+                                Duration secondDurationByConfigurationName = tokenDurationService.getSecondDurationByConfigurationName("CONFIGURATION_NAME");
+
+                                long sendmoneytokenexpirytime2 = Instant.ofEpochMilli(sendMoneyExpiryTime).plus(secondDurationByConfigurationName).toEpochMilli();
+                                l.setSendmoneytokenstarttime2(sendMoneyExpiryTime);
                                 l.setSendmoneytokenexpiretime2(sendmoneytokenexpirytime2);
                                 repository.save(l);
 

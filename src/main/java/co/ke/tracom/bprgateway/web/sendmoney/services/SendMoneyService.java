@@ -71,6 +71,8 @@ public class SendMoneyService {
     private final ScheduledSMSRepository scheduledSMSRepository;
     private final TransactionLimitManagerService limitManagerService;
 
+    private final TokenDurationService tokenDurationService;
+
     @SneakyThrows
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
         T24TXNQueue toT24= new T24TXNQueue();
@@ -406,7 +408,10 @@ public class SendMoneyService {
         long timeNow = now.toEpochMilli();
         ms.setSendmoneytokenstarttime(timeNow);
 
-        long expiryTime = now.plus(Duration.ofHours(72)).toEpochMilli();
+        //todo use the exact configuration name
+        Duration initialDurationByConfigurationName = tokenDurationService.getInitialDurationByConfigurationName("CONFIGURATION_NAME");
+
+        long expiryTime = now.plus(initialDurationByConfigurationName).toEpochMilli();
         ms.setSendmoneytokenexpiretime(expiryTime);
         moneySendRepository.save(ms);
     }
