@@ -29,7 +29,7 @@ public class MultiTenantDynamicTenantAwareRoutingSource {
         // Now create a Lookup Table:
         return Arrays
                 .stream(configurations)
-                .collect(Collectors.toMap(x -> x.getTenant(), x -> buildDataSource(x)));
+                .collect(Collectors.toMap(MultiTenantDatabaseConfiguration::getTenant, this::buildDataSource));
     }
 
     private MultiTenantDatabaseConfiguration[] getDatabaseConfigurations() {

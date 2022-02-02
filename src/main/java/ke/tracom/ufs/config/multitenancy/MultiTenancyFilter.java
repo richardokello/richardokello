@@ -31,7 +31,7 @@ public class MultiTenancyFilter extends OncePerRequestFilter{
         }
         else {
             // Implement your logic to extract the Tenant Name here. Another way would be to
-            // parse a and extract the Tenant Name from the Claims in the Token. In the
+            // parse a JWT and extract the Tenant Name from the Claims in the Token. In the
             // example code we are just extracting a Header value:
             System.err.println("== Calling multi-tenant filter ==");
             String tenantName = httpServletRequest.getHeader("X-TenantID");

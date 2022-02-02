@@ -8,6 +8,7 @@ import ke.tracom.ufs.config.FileStorageProperties;
 import ke.tracom.ufs.config.ParseJsonFile;
 import ke.tracom.ufs.config.multitenancy.MultiTenantDynamicTenantAwareRoutingSource;
 import ke.tracom.ufs.config.multitenancy.TenantAwareRoutingSource;
+import ke.tracom.ufs.config.multitenancy.ThreadLocalStorage;
 import ke.tracom.ufs.utils.AppConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -19,6 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -27,14 +30,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 @Slf4j
@@ -112,5 +114,26 @@ public class UfsApplication {
 
         }
         return dataSource;
+    }
+
+    @Bean
+    @Primary
+    public RestTemplate restTemplate() {
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+        interceptors.add((request, body, execution) -> {
+            HttpHeaders headers = request.getHeaders();
+            headers.add("X-TenantID", ThreadLocalStorage.getTenantName());
+            headers.add("X-Language", ThreadLocalStorage.getTenantName());
+            return execution.execute(request, body);
+        });
+
+        interceptors.add((request, body, execution) -> {
+            HttpHeaders headers = request.getHeaders();
+            headers.forEach((key, value) -> System.out.println("Rest Template Header " + key + " : " + value));
+            return execution.execute(request, body);
+        });
+        RestTemplate template = new RestTemplate();
+        template.setInterceptors(interceptors);
+        return template;
     }
 }

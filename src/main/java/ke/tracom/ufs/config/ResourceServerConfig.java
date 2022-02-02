@@ -5,7 +5,6 @@
  */
 package ke.tracom.ufs.config;
 
-import ke.tracom.ufs.config.multitenancy.MultiTenancyFilter;
 import ke.tracom.ufs.security.AuthenticationFilter;
 import ke.tracom.ufs.utils.ResponseFilter;
 import ke.tracom.ufs.utils.filters.OTPFilter;
@@ -14,12 +13,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
-import org.springframework.security.oauth2.provider.endpoint.TokenEndpointAuthenticationFilter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.cors.CorsUtils;
 
 /**

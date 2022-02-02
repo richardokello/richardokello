@@ -35,7 +35,6 @@ public class TenantNameInterceptor extends HandlerInterceptorAdapter {
         // After completing the request, make sure to erase the Tenant from the current Thread. It's
         // because Spring may reuse the Thread in the Thread Pool and you don't want to leak this
         // information:
-        System.err.println("Tenant Name: TenantNameInterceptor");
         ThreadLocalStorage.setTenantName(null);
     }
 }

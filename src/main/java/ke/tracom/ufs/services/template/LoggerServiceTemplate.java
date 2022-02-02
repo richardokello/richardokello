@@ -31,11 +31,11 @@ public class LoggerServiceTemplate implements LoggerService {
     @Autowired
     Executor executor;
 
-    private final RestTemplate temp;
+    private final RestTemplate restTemplate;
 
-    public LoggerServiceTemplate(LogExtras extras) {
+    public LoggerServiceTemplate(LogExtras extras, RestTemplate restTemplate) {
         this.extras = extras;
-        this.temp = new RestTemplate();
+        this.restTemplate = restTemplate;
     }
 
 
@@ -54,7 +54,7 @@ public class LoggerServiceTemplate implements LoggerService {
             e.printStackTrace();
         }
         executor.execute(() -> {
-            temp.postForEntity(url + "ufs-logger-service/api/v1/logger/log", logs, LogWrapper.class);
+            restTemplate.postForEntity(url + "ufs-logger-service/api/v1/logger/log", logs, LogWrapper.class);
         });
     }
 
@@ -67,12 +67,11 @@ public class LoggerServiceTemplate implements LoggerService {
 
     @Override
     public boolean isInitiator(String Entity, Object entityId, String activity) {
-        RestTemplate temp = new RestTemplate();
         List<IsInitiatorWrapper> payload = new ArrayList<>();
         IsInitiatorWrapper ismaker = new IsInitiatorWrapper(new BigDecimal(extras.getUserId()), Entity, entityId.toString(), activity);
         payload.add(ismaker);
 
-        IsInitiatorResonseEntity res = temp.postForObject(url + "ufs-logger-service/api/v1/logger/log/is-initiator", payload, IsInitiatorResonseEntity.class);
+        IsInitiatorResonseEntity res = restTemplate.postForObject(url + "ufs-logger-service/api/v1/logger/log/is-initiator", payload, IsInitiatorResonseEntity.class);
         return res.getData().getAllowewd().size() <= 0;
     }
 
