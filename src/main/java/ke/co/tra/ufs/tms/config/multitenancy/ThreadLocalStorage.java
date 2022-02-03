@@ -10,8 +10,7 @@ public class ThreadLocalStorage {
     }
 
     public static String getTenantName() {
-        Class<?> walker = java.lang.StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
-        System.err.printf("Fetching active tenant id [%s] >>> caller [%s]%n", tenant.get(), walker.getSimpleName());
+        System.err.printf("Fetching active tenant id [%s]%n", tenant.get());
         return tenant.get() == null ? "0" : tenant.get();
     }
 
