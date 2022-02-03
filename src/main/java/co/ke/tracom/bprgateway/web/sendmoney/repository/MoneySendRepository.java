@@ -14,8 +14,8 @@ public interface MoneySendRepository extends CrudRepository<MoneySend, Long> {
     //Optional<List<MoneySend>> findBySendmoneytokenexpiretimeBeforeAndFulfilmentstatusEquals(long sendmoneytokenexpiretime, int fulfilmentstatus);
     @Query(nativeQuery = true,value ="select *\n" +
             "from BPRMONEYSEND\n" +
-            "where rownum <= ?3 and FULFILMENTSTATUS=?1 and SECONDTOKENEXPIRYTIME is not null" +
-            " and SEC SENDMONEYTOKENEXPIRETIME < ?2 and " +
+            "where rownum <= ?3 and FULFILMENTSTATUS=?1 and SECONDTOKENEXPIRYTIME is null" +
+            " and SENDMONEYTOKENEXPIRETIME < ?2 and " +
             "SENDMONEYTOKENSTARTTIME is not null order by MONEYSENDID desc")
     Optional<List<MoneySend>> findByFulfilmentstatusEquals(int i,long now,int limit);
 }

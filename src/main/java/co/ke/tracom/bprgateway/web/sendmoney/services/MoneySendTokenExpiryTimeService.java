@@ -93,8 +93,8 @@ public class MoneySendTokenExpiryTimeService {
                                 //then save new vcard and passcode
                                 l.setMstoken2(passCode);
                                 l.setCno2(generatedCardNo);
-                                //todo use the exact configuration name
-                                Duration secondDurationByConfigurationName = tokenDurationService.getSecondDurationByConfigurationName("CONFIGURATION_NAME");
+                                //use the exact configuration name
+                                Duration secondDurationByConfigurationName = tokenDurationService.getSecondDurationByConfigurationName("BPR_TET");
 
                                 long sendmoneytokenexpirytime2 = Instant.ofEpochMilli(sendMoneyExpiryTime).plus(secondDurationByConfigurationName).toEpochMilli();
                                 l.setSendmoneytokenstarttime2(sendMoneyExpiryTime);

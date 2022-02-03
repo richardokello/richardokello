@@ -408,8 +408,8 @@ public class SendMoneyService {
         long timeNow = now.toEpochMilli();
         ms.setSendmoneytokenstarttime(timeNow);
 
-        //todo use the exact configuration name
-        Duration initialDurationByConfigurationName = tokenDurationService.getInitialDurationByConfigurationName("CONFIGURATION_NAME");
+        //use the exact configuration name
+        Duration initialDurationByConfigurationName = tokenDurationService.getInitialDurationByConfigurationName("BPR_TET");
 
         long expiryTime = now.plus(initialDurationByConfigurationName).toEpochMilli();
         ms.setSendmoneytokenexpiretime(expiryTime);
