@@ -8,6 +8,7 @@ import ke.tracom.ufs.wrappers.IsInitiatorWrapper;
 import ke.tracom.ufs.wrappers.LogExtras;
 import ke.tracom.ufs.wrappers.LogWrapper;
 import lombok.extern.apachecommons.CommonsLog;
+import net.bytebuddy.implementation.auxiliary.AuxiliaryType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,11 @@ public class LoggerServiceTemplate implements LoggerService {
     @Autowired
     Executor executor;
 
-    private final RestTemplate restTemplate;
+    @Autowired
+    RestTemplate restTemplate;
 
-    public LoggerServiceTemplate(LogExtras extras, RestTemplate restTemplate) {
+    public LoggerServiceTemplate(LogExtras extras) {
         this.extras = extras;
-        this.restTemplate = restTemplate;
     }
 
 
