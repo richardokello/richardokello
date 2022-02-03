@@ -7,8 +7,8 @@ import javax.persistence.*;
 
 
 @Data
-@Entity(name = "TOKEN_DURATION_CONFIGURATION")
-@Table(name = "TOKEN_DURATION_CONFIGURATION", uniqueConstraints = {
+@Entity(name = "BPR_TOKEN_DURATION_CONFIGURATION")
+@Table(name = "BPR_TOKEN_DURATION_CONFIGURATION", uniqueConstraints = {
         @UniqueConstraint(name = "CONFIGURATION_NAME_UNIQUE", columnNames = "NAME") })
 public class TokenDurationConfiguration {
     @javax.persistence.Id
