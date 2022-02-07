@@ -23,6 +23,7 @@
         {
           "name": "Make Payment",
           "hasSubMenu": false,
+          "svcCode": "01.2",
           "submenu": [],
           "fields": [
             {
@@ -50,6 +51,41 @@
               "label": "Sender phone number",
               "type": "numeric",
               "length": 12,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Debit Account",
+              "type": "alphanumeric",
+              "length": 15,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Credit Account",
+              "type": "alphanumeric",
+              "length": 15,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "School id",
+              "type": "numeric",
+              "length": 10,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "School name",
+              "type": "alphanumeric",
+              "length": 25,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Student Name",
+              "type": "alphanumeric",
+              "length": 15,
               "validated": false,
               "order": 5
             },

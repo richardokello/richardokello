@@ -2,6 +2,7 @@ package co.ke.tracom.bprgateway.servers.tcpserver;
 
 import co.ke.tracom.bprgateway.core.util.AppConstants;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
@@ -214,22 +215,43 @@ public class BillRequestHandler {
             throws JsonProcessingException, UnprocessableEntityException {
         //Accadermic bill payment
         BillPaymentResponse billPaymentResponse = null;
+        CustomerProfileResponse customerProfileResponse = null;
+
         //kelvin
-        /*switch(requestString){
-            case 01.1:
-                billPaymentResponse = getBillPaymentResponse();
+        CustomObjectMapper mapper = new CustomObjectMapper();
+        BillPaymentRequest genericRequest = mapper.readValue(requestString, BillPaymentRequest.class);
+        log.info("Validation REQUEST OBJECT: {}", genericRequest);
+        switch(genericRequest.getPayment().getSvcCode()){
+            case "01.2":
+               // billPaymentResponse = getBillPaymentResponse();
+                String OFS = academicBridgeT24Service.bootstrapAcademicBridgePaymentOFSMsg(
+                        genericRequest.getPayment().getDebitAccount(),
+                        genericRequest.getPayment().getCreditAccount(),
+                        genericRequest.getPayment().getAmount(),
+                        genericRequest.getPayment().getSenderName(),
+                        genericRequest.getPayment().getMobileNumber(),
+                        String.valueOf(genericRequest.getPayment().getSchoolId()),
+                        genericRequest.getPayment().getSchoolName(),
+                        genericRequest.getPayment().getStudentName(),
+                        genericRequest.getPayment().getBillNumber()
+                );
+                System.out.println("Request OFS : "+OFS);
+               // customerProfileResponse = ( academicBridgeT24Service.validateStudentId(OFS));
+                customerProfileResponse = (academicBridgeT24Service.academicBridgePayment(OFS));
+                System.out.println("In case 01.1");
                 break;
 
-            case 01.2:
+            case "02.2":
                 billPaymentResponse = getBillPaymentResponse();
                 break;
-        }*/
+        }
 
 
 
         Buffer outBuffer = Buffer.buffer();
-        CustomObjectMapper mapper = new CustomObjectMapper();
-        outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
+        //CustomObjectMapper mapper = new CustomObjectMapper();
+       // outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
+        outBuffer.appendString(mapper.writeValueAsString(customerProfileResponse));
         socket.write(outBuffer);
     }
 

@@ -32,7 +32,8 @@ public class AcademicBridgeT24 {
     public CustomerProfileResponse validateStudentId(String billNumber){
         CustomerProfileResponse student = new CustomerProfileResponse();
         //String sendMoneyOFSMsg = "0000AENQUIRY.SELECT,,INPUTT/123123/RW0010400,BPR.ACB.GET.DET.AGB,BILL.NO:EQ=1001190067-1";
-        String sendMoneyOFSMsg = bootstrapAcademicBridgeGetDetailsOFSMsg(billNumber);
+        //String sendMoneyOFSMsg = bootstrapAcademicBridgeGetDetailsOFSMsg(billNumber);
+        String sendMoneyOFSMsg = billNumber;
         String tot24str = String.format("%04d", sendMoneyOFSMsg.length()) + sendMoneyOFSMsg;
         Data agentAuthData = new Data();
         String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
@@ -86,9 +87,9 @@ public class AcademicBridgeT24 {
         return tot24;
     }
 
-    private String bootstrapAcademicBridgePaymentOFSMsg(String debitAcc, String creditAcc,double amount, String sender,
-                                                        String phone, String schoolId, String schoolName, String studentName,
-                                                        String billNumber) {
+    public String bootstrapAcademicBridgePaymentOFSMsg(String debitAcc, String creditAcc, double amount, String sender,
+                                                       String phone, String schoolId, String schoolName, String studentName,
+                                                       String billNumber) {
         return "0000AFUNDS.TRANSFER,BPR.ACB.PAY.AGB/I/PROCESS,INPUTT/123123/RW0010461,,TRANSACTION.TYPE::=ACAB,DEBIT.ACCT.NO::="
                 + debitAcc
                 + ","
@@ -194,6 +195,47 @@ public class AcademicBridgeT24 {
         }
         //  System.out.println(data[0]);
         System.out.println("***********************************************************");
+    }
+
+    public CustomerProfileResponse academicBridgePayment(String billNumber){
+        CustomerProfileResponse student = new CustomerProfileResponse();
+        //String sendMoneyOFSMsg = "0000AENQUIRY.SELECT,,INPUTT/123123/RW0010400,BPR.ACB.GET.DET.AGB,BILL.NO:EQ=1001190067-1";
+        //String sendMoneyOFSMsg = bootstrapAcademicBridgeGetDetailsOFSMsg(billNumber);
+        String sendMoneyOFSMsg = billNumber;
+        String tot24str = String.format("%04d", sendMoneyOFSMsg.length()) + sendMoneyOFSMsg;
+        Data agentAuthData = new Data();
+        String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
+        //agentAuthData.setAccountNumber("1236544");
+        T24TXNQueue tot24 = prepareT24Transaction(transactionRRN,
+                agentAuthData,
+                "1452365214",
+                tot24str, "12369854");
+
+        System.out.println("Data to be sent is: "+tot24);
+        System.out.println("RRN is : "+transactionRRN);
+       /* final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue(T24_IP);
+        final String t24Port = xSwitchParameterService.fetchXSwitchParamValue(T24_PORT);*/
+        final String t24Ip = "41.215.130.247";
+        final String t24Port = "7002";
+        System.out.println("IP an Port : "+t24Ip + "  "+t24Port);
+        student = t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
+        //transactionService.updateT24TransactionDTO(tot24);
+
+        System.err.printf(
+                "Send Money Charges Request : Transaction %s has been queued for T24 Processing. %n",
+                t24Ip);
+
+        System.out.println("response code is : "+tot24.getT24responsecode());
+
+        if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
+
+
+            //return extractChargesFromResponse(validationReferenceNo, tot24);
+            return student;
+
+        }
+
+        return student;//kelvin to do fix this bug
     }
 }
 

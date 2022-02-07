@@ -18,7 +18,9 @@ public class BillPaymentRequest {
 
   @JsonProperty("data")
   private List<TransactionData> data = null;
-
+/*
   @JsonProperty("credentials")
-  private Credentials credentials;
+  private Credentials credentials;*/
+
+  private PaymentDetails payment;
 }
