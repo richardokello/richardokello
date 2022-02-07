@@ -52,7 +52,7 @@ public class TCPServer {
               buffer -> {
                 CustomObjectMapper mapper = new CustomObjectMapper();
                 try {
-                  socket.close();
+                  //socket.close();
                   String requestPayload = buffer.toString().trim();
                   GenericRequest genericRequest =
                       mapper.readValue(requestPayload, GenericRequest.class);

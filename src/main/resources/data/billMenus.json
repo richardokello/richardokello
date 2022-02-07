@@ -6,13 +6,13 @@
       "svcCode": "01",
       "submenu": [
         {
-          "name": "Check Payment Status",
+          "name": "Check Student Details",
           "hasSubMenu": false,
           "svcCode": "01.1",
           "submenu": [],
           "fields": [
             {
-              "label": "Bank Reference Number",
+              "label": "billNumber",
               "type": "alphanumeric",
               "length": 12,
               "validated": true,
@@ -27,75 +27,69 @@
           "submenu": [],
           "fields": [
             {
-              "label": "Bill number",
+              "label": "billNumber",
               "type": "alphanumeric",
               "length": 12,
               "validated": true,
               "order": 1
             },
             {
-              "label": "Amount",
+              "label": "amount",
               "type": "numeric",
               "length": "12",
               "validated": false,
               "order": 3
             },
             {
-              "label": "Sender name",
+              "label": "senderName",
               "type": "alphanumeric",
-              "length": 12,
+              "length": 20,
               "validated": false,
               "order": 4
             },
             {
-              "label": "Sender phone number",
+              "label": "mobileNumber",
               "type": "numeric",
               "length": 12,
               "validated": false,
               "order": 5
             },
             {
-              "label": "Debit Account",
+              "label": "debitAccount",
               "type": "alphanumeric",
               "length": 15,
               "validated": false,
               "order": 5
             },
             {
-              "label": "Credit Account",
+              "label": "creditAccount",
               "type": "alphanumeric",
               "length": 15,
               "validated": false,
               "order": 5
             },
             {
-              "label": "School id",
+              "label": "schoolId",
               "type": "numeric",
               "length": 10,
               "validated": false,
               "order": 5
             },
             {
-              "label": "School name",
+              "label": "schoolName",
               "type": "alphanumeric",
               "length": 25,
               "validated": false,
               "order": 5
             },
             {
-              "label": "Student Name",
+              "label": "studentName",
               "type": "alphanumeric",
-              "length": 15,
+              "length": 20,
               "validated": false,
               "order": 5
-            },
-            {
-              "label": "Narration",
-              "type": "alphanumeric",
-              "length": 160,
-              "validated": false,
-              "order": 6
             }
+
           ]
         }
       ],

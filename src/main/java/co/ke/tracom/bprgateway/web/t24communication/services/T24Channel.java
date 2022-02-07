@@ -636,54 +636,60 @@ public class  T24Channel {
     }
 
 
-    private GetStudentDetailsResponse parseT24AcademicBidgeInquiry(T24TXNQueue t24TXNQueue, String gatewayref) {
+    private GetStudentDetailsResponse parseT24AcademicBidgePayment(T24TXNQueue t24TXNQueue, String gatewayref) {
         String t24Response = t24TXNQueue.getResponseleg();
         System.out.println(t24Response.isEmpty());//kelvin to do
         t24TXNQueue.setPostedstatus("1");
 
         GetStudentDetailsResponse student = new GetStudentDetailsResponse();
-        String respone = t24Response;
+       // String respone = t24Response;
 
        // String respone = "0303,Y.SCHOOL.ID::SCHOOL ID/Y.SCHOOL.NAME::SCHOOL NAME/Y.STUDENT.NAME::STUDENT NAME/Y.STU.REG.NO::STUDENT REGNO/Y.PAY.TYPE::PAY TYPE/Y.SCHOOL.AC::SCHOOL ACCOUNT,\"45             \"\t\"Demo school              \"\t\"Gabriel  Imanikuzwe                          \"\t\"1001190067    \"\t\"          \"\t\"40810263810194      \"\n";
-        System.out.println(respone);
+        System.out.println(t24Response);
 
-        String [] res = respone.split(",");
+        String [] res = t24Response.split(",");
         System.out.println(res[0]);
+        String [] transactionStatus = res[0].split("/");
 
-        respone = res[1];
-        System.out.println("After substring "+respone);
+       // if(transactionStatus[2].equalsIgnoreCase("1")) {
 
-        String [] data = res[2].substring(1,res[2].length()-1).split("\"");
+        t24Response = res[1];
+            System.out.println("After substring " + t24Response);
 
-        System.out.println(res[2]);
+            String[] data = res[2].substring(1, res[2].length() - 1).split("\"");
 
-
-        student.setStudent_name(data[4]);//
-        student.setStudent_reg_number(data[6]);//
-        student.setSchool_account_number(data[8]);//
-        student.setSchool_name(data[2]);
-        student.setSchool_ide(Integer.parseInt(data[0].trim()));
-
-        System.out.println("School name"+student.getSchool_name());
-        System.out.println("School id "+student.getSchool_ide());
-        System.out.println("Student name"+student.getStudent_name());
-        System.out.println("School acct name"+student.getSchool_account_name());
-        System.out.println("School acct number"+student.getSchool_account_number());
+            System.out.println(res[2]);
 
 
+            student.setStudent_name(data[4]);//
+            student.setStudent_reg_number(data[6]);//
+            student.setSchool_account_number(data[10]);//
+            student.setSchool_name(data[2]);
+            student.setSchool_ide(Integer.parseInt(data[0].trim()));
 
-        t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
+            System.out.println("School name" + student.getSchool_name());
+            System.out.println("School id " + student.getSchool_ide());
+            System.out.println("Student name" + student.getStudent_name());
+            System.out.println("School acct name" + student.getSchool_account_name());
+            System.out.println("School acct number" + student.getSchool_account_number());
 
-        System.out.println(
-                "Exiting t24 parse for Rec id  : "
-                        + t24TXNQueue.getT24TXNQueueid()
-                        + ", "
-                        + "Gateway ref "
-                        + gatewayref
-                        + " at "
-                        + System.currentTimeMillis());
 
-        return student;
+            t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
+
+            System.out.println(
+                    "Exiting t24 parse for Rec id  : "
+                            + t24TXNQueue.getT24TXNQueueid()
+                            + ", "
+                            + "Gateway ref "
+                            + gatewayref
+                            + " at "
+                            + System.currentTimeMillis());
+
+            return student;
+       /* }else {
+            System.out.println("Failed to extract");
+        }
+        return student;*/
     }
 
     public CustomerProfileResponse t24TransactionPosting(T24TXNQueue transactionPendingProcessing, String t24ip, int t24port) {
@@ -768,7 +774,7 @@ public class  T24Channel {
                             if (transactionPendingProcessing.getTxnmti().equals("1100")) {
                                 parseT24EuclElecInquiry(transactionPendingProcessing, transactionRRN);
                             } if(transactionPendingProcessing.getTxnmti().equals("1200")) {
-                            response = parseT24AcademicBidgeInquiry(transactionPendingProcessing, transactionRRN);
+                            response = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
                             student.setMessage("Transaction successful");
                             student.setStatus("00");
                             student.setData(response);

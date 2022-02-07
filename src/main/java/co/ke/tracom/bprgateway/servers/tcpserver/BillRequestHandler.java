@@ -98,12 +98,19 @@ public class BillRequestHandler {
         customerProfileResponse.setMessage("Success");
         customerProfileResponse.setStatus("200");
         customerProfileResponse.setData(null);
-        switch (genericRequest.getCredentials().getSvcCode()){
+//        switch (genericRequest.getCredentials().getSvcCode()){
+        switch (genericRequest.getSvcCode()){
             case "01.1":
-                customerProfileResponse = ( academicBridgeT24Service.validateStudentId(genericRequest.getCredentials().getBill()));
-                System.out.println("In case 01.1");
-                System.out.println(genericRequest.getCredentials().getBill());
-                System.out.println("T24 response is : "+customerProfileResponse.getMessage());
+            case "01.2":
+                if(genericRequest.getField().equalsIgnoreCase("billNumber")) {
+                    System.out.println("bill number is : "+genericRequest.getValue());
+                    customerProfileResponse = (academicBridgeT24Service.validateStudentId(genericRequest.getValue()));
+                    System.out.println("In case 01.1");
+                    System.out.println(genericRequest.getCredentials().getBill());
+                    System.out.println("T24 response is : " + customerProfileResponse.getMessage());
+                }else {
+                    System.out.println("Wrong svc code and field combination :"+genericRequest.getField());
+                }
                 break;
 
             case "02.1":
@@ -143,6 +150,7 @@ public class BillRequestHandler {
             writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
         }
 
+        String schoolId = String.valueOf(validationResponse.getSchool_ide());
         List<TransactionData> validationData = new ArrayList<>();
         validationData.add(
                 TransactionData.builder()
@@ -150,10 +158,10 @@ public class BillRequestHandler {
                         .value("POSTest").build());
         validationData.add(
                 TransactionData.builder().name("School Name").value(validationResponse.getSchool_name()).build());
-        /*validationData.add(
-                TransactionData.builder().name("School Id").value(validationResponse.getSchool_ide()).build());*/
         validationData.add(
-                TransactionData.builder().name("School Account name").value(validationResponse.getSchool_account_name()).build());
+                TransactionData.builder().name("School Id").value(String.valueOf(validationResponse.getSchool_ide())).build());
+        /*validationData.add(
+                TransactionData.builder().name("School Account name").value(validationResponse.getSchool_account_name()).build());*/
         validationData.add(
                 TransactionData.builder().name("School Account number").value(validationResponse.getSchool_account_number()).build());
         validationData.add(
@@ -221,11 +229,14 @@ public class BillRequestHandler {
         CustomObjectMapper mapper = new CustomObjectMapper();
         BillPaymentRequest genericRequest = mapper.readValue(requestString, BillPaymentRequest.class);
         log.info("Validation REQUEST OBJECT: {}", genericRequest);
-        switch(genericRequest.getPayment().getSvcCode()){
+        switch(genericRequest.getSvcCode()){
             case "01.2":
                // billPaymentResponse = getBillPaymentResponse();
-                String OFS = academicBridgeT24Service.bootstrapAcademicBridgePaymentOFSMsg(
-                        genericRequest.getPayment().getDebitAccount(),
+                List data = genericRequest.getData();
+                System.out.println(data.size());
+                System.out.println(data.stream().findFirst());
+               // String OFS = academicBridgeT24Service.bootstrapAcademicBridgePaymentOFSMsg(
+                       /* genericRequest.getPayment().getDebitAccount(),
                         genericRequest.getPayment().getCreditAccount(),
                         genericRequest.getPayment().getAmount(),
                         genericRequest.getPayment().getSenderName(),
@@ -233,11 +244,21 @@ public class BillRequestHandler {
                         String.valueOf(genericRequest.getPayment().getSchoolId()),
                         genericRequest.getPayment().getSchoolName(),
                         genericRequest.getPayment().getStudentName(),
-                        genericRequest.getPayment().getBillNumber()
-                );
-                System.out.println("Request OFS : "+OFS);
+                        genericRequest.getPayment().getBillNumber()*/
+
+                       /* genericRequest.getDebitAccount(),
+                        genericRequest.getCreditAccount(),
+                        genericRequest.getAmount(),
+                        genericRequest.getSenderName(),
+                        genericRequest.getMobileNumber(),
+                        String.valueOf(genericRequest.getSchoolId()),
+                        genericRequest.getSchoolName(),
+                        genericRequest.getStudentName(),
+                        genericRequest.getBillNumber()*/
+              //  );
+              //  System.out.println("Request OFS : "+OFS);
                // customerProfileResponse = ( academicBridgeT24Service.validateStudentId(OFS));
-                customerProfileResponse = (academicBridgeT24Service.academicBridgePayment(OFS));
+               // customerProfileResponse = (academicBridgeT24Service.academicBridgePayment(OFS));
                 System.out.println("In case 01.1");
                 break;
 
