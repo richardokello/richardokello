@@ -702,8 +702,38 @@ public class  T24Channel {
        // details = mapper.convertValue(t24data,TransactionData.class);
         details.setName("AUTH_DATE");
         details.setValue(t24data.get("AUTH_DATE"));
-        details.setName("STMT_NOS");
-        details.setValue(t24data.get("STMT_NOS"));
+        details.setName("DEBIT_CUSTOMER");
+        details.setValue(t24data.get("DEBIT_CUSTOMER"));
+        details.setName("ORDERING_BANK");
+        details.setValue(t24data.get("ORDERING_BANK"));
+        details.setName("AB_STU_NAME");
+        details.setValue(t24data.get("AB_STU_NAME"));
+        details.setName("BPR_SENDER_NAME");
+        details.setValue(t24data.get("BPR_SENDER_NAME"));
+        details.setName("LOCAL_CHARGE_AMT");
+        details.setValue(t24data.get("LOCAL_CHARGE_AMT"));
+        details.setName("AB_SCHOOL_ID");
+        details.setValue(t24data.get("AB_SCHOOL_ID"));
+        details.setName("DEBIT_ACCT_NO");
+        details.setValue(t24data.get("DEBIT_ACCT_NO"));
+        details.setName("AB_BILL_NO");
+        details.setValue(t24data.get("AB_BILL_NO"));
+        details.setName("CREDIT_THEIR_REF");
+        details.setValue(t24data.get("CREDIT_THEIR_REF"));
+        details.setName("DATE_TIME");
+        details.setValue(t24data.get("DATE_TIME"));
+        details.setName("MOBILE_NO");
+        details.setValue(t24data.get("MOBILE_NO"));
+        details.setName("DELIVERY_OUTREF");
+        details.setValue(t24data.get("DELIVERY_OUTREF"));
+        details.setName("AB_SCHL_NAME");
+        details.setValue(t24data.get("AB_SCHL_NAME"));
+        details.setName("CREDIT_AMOUNT");
+        details.setValue(t24data.get("CREDIT_AMOUNT"));
+        details.setName("CREDIT_ACCT_NO");
+        details.setValue(t24data.get("CREDIT_ACCT_NO"));
+        details.setName("BILLER_ID");
+        details.setValue(t24data.get("BILLER_ID"));
 
 
 
