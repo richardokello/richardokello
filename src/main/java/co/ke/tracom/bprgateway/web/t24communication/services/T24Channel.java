@@ -1,5 +1,6 @@
 package co.ke.tracom.bprgateway.web.t24communication.services;
 
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.AcademicTransactionData;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
 import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
@@ -636,12 +637,12 @@ public class  T24Channel {
     }
 
 
-    private TransactionData parseT24AcademicBidgePayment(T24TXNQueue t24TXNQueue, String gatewayref) {
+    private List<AcademicTransactionData> parseT24AcademicBidgePayment(T24TXNQueue t24TXNQueue, String gatewayref) {
         String t24Response = t24TXNQueue.getResponseleg();
         System.out.println(t24Response.isEmpty());//kelvin to do
         t24TXNQueue.setPostedstatus("1");
 
-        TransactionData details = new TransactionData();
+        AcademicTransactionData details = new AcademicTransactionData();
        // String respone = t24Response;
 
        // String respone = "0303,Y.SCHOOL.ID::SCHOOL ID/Y.SCHOOL.NAME::SCHOOL NAME/Y.STUDENT.NAME::STUDENT NAME/Y.STU.REG.NO::STUDENT REGNO/Y.PAY.TYPE::PAY TYPE/Y.SCHOOL.AC::SCHOOL ACCOUNT,\"45             \"\t\"Demo school              \"\t\"Gabriel  Imanikuzwe                          \"\t\"1001190067    \"\t\"          \"\t\"40810263810194      \"\n";
@@ -699,41 +700,48 @@ public class  T24Channel {
 
 
             System.out.println(t24data);
+        List<AcademicTransactionData> detailList=new ArrayList<>();
        // details = mapper.convertValue(t24data,TransactionData.class);
-        details.setName("AUTH_DATE");
-        details.setValue(t24data.get("AUTH_DATE"));
-        details.setName("DEBIT_CUSTOMER");
-        details.setValue(t24data.get("DEBIT_CUSTOMER"));
-        details.setName("ORDERING_BANK");
-        details.setValue(t24data.get("ORDERING_BANK"));
-        details.setName("AB_STU_NAME");
-        details.setValue(t24data.get("AB_STU_NAME"));
-        details.setName("BPR_SENDER_NAME");
-        details.setValue(t24data.get("BPR_SENDER_NAME"));
-        details.setName("LOCAL_CHARGE_AMT");
-        details.setValue(t24data.get("LOCAL_CHARGE_AMT"));
-        details.setName("AB_SCHOOL_ID");
-        details.setValue(t24data.get("AB_SCHOOL_ID"));
-        details.setName("DEBIT_ACCT_NO");
-        details.setValue(t24data.get("DEBIT_ACCT_NO"));
-        details.setName("AB_BILL_NO");
-        details.setValue(t24data.get("AB_BILL_NO"));
-        details.setName("CREDIT_THEIR_REF");
-        details.setValue(t24data.get("CREDIT_THEIR_REF"));
-        details.setName("DATE_TIME");
-        details.setValue(t24data.get("DATE_TIME"));
-        details.setName("MOBILE_NO");
-        details.setValue(t24data.get("MOBILE_NO"));
-        details.setName("DELIVERY_OUTREF");
-        details.setValue(t24data.get("DELIVERY_OUTREF"));
-        details.setName("AB_SCHL_NAME");
-        details.setValue(t24data.get("AB_SCHL_NAME"));
-        details.setName("CREDIT_AMOUNT");
-        details.setValue(t24data.get("CREDIT_AMOUNT"));
-        details.setName("CREDIT_ACCT_NO");
-        details.setValue(t24data.get("CREDIT_ACCT_NO"));
-        details.setName("BILLER_ID");
-        details.setValue(t24data.get("BILLER_ID"));
+//        details.setName("AUTH_DATE");
+//        details.setValue(t24data.get("AUTH_DATE"));
+       // detailList.add(details);
+
+        details.setDebitCustomer(t24data.get("DEBIT_CUSTOMER"));
+
+
+        details.setOrderingBank(t24data.get("ORDERING_BANK"));
+
+        details.setAbStudentName(t24data.get("AB_STU_NAME"));
+
+
+        details.setBprSenderName(t24data.get("BPR_SENDER_NAME"));
+
+        details.setLocalCahrgeAmount(t24data.get("LOCAL_CHARGE_AMT"));
+
+        details.setAbSchoolId(t24data.get("AB_SCHOOL_ID"));
+
+        details.setDebitAcctNo(t24data.get("DEBIT_ACCT_NO"));
+
+        details.setAbBillNo(t24data.get("AB_BILL_NO"));
+
+        details.setCreditTheirRef(t24data.get("CREDIT_THEIR_REF"));
+
+        details.setDateTime(t24data.get("DATE_TIME"));
+
+        details.setMobileNo(t24data.get("MOBILE_NO"));
+
+        details.setDeliveryOutRef(t24data.get("DELIVERY_OUTREF"));
+
+        details.setAbSchoolName(t24data.get("AB_SCHL_NAME"));
+
+        details.setCreditAmount(t24data.get("CREDIT_AMOUNT"));
+
+//        details.set(t24data.get("CREDIT_ACCT_NO"));
+//
+        details.setBillerId(t24data.get("BILLER_ID"));
+        //detailList.add(details);
+
+        detailList.add(details);
 
 
 
@@ -762,8 +770,9 @@ public class  T24Channel {
                             + gatewayref
                             + " at "
                             + System.currentTimeMillis());
+        System.out.println(detailList);
 
-            return details;
+            return detailList;
        /* }else {
             System.out.println("Failed to extract");
         }
@@ -861,12 +870,12 @@ public class  T24Channel {
                             student.setData(response);
                         }
                         else {
-                            data = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
+                           /* data = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
 
                             student.setMessage("Transaction successful");
                             student.setStatus("00");
-                            student.setData(response);
-                           // parseT24ResponseRefactored(transactionPendingProcessing, transactionRRN);
+                            student.setData(response);*/
+                            parseT24ResponseRefactored(transactionPendingProcessing, transactionRRN);
                         }
                             break;
                         case "510000":
@@ -967,7 +976,7 @@ public class  T24Channel {
             System.out.println(res[2]);
 
             if (res[2].substring(1).startsWith("No records were found")){
-                student=null;
+                student.setStudent_name("No record found");
             }else {
 
                 student.setStudent_name(data[4]);//
@@ -1123,14 +1132,16 @@ public class  T24Channel {
                             student.setData(response);*/
                         }
                         else {
-                            data = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
+                            List<AcademicTransactionData> dataDetails= new ArrayList<>();
+                            dataDetails = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
                            // student=data;
-                            List<TransactionData> dataDetails= new ArrayList<>();
-                            dataDetails.add(data);
+
+                           // dataDetails.add(data);
+                            System.out.println("paymentDetails to be returned : "+dataDetails.get(0));
 
                             student.setResponseCode("00");
                             student.setResponseMessage("Successful");
-                            student.setData(dataDetails);
+                            student.setPaymentData(dataDetails);
                             // parseT24ResponseRefactored(transactionPendingProcessing, transactionRRN);
                         }
                             break;

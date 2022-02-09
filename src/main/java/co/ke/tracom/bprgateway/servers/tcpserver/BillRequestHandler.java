@@ -2,12 +2,9 @@ package co.ke.tracom.bprgateway.servers.tcpserver;
 
 import co.ke.tracom.bprgateway.core.util.AppConstants;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.*;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.ValidationRequest;
 import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
 import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeService;
 import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeT24;
@@ -31,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -101,17 +99,22 @@ public class BillRequestHandler {
         customerProfileResponse.setStatus("200");
         customerProfileResponse.setData(null);
 //        switch (genericRequest.getCredentials().getSvcCode()){
+        String billNumber=null;
         switch (genericRequest.getSvcCode()){
             case "01.1":
             case "01.2":
                 if(genericRequest.getField().equalsIgnoreCase("billNumber")) {
                     System.out.println("bill number is : "+genericRequest.getValue());
                     customerProfileResponse = (academicBridgeT24Service.validateStudentId(genericRequest.getValue()));
+                    billNumber= genericRequest.getValue();
                     System.out.println("In case 01.1");
                     System.out.println(genericRequest.getCredentials().getBill());
                     System.out.println("T24 response is : " + customerProfileResponse.getMessage());
                 }else {
                     System.out.println("Wrong svc code and field combination :"+genericRequest.getField());
+                   /* customerProfileResponse.setData(null);
+                    customerProfileResponse.setMessage("Wrong svc code and field name combination");
+                    customerProfileResponse.setStatus("09");*/
                 }
                 break;
 
@@ -159,22 +162,33 @@ public class BillRequestHandler {
         List<TransactionData> validationData = new ArrayList<>();
         if (validationResponse != null){
             System.out.println("Response data setting");
-        validationData.add(
-                TransactionData.builder()
-                        .name("Client Post Name")
-                        .value("POSTest").build());
-        validationData.add(
-                TransactionData.builder().name("School Name").value(validationResponse.getSchool_name()).build());
-        validationData.add(
-                TransactionData.builder().name("School Id").value(String.valueOf(validationResponse.getSchool_ide())).build());
+            if(validationResponse.getStudent_name().equalsIgnoreCase("No record found")){
+                validationData.add(
+                        TransactionData.builder()
+                                .name("Client Post Name")
+                                .value("POSTest").build());
+                validationData.add(
+                        TransactionData.builder().name("Student Data").value("No records were found for the student").build());
+                validationData.add(
+                        TransactionData.builder().name("Student Id").value(billNumber).build());
+            }else {
+                validationData.add(
+                        TransactionData.builder()
+                                .name("Client Post Name")
+                                .value("POSTest").build());
+                validationData.add(
+                        TransactionData.builder().name("School Name").value(validationResponse.getSchool_name()).build());
+                validationData.add(
+                        TransactionData.builder().name("School Id").value(String.valueOf(validationResponse.getSchool_ide())).build());
         /*validationData.add(
                 TransactionData.builder().name("School Account name").value(validationResponse.getSchool_account_name()).build());*/
-        validationData.add(
-                TransactionData.builder().name("School Account number").value(validationResponse.getSchool_account_number()).build());
-        validationData.add(
-                TransactionData.builder().name("Student Name").value(validationResponse.getStudent_name()).build());
-        validationData.add(
-                TransactionData.builder().name("Student Id").value(validationResponse.getStudent_reg_number()).build());
+                validationData.add(
+                        TransactionData.builder().name("School Account number").value(validationResponse.getSchool_account_number()).build());
+                validationData.add(
+                        TransactionData.builder().name("Student Name").value(validationResponse.getStudent_name()).build());
+                validationData.add(
+                        TransactionData.builder().name("Student Id").value(validationResponse.getStudent_reg_number()).build());
+            }
 
        /* validationData.add(
                 TransactionData.builder().name("Name").value("wanjohi").build());
@@ -311,21 +325,69 @@ public class BillRequestHandler {
                 break;
         }
 
-        System.out.println(billPaymentResponse.getResponseMessage());
+        System.out.println("Data in list");
+        List<AcademicTransactionData> list=billPaymentResponse.getPaymentData().stream().collect(Collectors.toList());
+        System.out.println("First list element : "+ list.get(0).getAbStudentName());
+        System.out.println("End of data in list");
        // System.out.println(customerProfileResponse);
+        //forEach(System.out::println)
+       List<TransactionData> data = new ArrayList<>();
 
+        if (list != null) {
+            System.out.println("Response data setting");
+            data.add(
+                    TransactionData.builder()
+                            .name("Client Post Name")
+                            .value("POSTest").build());
+            data.add(
+                    TransactionData.builder().name("Debit Customer").value(list.get(0).getDebitCustomer()).build());
+            data.add(
+                    TransactionData.builder().name("Ordering Bank").value(String.valueOf(list.get(0).getOrderingBank())).build());
+            data.add(
+                    TransactionData.builder().name("AB Student name").value(list.get(0).getAbStudentName()).build());
+            data.add(
+                    TransactionData.builder().name("BPR Sender Name").value(list.get(0).getBprSenderName()).build());
+            data.add(
+                    TransactionData.builder().name("Local Charge Amount").value(list.get(0).getLocalCahrgeAmount()).build());
+            data.add(
+                    TransactionData.builder().name("AB School Id").value(list.get(0).getAbSchoolId()).build());
+            data.add(
+                    TransactionData.builder().name("Credit Amount").value(list.get(0).getCreditAmount()).build());
+            data.add(
+                    TransactionData.builder().name("Biller Id").value(list.get(0).getBillerId()).build());
+            data.add(
+                    TransactionData.builder().name("AB School Name").value(list.get(0).getAbSchoolName()).build());
+            data.add(
+                    TransactionData.builder().name("Mobile No").value(list.get(0).getMobileNo()).build());
+            data.add(
+                    TransactionData.builder().name("DateTime").value(list.get(0).getDateTime()).build());
+            data.add(
+                    TransactionData.builder().name("Debit Account").value(list.get(0).getDebitAcctNo()).build());
+            data.add(
+                    TransactionData.builder().name("Credit Their Ref").value(list.get(0).getCreditTheirRef()).build());
+            data.add(
+                    TransactionData.builder().name("Bill No").value(list.get(0).getAbBillNo()).build());
+            data.add(
+                    TransactionData.builder().name("Delivery Out Ref").value(list.get(0).getDeliveryOutRef()).build());
+        }
         /*customerProfileResponse.setStatus("00");
         customerProfileResponse.setMessage("Transaction Successful");
         customerProfileResponse.setData(customerProfileResponse.getData());*/
+
+
 
         Buffer outBuffer = Buffer.buffer();
         CustomObjectMapper mappe = new CustomObjectMapper();
         outBuffer.appendString(mappe.writeValueAsString(billPaymentResponse));
         //outBuffer.appendString(mappe.writeValueAsString(customerProfileResponse));
         System.out.println("Response to PSO: "+outBuffer);
-        writeResponseToTCPChannel(socket, mapper.writeValueAsString(billPaymentResponse));
+       // writeResponseToTCPChannel(socket, mapper.writeValueAsString(billPaymentResponse));
        // socket.write(outBuffer);
        // writeResponseToTCPChannel(socket, "kelvo payment");
+
+
+        AcademicBridgeValidation response = getAcademicBridgeValidation(data, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
+        writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
     }
 
     private BillPaymentResponse getBillPaymentResponse() {
