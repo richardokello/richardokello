@@ -28,6 +28,7 @@ public interface UserService {
     public ResponseWrapper editUser(UfsUser user);
 
     UfsUser findByUserId(Long id);
+    UfsUser findByEmail(String email);
 
     UfsUser findByUserIdAndIntrash(Long id);
 

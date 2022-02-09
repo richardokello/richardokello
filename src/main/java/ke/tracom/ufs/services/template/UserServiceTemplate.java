@@ -126,6 +126,10 @@ public class UserServiceTemplate implements UserService {
 
         return userRepo.findByUserId(id);
     }
+    @Override
+    public UfsUser findByEmail(String email) {
+        return userRepo.findByEmail(email);
+    }
 
     @Override
     public UfsUser findByUserIdAndIntrash(Long id) {

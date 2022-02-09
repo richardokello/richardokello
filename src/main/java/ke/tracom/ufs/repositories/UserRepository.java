@@ -22,7 +22,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends CrudRepository<UfsUser, Long> {
     UfsUser findByUserId(Long ids);
-
+    UfsUser findByEmail(String email);
     UfsUser findByfullName(String name);
 
     UfsUser findByuserId(Long id);

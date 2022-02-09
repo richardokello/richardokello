@@ -186,15 +186,16 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
     @Override
     @Transactional
     public ResponseEntity<ResponseWrapper<UfsUser>> create(@Valid @RequestBody UfsUser ufsUser) {
-
-        if (urepo.findByusernameIgnoreCase(ufsUser.getEmail()) != null) {
-            try {
-                throw new DataExistsException(ufsUser.getEmail() + " Already Exists");
-            } catch (DataExistsException e) {
-                e.printStackTrace();
-            }
+        // validate the user email
+        boolean userExist = Objects.nonNull(urepo.findByEmail(ufsUser.getEmail()));
+        if (userExist){
+            ResponseWrapper<UfsUser> wrapper = new ResponseWrapper<>();
+            wrapper.setData(null);
+            String message = String.format("%s has already been taken.Please choose another email address",ufsUser.getEmail());
+            wrapper.setMessage(message);
+            wrapper.setCode(HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(wrapper,HttpStatus.BAD_REQUEST);
         }
-
         ufsUser.setStatus(AppConstants.STATUS_EXPIRED);
 
         ResponseEntity<ResponseWrapper<UfsUser>> response = super.create(ufsUser);
