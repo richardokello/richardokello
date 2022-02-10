@@ -26,7 +26,7 @@ public class WascWaterTxnLog {
     private String customerName;
     @Column(name = "BANK_BRANCH")
     private String bankBranch;
-    @FieldNameConstants.Exclude
+    @Transient
     private String amount;
     @Column(name = "GATEWAY_T24_POSTING_STATUS")
     private String gatewayT24PostingStatus;
