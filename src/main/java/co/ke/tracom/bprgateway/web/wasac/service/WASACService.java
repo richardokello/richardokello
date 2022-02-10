@@ -188,11 +188,12 @@ public class WASACService {
         //String meterNo = "211610021";
 
         waterTxnLog.setAmount(String.valueOf(amount));
-        waterTxnLog.setCustomerName(agentAuthData.getNames());
+        waterTxnLog.setCustomerName(customerName);
         waterTxnLog.setMeterNo(/*profileResponse1Data.getMeterid()*/meterNo);
-        waterTxnLog.setPosRef(RRN);
+        waterTxnLog.setPosRef(request.getCredentials().getSerialNumber());
         waterTxnLog.setMid(agentAuthData.getMid());
         waterTxnLog.setTid(request.getCredentials().getTid());
+        waterTxnLog.setCreationDate(new Date());
 
         String tot24str = getT24OFS(/*profileResponse1Data.getMeterid()*/meterNo, account, amount,
                 /*profileResponse1Data.getName()agentAuthData.getNames()*/customerName, request.getCredentials().getTid(),
@@ -251,6 +252,9 @@ public class WASACService {
 
                 billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
                         AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
+
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, request.getTnxType(), "0200", amount,
+                        AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
             }
         } else {
             transactionData.add(addValidationResponse("t24 fail narration", tot24.getT24failnarration()));
@@ -258,13 +262,14 @@ public class WASACService {
             billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(),
                     AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.getReasonPhrase());
 
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, request.getTnxType(), "0200", amount, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(),
+                    agentAuthData.getTid(), agentAuthData.getMid());
             waterTxnLog.setGatewayT24PostingStatus("0");
             insertWascTxnLogs(waterTxnLog);
         }
         tot24.setT24reference(tot24.getT24reference());
 
-        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, request.getTnxType(), "0200", amount, tot24.getPostedstatus(),
-                agentAuthData.getTid(), agentAuthData.getMid());
+
 
         return billPaymentResponse;
     }
@@ -351,7 +356,7 @@ public class WASACService {
         AcademicBridgeValidation response = AcademicBridgeValidation.builder().build();
         List<TransactionData> validationData = new ArrayList<>();
         try {
-           /* AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
+            AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
                     new MerchantAuthInfo(validationRequest.getCredentials().getUsername(), validationRequest.getCredentials().getPassword()));
 
             if (authenticateAgentResponse.getCode() != 200) {
@@ -360,7 +365,7 @@ public class WASACService {
                 response = getBridgeValidation(wasacPaymentResponse);
                 return response;
             }
-            Data agentAuthData = authenticateAgentResponse.getData();*/
+            Data agentAuthData = authenticateAgentResponse.getData();
 
             String waitTime = xSwitchParameterService.fetchXSwitchParamValue("T24_INQUIRY_WAIT_TIME_MILLISECONDS");
             waitTime = waitTime.isEmpty() ? "30000" : waitTime;
@@ -452,15 +457,18 @@ public class WASACService {
 
                 response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
 
+                transactionService.saveCardLessTransactionToAllTransactionTable(
+                        tot24, validationRequest.getTnxType(), "WASC ACCOUNT VALIDATION", 0, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
             } else {
                 validationData.add(addValidationResponse("T24failnarration", tot24.getT24failnarration()));
                 validationData.add(addValidationResponse("Action code", "135"));
                 response = getAcademicBridgeValidation(validationData, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.getReasonPhrase());
 
+                transactionService.saveCardLessTransactionToAllTransactionTable(
+                        tot24, validationRequest.getTnxType(), "WASC ACCOUNT VALIDATION", 0, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
             }
 
-            transactionService.saveCardLessTransactionToAllTransactionTable(
-                    tot24, validationRequest.getTnxType(), "WASC ACCOUNT VALIDATION", 0, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), /*agentAuthData.getTid()*/validationRequest.getCredentials().getTid(), /*agentAuthData.getMid()*/validationRequest.getCredentials().getTid());
+
 
         } catch (Exception e) {
             e.printStackTrace();
