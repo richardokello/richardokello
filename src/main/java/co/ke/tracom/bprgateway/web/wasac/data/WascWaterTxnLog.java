@@ -1,24 +1,36 @@
 package co.ke.tracom.bprgateway.web.wasac.data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.experimental.FieldNameConstants;
+
+import javax.persistence.*;
 import java.util.Date;
 
-@Entity
+@Entity(name = "BPR_WASC_AUDIT_TRAIL")
+@Table(name = "BPR_WASC_AUDIT_TRAIL")
 public class WascWaterTxnLog {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "BPR_WASC_AUDIT_TRAIL_SEQ", sequenceName = "BPR_WASC_AUDIT_TRAIL_SEQ",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BPR_WASC_AUDIT_TRAIL_SEQ")
+    @Column(name = "ID")
     private Long id;
+    @Column(name = "TID")
     private String tid;
+    @Column(name = "MID")
     private String mid;
+    @Column(name = "POS_REF")
     private String posRef;
+    @Column(name = "METER_NO")
     private String meterNo;
+    @Column(name = "CUSTOMER_NAME")
     private String customerName;
+    @Column(name = "BANK_BRANCH")
     private String bankBranch;
+    @FieldNameConstants.Exclude
     private String amount;
+    @Column(name = "GATEWAY_T24_POSTING_STATUS")
     private String gatewayT24PostingStatus;
+    @Column(name = "CREATION_DATE")
     private Date creationDate;
 
     public Long getId() {
