@@ -11,7 +11,10 @@ import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeT24;
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
+import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
+import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
@@ -35,7 +38,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BillRequestHandler {
     private final WASACService wasacService;
-    private  final AcademicBridgeT24 academicBridgeT24Service;
+    private final AcademicBridgeT24 academicBridgeT24Service;
+    private final TransactionService transactionService;
 
     public void menu(String requestString, BillMenusService billMenusService, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
@@ -99,27 +103,31 @@ public class BillRequestHandler {
         customerProfileResponse.setStatus("200");
         customerProfileResponse.setData(null);
 //        switch (genericRequest.getCredentials().getSvcCode()){
-        String billNumber=null;
-        switch (genericRequest.getSvcCode()){
+        String billNumber = null;
+        switch (genericRequest.getSvcCode()) {
             case "01.1":
             case "01.2":
-                if(genericRequest.getField().equalsIgnoreCase("billNumber")) {
-                    System.out.println("bill number is : "+genericRequest.getValue());
-                    customerProfileResponse = (academicBridgeT24Service.validateStudentId(genericRequest.getValue()));
-                    billNumber= genericRequest.getValue();
-                    System.out.println("In case 01.1");
-                    System.out.println(genericRequest.getCredentials().getBill());
-                    System.out.println("T24 response is : " + customerProfileResponse.getMessage());
-                }else {
-                    System.out.println("Wrong svc code and field combination :"+genericRequest.getField());
-                   /* customerProfileResponse.setData(null);
+
+                if (genericRequest.getField().equalsIgnoreCase("billNumber")) {
+                    System.out.println("bill number is : " + genericRequest.getValue());
+                    try {
+                        customerProfileResponse = (academicBridgeT24Service.validateStudentId(genericRequest.getValue(), genericRequest.getCredentials()));
+                    } catch (InvalidAgentCredentialsException e) {
+                        e.printStackTrace();
+                    }
+                    billNumber = genericRequest.getValue();
+                    log.info("In case 01.1");
+
+                } else {
+                    log.info("Wrong svc code and field combination :" + genericRequest.getField());
+                    customerProfileResponse.setData(null);
                     customerProfileResponse.setMessage("Wrong svc code and field name combination");
-                    customerProfileResponse.setStatus("09");*/
+                    customerProfileResponse.setStatus("09");
                 }
                 break;
 
             case "02.1":
-                System.out.println("In case 02.1");
+
                  /*customerProfileResponse = null;
                         wasacService.fetchCustomerProfile(
                                 CustomerProfileRequest.builder().customerId(data.get(0).getValue()).credentials(
@@ -128,8 +136,8 @@ public class BillRequestHandler {
                 break;
 
             case "03.1":
-                System.out.println("In case 03.1");
-               // customerProfileResponse = null;
+
+                // customerProfileResponse = null;
                 break;
 
 
@@ -139,13 +147,8 @@ public class BillRequestHandler {
         GetStudentDetailsResponse validationResponse = customerProfileResponse.getData();
 //        Response validationResponse = customerProfileResponse.getData();
         if (validationResponse != null) {
-            System.out.println("sch name " + validationResponse.getSchool_name());
-            System.out.println("sch id " + validationResponse.getSchool_ide());
-            System.out.println("sch acc name " + validationResponse.getSchool_account_name());
-            System.out.println("sch acc num " + validationResponse.getSchool_account_number());
-            System.out.println(" student name " + validationResponse.getStudent_name());
-            System.out.println("student id " + validationResponse.getStudent_reg_number());
-        }else{
+
+        } else {
             System.out.println("No data in the response");
         }
 
@@ -158,11 +161,11 @@ public class BillRequestHandler {
             writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
         }
 
-       // String schoolId = String.valueOf(validationResponse.getSchool_ide());
+        // String schoolId = String.valueOf(validationResponse.getSchool_ide());
         List<TransactionData> validationData = new ArrayList<>();
-        if (validationResponse != null){
+        if (validationResponse != null) {
             System.out.println("Response data setting");
-            if(validationResponse.getStudent_name().equalsIgnoreCase("No record found")){
+            if (validationResponse.getStudent_name().equalsIgnoreCase("No record found")) {
                 validationData.add(
                         TransactionData.builder()
                                 .name("Client Post Name")
@@ -171,7 +174,7 @@ public class BillRequestHandler {
                         TransactionData.builder().name("Student Data").value("No records were found for the student").build());
                 validationData.add(
                         TransactionData.builder().name("Student Id").value(billNumber).build());
-            }else {
+            } else {
                 validationData.add(
                         TransactionData.builder()
                                 .name("Client Post Name")
@@ -180,8 +183,7 @@ public class BillRequestHandler {
                         TransactionData.builder().name("School Name").value(validationResponse.getSchool_name()).build());
                 validationData.add(
                         TransactionData.builder().name("School Id").value(String.valueOf(validationResponse.getSchool_ide())).build());
-        /*validationData.add(
-                TransactionData.builder().name("School Account name").value(validationResponse.getSchool_account_name()).build());*/
+
                 validationData.add(
                         TransactionData.builder().name("School Account number").value(validationResponse.getSchool_account_number()).build());
                 validationData.add(
@@ -190,39 +192,15 @@ public class BillRequestHandler {
                         TransactionData.builder().name("Student Id").value(validationResponse.getStudent_reg_number()).build());
             }
 
-       /* validationData.add(
-                TransactionData.builder().name("Name").value("wanjohi").build());
-        validationData.add(
-                TransactionData.builder().name("Zone").value("Nairobi").build());
-        validationData.add(
-                TransactionData.builder().name("Mobile No").value("0712890098").build());
-        validationData.add(
-                TransactionData.builder().name("Email").value("test@gmail.com").build());
-        validationData.add(
-                TransactionData.builder().name("Phone").value("123654878").build());
-        validationData.add(
-                TransactionData.builder()
-                        .name("National ID")
-                        .value("03214569").build());
-        validationData.add(
-                TransactionData.builder().name("Branch").value("tracom").build());
-        validationData.add(
-                TransactionData.builder().name("Balance").value("120").build());
-        validationData.add(
-                TransactionData.builder().name("Meter No").value("0002222111555").build());
-        validationData.add(
-                TransactionData.builder()
-                        .name("Customer Id")
-                        .value("02315").build());*/
 
-        }else{
+        } else {
             System.out.println("No data set for response");
-            validationData=null;
+            validationData = null;
         }
 
         AcademicBridgeValidation response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
         writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
-       // writeResponseToTCPChannel(socket, "kelvo");
+
     }
 
     private void writeResponseToTCPChannel(NetSocket socket, String s) {
@@ -248,61 +226,26 @@ public class BillRequestHandler {
 
     public void billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
-        //Accadermic bill payment
-        BillPaymentResponse billPaymentResponse = null;
-       // CustomerProfileResponse customerProfileResponse = null;
 
-        //kelvin
+        BillPaymentResponse billPaymentResponse = null;
         CustomObjectMapper mapper = new CustomObjectMapper();
         BillPaymentRequest genericRequest = mapper.readValue(requestString, BillPaymentRequest.class);
         log.info("Validation REQUEST OBJECT: {}", genericRequest);
-        switch(genericRequest.getSvcCode()){
+        switch (genericRequest.getSvcCode()) {
             case "01.2":
                 HashMap<String, String> payment = new HashMap<String, String>();
 
-                List<TransactionData> data=genericRequest.getData();
+                List<TransactionData> data = genericRequest.getData();
                 int ii = 0;
                 for (TransactionData column : data) {
                     if (ii >= 0) {
-
-                       // System.out.println(column.getName());
-                       // System.out.println(column.getValue());
-
-                        payment.put(column.getName(),column.getValue());
-
-
+                        payment.put(column.getName(), column.getValue());
 
                     }
                     ii++;
 
                 }
-                System.out.println(payment);
-                System.out.println(payment.get("creditAccount"));
-               // billPaymentResponse = getBillPaymentResponse();
-               // List data = genericRequest.getData();
-               // System.out.println(data.size());
-               // System.out.println(data.stream().findFirst());
                 String OFS = academicBridgeT24Service.bootstrapAcademicBridgePaymentOFSMsg(
-                       /* genericRequest.getPayment().getDebitAccount(),
-                        genericRequest.getPayment().getCreditAccount(),
-                        genericRequest.getPayment().getAmount(),
-                        genericRequest.getPayment().getSenderName(),
-                        genericRequest.getPayment().getMobileNumber(),
-                        String.valueOf(genericRequest.getPayment().getSchoolId()),
-                        genericRequest.getPayment().getSchoolName(),
-                        genericRequest.getPayment().getStudentName(),
-                        genericRequest.getPayment().getBillNumber()*/
-
-                       /* genericRequest.getDebitAccount(),
-                        genericRequest.getCreditAccount(),
-                        genericRequest.getAmount(),
-                        genericRequest.getSenderName(),
-                        genericRequest.getMobileNumber(),
-                        String.valueOf(genericRequest.getSchoolId()),
-                        genericRequest.getSchoolName(),
-                        genericRequest.getStudentName(),
-                        genericRequest.getBillNumber()*/
-
                         payment.get("debitAccount"),
                         payment.get("creditAccount"),
                         Double.parseDouble(payment.get("amount")),
@@ -314,10 +257,9 @@ public class BillRequestHandler {
                         payment.get("billNumber")
 
                 );
-                System.out.println("Request OFS : "+OFS);
-               // customerProfileResponse = ( academicBridgeT24Service.validateStudentId(OFS));
+
                 billPaymentResponse = (academicBridgeT24Service.academicBridgePayment(OFS));
-                System.out.println("In case 01.1");
+
                 break;
 
             case "02.2":
@@ -325,13 +267,10 @@ public class BillRequestHandler {
                 break;
         }
 
-        System.out.println("Data in list");
-        List<AcademicTransactionData> list=billPaymentResponse.getPaymentData().stream().collect(Collectors.toList());
-        System.out.println("First list element : "+ list.get(0).getAbStudentName());
-        System.out.println("End of data in list");
-       // System.out.println(customerProfileResponse);
-        //forEach(System.out::println)
-       List<TransactionData> data = new ArrayList<>();
+        List<AcademicTransactionData> list = billPaymentResponse.getPaymentData().stream().collect(Collectors.toList());
+        System.out.println("First list element : " + list.get(0).getAbStudentName());
+
+        List<TransactionData> data = new ArrayList<>();
 
         if (list != null) {
             System.out.println("Response data setting");
@@ -370,22 +309,21 @@ public class BillRequestHandler {
             data.add(
                     TransactionData.builder().name("Delivery Out Ref").value(list.get(0).getDeliveryOutRef()).build());
         }
-        /*customerProfileResponse.setStatus("00");
-        customerProfileResponse.setMessage("Transaction Successful");
-        customerProfileResponse.setData(customerProfileResponse.getData());*/
-
 
 
         Buffer outBuffer = Buffer.buffer();
         CustomObjectMapper mappe = new CustomObjectMapper();
         outBuffer.appendString(mappe.writeValueAsString(billPaymentResponse));
         //outBuffer.appendString(mappe.writeValueAsString(customerProfileResponse));
-        System.out.println("Response to PSO: "+outBuffer);
-       // writeResponseToTCPChannel(socket, mapper.writeValueAsString(billPaymentResponse));
-       // socket.write(outBuffer);
-       // writeResponseToTCPChannel(socket, "kelvo payment");
+        System.out.println("Response to PSO: " + outBuffer);
+        // writeResponseToTCPChannel(socket, mapper.writeValueAsString(billPaymentResponse));
+        // socket.write(outBuffer);
+        T24TXNQueue tot24 = new T24TXNQueue();
+        tot24.setDebitacctno("12344455566");
 
-
+        transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                Double.valueOf("100"), "000",
+                "1234", "098766");//Replace with actua data after successfull login credentials fro POS
         AcademicBridgeValidation response = getAcademicBridgeValidation(data, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
         writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
     }

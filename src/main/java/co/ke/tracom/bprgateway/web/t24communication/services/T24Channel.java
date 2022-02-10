@@ -24,7 +24,7 @@ import java.util.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class  T24Channel {
+public class T24Channel {
 
     public static final String MASKED_T24_USERNAME = "########U";
     public static final String MASKED_T24_PASSWORD = "########A";
@@ -41,9 +41,9 @@ public class  T24Channel {
         System.out.println(t24Response.isEmpty());//kelvin to do
         t24TXNQueue.setPostedstatus("1");
         String[] output = t24Response.split(",");
-        System.out.println("Output length is : " +output.length);//kelvin to do
+        System.out.println("Output length is : " + output.length);//kelvin to do
         System.out.println("Output message is" +
-                " : " +output[0]);//kelvin to do
+                " : " + output[0]);//kelvin to do
 
         if (output.length > 0) {
             if (output[0].equals("0112")) {
@@ -54,7 +54,7 @@ public class  T24Channel {
                 t24TXNQueue.setMeterLocation(meterLocation);
             } else {
                 System.out.println("In else of parse t24 elec inquiry");
-                System.out.println("Output length is : " +output.length);//kelvin to do
+                System.out.println("Output length is : " + output.length);//kelvin to do
                 System.out.println("Error=>" + output[3]);
                 t24TXNQueue.setT24failnarration(output[3].replace("\"", ""));
             }
@@ -355,8 +355,8 @@ public class  T24Channel {
     }
 
     public void processTransactionToT24(String t24Ip, int t24Port, T24TXNQueue transactionPendingT24Processing) {
-       log.info("Processing T24 transaction");
-       CustomerProfileResponse student = new CustomerProfileResponse();
+        log.info("Processing T24 transaction");
+        CustomerProfileResponse student = new CustomerProfileResponse();
         try {
             if (transactionPendingT24Processing != null) {
                 log.info(
@@ -373,13 +373,14 @@ public class  T24Channel {
                 log.info("After transaction posting >>>> {}", student.getMessage());
             }
         } catch (Exception e) {
-           log.info(
+            log.info(
                     "[Error] Unable to fetch transaction from database queue. Error message: {}",
                     e.getMessage());
             transactionPendingT24Processing.setPostedstatus("3");
             e.printStackTrace();
         }
     }
+
     public boolean t24TransactionPosting(T24TXNQueue transactionPendingProcessing, String t24ip, int t24port) {
         String t24RequestOFS = transactionPendingProcessing.getRequestleg();
         String transactionRRN = transactionPendingProcessing.getGatewayref();
@@ -387,7 +388,7 @@ public class  T24Channel {
         log.info(
                 "Processing initialization for Transaction RRN [{}] at [{}] OFS Request: [{}]",
                 transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), t24RequestOFS);
-        System.out.println("Pcode is : "+transactionPendingProcessing.getProcode());
+        System.out.println("Pcode is : " + transactionPendingProcessing.getProcode());
 
         TelnetClient telnetClient = new TelnetClient();
         try {
@@ -424,7 +425,7 @@ public class  T24Channel {
             log.info("Formatted OFS Message String: {}", formattedOFSMessageString);
 
             telnetClient.connect(t24ip, t24port);
-            if(!telnetClient.isConnected()){
+            if (!telnetClient.isConnected()) {
                 //log that connection has failed
                 //retun
                 //to do waweru
@@ -433,10 +434,9 @@ public class  T24Channel {
             boolean sent = send(telnetClient, formattedOFSMessageString.trim(), transactionRRN);
             log.info("Transaction sent to t24");
             String T24ResponseOFS = receive(telnetClient, transactionPendingProcessing);
-           // String T24ResponseOFS = receive2(telnetClient);
-           // String T24ResponseOFS = "yolo";
+
             System.out.println("####################################################################");
-            System.out.println("Response from t24 is :> "+T24ResponseOFS);
+            System.out.println("Response from t24 is :> " + T24ResponseOFS);
             System.out.println("####################################################################");
 
             log.info(
@@ -453,16 +453,16 @@ public class  T24Channel {
                 transactionPendingProcessing.setPostedstatus("4");
                 transactionPendingProcessing.setT24failnarration("UNEXPECTED RESPONSE FROM REMOTE SYSTEM");
             } else {
-                System.out.println("Pcode in else is : "+transactionPendingProcessing.getProcode());
+                System.out.println("Pcode in else is : " + transactionPendingProcessing.getProcode());
                 try {
                     switch (transactionPendingProcessing.getProcode() == null ? "" : transactionPendingProcessing.getProcode()) {
                         case "460001":
                             if (transactionPendingProcessing.getTxnmti().equals("1100")) {
                                 parseT24EuclElecInquiry(transactionPendingProcessing, transactionRRN);
-                            } if(transactionPendingProcessing.getTxnmti().equals("1200")) {
-                           // parseT24AcademicBidgeInquiry(transactionPendingProcessing, transactionRRN);//kelvin uncomment this
                             }
-                            else {
+                            if (transactionPendingProcessing.getTxnmti().equals("1200")) {
+                                // parseT24AcademicBidgeInquiry(transactionPendingProcessing, transactionRRN);//kelvin uncomment this
+                            } else {
                                 parseT24ResponseRefactored(transactionPendingProcessing, transactionRRN);
                             }
                             break;
@@ -479,7 +479,7 @@ public class  T24Channel {
                             break;
                     }
                 } catch (Exception e) {
-                    log.info("Error Parsing T24 Response : for  {}", transactionRRN );
+                    log.info("Error Parsing T24 Response : for  {}", transactionRRN);
                     transactionPendingProcessing.setPostedstatus("5");
                     transactionPendingProcessing.setT24failnarration(e.getMessage());
                     e.printStackTrace();
@@ -567,14 +567,14 @@ public class  T24Channel {
             byte[] buf = new byte[4096];
             int len = 0;
 
-             Thread.sleep(100L);
+            Thread.sleep(100L);
             int datalen = -1;
-            log.info("the data recieved from T24 is {}"+ len);
+            log.info("the data recieved from T24 is {}" + len);
 
-            System.out.println("thread is : "+client.getReaderThread());
+            System.out.println("thread is : " + client.getReaderThread());
 
 
-           // System.out.println(client.getInputStream().read(buf) >1);
+            // System.out.println(client.getInputStream().read(buf) >1);
 
 
             while ((len = client.getInputStream().read(buf)) != 0) {
@@ -605,162 +605,69 @@ public class  T24Channel {
         return "";
     }
 
-    public  String receive2(TelnetClient client) {
-        StringBuffer strBuffer;
-        try {
-
-            strBuffer = new StringBuffer();
-            byte[] buf = new byte[4096];
-            int len = 0, datalen = -1;
-
-            while ((len = client.getInputStream().read(buf)) != 0) {
-                strBuffer.append(new String(buf, 0, len));
-                // if length of received data is greater than four ... store the
-                // data length if its not set yet
-                Thread.sleep(20L);
-                if (datalen == -1 && strBuffer.toString().length() > 4) {
-                    datalen = Integer.parseInt(strBuffer.toString().substring(0, 4));
-                }
-                if (client.getInputStream().available() == 0) {
-                    break;
-                }
-                if (strBuffer.length() == datalen) {
-                    break;
-                }
-            }
-            return strBuffer.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return "";
-    }
-
 
     private List<AcademicTransactionData> parseT24AcademicBidgePayment(T24TXNQueue t24TXNQueue, String gatewayref) {
-        String t24Response = t24TXNQueue.getResponseleg();
-        System.out.println(t24Response.isEmpty());//kelvin to do
-        t24TXNQueue.setPostedstatus("1");
+        List<AcademicTransactionData> detailList = new ArrayList<>();
+        try {
+            String t24Response = t24TXNQueue.getResponseleg();
 
-        AcademicTransactionData details = new AcademicTransactionData();
-       // String respone = t24Response;
+            t24TXNQueue.setPostedstatus("1");
 
-       // String respone = "0303,Y.SCHOOL.ID::SCHOOL ID/Y.SCHOOL.NAME::SCHOOL NAME/Y.STUDENT.NAME::STUDENT NAME/Y.STU.REG.NO::STUDENT REGNO/Y.PAY.TYPE::PAY TYPE/Y.SCHOOL.AC::SCHOOL ACCOUNT,\"45             \"\t\"Demo school              \"\t\"Gabriel  Imanikuzwe                          \"\t\"1001190067    \"\t\"          \"\t\"40810263810194      \"\n";
-        System.out.println(t24Response);
+            AcademicTransactionData details = new AcademicTransactionData();
+            // String respone = "0303,Y.SCHOOL.ID::SCHOOL ID/Y.SCHOOL.NAME::SCHOOL NAME/Y.STUDENT.NAME::STUDENT NAME/Y.STU.REG.NO::STUDENT REGNO/Y.PAY.TYPE::PAY TYPE/Y.SCHOOL.AC::SCHOOL ACCOUNT,\"45             \"\t\"Demo school              \"\t\"Gabriel  Imanikuzwe                          \"\t\"1001190067    \"\t\"          \"\t\"40810263810194      \"\n";
+            String[] res = t24Response.split("/");
 
-        /*String [] res = t24Response.split(",");
-        System.out.println(res[0]);
-        String [] transactionStatus = res[0].split("/");
+            String[] data = res[2].replace(":1:1", "").replace(".", "_").split(",");
+            // String data = res[1].replace(":2:1","");
 
-       // if(transactionStatus[2].equalsIgnoreCase("1")) {
+            HashMap<String, String> t24data = new HashMap<>();
 
-        t24Response = res[1];
-            System.out.println("After substring " + t24Response);
-
-            String[] data = res[2].substring(1, res[2].length() - 1).split("\"");
-
-            System.out.println(res[2]);*/
+            ObjectMapper mapper = new ObjectMapper();
+            if (data[0].equalsIgnoreCase("1")) {
 
 
-            /*student.setStudent_name(data[4]);//
-            student.setStudent_reg_number(data[6]);//
-            student.setSchool_account_number(data[10]);//
-            student.setSchool_name(data[2]);
-            student.setSchool_ide(Integer.parseInt(data[0].trim()));*/
-
-        String [] res = t24Response.split("/");
-
-        String [] data = res[2].replace(":1:1","").replace(".","_").split(",");
-        // String data = res[1].replace(":2:1","");
-
-        HashMap<String, String> t24data = new HashMap<>();
-
-        ObjectMapper mapper = new ObjectMapper();
-        if(data[0].equalsIgnoreCase("1") ) {
-
-
-            int ii = 0;
-            for (String column : data) {
-                if (ii > 0) {
-
-                    /*details.setName(column.split("=")[0]);
-                    details.setValue(column.split("=")[1]);*/
-
-                    t24data.put(column.split("=")[0], column.split("=")[1]);
-                   // System.out.println(column.split("=")[0]);
-
+                int ii = 0;
+                for (String column : data) {
+                    if (ii > 0) {
+                        t24data.put(column.split("=")[0], column.split("=")[1]);
+                    }
+                    ii++;
                 }
-                ii++;
+            }/* else {
+            t24data.put("Status", "No data was retrieved");
+            *//*details.setName("Status");
+            details.setValue("There is no data received");*//*
+        }*/
+            try {
+                details.setDebitCustomer(t24data.get("DEBIT_CUSTOMER"));
+                details.setOrderingBank(t24data.get("ORDERING_BANK"));
+                details.setAbStudentName(t24data.get("AB_STU_NAME"));
+                details.setBprSenderName(t24data.get("BPR_SENDER_NAME"));
+                details.setLocalCahrgeAmount(t24data.get("LOCAL_CHARGE_AMT"));
+                details.setAbSchoolId(t24data.get("AB_SCHOOL_ID"));
+                details.setDebitAcctNo(t24data.get("DEBIT_ACCT_NO"));
+                details.setAbBillNo(t24data.get("AB_BILL_NO"));
+                details.setCreditTheirRef(t24data.get("CREDIT_THEIR_REF"));
+                details.setDateTime(t24data.get("DATE_TIME"));
+                details.setMobileNo(t24data.get("MOBILE_NO"));
+                details.setDeliveryOutRef(t24data.get("DELIVERY_OUTREF"));
+                details.setAbSchoolName(t24data.get("AB_SCHL_NAME"));
+                details.setCreditAmount(t24data.get("CREDIT_AMOUNT"));
+                details.setBillerId(t24data.get("BILLER_ID"));
+
+                detailList.add(details);
+            } catch (Exception ex) {
+                details = null;
+                detailList.add(details);
+                log.info(
+                        "[Error] : {}",
+                        ex.getMessage());
+
+                ex.printStackTrace();
             }
-        }else{
-            t24data.put("Status","No data was retrieved");
-            /*details.setName("Status");
-            details.setValue("There is no data received");*/
-        }
 
 
-            System.out.println(t24data);
-        List<AcademicTransactionData> detailList=new ArrayList<>();
-       // details = mapper.convertValue(t24data,TransactionData.class);
-//        details.setName("AUTH_DATE");
-//        details.setValue(t24data.get("AUTH_DATE"));
-       // detailList.add(details);
-
-        details.setDebitCustomer(t24data.get("DEBIT_CUSTOMER"));
-
-
-        details.setOrderingBank(t24data.get("ORDERING_BANK"));
-
-        details.setAbStudentName(t24data.get("AB_STU_NAME"));
-
-
-        details.setBprSenderName(t24data.get("BPR_SENDER_NAME"));
-
-        details.setLocalCahrgeAmount(t24data.get("LOCAL_CHARGE_AMT"));
-
-        details.setAbSchoolId(t24data.get("AB_SCHOOL_ID"));
-
-        details.setDebitAcctNo(t24data.get("DEBIT_ACCT_NO"));
-
-        details.setAbBillNo(t24data.get("AB_BILL_NO"));
-
-        details.setCreditTheirRef(t24data.get("CREDIT_THEIR_REF"));
-
-        details.setDateTime(t24data.get("DATE_TIME"));
-
-        details.setMobileNo(t24data.get("MOBILE_NO"));
-
-        details.setDeliveryOutRef(t24data.get("DELIVERY_OUTREF"));
-
-        details.setAbSchoolName(t24data.get("AB_SCHL_NAME"));
-
-        details.setCreditAmount(t24data.get("CREDIT_AMOUNT"));
-
-//        details.set(t24data.get("CREDIT_ACCT_NO"));
-//
-        details.setBillerId(t24data.get("BILLER_ID"));
-        //detailList.add(details);
-
-        detailList.add(details);
-
-
-
-            /*student.setStudent_name(t24data.get("AUTH_DATE"));//
-            student.setStudent_reg_number(t24data.get("STMT_NOS"));//
-            student.setSchool_account_number(t24data.get("CREDIT_CURRENCY"));//
-            student.setSchool_name(t24data.get("DEBIT_CURRENCY"));
-            student.setSchool_ide(Integer.parseInt(t24data.get("LOC_AMT_CREDITED").trim()));
-*/
-           /* System.out.println("School name" + student.getSchool_name());
-            System.out.println("School id " + student.getSchool_ide());
-            System.out.println("Student name" + student.getStudent_name());
-            System.out.println("School acct name" + student.getSchool_account_name());
-            System.out.println("School acct number" + student.getSchool_account_number());*/
-
-
-
-
-            t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
+            //  t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
 
             System.out.println(
                     "Exiting t24 parse for Rec id  : "
@@ -770,13 +677,19 @@ public class  T24Channel {
                             + gatewayref
                             + " at "
                             + System.currentTimeMillis());
-        System.out.println(detailList);
+            System.out.println(detailList);
 
-            return detailList;
-       /* }else {
-            System.out.println("Failed to extract");
+        } catch (Exception ex) {
+            log.info(
+                    "[Error] : {}",
+                    ex.getMessage());
+
+            ex.printStackTrace();
+
         }
-        return student;*/
+
+        return detailList;
+
     }
 
     public CustomerProfileResponse t24TransactionPostingAcademicBridge(T24TXNQueue transactionPendingProcessing, String t24ip, int t24port) {
@@ -787,7 +700,7 @@ public class  T24Channel {
         log.info(
                 "Processing initialization for Transaction RRN [{}] at [{}] OFS Request: [{}]",
                 transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), t24RequestOFS);
-        System.out.println("Pcode is : "+transactionPendingProcessing.getProcode());
+        System.out.println("Pcode is : " + transactionPendingProcessing.getProcode());
 
         TelnetClient telnetClient = new TelnetClient();
         try {
@@ -795,8 +708,6 @@ public class  T24Channel {
                     "Connection established to T24 for Transaction RRN [{}] at [{}] ",
                     transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()));
 
-//            String[] OFSSplit = t24RequestOFS.split(",");
-//            String OFSContainingMaskedCredentials = OFSSplit[2];
 
             Optional<XSwitchParameter> optionalT24UserCredentials = xSwitchParameterRepository.findByParamName("T24USER");
             Optional<XSwitchParameter> optionalT24Pass = xSwitchParameterRepository.findByParamName("T24PASS");
@@ -808,11 +719,6 @@ public class  T24Channel {
             String t24usn = utilityService.decryptSensitiveData(optionalT24UserCredentials.get().getParamValue());
             String t24pwd = utilityService.decryptSensitiveData(optionalT24Pass.get().getParamValue());
 
-//            String[] T24ChannelCredentials = OFSContainingMaskedCredentials.split("/");
-//            String OFSWithPlainTextCredentials =
-//                    t24RequestOFS.replaceAll(T24ChannelCredentials[0], t24usn);
-//            OFSWithPlainTextCredentials =
-//                    OFSWithPlainTextCredentials.replaceAll(T24ChannelCredentials[1], t24pwd);
 
             t24RequestOFS = t24RequestOFS.replace(MASKED_T24_USERNAME, t24usn.trim());
             String OFSWithPlainTextCredentials = t24RequestOFS.replace(MASKED_T24_PASSWORD, t24pwd.trim());
@@ -824,7 +730,7 @@ public class  T24Channel {
             log.info("Formatted OFS Message String: {}", formattedOFSMessageString);
 
             telnetClient.connect(t24ip, t24port);
-            if(!telnetClient.isConnected()){
+            if (!telnetClient.isConnected()) {
                 //log that connection has failed
                 //retun
                 //to do waweru
@@ -833,11 +739,7 @@ public class  T24Channel {
             boolean sent = send(telnetClient, formattedOFSMessageString.trim(), transactionRRN);
             log.info("Transaction sent to t24");
             String T24ResponseOFS = receive(telnetClient, transactionPendingProcessing);
-            // String T24ResponseOFS = receive2(telnetClient);
-            // String T24ResponseOFS = "yolo";
-            System.out.println("####################################################################");
-            System.out.println("Response from t24 is :> "+T24ResponseOFS);
-            System.out.println("####################################################################");
+
 
             log.info(
                     "T24 response received for Transaction RRN [{}] at [{}] :: Response [{}]",
@@ -846,7 +748,7 @@ public class  T24Channel {
             transactionPendingProcessing.setResponseleg(T24ResponseOFS);
             transactionPendingProcessing.setEndtime(System.currentTimeMillis());
             GetStudentDetailsResponse response = null;
-            TransactionData data=null;
+            TransactionData data = null;
 
             if (T24ResponseOFS.length() < 5) {
                 log.info(
@@ -855,28 +757,24 @@ public class  T24Channel {
                 transactionPendingProcessing.setPostedstatus("4");
                 transactionPendingProcessing.setT24failnarration("UNEXPECTED RESPONSE FROM REMOTE SYSTEM");
             } else {
-                System.out.println("Pcode in else is : "+transactionPendingProcessing.getProcode());
+
                 try {
                     switch (transactionPendingProcessing.getProcode() == null ? "" : transactionPendingProcessing.getProcode()) {
                         case "460001":
                             if (transactionPendingProcessing.getTxnmti().equals("1100")) {
                                 parseT24EuclElecInquiry(transactionPendingProcessing, transactionRRN);
-                            } if(transactionPendingProcessing.getTxnmti().equals("1200")) {
+                            }
+                            if (transactionPendingProcessing.getTxnmti().equals("1200")) {
 //                            response = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
-                            response = parseT24AcademicBidgeValidation(transactionPendingProcessing, transactionRRN);
+                                response = parseT24AcademicBidgeValidation(transactionPendingProcessing, transactionRRN);
 
-                            student.setMessage("Transaction successful");
-                            student.setStatus("00");
-                            student.setData(response);
-                        }
-                        else {
-                           /* data = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
+                                student.setMessage("Transaction successful");
+                                student.setStatus("00");
+                                student.setData(response);
+                            } else {
 
-                            student.setMessage("Transaction successful");
-                            student.setStatus("00");
-                            student.setData(response);*/
-                            parseT24ResponseRefactored(transactionPendingProcessing, transactionRRN);
-                        }
+                                parseT24ResponseRefactored(transactionPendingProcessing, transactionRRN);
+                            }
                             break;
                         case "510000":
                         case "430000":
@@ -891,7 +789,7 @@ public class  T24Channel {
                             break;
                     }
                 } catch (Exception e) {
-                    log.info("Error Parsing T24 Response : for  {}", transactionRRN );
+                    log.info("Error Parsing T24 Response : for  {}", transactionRRN);
                     transactionPendingProcessing.setPostedstatus("5");
                     transactionPendingProcessing.setT24failnarration(e.getMessage());
                     e.printStackTrace();
@@ -954,61 +852,68 @@ public class  T24Channel {
     private GetStudentDetailsResponse parseT24AcademicBidgeValidation(T24TXNQueue t24TXNQueue, String gatewayref) {
         String t24Response = t24TXNQueue.getResponseleg();
         System.out.println(t24Response.isEmpty());//kelvin to do
+
         t24TXNQueue.setPostedstatus("1");
 
         GetStudentDetailsResponse student = new GetStudentDetailsResponse();
-        // String respone = t24Response;
+        if(!t24Response.isEmpty()){
 
-        // String respone = "0303,Y.SCHOOL.ID::SCHOOL ID/Y.SCHOOL.NAME::SCHOOL NAME/Y.STUDENT.NAME::STUDENT NAME/Y.STU.REG.NO::STUDENT REGNO/Y.PAY.TYPE::PAY TYPE/Y.SCHOOL.AC::SCHOOL ACCOUNT,\"45             \"\t\"Demo school              \"\t\"Gabriel  Imanikuzwe                          \"\t\"1001190067    \"\t\"          \"\t\"40810263810194      \"\n";
-        System.out.println(t24Response);
+            student=null;
+        }
+        try {
+            log.info("T24 response {}",t24Response);
+            String[] res = t24Response.split(",");
+            String[] transactionStatus = res[0].split("/");
 
-        String [] res = t24Response.split(",");
-        System.out.println(res[0]);
-        String [] transactionStatus = res[0].split("/");
+            // if(transactionStatus[2].equalsIgnoreCase("1")) {
 
-       // if(transactionStatus[2].equalsIgnoreCase("1")) {
-
-        t24Response = res[1];
-            System.out.println("After substring " + t24Response);
-
+            t24Response = res[1];
+            log.info("res position 1 is : {}",t24Response);
             String[] data = res[2].substring(1, res[2].length() - 1).split("\"");
-
-            System.out.println(res[2]);
-
-            if (res[2].substring(1).startsWith("No records were found")){
+            log.info("Response data >> {}",data);
+            if (res[2].substring(1).startsWith("No records were found")) {
                 student.setStudent_name("No record found");
-            }else {
+            } else {
+                try{
 
-                student.setStudent_name(data[4]);//
-                student.setStudent_reg_number(data[6]);//
-                student.setSchool_account_number(data[10]);//
+                student.setStudent_name(data[4]);
+                student.setStudent_reg_number(data[6]);
+                student.setSchool_account_number(data[10]);
                 student.setSchool_name(data[2]);
                 student.setSchool_ide(Integer.parseInt(data[0].trim()));
+                }catch (Exception ex){
+                    log.info(
+                            "[Error] : {}",
+                            ex.getMessage());
 
+                    ex.printStackTrace();
 
-                System.out.println("School name" + student.getSchool_name());
-                System.out.println("School id " + student.getSchool_ide());
-                System.out.println("Student name" + student.getStudent_name());
-                System.out.println("School acct name" + student.getSchool_account_name());
-                System.out.println("School acct number" + student.getSchool_account_number());
+                }
+
             }
 
-        t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
+            t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
 
-        System.out.println(
-                "Exiting t24 parse for Rec id  : "
-                        + t24TXNQueue.getT24TXNQueueid()
-                        + ", "
-                        + "Gateway ref "
-                        + gatewayref
-                        + " at "
-                        + System.currentTimeMillis());
+            System.out.println(
+                    "Exiting t24 parse for Rec id  : "
+                            + t24TXNQueue.getT24TXNQueueid()
+                            + ", "
+                            + "Gateway ref "
+                            + gatewayref
+                            + " at "
+                            + System.currentTimeMillis());
+
+        } catch (Exception ex) {
+            log.info(
+                    "[Error] Unable to fetch transaction from database queue. Error message: {}",
+                    ex.getMessage());
+
+            ex.printStackTrace();
+
+        }
 
         return student;
-       /* }else {
-            System.out.println("Failed to extract");
-        }
-        return student;*/
+
     }
 
 
@@ -1049,7 +954,7 @@ public class  T24Channel {
         log.info(
                 "Processing initialization for Transaction RRN [{}] at [{}] OFS Request: [{}]",
                 transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), t24RequestOFS);
-        System.out.println("Pcode is : "+transactionPendingProcessing.getProcode());
+
 
         TelnetClient telnetClient = new TelnetClient();
         try {
@@ -1086,20 +991,17 @@ public class  T24Channel {
             log.info("Formatted OFS Message String: {}", formattedOFSMessageString);
 
             telnetClient.connect(t24ip, t24port);
-            if(!telnetClient.isConnected()){
+            if (!telnetClient.isConnected()) {
                 //log that connection has failed
                 //retun
                 //to do waweru
+                log.info("Connection to t24 failed");
             }
             log.info("Connection established >>>> {}", telnetClient.isConnected());
             boolean sent = send(telnetClient, formattedOFSMessageString.trim(), transactionRRN);
             log.info("Transaction sent to t24");
             String T24ResponseOFS = receive(telnetClient, transactionPendingProcessing);
-            // String T24ResponseOFS = receive2(telnetClient);
-            // String T24ResponseOFS = "yolo";
-            System.out.println("####################################################################");
-            System.out.println("Response from t24 is :> "+T24ResponseOFS);
-            System.out.println("####################################################################");
+
 
             log.info(
                     "T24 response received for Transaction RRN [{}] at [{}] :: Response [{}]",
@@ -1108,7 +1010,7 @@ public class  T24Channel {
             transactionPendingProcessing.setResponseleg(T24ResponseOFS);
             transactionPendingProcessing.setEndtime(System.currentTimeMillis());
             GetStudentDetailsResponse response = null;
-            TransactionData data=null;
+            TransactionData data = null;
 
             if (T24ResponseOFS.length() < 5) {
                 log.info(
@@ -1117,33 +1019,31 @@ public class  T24Channel {
                 transactionPendingProcessing.setPostedstatus("4");
                 transactionPendingProcessing.setT24failnarration("UNEXPECTED RESPONSE FROM REMOTE SYSTEM");
             } else {
-                System.out.println("Pcode in else is : "+transactionPendingProcessing.getProcode());
+
                 try {
                     switch (transactionPendingProcessing.getProcode() == null ? "" : transactionPendingProcessing.getProcode()) {
                         case "460001":
                             if (transactionPendingProcessing.getTxnmti().equals("1100")) {
                                 parseT24EuclElecInquiry(transactionPendingProcessing, transactionRRN);
-                            } if(transactionPendingProcessing.getTxnmti().equals("1200")) {
-                          //  response = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
+                            }
+                            if (transactionPendingProcessing.getTxnmti().equals("1200")) {
+                                //  response = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
                            /* response = parseT24AcademicBidgeValidation(transactionPendingProcessing, transactionRRN);
 
                             student.setMessage("Transaction successful");
                             student.setStatus("00");
                             student.setData(response);*/
-                        }
-                        else {
-                            List<AcademicTransactionData> dataDetails= new ArrayList<>();
-                            dataDetails = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
-                           // student=data;
+                            } else {
+                                List<AcademicTransactionData> dataDetails = new ArrayList<>();
+                                dataDetails = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
 
-                           // dataDetails.add(data);
-                            System.out.println("paymentDetails to be returned : "+dataDetails.get(0));
+                                System.out.println("paymentDetails to be returned : " + dataDetails.get(0));
 
-                            student.setResponseCode("00");
-                            student.setResponseMessage("Successful");
-                            student.setPaymentData(dataDetails);
-                            // parseT24ResponseRefactored(transactionPendingProcessing, transactionRRN);
-                        }
+                                student.setResponseCode("00");
+                                student.setResponseMessage("Successful");
+                                student.setPaymentData(dataDetails);
+
+                            }
                             break;
                         case "510000":
                         case "430000":
@@ -1158,7 +1058,7 @@ public class  T24Channel {
                             break;
                     }
                 } catch (Exception e) {
-                    log.info("Error Parsing T24 Response : for  {}", transactionRRN );
+                    log.info("Error Parsing T24 Response : for  {}", transactionRRN);
                     transactionPendingProcessing.setPostedstatus("5");
                     transactionPendingProcessing.setT24failnarration(e.getMessage());
                     e.printStackTrace();
@@ -1185,6 +1085,7 @@ public class  T24Channel {
                 }
             }
         }
+
         return student;
     }
 
