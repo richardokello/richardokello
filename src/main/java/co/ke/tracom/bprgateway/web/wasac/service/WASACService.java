@@ -209,7 +209,7 @@ public class WASACService {
         tot24.setTxnchannel("PC");
         tot24.setGatewayref(RRN);
         tot24.setPostedstatus("0");
-        tot24.setProcode("460001");
+        //tot24.setProcode("460001");
         tot24.setTid(agentAuthData.getTid());
         tot24.setDebitacctno(account);
         tot24.setTotalchargeamt("0.0");
