@@ -7,12 +7,18 @@ import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationRequ
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationResponse;
 import co.ke.tracom.bprgateway.web.VisionFund.entity.VisionFund;
 import co.ke.tracom.bprgateway.web.VisionFund.repository.VisionFundRepository;
+import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
+import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.Data;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
+import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
+import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
+import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +36,21 @@ public class VisionFundService {
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
     private final VisionFundRepository visionFundRepository;
+    private final BaseServiceProcessor baseServiceProcessor;
 
+    @SneakyThrows
     public BalanceEnquiryResponse getBalance(BalanceEnquiryRequest enquiryRequest) {
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
+                new MerchantAuthInfo(enquiryRequest.getCredentials().getUsername(), enquiryRequest.getCredentials().getPassword()));
+
+        if (authenticateAgentResponse.getCode() != 200) {
+            return BalanceEnquiryResponse.builder()
+                    .responseCode("05")
+                    .responseString("Invalid credentials")
+                    .build();
+        }
+        Data agentAuthData = authenticateAgentResponse.getData();
+
         String agentFloatBalanceOFS =
                 String.format(
                         "0000AENQUIRY.SELECT,,%s/%s,BPR.ENQ.VFR.GET.DET,ID:EQ=%s",
@@ -60,15 +79,21 @@ public class VisionFundService {
 
             if (t24TXNQueue.getBaladvise() == null) {
 
-                return null;
+                transactionService.saveCardLessTransactionToAllTransactionTable(t24TXNQueue, enquiryRequest.getTnxType(), "0200", 0,
+                        AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
+                return BalanceEnquiryResponse.builder()
+                        .responseCode(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value())
+                        .responseString("Transaction failed! "+t24TXNQueue.getT24failnarration())
+                        .build();
             } else {
                 try {
+                    transactionService.saveCardLessTransactionToAllTransactionTable(t24TXNQueue, enquiryRequest.getTnxType(), "0200", 0,
+                            AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
                     return BalanceEnquiryResponse.builder()
-                            .responseCode("00")
+                            .responseCode(AppConstants.TRANSACTION_SUCCESS_STANDARD.value())
                             .txnDateTime(DateFormat.getDateInstance().parse(t24TXNQueue.getDatetime()))
                             .availBalance(Double.parseDouble(t24TXNQueue.getBaladvise()))
-                            .ledgerBalance(Double.parseDouble(t24TXNQueue.getBaladvise()))
-                            .responseString("Customer Balance fetched successfully")
+                            .responseString(AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase())
                             .txnReference(t24TXNQueue.getGatewayref())
                             .build();
                 } catch (ParseException e) {
@@ -80,8 +105,18 @@ public class VisionFundService {
         return null;
     }
 
+    @SneakyThrows
     public AccountDepositResponse makeDeposit(AccountDepositRequest depositRequest) {
-        //todo implement later
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
+                new MerchantAuthInfo(depositRequest.getCredentials().getUsername(), depositRequest.getCredentials().getPassword()));
+
+        if (authenticateAgentResponse.getCode() != 200) {
+            return AccountDepositResponse.builder()
+                    .responseCode("05")
+                    .responseString("Invalid credentials")
+                    .build();
+        }
+        Data agentAuthData = authenticateAgentResponse.getData();
 
         String bareOfs ="FUNDS.TRANSFER," +
                 "BPR.VFR.DEP/I/PROCESS/1/0," +
@@ -113,30 +148,33 @@ public class VisionFundService {
         tot24.setPostedstatus("0");
         tot24.setProcode("460001");
 
-        /*
-        processT24Transactions(tot24);
+        /*processT24Transactions(tot24);
 
         //Save the transaction
         //todo table to be created
-        VisionFund visionFund = new VisionFund();
-        visionFund.setAccountName(tot24.getAccountname());
-        visionFund.setAccountNumber(depositRequest.getAccountNumber());
-        visionFund.setAmount(depositRequest.getAmount());
-        visionFund.setMobileNumber(depositRequest.getMobileNumber());
-        visionFund.setTranDesc(depositRequest.getTranDesc());
-        visionFund.setCurrencyCode(depositRequest.getCurrencyCode());
-        visionFund.setNationalID(depositRequest.getNationalID());
-        visionFund.setReferenceNumber(tot24.getGatewayref());
-        visionFundRepository.save(visionFund);
+        //VisionFund visionFund = new VisionFund();
+        //visionFund.setAccountName(tot24.getAccountname());
+        //visionFund.setAccountNumber(depositRequest.getAccountNumber());
+        //visionFund.setAmount(depositRequest.getAmount());
+        //visionFund.setMobileNumber(depositRequest.getMobileNumber());
+        //visionFund.setTranDesc(depositRequest.getTranDesc());
+        //visionFund.setCurrencyCode(depositRequest.getCurrencyCode());
+        //visionFund.setNationalID(depositRequest.getNationalID());
+        //visionFund.setReferenceNumber(tot24.getGatewayref());
+        //visionFundRepository.save(visionFund);
 
         if (tot24.getT24responsecode() == null || tot24.getT24responsecode().equals("3")){
 
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, depositRequest.getTnxType(), "0200", depositRequest.getAmount(),
+                    AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
             return AccountDepositResponse.builder()
                     .responseCode("05")
                     .responseString("Transaction failed! "+tot24.getT24failnarration())
                     .build();
         }else{
             try{
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, depositRequest.getTnxType(), "0200", depositRequest.getAmount(),
+                        AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
                 return AccountDepositResponse.builder()
                         .responseCode(AppConstants.TRANSACTION_SUCCESS_STANDARD.value())
                         .responseString(AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase())
@@ -164,8 +202,19 @@ public class VisionFundService {
         //return null;
     }
 
+    @SneakyThrows
     public CashWithdrawalResponse doWithdraw(CashWithdrawalRequest withdrawalRequest) {
-        //todo implement later
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
+                new MerchantAuthInfo(withdrawalRequest.getCredentials().getUsername(), withdrawalRequest.getCredentials().getPassword()));
+
+        if (authenticateAgentResponse.getCode() != 200) {
+            return CashWithdrawalResponse.builder()
+                    .responseCode("05")
+                    .responseString("Invalid credentials")
+                    .build();
+        }
+        Data agentAuthData = authenticateAgentResponse.getData();
+
         String ofs = String.format("FUNDS.TRANSFER," +
                         "BPR.VFR.WDR/I/PROCESS/1/0,%s/%s/%s,," +
                         "DEBIT.CURRENCY::=RWF,DEBIT.AMOUNT::=1100," +
@@ -197,30 +246,34 @@ public class VisionFundService {
         tot24.setPhone(withdrawalRequest.getMobileNumber());
         tot24.setTokenNo(withdrawalRequest.getToken());*/
 
-        /*
-        processT24Transactions(tot24);
+        /*processT24Transactions(tot24);
 
         //Save the transaction
-        VisionFund visionFund = new VisionFund();
-        visionFund.setAccountName(tot24.getAccountname());
-        visionFund.setAccountNumber(withdrawalRequest.getAccountNumber());
-        visionFund.setAmount(withdrawalRequest.getAmount());
-        visionFund.setMobileNumber(withdrawalRequest.getMobileNumber());
-        visionFund.setTranDesc(withdrawalRequest.getTranDesc());
-        visionFund.setCurrencyCode(withdrawalRequest.getCurrencyCode());
-        visionFund.setNationalID(withdrawalRequest.getNationalID());
-        visionFund.setReferenceNumber(tot24.getGatewayref());
-        visionFund.setToken(withdrawalRequest.getToken());
-        visionFundRepository.save(visionFund);
+        //VisionFund visionFund = new VisionFund();
+        //visionFund.setAccountName(tot24.getAccountname());
+        //visionFund.setAccountNumber(withdrawalRequest.getAccountNumber());
+        //visionFund.setAmount(withdrawalRequest.getAmount());
+        //visionFund.setMobileNumber(withdrawalRequest.getMobileNumber());
+        //visionFund.setTranDesc(withdrawalRequest.getTranDesc());
+        //visionFund.setCurrencyCode(withdrawalRequest.getCurrencyCode());
+        //visionFund.setNationalID(withdrawalRequest.getNationalID());
+        //visionFund.setReferenceNumber(tot24.getGatewayref());
+        //visionFund.setToken(withdrawalRequest.getToken());
+        //visionFundRepository.save(visionFund);
 
         if (tot24.getT24responsecode() == null || tot24.getT24responsecode().equals("3")){
 
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, withdrawalRequest.getTnxType(), "0200", withdrawalRequest.getAmount(),
+                    AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
             return CashWithdrawalResponse.builder()
-                    .responseCode("05")
+                    .responseCode(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value())
                     .responseString("Transaction failed! "+tot24.getT24failnarration())
                     .build();
         }else{
             try{
+
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, withdrawalRequest.getTnxType(), "0200", withdrawalRequest.getAmount(),
+                        AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
 
                 return CashWithdrawalResponse.builder()
                         .responseCode(AppConstants.TRANSACTION_SUCCESS_STANDARD.value())
@@ -234,7 +287,7 @@ public class VisionFundService {
                 log.error("<<<Vision Fund Withdrawal Transaction>>>\n{}",e.getMessage());
             }
         }
-*/
+        */
         //for simulation purposes
         String ofsSampleResponse = "FT19189M51JV/TRCOM191890684045803.01/1,TRANSACTION.TYPE:1:1=ACVW,DEBIT.ACCT.NO:1:1=560239437610116,CURRENCY.MKT.DR:1:1=1,DEBIT.CURRENCY:1:1=RWF,DEBIT.AMOUNT:1:1=60000,DEBIT.VALUE.DATE:1:1=20190708,CREDIT.ACCT.NO:1:1=464430463110128,CURRENCY.MKT.CR:1:1=1,CREDIT.CURRENCY:1:1=RWF,CREDIT.VALUE.DATE:1:1=20190708,PROCESSING.DATE:1:1=20190708,PAYMENT.DETAILS:1:1=VFR WITHDRAWAL FOR CHARLES,PAYMENT.DETAILS:2:1= BY ,PAYMENT.DETAILS:3:1= test 123,PAYMENT.DETAILS:4:1=PO400010 000000RW0010007,CHARGES.ACCT.NO:1:1=560239437610116,CHARGE.COM.DISPLAY:1:1=NO,COMMISSION.CODE:1:1=DEBIT PLUS CHARGES,CHARGE.CODE:1:1=DEBIT PLUS CHARGES,PROFIT.CENTRE.CUST:1:1=2394376,RETURN.TO.DEPT:1:1=NO,FED.FUNDS:1:1=NO,POSITION.TYPE:1:1=TR,BPR.ID.NUMBER:1:1=102036384750101,BPR.ID.DOC.NO:1:1=1198080005389094,AC.NAME:1:1=CHARLES,ETAX.NARRATIVE:1:1=941600.81,TRAN.REF:1:1=17312320,INVOICE.DETAILS:1:1=2021-01-29T12:56:20+0200,MOBILE.NO:1:1=250788894696,TCM.REF:1:1=003030164525,AB.SCHL.NAME:1:1=941600.81,EUCL.CUS.NO:1:1=731618,AMOUNT.DEBITED:1:1=RWF60000,AMOUNT.CREDITED:1:1=RWF60000,CREDIT.COMP.CODE:1:1=RW0010464,DEBIT.COMP.CODE:1:1=RW0010560,LOC.AMT.DEBITED:1:1=60000,LOC.AMT.CREDITED:1:1=60000,CUST.GROUP.LEVEL:1:1=99,DEBIT.CUSTOMER:1:1=2394376,CREDIT.CUSTOMER:1:1=4304631,DR.ADVICE.REQD.Y.N:1:1=N,CR.ADVICE.REQD.Y.N:1:1=N,CHARGED.CUSTOMER:1:1=4304631,TOT.REC.COMM:1:1=0,TOT.REC.COMM.LCL:1:1=0,TOT.REC.CHG:1:1=0,TOT.REC.CHG.LCL:1:1=0,RATE.FIXING:1:1=NO,TOT.REC.CHG.CRCCY:1:1=0,TOT.SND.CHG.CRCCY:1:1=0,AUTH.DATE:1:1=20190708,ROUND.TYPE:1:1=NATURAL,STMT.NOS:1:1=193880684045805.00,STMT.NOS:2:1=1-2,STMT.NOS:3:1=RW0010464,STMT.NOS:4:1=193880684045805.01,STMT.NOS:5:1=1-2,STMT.NOS:6:1=RW0010560,STMT.NOS:7:1=193880684045805.02,STMT.NOS:8:1=1-2,STMT.NOS:9:1=RW0010400,STMT.NOS:10:1=193880684045805.03,STMT.NOS:11:1=1-4,CURR.NO:1:1=1,INPUTTER:1:1=6840_INPUTTER__OFS_TRCOMOFS,DATE.TIME:1:1=2101291243,AUTHORISER:1:1=6840_INPUTTER_OFS_TRCOMOFS,CO.CODE:1:1=RW0010404,DEPT.CODE:1:1=400";
         String[] strings = ofsSampleResponse.split(",");
@@ -248,7 +301,19 @@ public class VisionFundService {
         //return null;
     }
 
+    @SneakyThrows
     public CustomVerificationResponse verifyCustomer(CustomVerificationRequest verificationRequest) {
+        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
+                new MerchantAuthInfo(verificationRequest.getCredentials().getUsername(), verificationRequest.getCredentials().getPassword()));
+
+        if (authenticateAgentResponse.getCode() != 200) {
+           return CustomVerificationResponse.builder()
+                    .responseCode("05")
+                    .responseString("Invalid credentials")
+                    .build();
+        }
+        Data agentAuthData = authenticateAgentResponse.getData();
+
         String ofsFormat = "0000AENQUIRY.SELECT,,%s/%s/%s,BPR.VFR.GET.DAT,ACCT.NO:EQ=%s,MOBILE.NO:EQ=%s";
 
         String format = String.format(ofsFormat, getT24UserName(), getT24Password(), getDefaultBranch(), verificationRequest.getAccountNumber(), verificationRequest.getMobileNumber());
@@ -264,24 +329,27 @@ public class VisionFundService {
         tot24.setPostedstatus("0");
         tot24.setProcode("500000");
 
-        processT24Transactions(tot24);
-/*
+       /* processT24Transactions(tot24);
         //Save the transaction
-        VisionFund visionFund = new VisionFund();
-        visionFund.setAccountName(tot24.getAccountname());
-        visionFund.setAccountNumber(verificationRequest.getAccountNumber());
-        visionFund.setMobileNumber(verificationRequest.getMobileNumber());
-        visionFund.setReferenceNumber(tot24.getGatewayref());
-        visionFundRepository.save(visionFund);
+        //VisionFund visionFund = new VisionFund();
+        //visionFund.setAccountName(tot24.getAccountname());
+        //visionFund.setAccountNumber(verificationRequest.getAccountNumber());
+        //visionFund.setMobileNumber(verificationRequest.getMobileNumber());
+        //visionFund.setReferenceNumber(tot24.getGatewayref());
+        //visionFundRepository.save(visionFund);
 
         if (tot24.getT24responsecode() == null || tot24.getT24responsecode().equals("3")){
 
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, verificationRequest.getTnxType(), "0200", 0,
+                    AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
             return CustomVerificationResponse.builder()
                     .responseCode("05")
                     .responseString("Transaction failed! "+tot24.getT24failnarration())
                     .build();
         }else{
             try{
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, verificationRequest.getTnxType(), "0200", 0,
+                        AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
                 return CustomVerificationResponse.builder()
                         .responseCode(AppConstants.TRANSACTION_SUCCESS_STANDARD.value())
                         .responseString(AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase())
@@ -295,6 +363,7 @@ public class VisionFundService {
                 log.error("<<<Vision Fund Verification Transaction>>>\n{}",e.getMessage());
             }
         }*/
+
 
         String ofsResponse = ",Y.CUS.ID::CUSTOMER.ID/Y.CUS.NAME::CUSTOMER.NAME/Y.BRANCH.ID::BRANCH.ID,\"0000363847\"    \"CHARLES RUMONGI\"       \"KIGALI         \"\n";
 

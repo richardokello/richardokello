@@ -195,6 +195,9 @@ public class BillRequestHandler {
                     verificationRequest.setAccountNumber(visionFundRequest.getData().get(1).getValue());
                     verificationRequest.setMobileNumber(visionFundRequest.getData().get(0).getValue());
 
+                    verificationRequest.setCredentials(visionFundRequest.getCredentials());
+                    verificationRequest.setTnxType(visionFundRequest.getTnxType());
+
                     CustomVerificationResponse verificationResponse = visionFundService.verifyCustomer(verificationRequest);
                     fundResponse.setResponseCode(verificationResponse.getResponseCode());
                     fundResponse.setResponseMessage(verificationResponse.getResponseString());
@@ -407,6 +410,9 @@ public class BillRequestHandler {
                 depositRequest.setNationalID(data.get(2).getValue());
                 depositRequest.setTranDesc("Account Deposit");
 
+                depositRequest.setCredentials(fundRequest.getCredentials());
+                depositRequest.setTnxType(fundRequest.getTnxType());
+
                 log.error("<<<<\n[\nVISION FUND ACCOUNT DEPOSIT REQUEST OBJECT: \n{}\n]", depositRequest);
 
                 AccountDepositResponse depositResponse = visionFundService.makeDeposit(depositRequest);
@@ -440,6 +446,9 @@ public class BillRequestHandler {
                 withdrawalRequest.setAccountNumber(data.get(4).getValue());
                 withdrawalRequest.setAccountName(data.get(5).getValue());
                 withdrawalRequest.setTranDesc("Cash Withdrawal");
+
+                withdrawalRequest.setCredentials(fundRequest.getCredentials());
+                withdrawalRequest.setTnxType(fundRequest.getTnxType());
 
                 log.error("<<<<\n[\nVISION FUND CASH WITHDRAWAL REQUEST OBJECT: \n{}\n]", withdrawalRequest);
 
