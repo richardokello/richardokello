@@ -95,7 +95,7 @@ public interface DeviceService {
     /**
      * @param serialNo
      */
-    public void updateWhitelistBySerialSync(String serialNo);
+    public void updateWhitelistBySerialSync(String serialNo,String status);
 
     /**
      * @param serialNo

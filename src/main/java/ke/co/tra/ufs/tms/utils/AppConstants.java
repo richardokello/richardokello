@@ -279,4 +279,7 @@ public class AppConstants {
     public static final String AGENT_WRAPPER_WITH_SIMILAR_TID = "AGENT_WRAPPER_WITH_SIMILAR_TID";
     public static final String CUSTOMER_DETAILS_AGENT_NOT_FOUND = "CUSTOMER_DETAILS_AGENT_NOT_FOUND";
     public static final String DATA_NOT_FOUND = "DATA_NOT_FOUND";
+    public static final String ASSIGN_PENDING_APPROVAL="2";
+    public static final String ASSIGN_NO="0";
+    public static final String ASSIGNED="1";
 }

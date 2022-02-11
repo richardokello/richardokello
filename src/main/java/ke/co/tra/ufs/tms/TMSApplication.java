@@ -199,7 +199,7 @@ public class TMSApplication {
         interceptors.add((request, body, execution) -> {
             HttpHeaders headers = request.getHeaders();
             headers.add("X-TenantID", ThreadLocalStorage.getTenantName());
-            headers.add("X-Language", ThreadLocalStorage.getTenantName());
+            headers.add("X-Language", ThreadLocalStorage.getLanguage());
             return execution.execute(request, body);
         });
 
