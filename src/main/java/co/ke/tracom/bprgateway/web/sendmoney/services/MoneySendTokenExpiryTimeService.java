@@ -1,6 +1,5 @@
 package co.ke.tracom.bprgateway.web.sendmoney.services;
 
-import co.ke.tracom.bprgateway.web.sendmoney.data.requests.SendMoneyRequest;
 import co.ke.tracom.bprgateway.web.sendmoney.entity.MoneySend;
 import co.ke.tracom.bprgateway.web.sendmoney.repository.MoneySendRepository;
 import co.ke.tracom.bprgateway.web.sms.dto.SMSRequest;
@@ -12,10 +11,10 @@ import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
-import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_RECEIVER;
 import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_SENDER;
 
 @Data
@@ -47,6 +45,9 @@ public class MoneySendTokenExpiryTimeService {
     private final UtilityService utilityService;
 
     private final TokenDurationService tokenDurationService;
+
+    @Value("${vision-fund.token-expiry.configuration-name}")
+    private String tokenConfigurationName;
 
 
     private static final Logger log = LoggerFactory.getLogger(MoneySendTokenExpiryTimeService.class);
@@ -94,7 +95,7 @@ public class MoneySendTokenExpiryTimeService {
                                 l.setMstoken2(passCode);
                                 l.setCno2(generatedCardNo);
                                 //use the exact configuration name
-                                Duration secondDurationByConfigurationName = tokenDurationService.getSecondDurationByConfigurationName("BPR_TET");
+                                Duration secondDurationByConfigurationName = tokenDurationService.getSecondDurationByConfigurationName(tokenConfigurationName);
 
                                 long sendmoneytokenexpirytime2 = Instant.ofEpochMilli(sendMoneyExpiryTime).plus(secondDurationByConfigurationName).toEpochMilli();
                                 l.setSendmoneytokenstarttime2(sendMoneyExpiryTime);

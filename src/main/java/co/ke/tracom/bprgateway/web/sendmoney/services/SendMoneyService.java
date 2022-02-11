@@ -31,6 +31,7 @@ import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -72,6 +73,9 @@ public class SendMoneyService {
     private final TransactionLimitManagerService limitManagerService;
 
     private final TokenDurationService tokenDurationService;
+
+    @Value("${vision-fund.token-expiry.configuration-name}")
+    private String tokenConfigurationName;
 
     @SneakyThrows
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
@@ -410,7 +414,7 @@ public class SendMoneyService {
         ms.setSendmoneytokenstarttime(timeNow);
 
         //use the exact configuration name
-        Duration initialDurationByConfigurationName = tokenDurationService.getInitialDurationByConfigurationName("BPR_TET");
+        Duration initialDurationByConfigurationName = tokenDurationService.getInitialDurationByConfigurationName(tokenConfigurationName);
 
         long expiryTime = now.plus(initialDurationByConfigurationName).toEpochMilli();
         ms.setSendmoneytokenexpiretime(expiryTime);
