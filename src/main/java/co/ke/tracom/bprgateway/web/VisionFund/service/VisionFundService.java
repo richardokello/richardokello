@@ -329,7 +329,7 @@ public class VisionFundService {
         tot24.setPostedstatus("0");
         tot24.setProcode("500000");
 
-       /* processT24Transactions(tot24);
+        processT24Transactions(tot24);
         //Save the transaction
         //VisionFund visionFund = new VisionFund();
         //visionFund.setAccountName(tot24.getAccountname());
@@ -362,7 +362,7 @@ public class VisionFundService {
 
                 log.error("<<<Vision Fund Verification Transaction>>>\n{}",e.getMessage());
             }
-        }*/
+        }
 
 
         String ofsResponse = ",Y.CUS.ID::CUSTOMER.ID/Y.CUS.NAME::CUSTOMER.NAME/Y.BRANCH.ID::BRANCH.ID,\"0000363847\"    \"CHARLES RUMONGI\"       \"KIGALI         \"\n";

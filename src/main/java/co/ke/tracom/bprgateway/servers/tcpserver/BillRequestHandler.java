@@ -120,20 +120,10 @@ public class BillRequestHandler {
 
 
             //Validation for wasac customer profile.
-            case "02.1":
-                //If there is data sent then it's a profile validation else it's a  field validation
-                if (data.size() > 0) {
+            case "02.1":{
                     response = wasacService.validateWaterAccount(genericRequest, "POS");
-                   /* validationData.add(TransactionData.builder()
-                                    .name("Client POS name")responseValidation = {AcademicBridgeValidation@14727} "AcademicBridgeValidation(responseCode=05, responseMessage=Transaction processing failed. Please try again, data=[])"
-                                    .value("")
-                            .build());*/
-                } else {
-
-                    //fetch profile and return response
-                    response = wasacService.validateWaterAccountMeterNo(genericRequest, "POS");
-                }
-                //break;
+            }
+                break;
 
                 //EUCL validation
             case "03.1":
