@@ -23,6 +23,7 @@ import ke.tracom.ufs.security.OtpOAuth2AccessToken;
 import ke.tracom.ufs.services.AuthTokenReplication;
 import ke.tracom.ufs.services.CustomUserService;
 import ke.tracom.ufs.services.UserService;
+import ke.tracom.ufs.services.WorkGroupService;
 import ke.tracom.ufs.services.template.FileStorageService;
 import ke.tracom.ufs.services.template.LoggerServiceTemplate;
 import ke.tracom.ufs.services.template.NotifyServiceTemplate;
@@ -73,6 +74,7 @@ public class AuthorizationResource {
     private final AuthenticationRepository authRepository;
     private final NotifyServiceTemplate notifyService;
     private final OTPRepository otpRepository;
+    private final WorkGroupService workGroupService;
     @Autowired
     UserAccountService accService;
     @Autowired
@@ -90,7 +92,7 @@ public class AuthorizationResource {
 
     public AuthorizationResource(TokenStore tokenStore, @Qualifier("mainUserService") UserService userService,
                                  UserRepository userRepository, LoggerServiceTemplate loggerService, PasswordEncoder encoder, CustomUserService customUserService, AuthenticationRepository authRepository,
-                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository) {
+                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository, WorkGroupService workGroupService) {
         this.tokenStore = tokenStore;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -100,6 +102,7 @@ public class AuthorizationResource {
         this.authRepository = authRepository;
         this.notifyService = notifyService;
         this.otpRepository = otpRepository;
+        this.workGroupService = workGroupService;
     }
 
     //@RequestMapping("/test")
@@ -325,9 +328,9 @@ public class AuthorizationResource {
     @Transactional
     @RequestMapping(value = "/change-password/first-time", method = RequestMethod.POST)
     @ApiOperation(value = "Change user password", notes = "Used to change user  password when user doesnt have a token.")
-    public ResponseEntity<ResponseWrapper> changePassword(@Valid ChangePasswordWrapper changePaasowrd) throws GeneralBadRequest {
+    public ResponseEntity<ResponseWrapper> changePassword(@Valid ChangePasswordWrapper changePassword) throws GeneralBadRequest {
         ResponseWrapper response = new ResponseWrapper();
-        UfsAuthentication dbAuth = authRepository.findByusernameIgnoreCase(changePaasowrd.getEmail());
+        UfsAuthentication dbAuth = authRepository.findByusernameIgnoreCase(changePassword.getEmail());
 
         if (dbAuth == null) {
             response.setCode(404);
@@ -338,28 +341,29 @@ public class AuthorizationResource {
         }
 
         //password matches
-        if (!encoder.matches(changePaasowrd.getOldPassword(), dbAuth.getPassword())) {
+        if (!encoder.matches(changePassword.getOldPassword(), dbAuth.getPassword())) {
             response.setCode(400);
             response.setMessage("Invalid Old Password");
             return new ResponseEntity(response, HttpStatus.FORBIDDEN);
 
         }
-        if (accService.isPasswordValid(changePaasowrd.getNewPassword(), dbAuth.getUser()) == false) { //to check password meets policy
+        if (!accService.isPasswordValid(changePassword.getNewPassword(), dbAuth.getUser())) { //to check password meets policy
             response.setCode(400);
             response.setMessage("Password must have atleast 1 special character, 1 uppercase letter, 1 lowercase letter and 1 number. Kindly input a password meeting the policy"); //to fetch the policy from db
-            return new ResponseEntity(response, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
-        System.out.println("NEW PASSWORD===========>>>" + changePaasowrd.getNewPassword());
-        dbAuth.setPassword(encoder.encode(changePaasowrd.getNewPassword())); //set encoded password
+        System.out.println("NEW PASSWORD===========>>>" + changePassword.getNewPassword());
+        dbAuth.setPassword(encoder.encode(changePassword.getNewPassword())); //set encoded password
         dbAuth.setPasswordStatus(AppConstants.STATUS_ACTIVE);
         authRepository.save(dbAuth);
 
-//        this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
+        // replicate user information if the user belongs to superuser workgroup
+        String workGroupName = workGroupService.findByUserId(dbAuth.getUserId()).getGroupName();
+        if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)){
+            userService.replicateUserInfo(dbAuth.getUsername());
+        }
         response.setMessage("Password changed successfully. You can now login to your account");
-//        loggerService.log("Generating OTP for user {}", dbAuth.getUsername());
-
-        return new ResponseEntity(response, HttpStatus.OK);
-
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user/me")

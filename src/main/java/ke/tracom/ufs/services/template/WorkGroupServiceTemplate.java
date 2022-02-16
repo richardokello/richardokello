@@ -43,4 +43,9 @@ public class WorkGroupServiceTemplate implements WorkGroupService {
     public UfsWorkgroup findWorkgroupById(Long groupId) {
         return workgroupRepository.findByGroupIdAndIntrash(groupId, AppConstants.NO);
     }
+
+    @Override
+    public UfsWorkgroup findByUserId(long userid) {
+        return workgroupRepository.findByUserId(userid);
+    }
 }

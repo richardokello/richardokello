@@ -174,7 +174,6 @@ public class UserServiceTemplate implements UserService {
                 this.notifyService.sendEmail(auth.getUsername(), "LOGIN CREDENTIALS", "Use the following credentials to login: Username : " + auth.getUsername() + " \n \nPassword : " + password);
                 this.notifyService.sendSms(auth.getUser().getPhoneNumber(), "Use the following credentials to login: Username : " + auth.getUsername() + " \n \nPassword : " + password);
             }
-
         });
     }
 
@@ -219,9 +218,10 @@ public class UserServiceTemplate implements UserService {
     }
 
     @Override
+    @Async
+    public void replicateUserInfo(String email) {userRepo.replicateUserInfo(email);}
+    @Override
     public UfsAuthentication saveAuthentication(UfsAuthentication authentication) {
         return authRepo.save(authentication);
     }
-
-
 }

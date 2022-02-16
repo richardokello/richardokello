@@ -333,7 +333,7 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
             }
         }
 
-        if (mlkUsers.size() > 0) {
+        if (!mlkUsers.isEmpty()) {
             urepo.processApprove(mlkUsers);
         }
         return response;
