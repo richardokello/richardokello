@@ -23,6 +23,11 @@ import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.service.EUCLService;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
+import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
+import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;
+import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionRequest;
+import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionResponse;
+import co.ke.tracom.bprgateway.web.ltss.service.LtssService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
 import co.ke.tracom.bprgateway.web.wasac.service.WASACService;
@@ -34,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +52,7 @@ public class BillRequestHandler {
     private final EUCLService euclService;
     private final VisionFundService visionFundService;
 
+    private final LtssService ltssService;
     public void menu(String requestString, BillMenusService billMenusService, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         CustomObjectMapper mapper = new CustomObjectMapper();
@@ -209,6 +216,33 @@ public class BillRequestHandler {
                 }
             }
             break;
+            //Ejo Heza
+            case "05.1":{
+                NationalIDValidationRequest nationalIDValidationRequest = new NationalIDValidationRequest();
+                if (genericRequest.getData().size() > 0){
+                    nationalIDValidationRequest.setIdentification(genericRequest.getData().get(0).getValue());
+                }else {
+                    nationalIDValidationRequest.setIdentification(genericRequest.getValue());
+                }
+                NationalIDValidationResponse nationalIDValidationResponse = ltssService.validateNationalID(nationalIDValidationRequest);
+                if (!nationalIDValidationResponse.getName().isBlank() && !nationalIDValidationResponse.getIdentification().isBlank()){
+                    response.setResponseCode("00");
+                    response.setResponseMessage("Customer data fetched successfully!");
+                    List<TransactionData> transactionData = new ArrayList<>();
+                    transactionData.add(TransactionData.builder()
+                            .name("identification").value(nationalIDValidationResponse.getIdentification())
+                            .build());
+                    transactionData.add(TransactionData.builder()
+                            .name("name").value(nationalIDValidationResponse.getName())
+                            .build());
+
+                    response.setData(transactionData);
+                }else {
+                    response.setResponseCode("05");
+                    response.setResponseMessage("Unable to fetch customer data. Try again later!");
+                }
+            }
+            break;
 
         }
 
@@ -338,6 +372,84 @@ public class BillRequestHandler {
                         BeanUtils.copyProperties(fundResponse,billPaymentResponse);
                     }
                 break;
+            //Ejo Heza contributions
+            case "05.1":
+            {
+                PaymentContributionRequest paymentContributionRequest = new PaymentContributionRequest();
+                if (paymentRequest.getData().size()==0){
+                    billPaymentResponse.setResponseCode("05");
+                    billPaymentResponse.setResponseMessage("Transaction data missing");
+                }
+                else
+                {
+                    paymentContributionRequest.setPaymentDate(Instant.now().toString());
+                    paymentContributionRequest.setAmount(paymentRequest.getData().get(1).getValue());
+                    paymentContributionRequest.setDescription("Ejo Heza contribution payment");
+                    paymentContributionRequest.setIntermediary("Tracom Services Limited");
+                    //Generate RRn
+                    paymentContributionRequest.setExtReferenceNo(RRNGenerator.getInstance("EH").getRRN());
+
+                    NationalIDValidationRequest nationalIDValidationRequest = new NationalIDValidationRequest();
+                    nationalIDValidationRequest.setIdentification(paymentRequest.getData().get(0).getValue());
+                    paymentContributionRequest.setBeneficiary(nationalIDValidationRequest);
+
+                    PaymentContributionResponse paymentContributionResponse = ltssService.sendPaymentContribution(paymentContributionRequest);
+
+                    if (paymentContributionResponse.getRefNo().isBlank()){
+                        billPaymentResponse.setResponseCode("05");
+                        billPaymentResponse.setResponseMessage("Transaction failed. Try again later!");
+                    }
+                    else {
+                        billPaymentResponse.setResponseCode("00");
+                        billPaymentResponse.setResponseMessage("Transaction completed successfully!");
+
+                        List<TransactionData> transactionData = new ArrayList<>();
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("identification")
+                                        .value(paymentContributionResponse.getBeneficiary().getIdentification())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("name")
+                                        .value(paymentContributionResponse.getBeneficiary().getName())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("amount")
+                                        .value(paymentContributionResponse.getAmount())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("intermediary")
+                                        .value(paymentContributionResponse.getIntermediary())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("extReferenceNo")
+                                        .value(paymentContributionResponse.getExtReferenceNo())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("refNo")
+                                        .value(paymentContributionResponse.getRefNo())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("paymentDate")
+                                        .value(paymentContributionResponse.getPaymentDate().toString())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("description")
+                                        .value(paymentContributionResponse.getDescription())
+                                        .build());
+
+                        billPaymentResponse.setData(transactionData);
+                    }
+                }
+            }
+            break;
         }
 
 
