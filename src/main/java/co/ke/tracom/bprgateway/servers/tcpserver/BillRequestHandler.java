@@ -1,12 +1,12 @@
 package co.ke.tracom.bprgateway.servers.tcpserver;
 
-import co.ke.tracom.bprgateway.core.util.AppConstants;
+import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
+import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
+import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
-import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
-import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.ValidationRequest;
 import co.ke.tracom.bprgateway.web.VisionFund.data.*;
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationRequest;
@@ -15,7 +15,6 @@ import co.ke.tracom.bprgateway.web.VisionFund.service.VisionFundService;
 import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeService;
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
-import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
 import co.ke.tracom.bprgateway.web.eucl.dto.request.EUCLPaymentRequest;
 import co.ke.tracom.bprgateway.web.eucl.dto.request.MeterNoValidation;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
@@ -25,9 +24,7 @@ import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.service.EUCLService;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
-import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
-import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.Response;
 import co.ke.tracom.bprgateway.web.wasac.service.WASACService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.vertx.core.buffer.Buffer;
@@ -263,6 +260,17 @@ public class BillRequestHandler {
             //WASAC bill payment
             case "02.2":
                 //billPaymentResponse = getBillPaymentResponse();
+                if (paymentRequest.getBill() == null){
+                   paymentRequest.setBill("bill");
+                }
+                if (paymentRequest.getBillSubCategory() == null){
+                    paymentRequest.setBillSubCategory("billSubCategory");
+                }
+                if (paymentRequest.getData().size() == 0){
+                    billPaymentResponse.setResponseCode("05");
+                    billPaymentResponse.setResponseMessage("Missing Transaction data. Kindly provide all details and try again!");
+                    break;
+                }
                 billPaymentResponse = wasacService.payWaterBill(paymentRequest);
                 break;
             //EUCL requests

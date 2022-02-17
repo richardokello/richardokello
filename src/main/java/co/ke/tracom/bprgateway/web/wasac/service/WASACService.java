@@ -30,6 +30,7 @@ import co.ke.tracom.bprgateway.web.wasac.repository.WascWaterTxnLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
@@ -149,43 +150,30 @@ public class WASACService {
             return billPaymentResponse;
         }
         Data agentAuthData = authenticateAgentResponse.getData();
-        //long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
-
-        String waitTime = xSwitchParameterService.fetchXSwitchParamValue("T24_INQUIRY_WAIT_TIME_MILLISECONDS");
-        waitTime = waitTime.isEmpty() ? "30000" : waitTime;
-            /*profileResponse1 = fetchCustomerProfile(
-                    CustomerProfileRequest.builder()
-                        .customerId("CUSTOMER_ID")
-                        .credentials(
-                                MerchantAuthInfo.builder()
-                                    .username(request.getCredentials().getUsername())
-                                    .password(request.getCredentials().getPassword()
-                                ).build()
-                    ).build());*/
-        //Response profileResponse1Data = profileResponse1.getData();
 
         //extracting data from the request payload
         List<TransactionData> transactionDataList = request.getData();
+        //BeanUtils.copyProperties(request.getData(),transactionDataList);
         //List<TransactionData> transactionDataList = request.getCredentials().getData();
-        String meterNo="211610021";
+
+        /* String meterNo="211610021";
         String account;
         Long amount;
         String description="",customerName = "";
-        if (transactionDataList != null && transactionDataList.size() > 0) {
-            meterNo = transactionDataList.get(0).getValue();
-            account = transactionDataList.get(1).getValue();
-            amount = Long.parseLong(transactionDataList.get(2).getValue());
-            description = transactionDataList.get(3).getValue();
-            customerName = transactionDataList.get(4).getValue();
-        } else {
+        //if (transactionDataList != null && transactionDataList.size() > 0) {
+        */
+        String meterNo = transactionDataList.get(0).getValue();
+        String account = transactionDataList.get(1).getValue();
+        Long amount = Long.parseLong(transactionDataList.get(2).getValue());
+        String description = transactionDataList.get(3).getValue();
+        String customerName = transactionDataList.get(4).getValue();
+       /* } else {
             //meterNo = "211610021";
             account = agentAuthData.getAccountNumber();
             amount = 1500L;
-        }
+        }*/
 
         String RRN = RRNGenerator.getInstance("BP").getRRN();
-
-        //String meterNo = "211610021";
 
         waterTxnLog.setAmount(String.valueOf(amount));
         waterTxnLog.setCustomerName(customerName);
@@ -195,18 +183,14 @@ public class WASACService {
         waterTxnLog.setTid(request.getCredentials().getTid());
         waterTxnLog.setCreationDate(new Date());
 
-        String tot24str = getT24OFS(/*profileResponse1Data.getMeterid()*/meterNo, account, amount,
-                /*profileResponse1Data.getName()agentAuthData.getNames()*/customerName, request.getCredentials().getTid(),
-                agentAuthData.getMid());
+        String tot24str = getT24OFS(meterNo, account, amount, customerName, description, agentAuthData.getTid(), agentAuthData.getMid());
 
 
         T24TXNQueue tot24 = new T24TXNQueue();
 
-        tot24.setMeterno(/*profileResponse1Data.getMeterid()*/meterNo);
-        // base 64 encode request in db
+        tot24.setMeterno(meterNo);
         tot24.setRequestleg(tot24str);
         tot24.setStarttime(System.currentTimeMillis());
-        //tot24.setTxnmti(isomsg.getMTI());
         tot24.setTxnchannel("PC");
         tot24.setGatewayref(RRN);
         tot24.setPostedstatus("0");
@@ -241,13 +225,15 @@ public class WASACService {
                 // todo set token respondent elecTxnLogs.setToken_no(tot24.getTokenNo());
                 insertWascTxnLogs(waterTxnLog);
 
-                transactionData.add(addValidationResponse("T24 Reference", RRN));
+                transactionData.add(addValidationResponse("gateway Reference", RRN));
+                transactionData.add(addValidationResponse("T24 Reference", tot24.getT24reference()));
                 transactionData.add(addValidationResponse("name", customerName));
-                transactionData.add(addValidationResponse("Token No", tot24.getTokenNo()));
-                transactionData.add(addValidationResponse("Units", tot24.getUnitsKw()));
-                transactionData.add(addValidationResponse("Customer Id", meterNo));
+                //transactionData.add(addValidationResponse("Token No", tot24.getTokenNo()));
+                //transactionData.add(addValidationResponse("Units", tot24.getUnitsKw()));tot24.getBaladvise();
+                transactionData.add(addValidationResponse("Customer No", meterNo));
 
-                transactionData.add(addValidationResponse("Action code", "000"));
+                //transactionData.add(addValidationResponse("Action code", "000"));
+                transactionData.add(addValidationResponse("Amount", tot24.getAmountcredited()));
                 transactionData.add(addValidationResponse("Charge amount", tot24.getTotalchargeamt()));
 
                 billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
@@ -275,10 +261,8 @@ public class WASACService {
     }
 
     //construct t24 OFS message string
-    private String getT24OFS(String meterNo, String Account, Long Amount, String customerName, String terminalId,
+    private String getT24OFS(String meterNo, String Account, Long Amount, String customerName, String description, String terminalId,
                              String mid) {
-
-
         String t24UserName = getT24UserName();
         String t24Password = getT24Password();
         String euclBankBranch = getDefaultBranch();
@@ -286,7 +270,6 @@ public class WASACService {
         String waterBankBranch = "RW0010593"; // todo get from bpr functions
         String accountDetails = "22"; // todo get bank branch == is same as bank branch from enquiry leg
         String schoolID="22";
-
         // create t24 string
         String t24 =
                 "0000AFUNDS.TRANSFER,BPR.WASAC.PAYMENT.AGB/I/PROCESS,"
@@ -320,7 +303,10 @@ public class WASACService {
                         + customerName
                         + ","
                         + "CREDIT.CURRENCY::=RWF,"
-                        + "PAYMENT.DETAILS:1:1=WATER BILL PAYMENT," +
+                        + "PAYMENT.DETAILS:1:1="
+                        + description
+                        +","+
+                        //"WATER BILL PAYMENT," +
                         "PAYMENT.DETAILS:2:1="
                         + terminalId
                         + " "
@@ -328,17 +314,7 @@ public class WASACService {
                         + " "
                         + waterBankBranch;
 
-        String t24str = "0000AFUNDS.TRANSFER,BPR.WASAC.PAYMENT.AGB/I/PROCESS," +
-                "RAJ001/123456/RW0010593,," +
-                "TRANSACTION.TYPE::=ACWB,BPR.ID.NUMBER::=202213074," +
-                "DEBIT.ACCT.NO::=408102653810194,DEBIT.CURRENCY::=RWF,ORDERING.BANK::=BNK," +
-                "DEBIT.VALUE.DATE::=" +getFormattedDate("yyyyMMdd")+","+
-                //"20210831," +
-                "DEBIT.AMOUNT::=11000,INVOICE.DETAILS::=22.0," +
-                "AB.SCHOOL.ID::=22,AB.STU.NAME::=UWIMANA LIBERATHA," +
-                "CREDIT.CURRENCY::=RWF,PAYMENT.DETAILS:1:1=WATER BILL PAYMENT," +
-                "PAYMENT.DETAILS:2:1=PO400003 000000 RW001000";
-        return String.format("%04d", t24str.length()) + t24str;
+        return String.format("%04d", t24.length()) + t24;
     }
 
     private static String getFormattedDate(String pattern) {
@@ -366,10 +342,6 @@ public class WASACService {
                 return response;
             }
             Data agentAuthData = authenticateAgentResponse.getData();
-
-            String waitTime = xSwitchParameterService.fetchXSwitchParamValue("T24_INQUIRY_WAIT_TIME_MILLISECONDS");
-            waitTime = waitTime.isEmpty() ? "30000" : waitTime;
-            //Response profileResponse1Data = profileResponse1.getData();
 
             String t24usn = getT24UserName();
             String t24pwd = getT24Password();
@@ -405,7 +377,6 @@ public class WASACService {
             // create a table or function to generate T24 messages
             T24TXNQueue tot24 = new T24TXNQueue();
             tot24.setMeterno(meterNo);
-            // base 64 encode request in db
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
             tot24.setTxnchannel(channel);
@@ -413,12 +384,10 @@ public class WASACService {
             tot24.setPostedstatus("0");
             tot24.setProcode("500000");
             //tot24.setTxnmti("1100");
-            tot24.setTid(/*validationRequest.getCredentials().getTid() agentAuthData.getTid()*/ channel);
+            tot24.setTid(agentAuthData.getTid());
 
             final String t24Ip = getT24Ip();
             final String t24Port = getT24Port();
-
-            //long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
 
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
@@ -426,11 +395,6 @@ public class WASACService {
 
             transactionService.updateT24TransactionDTO(tot24);
 
-
-            //todo to be continued
-
-
-            String accname = tot24.getCustomerName() == null ? "" : tot24.getCustomerName();
             System.out.println("transaction response >>>>>> " + tot24);
             String responseCode = tot24.getT24responsecode() == null ? "" : tot24.getT24responsecode();
             if (tot24.getT24failnarration() == null && !responseCode.equals("3") /*(&& !responseCode.equals(""))*/) {
