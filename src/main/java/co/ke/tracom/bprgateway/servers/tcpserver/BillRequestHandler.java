@@ -2,6 +2,7 @@ package co.ke.tracom.bprgateway.servers.tcpserver;
 
 import co.ke.tracom.bprgateway.core.util.AppConstants;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
@@ -11,6 +12,12 @@ import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeService
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
+import co.ke.tracom.bprgateway.web.eucl.dto.request.EUCLPaymentRequest;
+import co.ke.tracom.bprgateway.web.eucl.dto.request.MeterNoValidation;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoData;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
+import co.ke.tracom.bprgateway.web.eucl.service.EUCLService;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileRequest;
@@ -18,6 +25,7 @@ import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileRes
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.Response;
 import co.ke.tracom.bprgateway.web.wasac.service.WASACService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +40,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BillRequestHandler {
     private final WASACService wasacService;
+    private final EUCLService euclService;
 
     public void menu(String requestString, BillMenusService billMenusService, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
@@ -89,6 +98,9 @@ public class BillRequestHandler {
         System.out.println(""+data.get(0).getValue());
 
         CustomerProfileResponse customerProfileResponse = null;
+        MeterNoValidation meterNoValidation=new MeterNoValidation();
+        MeterNoValidationResponse meterNoValidationResponse=new MeterNoValidationResponse();
+        AcademicBridgeValidation response = AcademicBridgeValidation.builder().build();
 
         switch (genericRequest.getSvcCode()){
             case "01.1":
@@ -104,7 +116,36 @@ public class BillRequestHandler {
                 break;
 
             case "03.1":
-                customerProfileResponse = null;
+               if(!data.isEmpty()){
+                   String meterNo=data.get(0).getValue();
+                   String phone =data.get(1).getValue();
+                   String amount =data.get(2).getValue();
+                   Long amounts= Long.parseLong(amount);
+                   meterNoValidation.setMeterNo(meterNo);
+                   meterNoValidation.setAmount(amount);
+                   meterNoValidation.setPhoneNo(phone);
+                   meterNoValidation.setCredentials(new MerchantAuthInfo(genericRequest.getCredentials().getUsername(),
+                           genericRequest.getCredentials().getPassword()));
+                   String euclRRN=RRNGenerator.getInstance("ECLV").getRRN();
+                   meterNoValidationResponse=euclService.validateEUCLMeterNo(meterNoValidation,euclRRN);
+
+                   //setting response service response to generic response
+                 response.setResponseMessage(meterNoValidationResponse.getMessage());
+                 response.setResponseCode(meterNoValidationResponse.getStatus());
+                  List<TransactionData> eucldata=new ArrayList<>();
+                   MeterNoData meterNoData= meterNoValidationResponse.getData();
+                   eucldata.add(TransactionData.builder().name("Meter Number").value(meterNoData.getMeterNo()).build());
+                   eucldata.add(TransactionData.builder().name("Account Name").value(meterNoData.getAccountName()).build());
+                   eucldata.add(TransactionData.builder().name("Meter Location").value(meterNoData.getMeterLocation()).build());
+                   eucldata.add(TransactionData.builder().name("RRN").value(meterNoData.getRrn()).build());
+
+                   response.setData(eucldata);
+
+                   //writing response to the output stream..
+                   writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
+
+
+               }
                 break;
 
 
@@ -118,7 +159,7 @@ public class BillRequestHandler {
                 .getStatus()
                 .equalsIgnoreCase(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value())) {
 
-            AcademicBridgeValidation response = getBridgeValidation(customerProfileResponse);
+          response = getBridgeValidation(customerProfileResponse);
 
             writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
         }
@@ -165,7 +206,7 @@ public class BillRequestHandler {
                         .name("Customer Id")
                         .value("02315").build());
 
-        AcademicBridgeValidation response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
+        response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
         writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
     }
 
@@ -187,20 +228,49 @@ public class BillRequestHandler {
         return getAcademicBridgeValidation(new ArrayList<>(), customerProfileResponse.getStatus(), "Transaction processing failed. Please try again");
     }
 
+
+
+
     public void billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         //Accadermic bill payment
         BillPaymentResponse billPaymentResponse = null;
+        ObjectMapper objectMapper =new ObjectMapper();
+        BillPaymentRequest paymentRequest=objectMapper.readValue(requestString,BillPaymentRequest.class);
+     
+        System.out.println("==========paymentRequest =========== " + paymentRequest);
+
+        List<TransactionData> transactionData=new ArrayList<>();
+        EUCLPaymentRequest euclPaymentRequest=new EUCLPaymentRequest();
+        EUCLPaymentResponse euclPaymentResponse=EUCLPaymentResponse.builder().build();
+
+
+
         //kelvin
-        /*switch(requestString){
-            case 01.1:
+        switch(requestString){
+            case "01.1":
                 billPaymentResponse = getBillPaymentResponse();
                 break;
 
-            case 01.2:
+            case "01.2":
                 billPaymentResponse = getBillPaymentResponse();
                 break;
-        }*/
+            case "01.3":
+
+            if(!transactionData.isEmpty()){
+                String meterNo= transactionData.get(0).getValue();
+                String phoneNumber=transactionData.get(1).getValue();
+                String amount=transactionData.get(2).getValue();
+                String meterLocation= transactionData.get(3).getValue();
+
+
+                euclPaymentRequest.setAmount(amount);
+                euclPaymentRequest.setCredentials(new MerchantAuthInfo(paymentRequest.getCredentials().getUsername(),
+                        paymentRequest.getCredentials().getPassword()));
+
+            }
+            break;
+        }
 
 
 
