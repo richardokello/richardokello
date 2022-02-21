@@ -18,6 +18,7 @@ import co.ke.tracom.bprgateway.core.tracomchannels.tcp.T24TCPClient;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -616,55 +617,78 @@ public class T24Channel {
             AcademicTransactionData details = new AcademicTransactionData();
             // String respone = "0303,Y.SCHOOL.ID::SCHOOL ID/Y.SCHOOL.NAME::SCHOOL NAME/Y.STUDENT.NAME::STUDENT NAME/Y.STU.REG.NO::STUDENT REGNO/Y.PAY.TYPE::PAY TYPE/Y.SCHOOL.AC::SCHOOL ACCOUNT,\"45             \"\t\"Demo school              \"\t\"Gabriel  Imanikuzwe                          \"\t\"1001190067    \"\t\"          \"\t\"40810263810194      \"\n";
             String[] res = t24Response.split("/");
+            System.out.println("T24 ref no. >>"+res[0]);
+           /* if (!res[0].isEmpty()){
+                details.setT24reference(res[0]);
+
+            }*/
 
             String[] data = res[2].replace(":1:1", "").replace(".", "_").split(",");
             // String data = res[1].replace(":2:1","");
 
             HashMap<String, String> t24data = new HashMap<>();
 
-            ObjectMapper mapper = new ObjectMapper();
+           // ObjectMapper mapper = new ObjectMapper();
             if (data[0].equalsIgnoreCase("1")) {
 
+                details.setT24reference(res[0]);
+                details.setT24responsecode(data[0]);
 
                 int ii = 0;
                 for (String column : data) {
                     if (ii > 0) {
                         t24data.put(column.split("=")[0], column.split("=")[1]);
+                        System.out.println("column name >> "+column.split("=")[0]+" data >> "+column.split("=")[1]);
                     }
                     ii++;
                 }
-            }/* else {
+            } else {
+                data = res[3].split(",");
             t24data.put("Status", "No data was retrieved");
-            *//*details.setName("Status");
-            details.setValue("There is no data received");*//*
-        }*/
-            try {
-                details.setDebitCustomer(t24data.get("DEBIT_CUSTOMER"));
-                details.setOrderingBank(t24data.get("ORDERING_BANK"));
-                details.setAbStudentName(t24data.get("AB_STU_NAME"));
-                details.setBprSenderName(t24data.get("BPR_SENDER_NAME"));
-                details.setLocalCahrgeAmount(t24data.get("LOCAL_CHARGE_AMT"));
-                details.setAbSchoolId(t24data.get("AB_SCHOOL_ID"));
-                details.setDebitAcctNo(t24data.get("DEBIT_ACCT_NO"));
-                details.setAbBillNo(t24data.get("AB_BILL_NO"));
-                details.setCreditTheirRef(t24data.get("CREDIT_THEIR_REF"));
-                details.setDateTime(t24data.get("DATE_TIME"));
-                details.setMobileNo(t24data.get("MOBILE_NO"));
-                details.setDeliveryOutRef(t24data.get("DELIVERY_OUTREF"));
-                details.setAbSchoolName(t24data.get("AB_SCHL_NAME"));
-                details.setCreditAmount(t24data.get("CREDIT_AMOUNT"));
-                details.setBillerId(t24data.get("BILLER_ID"));
+            details.setError(data[1]);
+            details.setT24responsecode("-1");
+            detailList.add(details);
+        }
+            if(!t24data.isEmpty()) {
+                System.out.println("map not empty");
+                // System.out.println("Amount before dash " + t24data.get("CREDIT_AMOUNT"));
+                if (t24data.containsKey("CREDIT_AMOUNT")) {
+                    if (t24data.get("CREDIT_AMOUNT").contains("_")) {
+                        t24data.put("CREDIT_AMOUNT", t24data.get("CREDIT_AMOUNT").replace("_", "."));
+                    }
+                    System.out.println("Amount after dash " + t24data.get("CREDIT_AMOUNT"));
+                    try {
+                        details.setDebitCustomer(t24data.get("DEBIT_CUSTOMER"));
+                        details.setOrderingBank(t24data.get("ORDERING_BANK"));
+                        details.setAbStudentName(t24data.get("AB_STU_NAME"));
+                        details.setBprSenderName(t24data.get("BPR_SENDER_NAME"));
+                        details.setLocalCahrgeAmount(t24data.get("LOCAL_CHARGE_AMT"));
+                        details.setAbSchoolId(t24data.get("AB_SCHOOL_ID"));
+                        details.setDebitAcctNo(t24data.get("DEBIT_ACCT_NO"));
+                        details.setAbBillNo(t24data.get("AB_BILL_NO"));
+                        details.setCreditTheirRef(t24data.get("CREDIT_THEIR_REF"));
+                        details.setDateTime(t24data.get("DATE_TIME"));
+                        details.setMobileNo(t24data.get("MOBILE_NO"));
+                        details.setDeliveryOutRef(t24data.get("DELIVERY_OUTREF"));
+                        details.setAbSchoolName(t24data.get("AB_SCHL_NAME"));
+                        details.setCreditAmount(t24data.get("CREDIT_AMOUNT"));
+                        details.setBillerId(t24data.get("BILLER_ID"));
 
-                detailList.add(details);
-            } catch (Exception ex) {
-                details = null;
-                detailList.add(details);
-                log.info(
-                        "[Error] : {}",
-                        ex.getMessage());
+                        detailList.add(details);
+                    } catch (Exception ex) {
+                        details = null;
+                        detailList.add(details);
+                        log.info(
+                                "[Error] : {}",
+                                ex.getMessage());
 
-                ex.printStackTrace();
-            }
+                        ex.printStackTrace();
+                    }
+                }
+
+                }
+
+
 
 
             //  t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
@@ -856,7 +880,7 @@ public class T24Channel {
         t24TXNQueue.setPostedstatus("1");
 
         GetStudentDetailsResponse student = new GetStudentDetailsResponse();
-        if(!t24Response.isEmpty()){
+        if(t24Response.isEmpty()){
 
             student=null;
         }
@@ -867,31 +891,39 @@ public class T24Channel {
 
             // if(transactionStatus[2].equalsIgnoreCase("1")) {
 
-            t24Response = res[1];
-            log.info("res position 1 is : {}",t24Response);
-            String[] data = res[2].substring(1, res[2].length() - 1).split("\"");
-            log.info("Response data >> {}",data);
-            if (res[2].substring(1).startsWith("No records were found")) {
-                student.setStudent_name("No record found");
-            } else {
-                try{
+            if(res.length >1){
+           // if(!res[1].isEmpty()) {
+                t24Response = res[1];
+                log.info("res position 1 is : {}", t24Response);
+                String[] data = res[2].substring(1, res[2].length() - 1).split("\"");
+                log.info("Response data >> {}", data);
+                if (res[2].substring(1).startsWith("No records were found")) {
+                    student.setStudent_name("No record found");
+                } else {
+                    try {
 
-                student.setStudent_name(data[4]);
-                student.setStudent_reg_number(data[6]);
-                student.setSchool_account_number(data[10]);
-                student.setSchool_name(data[2]);
-                student.setSchool_ide(Integer.parseInt(data[0].trim()));
-                }catch (Exception ex){
-                    log.info(
-                            "[Error] : {}",
-                            ex.getMessage());
+                        student.setStudent_name(data[4]);
+                        student.setStudent_reg_number(data[6]);
+                        student.setSchool_account_number(data[10]);
+                        student.setSchool_name(data[2]);
+                        student.setSchool_ide(Integer.parseInt(data[0].trim()));
+                    } catch (Exception ex) {
+                        log.info(
+                                "[Error] : {}",
+                                ex.getMessage());
 
-                    ex.printStackTrace();
+                        ex.printStackTrace();
+
+                    }
 
                 }
 
+            }else{
+                System.out.println("Res less than 1 "+res.length);
+                System.out.println(res[0].substring(4));
+               // 0016OFSERROR_PROCESS
+                student.setStudent_name(res[0].substring(4));
             }
-
             t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
 
             System.out.println(
@@ -1037,7 +1069,7 @@ public class T24Channel {
                                 List<AcademicTransactionData> dataDetails = new ArrayList<>();
                                 dataDetails = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
 
-                                System.out.println("paymentDetails to be returned : " + dataDetails.get(0));
+
 
                                 student.setResponseCode("00");
                                 student.setResponseMessage("Successful");

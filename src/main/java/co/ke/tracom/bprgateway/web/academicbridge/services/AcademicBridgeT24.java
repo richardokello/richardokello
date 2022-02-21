@@ -39,13 +39,9 @@ public class AcademicBridgeT24 {
     }
 
     @SneakyThrows
-    public CustomerProfileResponse validateStudentId(String billNumber, Credentials credentials) throws InvalidAgentCredentialsException {
+    public CustomerProfileResponse validateStudentId(String billNumber)  {
        // System.out.println("bill number "+billNumber);
-        MerchantAuthInfo auth = new MerchantAuthInfo();
-        auth.setUsername(credentials.getUsername());
-        auth.setPassword(credentials.getPassword());
-        //AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(auth);
-       // System.out.println("Agent account : "+authenticateAgentResponse.getData().getAccountNumber());
+
         CustomerProfileResponse student = new CustomerProfileResponse();
       //  String sendMoneyOFSMsg = "0000AENQUIRY.SELECT,,INPUTT/123123/RW0010400,BPR.ACB.GET.DET.AGB,BILL.NO:EQ=1001190067-1";
        // String sendMoneyOFSMsg = "0000AFUNDS.TRANSFER,BPR.ACB.PAY.AGB/I/PROCESS,INPUTT/123123/RW0010461,,TRANSACTION.TYPE::=ACAB,DEBIT.ACCT.NO::=593412948060277,DEBIT.CURRENCY::=RWF,ORDERING.BANK::=BNK,CREDIT.ACCT.NO::=408430683210261,CREDIT.CURRENCY::=RWF,CREDIT.AMOUNT::=2000,BPR.SENDER.NAME::=TINASHE TEST,MOBILE.NO::=0789379839,AB.SCHOOL.ID::=1614240687,AB.SCHL.NAME::=DEMO SCHOOL,AB.STU.NAME::=GABRIEL IMANIKUZWE,AB.BILL.NO::=1001190067-1";
@@ -68,7 +64,7 @@ public class AcademicBridgeT24 {
         final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue(T24_IP);
         final String t24Port = xSwitchParameterService.fetchXSwitchParamValue(T24_PORT);
 
-        log.info("Ip {} and Port {}",t24Ip,tot24);
+        log.info("Ip {} and Port {}",t24Ip,t24Port);
         student = t24Channel.processAcademicBridgeToT24(t24Ip, Integer.parseInt(t24Port), tot24);
         transactionService.updateT24TransactionDTO(tot24);
 

@@ -38,4 +38,5 @@ public class BillPaymentRequest {
 
   private String field;
   private String value;
+  private Credentials credentials;
 }

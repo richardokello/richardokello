@@ -29,5 +29,8 @@ public class AcademicTransactionData {
     private String abSchoolName;
     private String creditAmount;
     private String billerId;
+    private String T24reference;
+    private String T24responsecode;
+    private String Error;
 
 }
