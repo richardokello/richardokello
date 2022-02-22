@@ -1,7 +1,6 @@
 package co.ke.tracom.bprgateway.web.smsscheduled.entities;
 
 
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,8 +16,12 @@ public class ScheduledSMS implements java.io.Serializable {
     @Column(nullable = false, precision = 19)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long smsschedid;
+    @Column(name = "SENDMONEYTOKENSTARTTIME")
+    private Long sendmoneytokenstarttime;
     @Column(name = "RECEIVERPHONE")
     private String receiverphone;
+    @Column(name = "MONEYSENDID")
+    private Long sendMoneyId;
     @Column(name = "MESSAGE")
     private String message;
     @Column(name = "TXNREF")

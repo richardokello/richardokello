@@ -77,6 +77,7 @@ public class AgentTransactionService {
             String POSAgentAccount = authenticateAgentDepositResponse.getData().getAccountNumber();
 
             long POSAgentFloatBalance = fetchAgentAccountBalanceOnly(POSAgentAccount);
+        System.out.println("POSAgentFloatBalance =============== " + POSAgentFloatBalance);
             long depositAmount = agentTransactionRequest.getAmount();
 
         if (POSAgentFloatBalance < depositAmount) {

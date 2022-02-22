@@ -73,6 +73,8 @@ public class SendMoneyService {
 
     private final TokenDurationService tokenDurationService;
 
+    private long messageId=0;
+
     @SneakyThrows
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
         T24TXNQueue toT24= new T24TXNQueue();
@@ -94,7 +96,9 @@ public class SendMoneyService {
 
         System.out.println("agentAuthData ===>>>>>>>>>>>>>>> " + agentAuthData);
         System.out.println("agentAuthData.getAccountNumber() ==========>>>>>>>" + agentAuthData.getAccountNumber());
+
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
+        System.out.println("agentFloatAccountBalance =============== " + agentFloatAccountBalance);
 
         try {
 
@@ -232,7 +236,7 @@ public class SendMoneyService {
                 saveSendMoneyTransaction(request, agentAuthData, nationalIdDocumentName, tot24.getT24reference(), generatedCardNo, passCode,transactionRRN);
 
                 SMSRequest recipientMessage = saveRecipientMessage(request, transactionRRN, receiverMobile, senderMobileNo, vCardNo);
-                SMSRequest senderMessage = saveSenderMessage(request, transactionRRN, receiverMobile, senderMobileNo, passCode);
+                SMSRequest senderMessage = saveSenderMessage(request, messageId, transactionRRN, receiverMobile, senderMobileNo, passCode);
 
                 String fdiSMSAPIAuthToken = smsService.getFDISMSAPIAuthToken();
 
@@ -286,6 +290,12 @@ public class SendMoneyService {
             scheduledSMSTransaction.setAttempts(0);
             scheduledSMSTransaction.setReceiverphone(receiverMobile);
             scheduledSMSTransaction.setTxnref(transactionRRN);
+            scheduledSMSTransaction.setSendMoneyId(messageId);
+            Long sendmoneytokenstarttime = 0L;
+            if (moneySendRepository.findById(messageId).isPresent()){
+                sendmoneytokenstarttime = moneySendRepository.findById(messageId).get().getSendmoneytokenstarttime();
+            }
+            scheduledSMSTransaction.setSendmoneytokenstarttime(sendmoneytokenstarttime);
 
             if (recipientMessage.length() <= 160) {
                 scheduledSMSTransaction.setMessage(utilityService.encryptSensitiveData(recipientMessage));
@@ -342,7 +352,7 @@ public class SendMoneyService {
                 .build();
     }
 
-    private SMSRequest saveSenderMessage(SendMoneyRequest request, String transactionRRN,
+    private SMSRequest saveSenderMessage(SendMoneyRequest request, long messageId, String transactionRRN,
                                          String recipientMobile, String senderMobileNo, String passCode) {
 
         String senderMessage = senderMessage(request, recipientMobile, passCode);
@@ -355,6 +365,12 @@ public class SendMoneyService {
         scheduledSMS.setMessage(SMSContent);
         scheduledSMS.setReceiverphone(senderMobileNo);
         scheduledSMS.setTxnref(transactionRRN);
+        scheduledSMS.setSendMoneyId(messageId);
+        Long sendmoneytokenstarttime = 0L;
+        if (moneySendRepository.findById(messageId).isPresent()){
+            sendmoneytokenstarttime = moneySendRepository.findById(messageId).get().getSendmoneytokenstarttime();
+        }
+        scheduledSMS.setSendmoneytokenstarttime(sendmoneytokenstarttime);
         scheduledSMSRepository.save(scheduledSMS);
 
         return fdismsRequest;
@@ -404,8 +420,7 @@ public class SendMoneyService {
         //Save RRN, tokenstarttime, tokenexoirytime
         ms.setTransactionRRN(transactionRRN);
 
-        Instant now = Instant.now();
-        long timeNow = now.toEpochMilli();
+
         ms.setSendmoneytokenstarttime(timeNow);
 
         //use the exact configuration name
@@ -413,8 +428,14 @@ public class SendMoneyService {
 
         long expiryTime = now.plus(initialDurationByConfigurationName).toEpochMilli();
         ms.setSendmoneytokenexpiretime(expiryTime);
-        moneySendRepository.save(ms);
+        moneySendRepository.saveAndFlush(ms);
+
+        //fetch messageId
+        messageId =ms.getMoneysendid();
     }
+
+    Instant now = Instant.now();
+    long timeNow = now.toEpochMilli();
 
     @SneakyThrows
     private SendMoneyResponse processFailedSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN, Data agentAuthData, String t24Reference) {

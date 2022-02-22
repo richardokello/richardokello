@@ -1,5 +1,6 @@
 package co.ke.tracom.bprgateway.web.sendmoney.services;
 
+
 import co.ke.tracom.bprgateway.web.sendmoney.entity.MoneySend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class TestBackgroundService {
     }
 
 
-    @Scheduled(fixedRate = (20 * 60 * 1000), cron = ("0 0 8-17 * * *"))
+    @Scheduled(cron = ("*/6  8-17,   MON-FRI,SAT-SUN"))
     private void checkTokenExpiryTime() throws ExecutionException, InterruptedException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd h:m:sZ");
         log.info("The time is now {}", format.format(new Date()));

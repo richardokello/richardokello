@@ -123,6 +123,7 @@ public class DepositMoneyService {
             String accountBranchId = branch.getId();
 
             long agentbalancelong = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
+            System.out.println("agentbalancelong ======== " + agentbalancelong);
 
             String channel = "1510";
             log.info("Customer Deposit: Transaction %s. Agent Balance=%s Deposit amount=%d "+
