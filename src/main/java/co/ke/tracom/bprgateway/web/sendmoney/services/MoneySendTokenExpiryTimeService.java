@@ -1,6 +1,5 @@
 package co.ke.tracom.bprgateway.web.sendmoney.services;
 
-import co.ke.tracom.bprgateway.web.sendmoney.data.requests.SendMoneyRequest;
 import co.ke.tracom.bprgateway.web.sendmoney.entity.MoneySend;
 import co.ke.tracom.bprgateway.web.sendmoney.repository.MoneySendRepository;
 import co.ke.tracom.bprgateway.web.sms.dto.SMSRequest;
@@ -12,7 +11,6 @@ import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +25,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
-import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_RECEIVER;
 import static co.ke.tracom.bprgateway.web.sms.dto.SMSRequest.SMS_FUNCTION_SENDER;
 
 @Data
@@ -83,7 +80,9 @@ public class MoneySendTokenExpiryTimeService {
                             String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
                             System.out.println();
 
-                            SMSRequest senderMessage2 = saveSenderMessage2(amount, transactionRRN, receiverMobile, senderMobileNo, passCode, vCardNo);
+                            Duration secondDurationByConfigurationName = tokenDurationService.getSecondDurationByConfigurationName("BPR_TET");
+                            long sendmoneytokenexpirytime2 = Instant.ofEpochMilli(sendMoneyExpiryTime).plus(secondDurationByConfigurationName).toEpochMilli();
+                            SMSRequest senderMessage2 = saveSenderMessage2(amount, transactionRRN, receiverMobile, senderMobileNo, passCode, vCardNo, l.getMoneysendid(),sendmoneytokenexpirytime2);
 
                             try {
                                 String fdiSMSAPIAuthToken = smsService.getFDISMSAPIAuthToken();
@@ -94,9 +93,8 @@ public class MoneySendTokenExpiryTimeService {
                                 l.setMstoken2(passCode);
                                 l.setCno2(generatedCardNo);
                                 //use the exact configuration name
-                                Duration secondDurationByConfigurationName = tokenDurationService.getSecondDurationByConfigurationName("BPR_TET");
 
-                                long sendmoneytokenexpirytime2 = Instant.ofEpochMilli(sendMoneyExpiryTime).plus(secondDurationByConfigurationName).toEpochMilli();
+
                                 l.setSendmoneytokenstarttime2(sendMoneyExpiryTime);
                                 l.setSendmoneytokenexpiretime2(sendmoneytokenexpirytime2);
                                 repository.save(l);
@@ -118,7 +116,7 @@ public class MoneySendTokenExpiryTimeService {
     }
 
     private SMSRequest saveSenderMessage2(double amount, String transactionRRN,
-                                          String recipientMobile, String senderMobileNo, String passCode, String vCardNo) {
+                                          String recipientMobile, String senderMobileNo, String passCode, String vCardNo, Long sendMoneyId,Long sendmoneytokenstarttime) {
 
         String senderMessage = senderMessage2(amount, recipientMobile, passCode, vCardNo);
         SMSRequest fdismsRequest = getFDISMSRequest(senderMessage, senderMobileNo, SMS_FUNCTION_SENDER);
@@ -130,6 +128,8 @@ public class MoneySendTokenExpiryTimeService {
         scheduledSMS.setMessage(SMSContent);
         scheduledSMS.setReceiverphone(senderMobileNo);
         scheduledSMS.setTxnref(transactionRRN);
+        scheduledSMS.setSendMoneyId(sendMoneyId);
+        scheduledSMS.setSendmoneytokenstarttime(sendmoneytokenstarttime);
         scheduledSMSRepository.save(scheduledSMS);
         System.out.println("00000000000000000000000000000000000000");
         System.err.println(utilityService.decryptText(scheduledSMS.getMessage()));
