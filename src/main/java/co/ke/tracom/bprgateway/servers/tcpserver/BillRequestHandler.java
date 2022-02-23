@@ -266,7 +266,7 @@ public class BillRequestHandler {
     public void billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         //Accadermic bill payment
-        BillPaymentResponse billPaymentResponse = null;
+        BillPaymentResponse billPaymentResponse = BillPaymentResponse.builder().build();
         CustomObjectMapper mapper = new CustomObjectMapper();
 
         BillPaymentRequest paymentRequest = mapper.readValue(requestString, BillPaymentRequest.class);
