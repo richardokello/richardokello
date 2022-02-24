@@ -1,6 +1,7 @@
 package co.ke.tracom.bprgateway.web.ltss.controller;
 
 import co.ke.tracom.bprgateway.web.ltss.data.checkPayment.CheckPaymentRequest;
+import co.ke.tracom.bprgateway.web.ltss.data.checkPayment.CheckPaymentResponse;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;
 import co.ke.tracom.bprgateway.web.ltss.data.newSubscriber.NewSubscriberRequest;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -50,8 +53,8 @@ public class LtssController {
   @PostMapping("/payment/check")
   public ResponseEntity<?> checkPayment(@RequestBody CheckPaymentRequest request) {
     log.info("LTSS REQUEST DATA - CHECK PAYMENT: {}", request);
-    ResponseEntity<?> responseEntity = ltssService.checkPaymentByRefNo(request);
-    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+    CheckPaymentResponse checkPaymentResponse = ltssService.checkPaymentByRefNo(request);
+    return new ResponseEntity<>(checkPaymentResponse, Objects.requireNonNull(HttpStatus.resolve(Integer.parseInt(checkPaymentResponse.getStatus()))));
   }
 
   @ApiOperation(value = "Registers a new subscriber", response = NewSubscriberResponse.class)
@@ -59,6 +62,6 @@ public class LtssController {
   public ResponseEntity<?> registerSubscriber(@RequestBody NewSubscriberRequest request) {
     log.info("LTSS REQUEST DATA - REGISTER SUBSCRIBER: {}", request);
     NewSubscriberResponse responseEntity = ltssService.registerNewSubscriber(request);
-    return new ResponseEntity<>(responseEntity, HttpStatus.OK);
+    return new ResponseEntity<>(responseEntity, Objects.requireNonNull(HttpStatus.resolve(Integer.parseInt(responseEntity.getStatus()))));
   }
 }

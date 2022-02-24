@@ -39,8 +39,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -382,7 +385,8 @@ public class BillRequestHandler {
                 }
                 else
                 {
-                    paymentContributionRequest.setPaymentDate(Instant.now().toString());
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    paymentContributionRequest.setPaymentDate(formatter.format(new Date()));
                     paymentContributionRequest.setAmount(paymentRequest.getData().get(1).getValue());
                     paymentContributionRequest.setDescription("Ejo Heza contribution payment");
                     paymentContributionRequest.setIntermediary("Tracom Services Limited");
