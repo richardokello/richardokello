@@ -117,9 +117,14 @@ public class BillRequestHandler {
 
 
             //Validation for wasac customer profile.
-            case "02.1":{
-                    response = wasacService.validateWaterAccount(genericRequest, "POS");
-            }
+            case "02.1":
+            case "02.2":
+                {
+                        if (genericRequest.getBill() == null){
+                            genericRequest.setBill("bill");
+                        }
+                        response = wasacService.validateWaterAccount(genericRequest, "POS");
+                }
                 break;
 
                 //EUCL validation
