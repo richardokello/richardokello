@@ -118,6 +118,13 @@
               "length": 160,
               "validated": false,
               "order": 4
+            },
+            {
+              "label": "Customer Name",
+              "type": "alphanumeric",
+              "length": 60,
+              "validated": false,
+              "order": 5
             }
           ]
         }
