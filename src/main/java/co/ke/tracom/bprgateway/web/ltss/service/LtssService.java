@@ -4,17 +4,21 @@ import co.ke.tracom.bprgateway.core.tracomchannels.json.RestHTTPService;
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
 import co.ke.tracom.bprgateway.web.exceptions.custom.ExternalHTTPRequestException;
 import co.ke.tracom.bprgateway.web.ltss.data.checkPayment.CheckPaymentRequest;
+import co.ke.tracom.bprgateway.web.ltss.data.checkPayment.CheckPaymentResponse;
+import co.ke.tracom.bprgateway.web.ltss.data.exception.StatusCode;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;
 import co.ke.tracom.bprgateway.web.ltss.data.newSubscriber.NewSubscriberRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.newSubscriber.NewSubscriberResponse;
 import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @Slf4j
@@ -52,7 +56,7 @@ public class LtssService {
 
     try {
       String requestURL = ltssBaseUrl + nationalIdValidationUrl;
-      ResponseEntity<String> response = restHttpService.postRequest(validationRequest, requestURL);
+      ResponseEntity<String> response = restHttpService.postLTSSRequest(validationRequest, requestURL);
       log.info("LTSS SERVICE RESPONSE: {}", response);
       validationResponse = mapper.readValue(response.getBody(), NationalIDValidationResponse.class);
     } catch (Exception ex) {
@@ -76,7 +80,7 @@ public class LtssService {
     try {
       String requestURL = ltssBaseUrl + paymentContributionUrl;
       ResponseEntity<String> response =
-          restHttpService.postRequest(paymentContributionRequest, requestURL);
+          restHttpService.postLTSSRequest(paymentContributionRequest, requestURL);
       log.info("LTSS SERVICE RESPONSE: {}", response);
       paymentContributionResponse =
           mapper.readValue(response.getBody(), PaymentContributionResponse.class);
@@ -95,19 +99,34 @@ public class LtssService {
    * @return response entity from remote API; Structure of response is not specified in LTSS service
    *     documentation so an explicit response object to parse the response has not been used
    */
-  public ResponseEntity<?> checkPaymentByRefNo(CheckPaymentRequest checkPaymentRequest) {
+  public CheckPaymentResponse checkPaymentByRefNo(CheckPaymentRequest checkPaymentRequest) {
     ResponseEntity<String> response;
+    CheckPaymentResponse checkPaymentResponse = new CheckPaymentResponse();
     try {
       String requestURL = ltssBaseUrl + checkPaymentByRefNoUrl;
-      response = restHttpService.postRequest(checkPaymentRequest, requestURL);
+      response = restHttpService.postLTSSRequest(checkPaymentRequest, requestURL);
+      checkPaymentResponse = mapper.readValue(response.getBody(), CheckPaymentResponse.class);
       log.info("LTSS SERVICE RESPONSE: {}", response);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
-      throw new ExternalHTTPRequestException(
-          "Error checking payment by reference number from LTSS API");
+
+      String s = ex.getMessage().split(":\\p{Space}")[1].strip();
+      int endIndex = s.length()-1;
+      String message = s.substring(1, endIndex);
+      StatusCode statusCode = new StatusCode();
+      try {
+        statusCode = mapper.readValue(message,StatusCode.class);
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
+      checkPaymentResponse.setMessage(statusCode.getMessage());
+      checkPaymentResponse.setStatus(statusCode.getStatus());
+
+//      throw new ExternalHTTPRequestException(
+//          "Error checking payment by reference number from LTSS API");
     }
-    return response;
+    return checkPaymentResponse;
   }
 
   /**
@@ -122,14 +141,27 @@ public class LtssService {
     try {
       String requestURL = ltssBaseUrl + registerNewSubscriberURL;
       ResponseEntity<String> response =
-          restHttpService.postRequest(newSubscriberRequest, requestURL);
+          restHttpService.postLTSSRequest(newSubscriberRequest, requestURL);
       log.info("LTSS SERVICE RESPONSE: {}", newSubscriberResponse);
       newSubscriberResponse = mapper.readValue(response.getBody(), NewSubscriberResponse.class);
 
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
-      throw new ExternalHTTPRequestException("Error registering a new subscriber in  LTSS Service");
+      System.err.println("((((("+ex+")))))");
+
+      String s = ex.getMessage().split(":\\p{Space}")[1].strip();
+      int endIndex = s.length()-1;
+      String message = s.substring(1, endIndex);
+      StatusCode statusCode = new StatusCode();
+      try {
+        statusCode = mapper.readValue(message,StatusCode.class);
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
+      newSubscriberResponse.setMessage(statusCode.getMessage());
+      newSubscriberResponse.setStatus(statusCode.getStatus());
+      //throw new ExternalHTTPRequestException("Error registering a new subscriber in  LTSS Service");
     }
     return newSubscriberResponse;
   }

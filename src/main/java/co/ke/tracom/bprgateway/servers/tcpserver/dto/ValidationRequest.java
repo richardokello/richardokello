@@ -29,6 +29,7 @@ public class ValidationRequest {
   @JsonProperty("svcCode")
   private String svcCode;
 
+
   @JsonProperty("field")
   private String field;
 

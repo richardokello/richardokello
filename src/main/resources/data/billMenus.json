@@ -6,13 +6,13 @@
       "svcCode": "01",
       "submenu": [
         {
-          "name": "Check Payment Status",
+          "name": "Check Student Details",
           "hasSubMenu": false,
           "svcCode": "01.1",
           "submenu": [],
           "fields": [
             {
-              "label": "Bank Reference Number",
+              "label": "billNumber",
               "type": "alphanumeric",
               "length": 12,
               "validated": true,
@@ -23,43 +23,66 @@
         {
           "name": "Make Payment",
           "hasSubMenu": false,
+          "svcCode": "01.2",
           "submenu": [],
           "fields": [
             {
-              "label": "Bill number",
+              "label": "billNumber",
               "type": "alphanumeric",
               "length": 12,
               "validated": true,
               "order": 1
             },
             {
-              "label": "Amount",
+              "label": "amount",
               "type": "numeric",
               "length": "12",
               "validated": false,
               "order": 3
             },
             {
-              "label": "Sender name",
+              "label": "senderName",
               "type": "alphanumeric",
-              "length": 12,
+              "length": 20,
               "validated": false,
               "order": 4
             },
             {
-              "label": "Sender phone number",
+              "label": "mobileNumber",
               "type": "numeric",
               "length": 12,
               "validated": false,
               "order": 5
             },
             {
-              "label": "Narration",
+              "label": "creditAccount",
               "type": "alphanumeric",
-              "length": 160,
+              "length": 15,
               "validated": false,
-              "order": 6
+              "order": 5
+            },
+            {
+              "label": "schoolId",
+              "type": "numeric",
+              "length": 10,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "schoolName",
+              "type": "alphanumeric",
+              "length": 25,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "studentName",
+              "type": "alphanumeric",
+              "length": 20,
+              "validated": false,
+              "order": 5
             }
+
           ]
         }
       ],
@@ -143,21 +166,21 @@
           "submenu": [],
           "fields": [
             {
-              "label": "Meter number",
+              "label": "Amount",
               "type": "alphanumeric",
               "length": 20,
-              "validated": true,
+              "validated": false,
               "order": 1
             },
             {
               "label": "Phone number",
               "type": "numeric",
               "length": 12,
-              "validated": true,
+              "validated": false,
               "order": 2
             },
             {
-              "label": "Amount",
+              "label": "Meter number",
               "type": "numeric",
               "length": 12,
               "validated": true,
@@ -172,21 +195,21 @@
           "submenu": [],
           "fields": [
             {
-              "label": "Meter number",
+              "label": "Amount",
               "type": "alphanumeric",
               "length": 20,
-              "validated": true,
+              "validated": false,
               "order": 1
             },
             {
               "label": "Phone number",
               "type": "numeric",
               "length": 12,
-              "validated": true,
+              "validated": false,
               "order": 2
             },
             {
-              "label": "Amount",
+              "label": "Meter number",
               "type": "numeric",
               "length": 12,
               "validated": true,
@@ -297,6 +320,28 @@
         }
       ],
       "fields": []
+    },
+    {
+      "name": "Ejo Heza",
+      "hasSubMenu": false,
+      "svcCode": "05.1",
+      "submenu": [],
+      "fields": [
+        {
+          "label": "Customer National ID",
+          "type": "alphanumeric",
+          "length": 16,
+          "validated": true,
+          "order": 1
+        },
+        {
+          "label": "Amount",
+          "type": "numeric",
+          "length": 12,
+          "validated": false,
+          "order": 2
+        }
+      ]
     }
   ]
 }

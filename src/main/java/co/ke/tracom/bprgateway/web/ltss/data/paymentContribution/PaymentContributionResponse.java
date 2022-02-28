@@ -14,5 +14,5 @@ public class PaymentContributionResponse {
   private String intermediary;
   private String extReferenceNo;
   private String refNo;
-  private Date paymentDate;
+  private String paymentDate;
 }
