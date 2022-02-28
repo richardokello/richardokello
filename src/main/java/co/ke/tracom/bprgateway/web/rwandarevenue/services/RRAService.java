@@ -4,6 +4,7 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAg
 import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests.RRAPaymentRequest;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests.RRATINValidationRequest;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAData;
@@ -68,10 +69,17 @@ public class RRAService {
 
     @SneakyThrows
     public RRATINValidationResponse validateCustomerTIN(RRATINValidationRequest request, String transactionRRN) {
-        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse optionalAuthenticateAgentResponse = null;
+        try {
+            optionalAuthenticateAgentResponse= baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }catch (InvalidAgentCredentialsException e){
+            transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
+                    "AgentValidation","FAILED","ipAddress");
+        }
 
         HttpPost httpPost = null;
         try {
+
             String rrasoapurl = xSwitchParameterService.fetchXSwitchParamValue("RRASOAPURL");
             Boolean exists = findPendingRRAPaymentOnQueueByRRATIN(request.getRrareferenceNo());
 
@@ -316,7 +324,13 @@ public class RRAService {
 
     @SneakyThrows
     public RRAPaymentResponse processRRAPayment(RRAPaymentRequest request, String transactionRRN) {
+        T24TXNQueue tot24 = new T24TXNQueue();
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+
+
+
+
+
         try {
 
             String tid = "PC";
@@ -333,6 +347,10 @@ public class RRAService {
             String agentFloatAccount = authenticateAgentResponse.getData().getAccountNumber();
             BPRBranches branch = bprBranchService.fetchBranchAccountsByBranchCode(agentFloatAccount);
             if (branch.getCompanyName() == null) {
+                transactionService.updateT24TransactionDTO(tot24);
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                        request.getAmountToPay(), "065",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 log.info("Agent float deposit transaction [" + transactionRRN + "] failed. Error: Agent branch details could not be verified.");
                 RRAPaymentResponseData datas = RRAPaymentResponseData.builder()
                         .rrn(transactionRRN)
@@ -345,6 +363,10 @@ public class RRAService {
 
             String agentBranchId = branch.getId();
             if (agentBranchId.isEmpty()) {
+                transactionService.updateT24TransactionDTO(tot24);
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                        request.getAmountToPay(), "065",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                         .rrn(transactionRRN)
                         .build();
@@ -357,10 +379,16 @@ public class RRAService {
             long agentFloatBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
             log.info("Fet balance success >>> is greater {}", (agentFloatBalance > AMOUNT_TO_PAY));
             if (agentFloatBalance < AMOUNT_TO_PAY) {
+
+                transactionService.updateT24TransactionDTO(tot24);
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                        request.getAmountToPay(), "065",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 return RRAPaymentResponse.builder()
                         .status("065")
                         .message("Insufficient agent float balance.")
                         .data(null).build();
+
             }
             String channel = "PC";
             String sanitizedTaxPayerName = TAX_PAYER_NAME.length() > 49 ? TAX_PAYER_NAME.substring(0, 49) : TAX_PAYER_NAME;
@@ -407,7 +435,7 @@ public class RRAService {
             log.info("channel :" + channel);
             log.info("tid :" + tid);
 
-            T24TXNQueue tot24 = new T24TXNQueue();
+
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
             tot24.setTxnchannel(channel);
@@ -445,7 +473,7 @@ public class RRAService {
                 data.setNames(authenticateAgentResponse.getData().getNames());
                 data.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
                 data.setLocation(authenticateAgentResponse.getData().getLocation());
-               // data.setRrn(data.getRrn());
+                data.setRrn(transactionRRN);
                 data.setRRAReference(data.getRRAReference());
                 data.setTid(authenticateAgentResponse.getData().getTid());
                 data.setMid(authenticateAgentResponse.getData().getMid());
@@ -457,11 +485,16 @@ public class RRAService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            transactionService.updateT24TransactionDTO(tot24);
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
+                    request.getAmountToPay(), "118",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                     .rrn(transactionRRN)
                     .build();
-           // data.setRrn(data.getRrn());
-            data.setRRAReference(data.getRRAReference());
+            //data.setRrn(data.getRrn());
+            data.setRrn(transactionRRN);
+           // data.setRRAReference(data.getRRAReference());
 
             log.info("RRA Transaction [" + transactionRRN + "] failed during processing. Kindly contact BPR Customer Care");
             return RRAPaymentResponse.builder()

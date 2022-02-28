@@ -54,10 +54,15 @@ public class T24Channel {
                 t24TXNQueue.setCustomerName(customerName);
                 t24TXNQueue.setMeterLocation(meterLocation);
             } else {
+<<<<<<< HEAD
                 System.out.println("In else of parse t24 elec inquiry");
                 System.out.println("Output length is : " + output.length);//kelvin to do
+=======
+                if(output.length>2){
+>>>>>>> b4f8b51aa7de15d115450a31e54228f463d48fa6
                 System.out.println("Error=>" + output[3]);
                 t24TXNQueue.setT24failnarration(output[3].replace("\"", ""));
+            }else {   System.out.println("Error=> No response" );}
             }
         }
 
