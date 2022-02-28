@@ -374,9 +374,10 @@ public class BillRequestHandler {
                 if (paymentRequest.getData().size() == 0){
                     billPaymentResponse.setResponseCode("05");
                     billPaymentResponse.setResponseMessage("Missing Transaction data. Kindly provide all details and try again!");
-                    break;
                 }
-                billPaymentResponse = wasacService.payWaterBill(paymentRequest);
+                else {
+                    billPaymentResponse = wasacService.payWaterBill(paymentRequest);
+                }
                 break;
             //EUCL requests
             case "03.2":
