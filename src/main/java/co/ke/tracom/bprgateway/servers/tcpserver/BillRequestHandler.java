@@ -140,12 +140,13 @@ public class BillRequestHandler {
 
             //EUCL validation
             case "03.1":
+            case "03.2":
 
                 //Extract data from validation request object to local variables only when some data has been sent
                 if (!data.isEmpty()){
-                    String  meterNo = data.get(0).getValue();
+                    String  meterNo = data.get(2).getValue();
                     String phoneNo = data.get(1).getValue();
-                    String amount = data.get(2).getValue();
+                    String amount = data.get(0).getValue();
 
                     euclValidation.setAmount(amount);
                     euclValidation.setCredentials(
@@ -295,9 +296,9 @@ public class BillRequestHandler {
 
                 //Extract data from validation request object to local variables only when some data has been sent
                 if (!data.isEmpty()){
-                    String  meterNo = data.get(0).getValue();
+                    String  meterNo = data.get(2).getValue();
                     String phoneNo = data.get(1).getValue();
-                    String amount = data.get(2).getValue();
+                    String amount = data.get(0).getValue();
                     String meterLocation = data.get(3).getValue();
 
                     euclPaymentRequest.setAmount(amount);
