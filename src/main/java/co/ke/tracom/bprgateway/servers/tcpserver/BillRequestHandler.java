@@ -9,6 +9,12 @@ import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
 import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
+
+
+import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
+import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
+import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
+
 import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
@@ -138,8 +144,10 @@ public class BillRequestHandler {
         MeterNoValidation euclValidation = new MeterNoValidation();
 
 
-        switch (genericRequest.getSvcCode() /*genericRequest.getCredentials().getSvcCode()*/){
-       
+        String billNumber = null;
+
+        switch (genericRequest.getSvcCode() /*genericRequest.getCredentials().getSvcCode()*/) {
+
             case "01.1":
             case "01.2":
 
@@ -169,7 +177,6 @@ public class BillRequestHandler {
                 }
                 break;
 
-             
             //EUCL validation
             case "03.1":
             case "03.2":
@@ -249,16 +256,13 @@ public class BillRequestHandler {
 
                         }
                 }
-
-            break;
-
+                 break;
         }
 
-
-
+           
+        
         writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
         
-
     }
 
     private void writeResponseToTCPChannel(NetSocket socket, String s) {
@@ -283,29 +287,23 @@ public class BillRequestHandler {
     }
 
 
-
-
     public void billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         //Accadermic bill payment
         BillPaymentResponse billPaymentResponse = new BillPaymentResponse();
         CustomObjectMapper mapper = new CustomObjectMapper();
         BillPaymentRequest paymentRequest=mapper.readValue(requestString,BillPaymentRequest.class);
-
+     
         log.info("BILL PAYMENT REQUEST OBJECT: {}", paymentRequest);
         List<TransactionData> transactionData=paymentRequest.getData();
         EUCLPaymentRequest euclPaymentRequest=new EUCLPaymentRequest();
         EUCLPaymentResponse euclPaymentResponse=EUCLPaymentResponse.builder().build();
-
-        
-        
 
         //kelvin
         switch (paymentRequest.getSvcCode()) {
             case "01.1":
                 billPaymentResponse = getBillPaymentResponse();
                 break;
-
             case "01.2":
                 billPaymentResponse = getBillPaymentResponse();
                 break;
@@ -401,9 +399,10 @@ public class BillRequestHandler {
                         VisionFundResponse fundResponse = visionFundTransaction(requestString, socket);
                         BeanUtils.copyProperties(fundResponse,billPaymentResponse);
                     }
+
                 break;
+                  
         }
-        
 
         Buffer outBuffer = Buffer.buffer();
         outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
@@ -450,6 +449,18 @@ public class BillRequestHandler {
         socket.write(outBuffer);
     }
 
+
+    private BillPaymentResponse bootStrapNoAgentAccount() {
+        //List<AcademicTransactionData> paymentData = new ArrayList<>();
+        BillPaymentResponse billPaymentResponse =
+                BillPaymentResponse.builder()
+                        .responseCode("09")
+                        .responseMessage("No Agent account found")
+                        .data(null)
+                        //.paymentData(paymentData)
+                        .build();
+        return billPaymentResponse;
+}
     public VisionFundResponse visionFundTransaction(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         CustomObjectMapper mapper = new CustomObjectMapper();

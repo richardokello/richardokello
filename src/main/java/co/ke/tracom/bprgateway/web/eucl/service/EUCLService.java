@@ -39,6 +39,7 @@ public class EUCLService {
     @SneakyThrows
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
         // Validate agent credentials
+
         AuthenticateAgentResponse optionalAuthenticateAgentResponse = null;
         T24TXNQueue tot24 = new T24TXNQueue();
         try{optionalAuthenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
