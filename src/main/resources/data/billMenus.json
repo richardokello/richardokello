@@ -320,6 +320,28 @@
         }
       ],
       "fields": []
+    },
+    {
+      "name": "Ejo Heza",
+      "hasSubMenu": false,
+      "svcCode": "05.1",
+      "submenu": [],
+      "fields": [
+        {
+          "label": "Customer National ID",
+          "type": "alphanumeric",
+          "length": 16,
+          "validated": true,
+          "order": 1
+        },
+        {
+          "label": "Amount",
+          "type": "numeric",
+          "length": 12,
+          "validated": false,
+          "order": 2
+        }
+      ]
     }
   ]
 }

@@ -42,6 +42,11 @@ import co.ke.tracom.bprgateway.web.eucl.service.EUCLService;
 
 import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
+import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
+import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;
+import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionRequest;
+import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionResponse;
+import co.ke.tracom.bprgateway.web.ltss.service.LtssService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
@@ -58,7 +63,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,6 +86,7 @@ public class BillRequestHandler {
     private final VisionFundService visionFundService;
     private String billNumber;
 
+    private final LtssService ltssService;
     public void menu(String requestString, BillMenusService billMenusService, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         CustomObjectMapper mapper = new CustomObjectMapper();
@@ -253,25 +263,52 @@ public class BillRequestHandler {
 
                     fundResponse.setData(transactionData);
                     BeanUtils.copyProperties(fundResponse, response);
-
-                        }
+                    log.error("<<<<\nVision Fund Verification Completed");
+                    log.error("\n[\nVision Fund Response Object\n{}\n",verificationResponse);
+                    log.error("\nVision Fund RETURNED Response Object\n{}\n]\n>>>>",fundResponse);
                 }
-                 break;
+            }
+            break;
+            //Ejo Heza
+            case "05.1":{
+                NationalIDValidationRequest nationalIDValidationRequest = new NationalIDValidationRequest();
+                if (genericRequest.getData().size() > 0){
+                    nationalIDValidationRequest.setIdentification(genericRequest.getData().get(0).getValue());
+                }else {
+                    nationalIDValidationRequest.setIdentification(genericRequest.getValue());
+                }
+                NationalIDValidationResponse nationalIDValidationResponse = ltssService.validateNationalID(nationalIDValidationRequest);
+                if (!nationalIDValidationResponse.getName().isBlank() && !nationalIDValidationResponse.getIdentification().isBlank()){
+                    response.setResponseCode("00");
+                    response.setResponseMessage("Customer data fetched successfully!");
+                    List<TransactionData> transactionData = new ArrayList<>();
+                    transactionData.add(TransactionData.builder()
+                            .name("identification").value(nationalIDValidationResponse.getIdentification())
+                            .build());
+                    transactionData.add(TransactionData.builder()
+                            .name("name").value(nationalIDValidationResponse.getName())
+                            .build());
+
+                    response.setData(transactionData);
+                }else {
+                    response.setResponseCode("05");
+                    response.setResponseMessage("Unable to fetch customer data. Try again later!");
+                }
+            }
+            break;
+
         }
 
-           
-        
+
+
         writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
-        
+
     }
 
     private void writeResponseToTCPChannel(NetSocket socket, String s) {
-        System.out.println("writing response");
         Buffer outBuffer = Buffer.buffer();
         outBuffer.appendString(s);
-        System.out.println(s);
         socket.write(outBuffer);
-
     }
 
     private AcademicBridgeValidation getAcademicBridgeValidation(List<TransactionData> validationData, String value, String reasonPhrase) {
@@ -292,12 +329,15 @@ public class BillRequestHandler {
         //Accadermic bill payment
         BillPaymentResponse billPaymentResponse = new BillPaymentResponse();
         CustomObjectMapper mapper = new CustomObjectMapper();
-        BillPaymentRequest paymentRequest=mapper.readValue(requestString,BillPaymentRequest.class);
-     
+
+        BillPaymentRequest paymentRequest = mapper.readValue(requestString, BillPaymentRequest.class);
         log.info("BILL PAYMENT REQUEST OBJECT: {}", paymentRequest);
-        List<TransactionData> transactionData=paymentRequest.getData();
-        EUCLPaymentRequest euclPaymentRequest=new EUCLPaymentRequest();
-        EUCLPaymentResponse euclPaymentResponse=EUCLPaymentResponse.builder().build();
+
+        List<TransactionData> data = paymentRequest.getData();
+
+        //EUCL bill payment
+        EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder().build();
+        EUCLPaymentRequest euclPaymentRequest = new EUCLPaymentRequest();
 
         //kelvin
         switch (paymentRequest.getSvcCode()) {
@@ -309,11 +349,11 @@ public class BillRequestHandler {
                 break;
             case "01.3":
 
-            if(!transactionData.isEmpty()){
-                String meterNo= transactionData.get(0).getValue();
-                String phoneNumber=transactionData.get(1).getValue();
-                String amount=transactionData.get(2).getValue();
-                String meterLocation= transactionData.get(3).getValue();
+            if(!data.isEmpty()){
+                String meterNo= data.get(0).getValue();
+                String phoneNumber=data.get(1).getValue();
+                String amount=data.get(2).getValue();
+                String meterLocation= data.get(3).getValue();
 
 
                 euclPaymentRequest.setAmount(amount);
@@ -341,11 +381,11 @@ public class BillRequestHandler {
             //EUCL requests
             case "03.2":
                 //Extract data from validation request object to local variables only when some data has been sent
-                if (!transactionData.isEmpty()){
-                    String  meterNo = transactionData.get(2).getValue();
-                    String phoneNo = transactionData.get(1).getValue();
-                    String amount = transactionData.get(0).getValue();
-                    String meterLocation = transactionData.get(3).getValue();
+                if (!data.isEmpty()) {
+                    String meterNo = data.get(0).getValue();
+                    String phoneNo = data.get(1).getValue();
+                    String amount = data.get(2).getValue();
+                    String meterLocation = data.get(3).getValue();
 
                     euclPaymentRequest.setAmount(amount);
                     euclPaymentRequest.setCredentials(
@@ -401,8 +441,87 @@ public class BillRequestHandler {
                     }
 
                 break;
-                  
+            //Ejo Heza contributions
+            case "05.1":
+            {
+                PaymentContributionRequest paymentContributionRequest = new PaymentContributionRequest();
+                if (paymentRequest.getData().size()==0){
+                    billPaymentResponse.setResponseCode("05");
+                    billPaymentResponse.setResponseMessage("Transaction data missing");
+                }
+                else
+                {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    paymentContributionRequest.setPaymentDate(formatter.format(new Date()));
+                    paymentContributionRequest.setAmount(paymentRequest.getData().get(1).getValue());
+                    paymentContributionRequest.setDescription("Ejo Heza contribution payment");
+                    paymentContributionRequest.setIntermediary("Tracom Services Limited");
+                    //Generate RRn
+                    paymentContributionRequest.setExtReferenceNo(RRNGenerator.getInstance("EH").getRRN());
+
+                    NationalIDValidationRequest nationalIDValidationRequest = new NationalIDValidationRequest();
+                    nationalIDValidationRequest.setIdentification(paymentRequest.getData().get(0).getValue());
+                    paymentContributionRequest.setBeneficiary(nationalIDValidationRequest);
+
+                    PaymentContributionResponse paymentContributionResponse = ltssService.sendPaymentContribution(paymentContributionRequest);
+
+                    if (paymentContributionResponse.getRefNo().isBlank()){
+                        billPaymentResponse.setResponseCode("05");
+                        billPaymentResponse.setResponseMessage("Transaction failed. Try again later!");
+                    }
+                    else {
+                        billPaymentResponse.setResponseCode("00");
+                        billPaymentResponse.setResponseMessage("Transaction completed successfully!");
+
+                        List<TransactionData> transactionData = new ArrayList<>();
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("identification")
+                                        .value(paymentContributionResponse.getBeneficiary().getIdentification())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("name")
+                                        .value(paymentContributionResponse.getBeneficiary().getName())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("amount")
+                                        .value(paymentContributionResponse.getAmount())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("intermediary")
+                                        .value(paymentContributionResponse.getIntermediary())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("extReferenceNo")
+                                        .value(paymentContributionResponse.getExtReferenceNo())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("refNo")
+                                        .value(paymentContributionResponse.getRefNo())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("paymentDate")
+                                        .value(paymentContributionResponse.getPaymentDate().toString())
+                                        .build());
+                        transactionData.add(
+                                TransactionData.builder()
+                                        .name("description")
+                                        .value(paymentContributionResponse.getDescription())
+                                        .build());
+
+                        billPaymentResponse.setData(transactionData);
+                    }
+                }
+            }
+            break;
         }
+
 
         Buffer outBuffer = Buffer.buffer();
         outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
