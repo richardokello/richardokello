@@ -136,21 +136,21 @@
           "submenu": [],
           "fields": [
             {
-              "label": "Meter number",
+              "label": "Amount",
               "type": "alphanumeric",
               "length": 20,
-              "validated": true,
+              "validated": false,
               "order": 1
             },
             {
               "label": "Phone number",
               "type": "numeric",
               "length": 12,
-              "validated": true,
+              "validated": false,
               "order": 2
             },
             {
-              "label": "Amount",
+              "label": "Meter number",
               "type": "numeric",
               "length": 12,
               "validated": true,
@@ -165,21 +165,21 @@
           "submenu": [],
           "fields": [
             {
-              "label": "Meter number",
+              "label": "Amount",
               "type": "alphanumeric",
               "length": 20,
-              "validated": true,
+              "validated": false,
               "order": 1
             },
             {
               "label": "Phone number",
               "type": "numeric",
               "length": 12,
-              "validated": true,
+              "validated": false,
               "order": 2
             },
             {
-              "label": "Amount",
+              "label": "Meter number",
               "type": "numeric",
               "length": 12,
               "validated": true,

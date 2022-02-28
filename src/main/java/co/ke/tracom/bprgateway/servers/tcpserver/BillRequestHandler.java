@@ -2,6 +2,7 @@ package co.ke.tracom.bprgateway.servers.tcpserver;
 
 import co.ke.tracom.bprgateway.core.util.AppConstants;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
@@ -11,6 +12,13 @@ import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeService
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
+import co.ke.tracom.bprgateway.web.eucl.dto.request.EUCLPaymentRequest;
+import co.ke.tracom.bprgateway.web.eucl.dto.request.MeterNoValidation;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoData;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
+import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
+import co.ke.tracom.bprgateway.web.eucl.service.EUCLService;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileRequest;
@@ -27,11 +35,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BillRequestHandler {
     private final WASACService wasacService;
+    private final EUCLService euclService;
 
     public void menu(String requestString, BillMenusService billMenusService, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
@@ -86,25 +97,91 @@ public class BillRequestHandler {
         log.info("Validation REQUEST OBJECT: {}", genericRequest);
 
         List<TransactionData> data = genericRequest.getData();
-        System.out.println(""+data.get(0).getValue());
+        //List<TransactionData> data = genericRequest.getCredentials().getData();
+        //System.out.println(""+data.get(0).getValue());
 
         CustomerProfileResponse customerProfileResponse = null;
+        List<TransactionData> validationData = new ArrayList<>();
+        AcademicBridgeValidation response = AcademicBridgeValidation.builder().build();
 
-        switch (genericRequest.getSvcCode()){
+        MeterNoValidationResponse euclValidationResponse = MeterNoValidationResponse.builder().build();
+        MeterNoValidation euclValidation = new MeterNoValidation();
+
+
+        switch (genericRequest.getSvcCode() /*genericRequest.getCredentials().getSvcCode()*/){
             case "01.1":
                 customerProfileResponse = null;
                 break;
 
+
+            //Validation for wasac customer profile.
             case "02.1":
+                //If there is data sent then it's a profile validation else it's a  field validation
+                if (data.size() > 0){
+                    response = wasacService.validateWaterAccount(genericRequest, "POS");
+                   /* validationData.add(TransactionData.builder()
+                                    .name("Client POS name")responseValidation = {AcademicBridgeValidation@14727} "AcademicBridgeValidation(responseCode=05, responseMessage=Transaction processing failed. Please try again, data=[])"
+                                    .value("")
+                            .build());*/
+                }
+
+                //fetch profile and return response
                  customerProfileResponse =
                         wasacService.fetchCustomerProfile(
-                                CustomerProfileRequest.builder().customerId(/*data.get(0).getValue()*/"").credentials(
+                                CustomerProfileRequest.builder().customerId(genericRequest.getValue()).credentials(
                                         new MerchantAuthInfo(genericRequest.getCredentials().getUsername()
                                                 ,genericRequest.getCredentials().getPassword())).build());
-                break;
 
+                AcademicBridgeValidation responseValidation = getBridgeValidation(customerProfileResponse);
+
+                writeResponseToTCPChannel(socket, mapper.writeValueAsString(responseValidation));
+                return;
+                //break;
+
+            //EUCL validation
             case "03.1":
-                customerProfileResponse = null;
+            case "03.2":
+
+                //Extract data from validation request object to local variables only when some data has been sent
+                if (!data.isEmpty()){
+                    String  meterNo = data.get(2).getValue();
+                    String phoneNo = data.get(1).getValue();
+                    String amount = data.get(0).getValue();
+
+                    euclValidation.setAmount(amount);
+                    euclValidation.setCredentials(
+                            new MerchantAuthInfo(
+                                    genericRequest.getCredentials().getUsername(),
+                                    genericRequest.getCredentials().getPassword()
+                            )
+                    );
+                    euclValidation.setMeterNo(meterNo);
+                    euclValidation.setPhoneNo(phoneNo);
+                    String requestRefNo = RRNGenerator.getInstance("EV").getRRN();
+                    euclValidationResponse = euclService.validateEUCLMeterNo(euclValidation,requestRefNo);
+
+
+                    //Extract data from service response object to the generic response object
+                    response.setResponseCode(euclValidationResponse.getStatus());
+                    response.setResponseMessage(euclValidationResponse.getMessage());
+
+                    List<TransactionData> euclTransactionData = new ArrayList<>();
+                    MeterNoData euclValidationResponseData = euclValidationResponse.getData();
+                    euclTransactionData.add(TransactionData.builder().name("accountName").value(euclValidationResponseData.getAccountName())
+                            .build());
+                    euclTransactionData.add(TransactionData.builder().name("meterNo").value(euclValidationResponseData.getMeterNo()).build());
+                    euclTransactionData.add(TransactionData.builder().name("meterLocation").value(euclValidationResponseData.getMeterLocation())
+                            .build());
+                    euclTransactionData.add(TransactionData.builder().name("rrn").value(euclValidationResponseData.getRrn()).build());
+
+                    response.setData(euclTransactionData);
+
+                    // todo writing response to the output stream
+
+                    //for field validation
+                    customerProfileResponse = null;
+                }
+
                 break;
 
 
@@ -112,23 +189,23 @@ public class BillRequestHandler {
 
 
 
-        Response validationResponse = customerProfileResponse.getData();
+        /*Response validationResponse = customerProfileResponse.getData();
 
         if (customerProfileResponse
                 .getStatus()
                 .equalsIgnoreCase(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value())) {
 
-            AcademicBridgeValidation response = getBridgeValidation(customerProfileResponse);
+            AcademicBridgeValidation responseValidation = getBridgeValidation(customerProfileResponse);
 
-            writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
-        }
+            writeResponseToTCPChannel(socket, mapper.writeValueAsString(responseValidation));
+        }*/
 
-        List<TransactionData> validationData = new ArrayList<>();
-        validationData.add(
+
+        /*validationData.add(
                 TransactionData.builder()
                         .name("Client Post Name")
                         .value("POSTest").build());
-       /* validationData.add(
+       *//* validationData.add(
                 TransactionData.builder().name("Name").value(validationResponse.getName()).build());
         validationData.add(
                 TransactionData.builder().name("Zone").value(validationResponse.getZone()).build());
@@ -138,7 +215,7 @@ public class BillRequestHandler {
                 TransactionData.builder().name("Email").value(validationResponse.getEmail()).build());
         validationData.add(
                 TransactionData.builder().name("Phone").value(validationResponse.getPhone()).build());
-        validationData.add(*/
+        validationData.add(*//*
 
         validationData.add(
                 TransactionData.builder().name("Name").value("wanjohi").build());
@@ -165,7 +242,7 @@ public class BillRequestHandler {
                         .name("Customer Id")
                         .value("02315").build());
 
-        AcademicBridgeValidation response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
+        AcademicBridgeValidation response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());*/
         writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
     }
 
@@ -190,22 +267,87 @@ public class BillRequestHandler {
     public void billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         //Accadermic bill payment
-        BillPaymentResponse billPaymentResponse = null;
+        BillPaymentResponse billPaymentResponse = BillPaymentResponse.builder().build();
+        CustomObjectMapper mapper = new CustomObjectMapper();
+
+        BillPaymentRequest paymentRequest = mapper.readValue(requestString, BillPaymentRequest.class);
+        log.info("BILL PAYMENT REQUEST OBJECT: {}", paymentRequest);
+
+        List<TransactionData> data = paymentRequest.getData();
+
+        //EUCL bill payment
+        EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder().build();
+        EUCLPaymentRequest euclPaymentRequest = new EUCLPaymentRequest();
+
         //kelvin
-        /*switch(requestString){
-            case 01.1:
+        switch(paymentRequest.getSvcCode()){
+            case "01.1":
                 billPaymentResponse = getBillPaymentResponse();
                 break;
 
-            case 01.2:
-                billPaymentResponse = getBillPaymentResponse();
+            //WASAC bill payment
+            case "02.2":
+                //billPaymentResponse = getBillPaymentResponse();
+                billPaymentResponse = wasacService.payWaterBill(paymentRequest);
                 break;
-        }*/
+            //EUCL requests
+            case "03.2":
+                //billPaymentResponse = getBillPaymentResponse();
+
+                //Extract data from validation request object to local variables only when some data has been sent
+                if (!data.isEmpty()){
+                    String  meterNo = data.get(2).getValue();
+                    String phoneNo = data.get(1).getValue();
+                    String amount = data.get(0).getValue();
+                    String meterLocation = data.get(3).getValue();
+
+                    euclPaymentRequest.setAmount(amount);
+                    euclPaymentRequest.setCredentials(
+                            new MerchantAuthInfo(
+                                    paymentRequest.getCredentials().getUsername(),
+                                    paymentRequest.getCredentials().getPassword()
+                            )
+                    );
+                    euclPaymentRequest.setMeterNo(meterNo);
+                    euclPaymentRequest.setPhoneNo(phoneNo);
+                    euclPaymentRequest.setMeterLocation(meterLocation);
+
+                    String requestRefNo = RRNGenerator.getInstance("EV").getRRN();
+
+                    euclPaymentResponse = euclService.purchaseEUCLTokens(euclPaymentRequest,requestRefNo);
+
+                    billPaymentResponse.setResponseCode(euclPaymentResponse.getStatus()); //Assuming status is same as response code
+                    billPaymentResponse.setResponseMessage(euclPaymentResponse.getMessage());
+
+                    List<TransactionData> ueclTransactionData = new ArrayList<>();
+
+                    //Extract response data from response object and set transaction data
+                    PaymentResponseData euclPaymentResponseData = euclPaymentResponse.getData();
+                    ueclTransactionData.add(TransactionData.builder().name("t24Reference")
+                            .value(euclPaymentResponseData.getT24Reference()).build());
+                    ueclTransactionData.add(TransactionData.builder().name("token")
+                            .value(euclPaymentResponseData.getToken()).build());
+                    ueclTransactionData.add(TransactionData.builder().name("unitsInKW")
+                            .value(euclPaymentResponseData.getUnitsInKW()).build());
+                    ueclTransactionData.add(TransactionData.builder().name("rrn")
+                            .value(euclPaymentResponseData.getRrn()).build());
+                    ueclTransactionData.add(TransactionData.builder().name("tid")
+                            .value(euclPaymentResponseData.getTid()).build());
+                    ueclTransactionData.add(TransactionData.builder().name("mid")
+                            .value(euclPaymentResponseData.getMid()).build());
+                    ueclTransactionData.add(TransactionData.builder().name("charges")
+                            .value(euclPaymentResponseData.getCharges()).build());
+
+                    //Set transaction data
+                    billPaymentResponse.setData(ueclTransactionData);
+                }
+
+                break;
+        }
 
 
 
         Buffer outBuffer = Buffer.buffer();
-        CustomObjectMapper mapper = new CustomObjectMapper();
         outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
         socket.write(outBuffer);
     }
