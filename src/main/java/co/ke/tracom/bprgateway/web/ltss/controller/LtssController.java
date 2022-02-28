@@ -1,5 +1,6 @@
 package co.ke.tracom.bprgateway.web.ltss.controller;
 
+import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.web.ltss.data.checkPayment.CheckPaymentRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.checkPayment.CheckPaymentResponse;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
@@ -45,6 +46,7 @@ public class LtssController {
   @PostMapping("/payment/contribution")
   public ResponseEntity<?> sendPayment(@RequestBody PaymentContributionRequest request) {
     log.info("LTSS REQUEST DATA - SEND PAYMENT CONTRIBUTION: {}", request);
+    request.setExtReferenceNo(RRNGenerator.getInstance("EH").getRRN());
     PaymentContributionResponse responseEntity = ltssService.sendPaymentContribution(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }

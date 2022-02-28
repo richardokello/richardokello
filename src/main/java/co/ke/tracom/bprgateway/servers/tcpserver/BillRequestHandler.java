@@ -349,11 +349,11 @@ public class BillRequestHandler {
                 break;
             case "01.3":
 
-            if(!transactionData.isEmpty()){
-                String meterNo= transactionData.get(0).getValue();
-                String phoneNumber=transactionData.get(1).getValue();
-                String amount=transactionData.get(2).getValue();
-                String meterLocation= transactionData.get(3).getValue();
+            if(!data.isEmpty()){
+                String meterNo= data.get(0).getValue();
+                String phoneNumber=data.get(1).getValue();
+                String amount=data.get(2).getValue();
+                String meterLocation= data.get(3).getValue();
 
 
                 euclPaymentRequest.setAmount(amount);
@@ -522,8 +522,6 @@ public class BillRequestHandler {
             break;
         }
 
-
-        }
 
         Buffer outBuffer = Buffer.buffer();
         outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
