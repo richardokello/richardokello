@@ -55,13 +55,6 @@
               "order": 5
             },
             {
-              "label": "debitAccount",
-              "type": "alphanumeric",
-              "length": 15,
-              "validated": false,
-              "order": 5
-            },
-            {
               "label": "creditAccount",
               "type": "alphanumeric",
               "length": 15,

@@ -197,7 +197,7 @@ public class BillRequestHandler {
                         TransactionData.builder().name("School Id").value(String.valueOf(validationResponse.getSchool_ide())).build());
 
                 validationData.add(
-                        TransactionData.builder().name("School Account number").value(validationResponse.getSchool_account_number()).build());
+                        TransactionData.builder().name("Credit Account").value(validationResponse.getSchool_account_number()).build());
                 validationData.add(
                         TransactionData.builder().name("Student Name").value(validationResponse.getStudent_name()).build());
                 validationData.add(
@@ -353,7 +353,7 @@ public class BillRequestHandler {
                     data.add(
                             TransactionData.builder().name("BPR Sender Name").value(list.get(0).getBprSenderName()).build());
                     data.add(
-                            TransactionData.builder().name("Local Charge Amount").value(list.get(0).getLocalCahrgeAmount()).build());
+                            TransactionData.builder().name("Charge Amount").value(list.get(0).getLocalCahrgeAmount()).build());
                     data.add(
                             TransactionData.builder().name("AB School Id").value(list.get(0).getAbSchoolId()).build());
                     data.add(
@@ -368,12 +368,12 @@ public class BillRequestHandler {
                             TransactionData.builder().name("DateTime").value(list.get(0).getDateTime()).build());
                     data.add(
                             TransactionData.builder().name("Debit Account").value(list.get(0).getDebitAcctNo()).build());
-                    data.add(
-                            TransactionData.builder().name("Credit Their Ref").value(list.get(0).getCreditTheirRef()).build());
+                   /* data.add(
+                            TransactionData.builder().name("Credit Their Ref").value(list.get(0).getCreditTheirRef()).build());*/
                     data.add(
                             TransactionData.builder().name("Bill No").value(list.get(0).getAbBillNo()).build());
-                    data.add(
-                            TransactionData.builder().name("Delivery Out Ref").value(list.get(0).getDeliveryOutRef()).build());
+                   /* data.add(
+                            TransactionData.builder().name("Delivery Out Ref").value(list.get(0).getDeliveryOutRef()).build());*/
                     tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
                     // tot24.setT24reference("Ref123");
                     tot24.setCreditacctno(payment.get("creditAccount"));

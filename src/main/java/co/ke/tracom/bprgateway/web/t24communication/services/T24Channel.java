@@ -617,18 +617,13 @@ public class T24Channel {
             AcademicTransactionData details = new AcademicTransactionData();
             // String respone = "0303,Y.SCHOOL.ID::SCHOOL ID/Y.SCHOOL.NAME::SCHOOL NAME/Y.STUDENT.NAME::STUDENT NAME/Y.STU.REG.NO::STUDENT REGNO/Y.PAY.TYPE::PAY TYPE/Y.SCHOOL.AC::SCHOOL ACCOUNT,\"45             \"\t\"Demo school              \"\t\"Gabriel  Imanikuzwe                          \"\t\"1001190067    \"\t\"          \"\t\"40810263810194      \"\n";
             String[] res = t24Response.split("/");
-            System.out.println("T24 ref no. >>"+res[0]);
-           /* if (!res[0].isEmpty()){
-                details.setT24reference(res[0]);
 
-            }*/
 
             String[] data = res[2].replace(":1:1", "").replace(".", "_").split(",");
-            // String data = res[1].replace(":2:1","");
+
 
             HashMap<String, String> t24data = new HashMap<>();
 
-           // ObjectMapper mapper = new ObjectMapper();
             if (data[0].equalsIgnoreCase("1")) {
 
                 details.setT24reference(res[0]);
@@ -638,20 +633,19 @@ public class T24Channel {
                 for (String column : data) {
                     if (ii > 0) {
                         t24data.put(column.split("=")[0], column.split("=")[1]);
-                        System.out.println("column name >> "+column.split("=")[0]+" data >> "+column.split("=")[1]);
+
                     }
                     ii++;
                 }
             } else {
                 data = res[3].split(",");
-            t24data.put("Status", "No data was retrieved");
-            details.setError(data[1]);
-            details.setT24responsecode("-1");
-            detailList.add(details);
-        }
-            if(!t24data.isEmpty()) {
-                System.out.println("map not empty");
-                // System.out.println("Amount before dash " + t24data.get("CREDIT_AMOUNT"));
+                t24data.put("Status", "No data was retrieved");
+                details.setError(data[1]);
+                details.setT24responsecode("-1");
+                detailList.add(details);
+            }
+            if (!t24data.isEmpty()) {
+
                 if (t24data.containsKey("CREDIT_AMOUNT")) {
                     if (t24data.get("CREDIT_AMOUNT").contains("_")) {
                         t24data.put("CREDIT_AMOUNT", t24data.get("CREDIT_AMOUNT").replace("_", "."));
@@ -686,9 +680,7 @@ public class T24Channel {
                     }
                 }
 
-                }
-
-
+            }
 
 
             //  t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
@@ -701,7 +693,7 @@ public class T24Channel {
                             + gatewayref
                             + " at "
                             + System.currentTimeMillis());
-            System.out.println(detailList);
+
 
         } catch (Exception ex) {
             log.info(
@@ -880,19 +872,19 @@ public class T24Channel {
         t24TXNQueue.setPostedstatus("1");
 
         GetStudentDetailsResponse student = new GetStudentDetailsResponse();
-        if(t24Response.isEmpty()){
+        if (t24Response.isEmpty()) {
 
-            student=null;
+            student = null;
         }
         try {
-            log.info("T24 response {}",t24Response);
+            log.info("T24 response {}", t24Response);
             String[] res = t24Response.split(",");
             String[] transactionStatus = res[0].split("/");
 
             // if(transactionStatus[2].equalsIgnoreCase("1")) {
 
-            if(res.length >1){
-           // if(!res[1].isEmpty()) {
+            if (res.length > 1) {
+                // if(!res[1].isEmpty()) {
                 t24Response = res[1];
                 log.info("res position 1 is : {}", t24Response);
                 String[] data = res[2].substring(1, res[2].length() - 1).split("\"");
@@ -918,10 +910,10 @@ public class T24Channel {
 
                 }
 
-            }else{
-                System.out.println("Res less than 1 "+res.length);
+            } else {
+                System.out.println("Res less than 1 " + res.length);
                 System.out.println(res[0].substring(4));
-               // 0016OFSERROR_PROCESS
+                // 0016OFSERROR_PROCESS
                 student.setStudent_name(res[0].substring(4));
             }
             t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
@@ -1068,7 +1060,6 @@ public class T24Channel {
                             } else {
                                 List<AcademicTransactionData> dataDetails = new ArrayList<>();
                                 dataDetails = parseT24AcademicBidgePayment(transactionPendingProcessing, transactionRRN);
-
 
 
                                 student.setResponseCode("00");
