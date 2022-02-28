@@ -22,4 +22,6 @@ public class BillPaymentResponse {
 
   @JsonProperty("data")
   private List<TransactionData> data = new ArrayList<>();
+
+  private List<AcademicTransactionData> paymentData = new ArrayList<>();
 }

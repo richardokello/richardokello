@@ -7,6 +7,7 @@ import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
 import io.vertx.core.net.NetServerOptions;
@@ -37,6 +38,8 @@ public class TCPServer {
 
     Vertx vertx = Vertx.vertx();
     NetServerOptions options = new NetServerOptions().setPort(Integer.parseInt(port));
+    VertxOptions options1 = new VertxOptions();
+    options1.setBlockedThreadCheckInterval(1000*60*60);
     server = vertx.createNetServer(options);
     start();
   }
@@ -49,6 +52,7 @@ public class TCPServer {
               buffer -> {
                 CustomObjectMapper mapper = new CustomObjectMapper();
                 try {
+                  //socket.close();
                   String requestPayload = buffer.toString().trim();
                   GenericRequest genericRequest =
                       mapper.readValue(requestPayload, GenericRequest.class);

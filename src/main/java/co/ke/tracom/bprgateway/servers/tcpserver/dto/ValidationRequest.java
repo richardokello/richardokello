@@ -14,8 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ValidationRequest {
-  @JsonProperty("bill")
-  private String bill;
+//  @JsonProperty("bill")
+//  private String bill;
 
   @JsonProperty("tnxType")
   private String tnxType;  // valida
@@ -23,15 +23,22 @@ public class ValidationRequest {
   @JsonProperty("credentials")
   private Credentials credentials;
 
-  @JsonProperty("data")
+ /* @JsonProperty("data")
   private List<TransactionData> data = new ArrayList<>();
 
   @JsonProperty("svcCode")
+  private String svcCode;*/
+
   private String svcCode;
 
+<<<<<<< HEAD
   @JsonProperty("field")
   private String field;
 
   @JsonProperty("value")
+=======
+  private String field;
+
+>>>>>>> efcbb2b65c6e0f7d10ac63d3583f9325e0a4220c
   private String value;
 }
