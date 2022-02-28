@@ -11,4 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MerchantcustomerInfoDeposit {
     private String username;
+    private String password;
+
 }

@@ -3,6 +3,7 @@ package co.ke.tracom.bprgateway.web.izicash.service;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.bankbranches.entity.BPRBranches;
 import co.ke.tracom.bprgateway.web.bankbranches.service.BPRBranchService;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.izicash.data.request.IZICashRequest;
 import co.ke.tracom.bprgateway.web.izicash.data.response.IZICashResponse;
 import co.ke.tracom.bprgateway.web.izicash.data.response.IZICashResponseData;
@@ -10,6 +11,7 @@ import co.ke.tracom.bprgateway.web.izicash.entities.IZICashTxnLogs;
 import co.ke.tracom.bprgateway.web.izicash.repository.IZICashTxnLogsRepository;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
+import co.ke.tracom.bprgateway.web.transactionLimits.TransactionLimitManagerService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
@@ -38,6 +40,7 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @RequiredArgsConstructor
 @Service
 public class IZICashService {
+    private final Long IZI_CASH_TRANSACTION_LIMIT_ID=9L;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService branchService;
     private final TransactionService transactionService;
@@ -45,20 +48,42 @@ public class IZICashService {
 
     private final XSwitchParameterService xSwitchParameterService;
     private final IZICashTxnLogsRepository iziCashTxnLogsRepository;
+    private final TransactionLimitManagerService limitManagerService;
 
 
     @SneakyThrows
     public IZICashResponse processWithdrawMoneyTnx(IZICashRequest request, String transactionRRN) {
         // Validate agent credentials
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        AuthenticateAgentResponse authenticateAgentResponse =null;
+        try{
+            authenticateAgentResponse =  baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        }catch (InvalidAgentCredentialsException e)
+        {
+         transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
+                 "AgentValidation","FAILED","ipAddress");
+        }
+
 
         IZICashTxnLogs iziCashTxnLogs = new IZICashTxnLogs();
+        T24TXNQueue toT24=new T24TXNQueue();
         /*
          * 01 IZI Request from external system 00 Success 06 Failure 43 Not
          * Valid Mobile Number 45 Unknown Error
          */
-        try {
 
+
+            IZICashResponse responses=new IZICashResponse();
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(IZI_CASH_TRANSACTION_LIMIT_ID, request.getAmount());
+            if (!limitValid.isValid()) {
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                        request.getAmount(), "061",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                responses.setStatus("061");
+                responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
+                return responses;
+            }
+try
+{
             //TODO Clarify
             String transactionTerminalID = "PC";
             iziCashTxnLogs.setTid(transactionTerminalID);
@@ -72,12 +97,21 @@ public class IZICashService {
             String accountBranchID = branch.getId();
 
             if (request.getMobileNo().length() < 5) {
+
+
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                        request.getAmount(), "091",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 return IZICashResponse.builder()
                         .status("091")
                         .message("Transaction processing failed. Invalid mobile no length.")
                         .data(null)
                         .build();
             }
+
+
+
+
 
             String mobileNo10 = request.getMobileNo();
             String mobileNoLast5Digits = mobileNo10.substring(mobileNo10.length() - 5);
@@ -205,6 +239,7 @@ public class IZICashService {
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;
                     } else {
+
                         System.out.printf(
                                 "IZI Cash: [Failed] Transaction %s failed processing at T24. Reconciliation to reverse IZI Cash transaction required!",
                                 transactionRRN);
@@ -237,6 +272,10 @@ public class IZICashService {
                     iziCashTxnLogs.setPassCode("*****");
                     iziCashTxnLogsRepository.save(iziCashTxnLogs);
 
+
+                    transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                            request.getAmount(), "118",
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                     return IZICashResponse.builder()
                             .data(null)
                             .status("118")
@@ -247,6 +286,9 @@ public class IZICashService {
                 iziCashTxnLogs.setGatewayT24PostingStatus("5");
                 iziCashTxnLogs.setPassCode("*****");
                 iziCashTxnLogsRepository.save(iziCashTxnLogs);
+                transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                        request.getAmount(), "092",
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
                 return IZICashResponse.builder()
                         .data(null)
                         .status("092")
@@ -258,6 +300,9 @@ public class IZICashService {
                     "IZI Cash: [Error] An error occurred processing transaction [%s] : Error message %s %n",
                     transactionRRN, e.getMessage());
             e.printStackTrace();
+            transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
+                    request.getAmount(), "908",
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
             return IZICashResponse.builder()
                     .data(null)
                     .status("908")

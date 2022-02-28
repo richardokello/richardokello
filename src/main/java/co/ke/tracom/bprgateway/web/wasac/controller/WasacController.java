@@ -34,6 +34,9 @@ public class WasacController {
 
     log.info("WASAC REQUEST DATA - CUSTOMER REQUEST: {}", request);
     CustomerProfileResponse responseEntity = wasacService.fetchCustomerProfile(request);
+    if (responseEntity.getStatus().equals("05")){
+      return new ResponseEntity<>(responseEntity, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
 
@@ -47,6 +50,9 @@ public class WasacController {
 
     log.info("WASAC REQUEST DATA - PAYMENT: {}", request);
     BillPaymentResponse responseEntity = wasacService.payWaterBill(request);
+    if (responseEntity.getResponseCode().equals("05")){
+      return new ResponseEntity<>(responseEntity, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
 
@@ -58,6 +64,9 @@ public class WasacController {
                                                         ValidationRequest validationRequest){
     log.info("WASAC REQUEST DATA - PAYMENT: {}", validationRequest);
     AcademicBridgeValidation responseEntity = wasacService.validateWaterAccount(validationRequest, "PC");
+    if (responseEntity.getResponseCode().equals("05")){
+      return new ResponseEntity<>(responseEntity, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
 }

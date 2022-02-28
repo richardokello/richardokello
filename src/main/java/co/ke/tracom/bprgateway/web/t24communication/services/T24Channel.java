@@ -56,8 +56,10 @@ public class T24Channel {
             } else {
                 System.out.println("In else of parse t24 elec inquiry");
                 System.out.println("Output length is : " + output.length);//kelvin to do
+                if(output.length>2){
                 System.out.println("Error=>" + output[3]);
                 t24TXNQueue.setT24failnarration(output[3].replace("\"", ""));
+            }else {   System.out.println("Error=> No response" );}
             }
         }
 

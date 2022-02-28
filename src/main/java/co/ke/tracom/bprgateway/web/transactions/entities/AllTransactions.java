@@ -21,7 +21,9 @@ public class AllTransactions implements java.io.Serializable {
     private String creditAccountNo;
     @Column(name = "DEBITACCTNO")
     private String debitAccountNo;
-
+//added this column to help in reporting.. differenciate PC module and POS transacations.
+    @Column(name = "TXNTYPE", columnDefinition = "varchar(30) default 'POS'")
+    private  String txnType;
     @Column(name = "INSERTTIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date insertTime;
@@ -62,12 +64,26 @@ public class AllTransactions implements java.io.Serializable {
     @Column(name = "FIELD123")
     private String field123;
 
+    public AllTransactions() {
+    }
+
     public long getTransactionNumber() {
         return transactionNumber;
     }
 
     public AllTransactions setTransactionNumber(long transactionNumber) {
         this.transactionNumber = transactionNumber;
+        return this;
+    }
+
+
+
+    public String getTxnType() {
+        return txnType;
+    }
+
+    public AllTransactions setTxnType(String txnType) {
+        this.txnType = txnType;
         return this;
     }
 
