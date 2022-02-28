@@ -303,7 +303,7 @@ public class VisionFundService {
 
     @SneakyThrows
     public CustomVerificationResponse verifyCustomer(CustomVerificationRequest verificationRequest) {
-        AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
+        /*AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
                 new MerchantAuthInfo(verificationRequest.getCredentials().getUsername(), verificationRequest.getCredentials().getPassword()));
 
         if (authenticateAgentResponse.getCode() != 200) {
@@ -312,7 +312,7 @@ public class VisionFundService {
                     .responseString("Invalid credentials")
                     .build();
         }
-        Data agentAuthData = authenticateAgentResponse.getData();
+        Data agentAuthData = authenticateAgentResponse.getData();*/
 
         String ofsFormat = "0000AENQUIRY.SELECT,,%s/%s/%s,BPR.VFR.GET.DAT,ACCT.NO:EQ=%s,MOBILE.NO:EQ=%s";
 
@@ -340,16 +340,16 @@ public class VisionFundService {
 
         if (tot24.getT24responsecode() == null || tot24.getT24responsecode().equals("3")){
 
-            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, verificationRequest.getTnxType(), "0200", 0,
-                    AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
+           /* transactionService.saveCardLessTransactionToAllTransactionTable(tot24, verificationRequest.getTnxType(), "0200", 0,
+                    AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());*/
             return CustomVerificationResponse.builder()
                     .responseCode("05")
                     .responseString("Transaction failed! "+tot24.getT24failnarration())
                     .build();
         }else{
             try{
-                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, verificationRequest.getTnxType(), "0200", 0,
-                        AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
+               /* transactionService.saveCardLessTransactionToAllTransactionTable(tot24, verificationRequest.getTnxType(), "0200", 0,
+                        AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());*/
                 return CustomVerificationResponse.builder()
                         .responseCode(AppConstants.TRANSACTION_SUCCESS_STANDARD.value())
                         .responseString(AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase())

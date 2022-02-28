@@ -10,6 +10,7 @@ import com.squareup.okhttp.Response;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -28,7 +29,8 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
   private static final String USER_AGENT = "Mozilla/5.0";
   private final Logger logger = LoggerFactory.getLogger(RestHTTPService.class);
 
-
+  @Value("${ltss.auth.basic-auth}")
+  private String basicAuth;
   public ResponseEntity<String> postRequest(Object request, String url) throws Exception {
     // Fetch Host
     /* Pack the URL for this request */
@@ -51,6 +53,33 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
         httpEntity.getBody());
     ResponseEntity<String> responseEntity =
         restTemplate.exchange(uriComponents.toString(), HttpMethod.POST, httpEntity, String.class);
+    logger.info("SERVICE RESPONSE : {} {}", responseEntity.getHeaders(), responseEntity.getBody());
+    return responseEntity;
+  }
+
+  public ResponseEntity<String> postLTSSRequest(Object request, String url) throws Exception {
+    // Fetch Host
+    /* Pack the URL for this request */
+    UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(url).build().encode();
+
+    ObjectMapper mapper = new ObjectMapper();
+    RestTemplate restTemplate = new RestTemplate();
+
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+    httpHeaders.set("Authorization","Basic "+basicAuth);
+    HttpEntity<?> httpEntity =
+            new HttpEntity<>(
+                    mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request), httpHeaders);
+
+    System.err.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
+    logger.info(
+            "SERVICE REQUEST : {} {} {}",
+            uriComponents.toString(),
+            httpEntity.getHeaders(),
+            httpEntity.getBody());
+    ResponseEntity<String> responseEntity =
+            restTemplate.exchange(uriComponents.toString(), HttpMethod.POST, httpEntity, String.class);
     logger.info("SERVICE RESPONSE : {} {}", responseEntity.getHeaders(), responseEntity.getBody());
     return responseEntity;
   }

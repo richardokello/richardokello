@@ -39,7 +39,7 @@ public class EUCLService {
     @SneakyThrows
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
         // Validate agent credentials
-<<<<<<< HEAD
+
         AuthenticateAgentResponse optionalAuthenticateAgentResponse = null;
         T24TXNQueue tot24 = new T24TXNQueue();
         try{optionalAuthenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
@@ -50,14 +50,11 @@ public class EUCLService {
             transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
                     "AgentValidation","FAILED","ipAddress");
         }
-=======
-      //  AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
->>>>>>> b3145de46f0a14cf9880671dbd2fab347bdf95fb
 
         try {
          MeterNoValidationResponse responses=new MeterNoValidationResponse();
 
-            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, request.getAmount());
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, Double.parseDouble(request.getAmount()));
             if (!limitValid.isValid()) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
                         Double.valueOf(request.getAmount()), "061",

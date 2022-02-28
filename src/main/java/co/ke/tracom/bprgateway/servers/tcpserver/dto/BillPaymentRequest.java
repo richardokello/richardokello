@@ -40,6 +40,4 @@ public class BillPaymentRequest {
   private String value;
   private Credentials credentials;
 
-  @JsonProperty("svcCode")
-  private String svcCode;
 }
