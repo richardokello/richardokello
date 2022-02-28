@@ -21,4 +21,7 @@ public class BillPaymentRequest {
 
   @JsonProperty("credentials")
   private Credentials credentials;
+
+  @JsonProperty("svcCode")
+  private String svcCode;
 }
