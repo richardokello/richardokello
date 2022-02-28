@@ -185,6 +185,7 @@ public class BillRequestHandler {
                 break;
 
 
+<<<<<<< HEAD
         }
 =======
 >>>>>>> 4d3ba2bf7dd9775ed88dea1da280a0678992792e
@@ -194,6 +195,17 @@ public class BillRequestHandler {
                     String meterNo = data.get(0).getValue();
                     String phoneNo = data.get(1).getValue();
                     long amount = Long.parseLong(data.get(2).getValue());
+=======
+            //EUCL validation
+            case "03.1":
+            case "03.2":
+
+                //Extract data from validation request object to local variables only when some data has been sent
+                if (!data.isEmpty()){
+                    String  meterNo = data.get(2).getValue();
+                    String phoneNo = data.get(1).getValue();
+                    String amount = data.get(0).getValue();
+>>>>>>> b3145de46f0a14cf9880671dbd2fab347bdf95fb
 
                     euclValidation.setAmount(amount);
                     euclValidation.setCredentials(
@@ -437,10 +449,15 @@ public class BillRequestHandler {
                 //billPaymentResponse = getBillPaymentResponse();
 
                 //Extract data from validation request object to local variables only when some data has been sent
+<<<<<<< HEAD
                 if (!data.isEmpty()) {
                     String meterNo = data.get(0).getValue();
+=======
+                if (!data.isEmpty()){
+                    String  meterNo = data.get(2).getValue();
+>>>>>>> b3145de46f0a14cf9880671dbd2fab347bdf95fb
                     String phoneNo = data.get(1).getValue();
-                    String amount = data.get(2).getValue();
+                    String amount = data.get(0).getValue();
                     String meterLocation = data.get(3).getValue();
 
                     euclPaymentRequest.setAmount(amount);

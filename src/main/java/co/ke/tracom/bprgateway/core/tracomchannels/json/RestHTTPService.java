@@ -46,7 +46,7 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
     System.err.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
     logger.info(
         "SERVICE REQUEST : {} {} {}",
-        uriComponents.toString(),
+        uriComponents,
         httpEntity.getHeaders(),
         httpEntity.getBody());
     ResponseEntity<String> responseEntity =
