@@ -27,10 +27,26 @@ public class MoneySend {
     private String fulfilmentchannel; //pos .. web
     private String fulfilmentdate; // ese
     private String fulfilmentagentid; // fulfilment agentid
+    @Column(name = "SENDMONEYTOKENSTARTTIME")
     private Long sendmoneytokenstarttime;
+    @Column(name = "SENDMONEYTOKENEXPIRETIME")
     private Long sendmoneytokenexpiretime;
     private String sendernationalid;
     private  String typeofid;
-    private String sendmoneylegt24ref; 
+    private String sendmoneylegt24ref;
+
+    //added by walter
+    //should be saved with other transaction details
+    //to be used by the scheduled background service
+    @Column(name = "TRANSACTIONRRN")
+    private String transactionRRN;
+    @Column(name = "SECONDTOKENSTARTTIME")
+    private Long sendmoneytokenstarttime2;
+    @Column(name = "SECONDTOKENEXPIRYTIME")
+    private Long sendmoneytokenexpiretime2;
+    @Column(name = "SECONDMTOKEN")
+    private String mstoken2;
+    @Column(name = "SECONDCNO")
+    private String cno2;
 
 }

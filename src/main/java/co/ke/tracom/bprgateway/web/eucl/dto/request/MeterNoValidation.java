@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 public class MeterNoValidation {
     private String meterNo;
     private String phoneNo;
-    private String amount;
+    private long amount;
     private MerchantAuthInfo credentials;
 }

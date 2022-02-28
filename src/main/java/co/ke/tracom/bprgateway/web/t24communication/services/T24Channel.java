@@ -43,8 +43,10 @@ public class  T24Channel {
                 t24TXNQueue.setCustomerName(customerName);
                 t24TXNQueue.setMeterLocation(meterLocation);
             } else {
+                if(output.length>2){
                 System.out.println("Error=>" + output[3]);
                 t24TXNQueue.setT24failnarration(output[3].replace("\"", ""));
+            }else {   System.out.println("Error=> No response" );}
             }
         }
 
