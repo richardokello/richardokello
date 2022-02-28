@@ -2,6 +2,19 @@ package co.ke.tracom.bprgateway.servers.tcpserver;
 
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
+
+import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
+import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
+import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
+
+
+import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
+import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
+import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
+
 import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
@@ -13,8 +26,12 @@ import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationRequ
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationResponse;
 import co.ke.tracom.bprgateway.web.VisionFund.service.VisionFundService;
 import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeService;
+import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeT24;
+import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
+import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
+
 import co.ke.tracom.bprgateway.web.eucl.dto.request.EUCLPaymentRequest;
 import co.ke.tracom.bprgateway.web.eucl.dto.request.MeterNoValidation;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
@@ -22,18 +39,25 @@ import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoData;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.service.EUCLService;
+
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;
 import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionResponse;
 import co.ke.tracom.bprgateway.web.ltss.service.LtssService;
+import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
+import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
+import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
 import co.ke.tracom.bprgateway.web.wasac.service.WASACService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -44,7 +68,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -53,7 +79,12 @@ import java.util.List;
 public class BillRequestHandler {
     private final WASACService wasacService;
     private final EUCLService euclService;
+    private final AcademicBridgeT24 academicBridgeT24Service;
+    private final TransactionService transactionService;
+    private final BaseServiceProcessor baseServiceProcessor;
+
     private final VisionFundService visionFundService;
+    private String billNumber;
 
     private final LtssService ltssService;
     public void menu(String requestString, BillMenusService billMenusService, NetSocket socket)
@@ -104,6 +135,7 @@ public class BillRequestHandler {
     public void validation(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         CustomObjectMapper mapper = new CustomObjectMapper();
+        AcademicBridgeValidation posResponse = null;
 
         ValidationRequest genericRequest = mapper.readValue(requestString, ValidationRequest.class);
         log.info("Validation REQUEST OBJECT: {}", genericRequest);
@@ -113,6 +145,8 @@ public class BillRequestHandler {
         //System.out.println(""+data.get(0).getValue());
 
         CustomerProfileResponse customerProfileResponse = null;
+        MeterNoValidation meterNoValidation=new MeterNoValidation();
+        MeterNoValidationResponse meterNoValidationResponse=new MeterNoValidationResponse();
         List<TransactionData> validationData = new ArrayList<>();
         AcademicBridgeValidation response = AcademicBridgeValidation.builder().build();
 
@@ -120,9 +154,25 @@ public class BillRequestHandler {
         MeterNoValidation euclValidation = new MeterNoValidation();
 
 
+        String billNumber = null;
+
         switch (genericRequest.getSvcCode() /*genericRequest.getCredentials().getSvcCode()*/) {
+
             case "01.1":
-                customerProfileResponse = null;
+            case "01.2":
+
+                if (genericRequest.getField().equalsIgnoreCase("billNumber")) {
+                    System.out.println("bill number is : " + genericRequest.getValue());
+                    customerProfileResponse = (academicBridgeT24Service.validateStudentId(genericRequest.getValue()));
+                    billNumber = genericRequest.getValue();
+                    log.info("In case 01.1");
+
+                } else {
+                    log.info("Wrong svc code and field combination :" + genericRequest.getField());
+                    customerProfileResponse.setData(null);
+                    customerProfileResponse.setMessage("Wrong svc code and field name combination");
+                    customerProfileResponse.setStatus("09");
+                }
                 break;
 
 
@@ -137,14 +187,15 @@ public class BillRequestHandler {
                 }
                 break;
 
-                //EUCL validation
+            //EUCL validation
             case "03.1":
+            case "03.2":
 
                 //Extract data from validation request object to local variables only when some data has been sent
-                if (!data.isEmpty()) {
-                    String meterNo = data.get(0).getValue();
+                if (!data.isEmpty()){
+                    String  meterNo = data.get(2).getValue();
                     String phoneNo = data.get(1).getValue();
-                    long amount = Long.parseLong(data.get(2).getValue());
+                    String amount = data.get(0).getValue();
 
                     euclValidation.setAmount(amount);
                     euclValidation.setCredentials(
@@ -173,11 +224,6 @@ public class BillRequestHandler {
                     euclTransactionData.add(TransactionData.builder().name("rrn").value(euclValidationResponseData.getRrn()).build());
 
                     response.setData(euclTransactionData);
-
-                    // todo writing response to the output stream
-
-                    //for field validation
-                    customerProfileResponse = null;
                 }
 
                 break;
@@ -216,7 +262,6 @@ public class BillRequestHandler {
                             .build());
 
                     fundResponse.setData(transactionData);
-
                     BeanUtils.copyProperties(fundResponse, response);
                     log.error("<<<<\nVision Fund Verification Completed");
                     log.error("\n[\nVision Fund Response Object\n{}\n",verificationResponse);
@@ -256,8 +301,8 @@ public class BillRequestHandler {
 
 
 
-
         writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
+
     }
 
     private void writeResponseToTCPChannel(NetSocket socket, String s) {
@@ -277,6 +322,7 @@ public class BillRequestHandler {
     private AcademicBridgeValidation getBridgeValidation(CustomerProfileResponse customerProfileResponse) {
         return getAcademicBridgeValidation(new ArrayList<>(), customerProfileResponse.getStatus(), "Transaction processing failed. Please try again");
     }
+
 
     public void billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
@@ -298,7 +344,24 @@ public class BillRequestHandler {
             case "01.1":
                 billPaymentResponse = getBillPaymentResponse();
                 break;
+            case "01.2":
+                billPaymentResponse = getBillPaymentResponse();
+                break;
+            case "01.3":
 
+            if(!transactionData.isEmpty()){
+                String meterNo= transactionData.get(0).getValue();
+                String phoneNumber=transactionData.get(1).getValue();
+                String amount=transactionData.get(2).getValue();
+                String meterLocation= transactionData.get(3).getValue();
+
+
+                euclPaymentRequest.setAmount(amount);
+                euclPaymentRequest.setCredentials(new MerchantAuthInfo(paymentRequest.getCredentials().getUsername(),
+                        paymentRequest.getCredentials().getPassword()));
+
+            }
+            break;
             //WASAC bill payment
             case "02.2":
                 //billPaymentResponse = getBillPaymentResponse();
@@ -317,8 +380,6 @@ public class BillRequestHandler {
                 break;
             //EUCL requests
             case "03.2":
-                //billPaymentResponse = getBillPaymentResponse();
-
                 //Extract data from validation request object to local variables only when some data has been sent
                 if (!data.isEmpty()) {
                     String meterNo = data.get(0).getValue();
@@ -366,7 +427,6 @@ public class BillRequestHandler {
                     //Set transaction data
                     billPaymentResponse.setData(ueclTransactionData);
                 }
-
                 break;
                 /*
                 * Vision Fund
@@ -379,6 +439,7 @@ public class BillRequestHandler {
                         VisionFundResponse fundResponse = visionFundTransaction(requestString, socket);
                         BeanUtils.copyProperties(fundResponse,billPaymentResponse);
                     }
+
                 break;
             //Ejo Heza contributions
             case "05.1":
@@ -462,6 +523,8 @@ public class BillRequestHandler {
         }
 
 
+        }
+
         Buffer outBuffer = Buffer.buffer();
         outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
         socket.write(outBuffer);
@@ -507,6 +570,18 @@ public class BillRequestHandler {
         socket.write(outBuffer);
     }
 
+
+    private BillPaymentResponse bootStrapNoAgentAccount() {
+        //List<AcademicTransactionData> paymentData = new ArrayList<>();
+        BillPaymentResponse billPaymentResponse =
+                BillPaymentResponse.builder()
+                        .responseCode("09")
+                        .responseMessage("No Agent account found")
+                        .data(null)
+                        //.paymentData(paymentData)
+                        .build();
+        return billPaymentResponse;
+}
     public VisionFundResponse visionFundTransaction(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         CustomObjectMapper mapper = new CustomObjectMapper();

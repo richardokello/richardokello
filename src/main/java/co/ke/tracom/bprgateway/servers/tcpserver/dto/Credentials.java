@@ -15,8 +15,4 @@ public class Credentials {
   private String password;
   private String serialNumber;
   private String tid;
-
- /* private String bill;
-  private List<TransactionData> data = new ArrayList<>();
-  private String svcCode;*/
 }
