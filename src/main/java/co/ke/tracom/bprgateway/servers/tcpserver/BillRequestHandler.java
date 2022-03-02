@@ -1,10 +1,9 @@
 package co.ke.tracom.bprgateway.servers.tcpserver;
 
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
+import co.ke.tracom.bprgateway.core.util.AppConstants;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.*;
 
 import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
@@ -20,7 +19,6 @@ import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.ValidationRequest;
 import co.ke.tracom.bprgateway.web.VisionFund.data.*;
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationRequest;
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationResponse;
@@ -363,6 +361,8 @@ public class BillRequestHandler {
     public void billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         //Accadermic bill payment
+        AuthenticateAgentResponse authenticateAgentResponse = null;
+        HashMap<String, String> payment = new HashMap<String, String>();
         BillPaymentResponse billPaymentResponse = new BillPaymentResponse();
         CustomObjectMapper mapper = new CustomObjectMapper();
 
@@ -377,12 +377,55 @@ public class BillRequestHandler {
 
 
         switch (paymentRequest.getSvcCode()) {
-            case "01.1":
-                billPaymentResponse = getBillPaymentResponse();
-                break;
             case "01.2":
-                billPaymentResponse = getBillPaymentResponse();
+               // billPaymentResponse = getBillPaymentResponse();
+               // List<TransactionData> data = paymentRequest.getData();
+                int ii = 0;
+                for (TransactionData column : data) {
+                    if (ii >= 0) {
+                        payment.put(column.getName(), column.getValue());
+
+                    }
+                    ii++;
+
+                }
+                MerchantAuthInfo auth = new MerchantAuthInfo();
+                /*auth.setUsername(genericRequest.getCredentials().getUsername());
+                auth.setPassword(genericRequest.getCredentials().getPassword());*/
+
+                auth.setUsername(paymentRequest.getCredentials().getUsername());
+                auth.setPassword(paymentRequest.getCredentials().getPassword());
+
+//                AuthenticateAgentResponse authenticateAgentResponse = null;
+                try {
+                    authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(auth);
+                    System.out.println("Agent account : " + authenticateAgentResponse.getData().getAccountNumber());
+                    String OFS = academicBridgeT24Service.bootstrapAcademicBridgePaymentOFSMsg(
+                            // payment.get("debitAccount"),
+                            authenticateAgentResponse.getData().getAccountNumber(),
+                            payment.get("creditAccount"),
+                            Double.parseDouble(payment.get("amount")),
+                            payment.get("senderName"),
+                            payment.get("mobileNumber"),
+                            payment.get("schoolId"),
+                            payment.get("schoolName"),
+                            payment.get("studentName"),
+                            payment.get("billNumber")
+
+                    );
+
+                    billPaymentResponse = (academicBridgeT24Service.academicBridgePayment(OFS));
+                    billPaymentResponse = getResponse(billPaymentResponse,authenticateAgentResponse,payment.get("creditAccount"));
+                } catch (InvalidAgentCredentialsException e) {
+                    billPaymentResponse = bootStrapNoAgentAccount();
+                    e.printStackTrace();
+                }
+
+
                 break;
+            /*case "01.2":
+                billPaymentResponse = getBillPaymentResponse();
+                break;*/
             case "01.3":
 
             if(!data.isEmpty()){
@@ -560,6 +603,10 @@ public class BillRequestHandler {
             break;
         }
 
+        //kelvin
+
+        //kelvin
+
 
         Buffer outBuffer = Buffer.buffer();
         outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
@@ -707,5 +754,154 @@ public class BillRequestHandler {
         outBuffer.appendString(mapper.writeValueAsString(fundResponse));
         socket.write(outBuffer);*/
         return fundResponse;
+    }
+
+
+    private BillPaymentResponse getResponse(BillPaymentResponse billPaymentResponse,
+                                            AuthenticateAgentResponse authenticateAgentResponse,
+                                            String account){
+        BillPaymentResponse response= null;
+        T24TXNQueue tot24 = new T24TXNQueue();
+        String processingStatus = null;
+        String amount = "0";
+
+
+        List<TransactionData> data = new ArrayList<>();
+        if(billPaymentResponse.getResponseMessage().equalsIgnoreCase("No Agent account found")){
+            data.add(
+                    TransactionData.builder()
+                            .name("Client Post Name")
+                            .value("POSTest").build());
+            data.add(
+                    TransactionData.builder().name("No data").value(billPaymentResponse.getResponseMessage()).build());
+            response = getAcademicBridgePayment(data, AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.value(), AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.getReasonPhrase());
+        }
+
+        List<AcademicTransactionData> list = billPaymentResponse.getPaymentData().stream().collect(Collectors.toList());
+
+        if(!list.isEmpty()) {
+            tot24.setT24responsecode(list.get(0).getT24responsecode());
+            System.out.println("t24 response code to be saved "+tot24.getT24responsecode());
+            if (list.get(0).getT24responsecode().equalsIgnoreCase("1")) {
+                System.out.println("Response code from t24 after setting  " + list.get(0).getT24reference());
+                tot24.setT24reference(list.get(0).getT24reference());
+
+
+
+                if (!list.isEmpty()) {
+                    System.out.println("Response data setting");
+                    data.add(
+                            TransactionData.builder()
+                                    .name("Client Post Name")
+                                    .value("POSTest").build());
+                    data.add(
+                            TransactionData.builder().name("Debit Customer").value(list.get(0).getDebitCustomer()).build());
+                    data.add(
+                            TransactionData.builder().name("Ordering Bank").value(String.valueOf(list.get(0).getOrderingBank())).build());
+                    data.add(
+                            TransactionData.builder().name("AB Student name").value(list.get(0).getAbStudentName()).build());
+                    data.add(
+                            TransactionData.builder().name("BPR Sender Name").value(list.get(0).getBprSenderName()).build());
+                    data.add(
+                            TransactionData.builder().name("Charge Amount").value(list.get(0).getLocalCahrgeAmount()).build());
+                    data.add(
+                            TransactionData.builder().name("AB School Id").value(list.get(0).getAbSchoolId()).build());
+                    data.add(
+                            TransactionData.builder().name("Credit Amount").value(list.get(0).getCreditAmount()).build());
+                    data.add(
+                            TransactionData.builder().name("Biller Id").value(list.get(0).getBillerId()).build());
+                    data.add(
+                            TransactionData.builder().name("AB School Name").value(list.get(0).getAbSchoolName()).build());
+                    data.add(
+                            TransactionData.builder().name("Mobile No").value(list.get(0).getMobileNo()).build());
+                    data.add(
+                            TransactionData.builder().name("DateTime").value(list.get(0).getDateTime()).build());
+                    data.add(
+                            TransactionData.builder().name("Debit Account").value(list.get(0).getDebitAcctNo()).build());
+                   /* data.add(
+                            TransactionData.builder().name("Credit Their Ref").value(list.get(0).getCreditTheirRef()).build());*/
+                    data.add(
+                            TransactionData.builder().name("Bill No").value(list.get(0).getAbBillNo()).build());
+                    /*data.add(
+                            TransactionData.builder().name("Delivery Out Ref").value(list.get(0).getDeliveryOutRef()).build());*/
+                    tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
+                    // tot24.setT24reference("Ref123");
+                    tot24.setCreditacctno(account);
+                    amount = list.get(0).getCreditAmount();
+
+                    response = getAcademicBridgePayment(data, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
+
+                    processingStatus = "000";
+                } else {
+                    data.add(
+                            TransactionData.builder()
+                                    .name("Client Post Name")
+                                    .value("POSTest").build());
+                    data.add(
+                            TransactionData.builder().name("No data").value("Something went wrong during the transaction").build());
+                    tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
+
+                    tot24.setCreditacctno(null);
+                    amount = "0";
+
+                    response = getAcademicBridgePayment(data, AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.value(), AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.getReasonPhrase());
+
+
+                    processingStatus = "10";
+                }
+            } else {
+                System.out.println("Transaction not successful >> "+list.get(0).getT24responsecode());
+                data.add(
+                        TransactionData.builder()
+                                .name("Client Post Name")
+                                .value("POSTest").build());
+                data.add(
+                        TransactionData.builder().name("No data").value(list.get(0).getError()).build());
+
+                amount = "0";
+                processingStatus = "10";
+                response = getAcademicBridgePayment(data, AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.value(), AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.getReasonPhrase());
+
+            }
+        }else{
+
+            tot24.setT24responsecode("-1");
+            data.add(
+                    TransactionData.builder()
+                            .name("Client Post Name")
+                            .value("POSTest").build());
+            data.add(
+                    TransactionData.builder().name("No data").value(list.get(0).getError()).build());
+
+            amount = "0";
+            processingStatus = "10";
+            response = getAcademicBridgePayment(data, AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.value(), AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.getReasonPhrase());
+
+        }
+
+        /*Buffer outBuffer = Buffer.buffer();
+        CustomObjectMapper mappe = new CustomObjectMapper();
+        outBuffer.appendString(mappe.writeValueAsString(billPaymentResponse));*/
+
+
+        try {
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "ACADEMIC BRIDGE", "1200",
+                    Double.valueOf(amount), processingStatus,
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());//Replace with actua data after successfull login credentials fro POS
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+
+    private BillPaymentResponse getAcademicBridgePayment(List<TransactionData> validationData, String value, String reasonPhrase) {
+        return BillPaymentResponse.builder()
+                .responseCode(value)
+                .responseMessage(reasonPhrase)
+                .data(validationData)
+                .build();
     }
 }
