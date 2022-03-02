@@ -381,6 +381,7 @@ public class BillRequestHandler {
                 break;
             //EUCL requests
             case "03.2":
+                case"03.1":
                 //Extract data from validation request object to local variables only when some data has been sent
                 if (!data.isEmpty()) {
                     String meterNo = data.get(0).getValue();
