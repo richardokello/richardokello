@@ -350,10 +350,10 @@ public class BillRequestHandler {
             case "01.3":
 
             if(!data.isEmpty()){
-                String meterNo= data.get(0).getValue();
+                String amount= data.get(0).getValue();
                 String phoneNumber=data.get(1).getValue();
-                String amount=data.get(2).getValue();
-                String meterLocation= data.get(3).getValue();
+                String meterNo = data.size()>2? data.get(2).getValue():"00";
+                String meterLocation= data.size()>3 ?data.get(3).getValue():"No location";
 
 
                 euclPaymentRequest.setAmount(amount);
@@ -384,10 +384,10 @@ public class BillRequestHandler {
                 case"03.1":
                 //Extract data from validation request object to local variables only when some data has been sent
                 if (!data.isEmpty()) {
-                    String meterNo = data.get(0).getValue();
+                    String amount = data.get(0).getValue();
                     String phoneNo = data.get(1).getValue();
-                    String amount = data.get(2).getValue();
-                    String meterLocation = data.get(3).getValue();
+                    String meterNo = data.size()>2? data.get(2).getValue():"00";
+                    String meterLocation= data.size()>3 ?data.get(3).getValue():"No location";
 
                     euclPaymentRequest.setAmount(amount);
                     euclPaymentRequest.setCredentials(
