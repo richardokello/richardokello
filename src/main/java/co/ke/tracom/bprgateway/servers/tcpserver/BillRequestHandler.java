@@ -162,10 +162,46 @@ public class BillRequestHandler {
             case "01.2":
 
                 if (genericRequest.getField().equalsIgnoreCase("billNumber")) {
-                    System.out.println("bill number is : " + genericRequest.getValue());
+
                     customerProfileResponse = (academicBridgeT24Service.validateStudentId(genericRequest.getValue()));
                     billNumber = genericRequest.getValue();
-                    log.info("In case 01.1");
+                    response.setResponseCode("00");
+                    response.setResponseMessage("Transaction successful");
+                    List<TransactionData> transactionData = new ArrayList<>();
+                    GetStudentDetailsResponse customerProfileResponseData = customerProfileResponse.getData();
+                    transactionData.add(TransactionData.builder()
+                                    .name("Billnumber")
+                                    .value(customerProfileResponseData.getStudent_reg_number())
+                            .build()
+                    );
+                    transactionData.add(TransactionData.builder()
+                            .name("StudentName")
+                            .value(customerProfileResponseData.getStudent_name())
+                            .build()
+                    );
+                    transactionData.add(TransactionData.builder()
+                            .name("SchoolName")
+                            .value(customerProfileResponseData.getSchool_name())
+                            .build()
+                    );
+                    transactionData.add(TransactionData.builder()
+                            .name("SchoolAccount")
+                            .value(customerProfileResponseData.getSchool_account_number())
+                            .build()
+                    );
+                    transactionData.add(TransactionData.builder()
+                            .name("StudentName")
+                            .value(customerProfileResponseData.getStudent_name())
+                            .build()
+                    );
+                    transactionData.add(TransactionData.builder()
+                            .name("SchoolId")
+                            .value(String.valueOf(customerProfileResponseData.getSchool_ide()))
+                            .build()
+                    );
+
+                    response.setData(transactionData);
+
 
                 } else {
                     log.info("Wrong svc code and field combination :" + genericRequest.getField());
@@ -339,7 +375,7 @@ public class BillRequestHandler {
         EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder().build();
         EUCLPaymentRequest euclPaymentRequest = new EUCLPaymentRequest();
 
-        //kelvin
+
         switch (paymentRequest.getSvcCode()) {
             case "01.1":
                 billPaymentResponse = getBillPaymentResponse();
