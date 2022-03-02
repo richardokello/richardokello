@@ -391,7 +391,7 @@ public class T24Channel {
         log.info(
                 "Processing initialization for Transaction RRN [{}] at [{}] OFS Request: [{}]",
                 transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), t24RequestOFS);
-        System.out.println("Pcode is : " + transactionPendingProcessing.getProcode());
+
 
         TelnetClient telnetClient = new TelnetClient();
         try {
@@ -456,7 +456,7 @@ public class T24Channel {
                 transactionPendingProcessing.setPostedstatus("4");
                 transactionPendingProcessing.setT24failnarration("UNEXPECTED RESPONSE FROM REMOTE SYSTEM");
             } else {
-                System.out.println("Pcode in else is : " + transactionPendingProcessing.getProcode());
+
                 try {
                     switch (transactionPendingProcessing.getProcode() == null ? "" : transactionPendingProcessing.getProcode()) {
                         case "460001":
@@ -574,7 +574,7 @@ public class T24Channel {
             int datalen = -1;
             log.info("the data recieved from T24 is {}" + len);
 
-            System.out.println("thread is : " + client.getReaderThread());
+
 
 
             // System.out.println(client.getInputStream().read(buf) >1);
@@ -718,7 +718,7 @@ public class T24Channel {
         log.info(
                 "Processing initialization for Transaction RRN [{}] at [{}] OFS Request: [{}]",
                 transactionRRN, GATEWAY_SERVER_DATE_FORMAT.format(new Date()), t24RequestOFS);
-        System.out.println("Pcode is : " + transactionPendingProcessing.getProcode());
+
 
         TelnetClient telnetClient = new TelnetClient();
         try {
@@ -913,9 +913,8 @@ public class T24Channel {
                 }
 
             } else {
-                System.out.println("Res less than 1 " + res.length);
-                System.out.println(res[0].substring(4));
-                // 0016OFSERROR_PROCESS
+                log.info("Response {}",res[0].substring(4));
+
                 student.setStudent_name(res[0].substring(4));
             }
             t24TXNQueue.setAttempts(t24TXNQueue.getAttempts() < 1 ? 1 : t24TXNQueue.getAttempts() + 1);
