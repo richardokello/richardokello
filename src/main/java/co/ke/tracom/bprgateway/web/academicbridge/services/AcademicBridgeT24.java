@@ -108,7 +108,10 @@ public class AcademicBridgeT24 {
     public String bootstrapAcademicBridgePaymentOFSMsg(String debitAcc, String creditAcc, double amount, String sender,
                                                        String phone, String schoolId, String schoolName, String studentName,
                                                        String billNumber) {
-        return "0000AFUNDS.TRANSFER,BPR.ACB.PAY.AGB/I/PROCESS,INPUTT/123123/RW0010461,,TRANSACTION.TYPE::=ACAB,DEBIT.ACCT.NO::="
+       // return "0000AFUNDS.TRANSFER,BPR.ACB.PAY.AGB/I/PROCESS,INPUTT/123123/RW0010461,,TRANSACTION.TYPE::=ACAB,DEBIT.ACCT.NO::="
+
+
+        return "0000AFUNDS.TRANSFER,BPR.ACB.PAY.AGB/I/PROCESS,"+getT24UserName()+"/"+getT24Password()+"/RW0010461,,TRANSACTION.TYPE::=ACAB,DEBIT.ACCT.NO::="
                 + debitAcc
                 + ","
                 + "DEBIT.CURRENCY::=RWF,"
