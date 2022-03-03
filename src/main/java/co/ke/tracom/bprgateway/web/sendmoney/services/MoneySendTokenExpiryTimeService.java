@@ -84,7 +84,7 @@ public class MoneySendTokenExpiryTimeService {
                             String passCode = String.format("%06d", 100000 + generator.nextInt(899999));
                             System.out.println();
 
-                            Duration secondDurationByConfigurationName = tokenDurationService.getSecondDurationByConfigurationName("BPR_TET");
+                            Duration secondDurationByConfigurationName = tokenDurationService.getSecondDurationByConfigurationName(tokenConfigurationName);
                             long sendmoneytokenexpirytime2 = Instant.ofEpochMilli(sendMoneyExpiryTime).plus(secondDurationByConfigurationName).toEpochMilli();
                             SMSRequest senderMessage2 = saveSenderMessage2(amount, transactionRRN, receiverMobile, senderMobileNo, passCode, vCardNo, l.getMoneysendid(),sendmoneytokenexpirytime2);
 
@@ -94,8 +94,12 @@ public class MoneySendTokenExpiryTimeService {
                                 log.info("Sender SMS Response[" + transactionRRN + "]: " + senderResponse.toString());
 
                                 //then save new vcard and passcode
-                                l.setMstoken2(passCode);
-                                l.setCno2(generatedCardNo);
+                                l.setMstoken2(l.getMstoken());
+                                l.setCno2(l.getCno());
+                                l.setMstoken(passCode);
+                                l.setCno(generatedCardNo);
+                                l.setRecevernumber(l.getSendernumber());
+
                                 //use the exact configuration name
 
 
@@ -135,8 +139,7 @@ public class MoneySendTokenExpiryTimeService {
         scheduledSMS.setSendMoneyId(sendMoneyId);
         scheduledSMS.setSendmoneytokenstarttime(sendmoneytokenstarttime);
         scheduledSMSRepository.save(scheduledSMS);
-        System.out.println("00000000000000000000000000000000000000");
-        System.err.println(utilityService.decryptText(scheduledSMS.getMessage()));
+        log.error("\n00000000000000000000000000000000000000\n{}\n00000000000000000000000000000000000000\n",utilityService.decryptText(scheduledSMS.getMessage()));
 
         return fdismsRequest;
     }
