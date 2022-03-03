@@ -440,7 +440,7 @@ public class BillRequestHandler {
 
             case "01.3":
 
-            if(!data.isEmpty()){
+            /*if(!data.isEmpty()){
                 String amount= data.get(0).getValue();
                 String phoneNumber=data.get(1).getValue();
                 String meterNo = data.size()>2? data.get(2).getValue():"00";
@@ -452,7 +452,8 @@ public class BillRequestHandler {
                         paymentRequest.getCredentials().getPassword()));
 
             }
-            break;
+            break;*/
+
             //WASAC bill payment
             case "02.2":
                 //billPaymentResponse = getBillPaymentResponse();
