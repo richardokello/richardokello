@@ -227,9 +227,10 @@ public class BillRequestHandler {
 
                 //Extract data from validation request object to local variables only when some data has been sent
                 if (!data.isEmpty()){
-                    String  meterNo = data.get(2).getValue();
-                    String phoneNo = data.get(1).getValue();
-                    String amount = data.get(0).getValue();
+                    String amount= data.get(0).getValue();
+                    String phoneNumber=data.get(1).getValue();
+                    String meterNo = data.size()>2? data.get(2).getValue():"00";
+                    String meterLocation= data.size()>3 ?data.get(3).getValue():"No location";
 
                     euclValidation.setAmount(amount);
                     euclValidation.setCredentials(
@@ -239,7 +240,7 @@ public class BillRequestHandler {
                             )
                     );
                     euclValidation.setMeterNo(meterNo);
-                    euclValidation.setPhoneNo(phoneNo);
+                    euclValidation.setPhoneNo(phoneNumber);
                     String requestRefNo = RRNGenerator.getInstance("EV").getRRN();
                     euclValidationResponse = euclService.validateEUCLMeterNo(euclValidation, requestRefNo);
 
