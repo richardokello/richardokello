@@ -1,5 +1,6 @@
 package co.ke.tracom.bprgateway.web.wasac.data.customerprofile;
 
+import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -20,8 +21,9 @@ public class CustomerProfileResponse {
 
     private String message;
 
-    @JsonProperty("response")
-    private Response data;
+   /* @JsonProperty("response")
+    private Response data;*/
+    private GetStudentDetailsResponse data;
 
     @Override
     public String toString() {

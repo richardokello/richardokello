@@ -13,6 +13,7 @@ public class Menu {
   /* Name of bill Menu*/
   private String name;
   private boolean hasSubMenu;
+  private String svcCode;
   /* List of all sub menu items - empty if menu does not have submenus
    * A sub menu is a menu */
   private List<Menu> submenu;

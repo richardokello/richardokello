@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MeterNoValidation {
-    private String meterNo;
+    private String amount;
     private String phoneNo;
-    private long amount;
+    private String meterNo;
     private MerchantAuthInfo credentials;
 }

@@ -39,6 +39,7 @@ public class EUCLService {
     @SneakyThrows
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
         // Validate agent credentials
+
         AuthenticateAgentResponse optionalAuthenticateAgentResponse = null;
         T24TXNQueue tot24 = new T24TXNQueue();
         try{optionalAuthenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
@@ -53,7 +54,7 @@ public class EUCLService {
         try {
          MeterNoValidationResponse responses=new MeterNoValidationResponse();
 
-            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, request.getAmount());
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, Double.parseDouble(request.getAmount()));
             if (!limitValid.isValid()) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
                         Double.valueOf(request.getAmount()), "061",
@@ -266,8 +267,14 @@ public class EUCLService {
             String errorMessage =
                     tot24.getT24failnarration() == null ? "" : tot24.getT24failnarration();
             if (errorMessage.isEmpty()) {
+                boolean manual =false;
+                if (tot24.getT24responsecode() == null && tot24.getResponseleg().length() > 150){
+                    //extract data  manually
+                    manualExtraction(tot24,tot24.getResponseleg());
+                    manual =true;
+                }
 
-                if (tot24.getT24responsecode().equals("1")) {
+                if (manual || tot24.getT24responsecode().equals("1")) {
 
                     elecTxnLogs.setGateway_t24postingstatus("1");
                     elecTxnLogs.setToken_no(tot24.getTokenNo());
@@ -352,5 +359,14 @@ public class EUCLService {
                     .message("EUCL transaction failed. An exception occurred")
                     .data(paymentResponseData).build();
         }
+    }
+
+    private void manualExtraction(T24TXNQueue tot24, String responseleg) {
+        String[] split = responseleg.split(",");
+        tot24.setT24reference(split[0].split("/")[0]);
+        String[] token = split[27].split(":");
+        tot24.setTokenNo(token[3].split("-")[0]);
+        tot24.setUnitsKw(token[4]);
+        tot24.setGatewayref(split[15].split("=")[1]);
     }
 }
