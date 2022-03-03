@@ -98,7 +98,7 @@ public class MoneySendTokenExpiryTimeService {
                                 l.setCno2(l.getCno());
                                 l.setMstoken(passCode);
                                 l.setCno(generatedCardNo);
-                                l.setRecevernumber(l.getSendernumber());
+                                l.setRecevernumber(senderMobileNo);
 
                                 //use the exact configuration name
 

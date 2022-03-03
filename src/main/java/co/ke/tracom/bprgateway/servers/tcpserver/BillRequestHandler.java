@@ -3,33 +3,19 @@ package co.ke.tracom.bprgateway.servers.tcpserver;
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
 import co.ke.tracom.bprgateway.core.util.AppConstants;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
+import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
+import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.*;
-
-import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
-import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
-import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
-
-
-import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
-import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
-import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
-
-import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
-import co.ke.tracom.bprgateway.servers.tcpserver.data.billMenu.BillMenuRequest;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
 import co.ke.tracom.bprgateway.web.VisionFund.data.*;
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationRequest;
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationResponse;
 import co.ke.tracom.bprgateway.web.VisionFund.service.VisionFundService;
+import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
 import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeService;
 import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeT24;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
-import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
-
 import co.ke.tracom.bprgateway.web.eucl.dto.request.EUCLPaymentRequest;
 import co.ke.tracom.bprgateway.web.eucl.dto.request.MeterNoValidation;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.EUCLPaymentResponse;
@@ -37,7 +23,6 @@ import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoData;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.MeterNoValidationResponse;
 import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.service.EUCLService;
-
 import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
@@ -52,18 +37,14 @@ import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
 import co.ke.tracom.bprgateway.web.wasac.service.WASACService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -439,7 +420,7 @@ public class BillRequestHandler {
 
                 break;
 
-            case "01.3":
+
 
             /*if(!data.isEmpty()){
                 String amount= data.get(0).getValue();
