@@ -157,48 +157,67 @@ public class BillRequestHandler {
         switch (genericRequest.getSvcCode() /*genericRequest.getCredentials().getSvcCode()*/) {
 
             case "01.1":
+                //Validation Academic bridge
             case "01.2":
 
                 if (genericRequest.getField().equalsIgnoreCase("billNumber")) {
 
                     customerProfileResponse = (academicBridgeT24Service.validateStudentId(genericRequest.getValue()));
                     billNumber = genericRequest.getValue();
-                    response.setResponseCode("00");
-                    response.setResponseMessage("Transaction successful");
                     List<TransactionData> transactionData = new ArrayList<>();
-                    GetStudentDetailsResponse customerProfileResponseData = customerProfileResponse.getData();
-                    transactionData.add(TransactionData.builder()
-                                    .name("Billnumber")
-                                    .value(customerProfileResponseData.getStudent_reg_number())
-                            .build()
-                    );
-                    transactionData.add(TransactionData.builder()
-                            .name("StudentName")
-                            .value(customerProfileResponseData.getStudent_name())
-                            .build()
-                    );
-                    transactionData.add(TransactionData.builder()
-                            .name("SchoolName")
-                            .value(customerProfileResponseData.getSchool_name())
-                            .build()
-                    );
-                    transactionData.add(TransactionData.builder()
-                            .name("SchoolAccount")
-                            .value(customerProfileResponseData.getSchool_account_number())
-                            .build()
-                    );
-                    transactionData.add(TransactionData.builder()
-                            .name("StudentName")
-                            .value(customerProfileResponseData.getStudent_name())
-                            .build()
-                    );
-                    transactionData.add(TransactionData.builder()
-                            .name("SchoolId")
-                            .value(String.valueOf(customerProfileResponseData.getSchool_ide()))
-                            .build()
-                    );
 
-                    response.setData(transactionData);
+                    if(customerProfileResponse != null && customerProfileResponse.getData().getSchool_ide()>1) {
+                        response.setResponseCode("00");
+
+                        response.setResponseMessage("Transaction successful");
+
+
+                        GetStudentDetailsResponse customerProfileResponseData = customerProfileResponse.getData();
+                        transactionData.add(TransactionData.builder()
+                                .name("Billnumber")
+                                .value(customerProfileResponseData.getStudent_reg_number())
+                                .build()
+                        );
+                        transactionData.add(TransactionData.builder()
+                                .name("StudentName")
+                                .value(customerProfileResponseData.getStudent_name())
+                                .build()
+                        );
+                        transactionData.add(TransactionData.builder()
+                                .name("SchoolName")
+                                .value(customerProfileResponseData.getSchool_name())
+                                .build()
+                        );
+                        transactionData.add(TransactionData.builder()
+                                .name("SchoolAccount")
+                                .value(customerProfileResponseData.getSchool_account_number())
+                                .build()
+                        );
+                        transactionData.add(TransactionData.builder()
+                                .name("StudentName")
+                                .value(customerProfileResponseData.getStudent_name())
+                                .build()
+                        );
+                        transactionData.add(TransactionData.builder()
+                                .name("SchoolId")
+                                .value(String.valueOf(customerProfileResponseData.getSchool_ide()))
+                                .build()
+                        );
+
+                        response.setData(transactionData);
+                    }else{
+                        response.setResponseCode("10");
+
+                        response.setResponseMessage("Something went wrong");
+                        transactionData.add(TransactionData.builder()
+                                .name("Data")
+                                .value(String.valueOf(customerProfileResponse.getData().getStudent_name()))
+                                .build()
+                        );
+                        response.setData(transactionData);
+
+                    }
+
 
 
                 } else {
@@ -362,7 +381,7 @@ public class BillRequestHandler {
             throws JsonProcessingException, UnprocessableEntityException {
         //Accadermic bill payment
         AuthenticateAgentResponse authenticateAgentResponse = null;
-        HashMap<String, String> payment = new HashMap<String, String>();
+        HashMap<String, String> payment = new HashMap();
         BillPaymentResponse billPaymentResponse = new BillPaymentResponse();
         CustomObjectMapper mapper = new CustomObjectMapper();
 
@@ -377,9 +396,8 @@ public class BillRequestHandler {
 
 
         switch (paymentRequest.getSvcCode()) {
+            //Academic bridge Payment
             case "01.2":
-               // billPaymentResponse = getBillPaymentResponse();
-               // List<TransactionData> data = paymentRequest.getData();
                 int ii = 0;
                 for (TransactionData column : data) {
                     if (ii >= 0) {
@@ -390,18 +408,14 @@ public class BillRequestHandler {
 
                 }
                 MerchantAuthInfo auth = new MerchantAuthInfo();
-                /*auth.setUsername(genericRequest.getCredentials().getUsername());
-                auth.setPassword(genericRequest.getCredentials().getPassword());*/
-
                 auth.setUsername(paymentRequest.getCredentials().getUsername());
                 auth.setPassword(paymentRequest.getCredentials().getPassword());
 
-//                AuthenticateAgentResponse authenticateAgentResponse = null;
+//
                 try {
                     authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(auth);
-                    System.out.println("Agent account : " + authenticateAgentResponse.getData().getAccountNumber());
+
                     String OFS = academicBridgeT24Service.bootstrapAcademicBridgePaymentOFSMsg(
-                            // payment.get("debitAccount"),
                             authenticateAgentResponse.getData().getAccountNumber(),
                             payment.get("creditAccount"),
                             Double.parseDouble(payment.get("amount")),
@@ -423,9 +437,7 @@ public class BillRequestHandler {
 
 
                 break;
-            /*case "01.2":
-                billPaymentResponse = getBillPaymentResponse();
-                break;*/
+
             case "01.3":
 
             if(!data.isEmpty()){
@@ -603,11 +615,6 @@ public class BillRequestHandler {
             break;
         }
 
-        //kelvin
-
-        //kelvin
-
-
         Buffer outBuffer = Buffer.buffer();
         outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
         socket.write(outBuffer);
@@ -655,13 +662,13 @@ public class BillRequestHandler {
 
 
     private BillPaymentResponse bootStrapNoAgentAccount() {
-        //List<AcademicTransactionData> paymentData = new ArrayList<>();
+
         BillPaymentResponse billPaymentResponse =
                 BillPaymentResponse.builder()
                         .responseCode("09")
                         .responseMessage("No Agent account found")
                         .data(null)
-                        //.paymentData(paymentData)
+
                         .build();
         return billPaymentResponse;
 }
@@ -893,6 +900,8 @@ public class BillRequestHandler {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        log.error("[\nACADEMIC BRIDGE PAYMENT RESPONSE : \n{}\n]\n>>>>", response);
 
         return response;
     }
