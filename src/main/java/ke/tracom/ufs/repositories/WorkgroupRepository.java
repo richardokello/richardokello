@@ -26,5 +26,4 @@ public interface WorkgroupRepository extends CrudRepository<UfsWorkgroup, Long> 
     Optional<UfsWorkgroup> findById(Long aLong);
 
     public UfsWorkgroup findByGroupIdAndIntrash(Long groupId,String intrash);
-    UfsWorkgroup findByUserId(long userid);
 }

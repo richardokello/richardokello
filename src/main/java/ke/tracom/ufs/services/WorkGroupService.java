@@ -13,5 +13,4 @@ public interface WorkGroupService {
     public UfsWorkgroup saveWorkgroup(UfsWorkgroup ufsWorkgroup);
 
     public UfsWorkgroup findWorkgroupById(Long groupId);
-    UfsWorkgroup findByUserId(long userid);
 }

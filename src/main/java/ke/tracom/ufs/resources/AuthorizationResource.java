@@ -12,18 +12,12 @@ import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.exceptions.GeneralBadRequest;
 import ke.axle.chassis.exceptions.NotFoundException;
 import ke.axle.chassis.wrappers.ResponseWrapper;
-import ke.tracom.ufs.entities.UfsAuthentication;
-import ke.tracom.ufs.entities.UfsOtp;
-import ke.tracom.ufs.entities.UfsOtpCategory;
-import ke.tracom.ufs.entities.UfsUser;
+import ke.tracom.ufs.entities.*;
 import ke.tracom.ufs.entities.wrapper.OtpConfigWrapper;
 import ke.tracom.ufs.repositories.*;
 import ke.tracom.ufs.security.CustomUserDetails;
 import ke.tracom.ufs.security.OtpOAuth2AccessToken;
-import ke.tracom.ufs.services.AuthTokenReplication;
-import ke.tracom.ufs.services.CustomUserService;
-import ke.tracom.ufs.services.UserService;
-import ke.tracom.ufs.services.WorkGroupService;
+import ke.tracom.ufs.services.*;
 import ke.tracom.ufs.services.template.FileStorageService;
 import ke.tracom.ufs.services.template.LoggerServiceTemplate;
 import ke.tracom.ufs.services.template.NotifyServiceTemplate;
@@ -53,7 +47,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -75,6 +71,7 @@ public class AuthorizationResource {
     private final NotifyServiceTemplate notifyService;
     private final OTPRepository otpRepository;
     private final WorkGroupService workGroupService;
+    private final UserWorkGroupService userWorkGroupService;
     @Autowired
     UserAccountService accService;
     @Autowired
@@ -92,7 +89,7 @@ public class AuthorizationResource {
 
     public AuthorizationResource(TokenStore tokenStore, @Qualifier("mainUserService") UserService userService,
                                  UserRepository userRepository, LoggerServiceTemplate loggerService, PasswordEncoder encoder, CustomUserService customUserService, AuthenticationRepository authRepository,
-                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository, WorkGroupService workGroupService) {
+                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository, WorkGroupService workGroupService, UserWorkGroupService userWorkGroupService) {
         this.tokenStore = tokenStore;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -103,6 +100,7 @@ public class AuthorizationResource {
         this.notifyService = notifyService;
         this.otpRepository = otpRepository;
         this.workGroupService = workGroupService;
+        this.userWorkGroupService = userWorkGroupService;
     }
 
     //@RequestMapping("/test")
@@ -358,10 +356,14 @@ public class AuthorizationResource {
         authRepository.save(dbAuth);
 
         // replicate user information if the user belongs to superuser workgroup
-        String workGroupName = workGroupService.findByUserId(dbAuth.getUserId()).getGroupName();
-        if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)){
-            userService.replicateUserInfo(dbAuth.getUsername());
-        }
+        List<UfsUserWorkgroup> userWorkgroupList = userWorkGroupService.findAllByUserId(dbAuth.getUserId());
+        userWorkgroupList.forEach(ufsUserWorkgroup -> {
+            BigDecimal workGroupId = ufsUserWorkgroup.getGroupId();
+            String workGroupName = workGroupService.findWorkgroupById(workGroupId.longValue()).getGroupName();
+            if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)){
+                userService.replicateUserInfo(dbAuth.getUsername());
+            }
+        });
         response.setMessage("Password changed successfully. You can now login to your account");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
