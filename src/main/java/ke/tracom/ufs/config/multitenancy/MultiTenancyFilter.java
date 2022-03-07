@@ -46,11 +46,10 @@ public class MultiTenancyFilter extends OncePerRequestFilter{
 
             if(tenantName == null) {
                 ThreadLocalStorage.setTenantName("0");
-                ThreadLocalStorage.setTenantName("en");
+                ThreadLocalStorage.setLanguage("en");
             }
 
             System.out.println("Tenant name >>>> [" + ThreadLocalStorage.getTenantName() +"] and language "+ language +" in mutlitenant filter");
-
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
     }
