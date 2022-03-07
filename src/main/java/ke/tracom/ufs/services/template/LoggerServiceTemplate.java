@@ -3,6 +3,8 @@ package ke.tracom.ufs.services.template;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ke.axle.chassis.utils.LoggerService;
+import ke.tracom.ufs.config.multitenancy.ThreadLocalStorage;
+import ke.tracom.ufs.utils.EmailBody;
 import ke.tracom.ufs.wrappers.IsInitiatorResonseEntity;
 import ke.tracom.ufs.wrappers.IsInitiatorWrapper;
 import ke.tracom.ufs.wrappers.LogExtras;
@@ -11,12 +13,18 @@ import lombok.extern.apachecommons.CommonsLog;
 import net.bytebuddy.implementation.auxiliary.AuxiliaryType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 /**
@@ -55,7 +63,24 @@ public class LoggerServiceTemplate implements LoggerService {
             e.printStackTrace();
         }
         executor.execute(() -> {
-            restTemplate.postForEntity(url + "ufs-logger-service/api/v1/logger/log", logs, LogWrapper.class);
+            //
+            HttpServletRequest req =
+                    ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
+                            .getRequest();
+
+            String tenant = req.getHeader("X-TenantID");
+            HttpEntity<LogWrapper> request = new HttpEntity<>(logs);
+            HttpHeaders headers = request.getHeaders();
+            Enumeration<String> headerNames = req.getHeaderNames();
+
+            while (headerNames.hasMoreElements()) {
+                String header = headerNames.nextElement();
+                headers.add(header, req.getHeader(header));
+            }
+//            ThreadLocalStorage.setTenantName(tenant);
+//            restTemplate.postForEntity(url + "ufs-logger-service/api/v1/logger/log", logs, LogWrapper.class);
+
+            restTemplate.exchange(url + "ufs-logger-service/api/v1/logger/log", HttpMethod.POST, request, LogWrapper.class);
         });
     }
 

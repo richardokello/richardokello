@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- *
  * @author Cornelius M
  */
 @Component
@@ -34,16 +33,17 @@ public class ResponseFilter implements Filter {
         FilterInvocation fi = new FilterInvocation(request, response, chain);
 
         log.info("Found filter: url " + fi.getRequestUrl().contains("/oauth/token") + " and method " + fi.getHttpRequest().getMethod());
-       fi.getHttpResponse().setHeader("Access-Control-Allow-Origin", "*");
+        fi.getHttpResponse().setHeader("Access-Control-Allow-Origin", "*");
         fi.getHttpResponse().setHeader("Access-Control-Allow-Credentials", "true");
         fi.getHttpResponse().setHeader("cache-control", "public");
         fi.getHttpResponse().setHeader("origin", "*");
         fi.getHttpResponse().setHeader("Vary", "origin");
         fi.getHttpResponse().setHeader("Access-Control-Allow-Headers", "Authorization, cache-control, Accept, Accept-Language, Content-Language, Content-Type");
-        if (fi.getRequestUrl().contains("/oauth/token")
-                && fi.getHttpRequest().getMethod().equalsIgnoreCase("OPTIONS")) {
+        if (fi.getRequestUrl().contains("/oauth/token") && fi.getHttpRequest().getMethod().equalsIgnoreCase("OPTIONS")) {
             fi.getHttpResponse().setStatus(200);
         } else {
+            // check whether all header items are available
+            log.info("Filter: url " + fi.getRequestUrl() + " and method " + fi.getHttpRequest().getMethod());
             chain.doFilter(request, response);
         }
     }
@@ -52,5 +52,4 @@ public class ResponseFilter implements Filter {
     public void destroy() {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }

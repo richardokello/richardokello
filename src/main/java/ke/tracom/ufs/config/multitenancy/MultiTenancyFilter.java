@@ -30,20 +30,28 @@ public class MultiTenancyFilter extends OncePerRequestFilter{
             httpServletResponse.setStatus(httpServletResponse.SC_OK);
         }
         else {
+
+            System.err.println("Show header sent for every request >>>>>> Tenant: " + httpServletRequest.getHeader("X-TenantID") + " Language: " +  httpServletRequest.getHeader("X-Language"));
             // Implement your logic to extract the Tenant Name here. Another way would be to
             // parse a JWT and extract the Tenant Name from the Claims in the Token. In the
             // example code we are just extracting a Header value:
-            System.err.println("== Calling multi-tenant filter ==");
             String tenantName = httpServletRequest.getHeader("X-TenantID");
             String language = httpServletRequest.getHeader("X-Language");
+            System.err.println("== Calling multi-tenant filter == tenantName == null : " + (tenantName == null));
             // Always set the Tenant Name, so we avoid leaking Tenants between Threads even in the scenario, when no
             // Tenant is given. I do this because if somehow the afterCompletion Handler isn't called the Tenant Name
             // could still be persisted within the ThreadLocal:
             ThreadLocalStorage.setTenantName(tenantName);
             ThreadLocalStorage.setLanguage(language);
 
+            if(tenantName == null) {
+                ThreadLocalStorage.setTenantName("0");
+                ThreadLocalStorage.setTenantName("en");
+            }
+
+            System.out.println("Tenant name >>>> [" + ThreadLocalStorage.getTenantName() +"] and language "+ language +" in mutlitenant filter");
+
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
-
     }
 }
