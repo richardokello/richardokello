@@ -6,6 +6,8 @@ public class TenantAwareRoutingSource extends AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
-        return ThreadLocalStorage.getTenantName();
+        String key = ThreadLocalStorage.getTenantName();
+        System.err.println("Current lookup key >>>>> " + key);
+        return key;
     }
 }

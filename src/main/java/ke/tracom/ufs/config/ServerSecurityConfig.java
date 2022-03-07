@@ -44,7 +44,8 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
                 "bcrypt", encoders);
         passworEncoder.setDefaultPasswordEncoderForMatches(defaultEncoder);
 
+        // System.out.println("Hashed password : secret >>>> " + passworEncoder.encode("secret"));
+
         return passworEncoder;
     }
-
 }

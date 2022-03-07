@@ -12,7 +12,9 @@ import ke.tracom.ufs.config.multitenancy.ThreadLocalStorage;
 import ke.tracom.ufs.utils.AppConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.MessageSource;
@@ -40,7 +42,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableEurekaClient
 @EnableAsync
 @EnableConfigurationProperties({FileStorageProperties.class})
