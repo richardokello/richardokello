@@ -24,7 +24,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends CrudRepository<UfsUser, Long> {
     UfsUser findByUserId(Long ids);
+
     UfsUser findByEmail(String email);
+
     UfsUser findByfullName(String name);
 
     UfsUser findByuserId(Long id);
@@ -36,22 +38,23 @@ public interface UserRepository extends CrudRepository<UfsUser, Long> {
     @Query("SELECT u FROM #{#entityName} u WHERE  u.actionStatus like ?1% "
             + "AND u.creationDate BETWEEN ?2 AND ?3 AND "
             + "(lower(u.fullName) LIKE %?4% OR lower(u.phoneNumber) LIKE %?4% OR lower(u.email) LIKE %?4%) AND lower(u.intrash) = lower(?5) AND u != ?6")
-    public Page<UfsUser> findAll(String actionStatus,Date from, Date to, String needle, String intrash,UfsUser user, Pageable pg);
+    public Page<UfsUser> findAll(String actionStatus, Date from, Date to, String needle, String intrash, UfsUser user, Pageable pg);
 
     @Query("SELECT u FROM #{#entityName} u WHERE  u.actionStatus like ?1% "
             + "AND u.creationDate BETWEEN ?2 AND ?3 AND "
             + "(lower(u.fullName) LIKE %?4% OR lower(u.phoneNumber) LIKE %?4% OR lower(u.email) LIKE %?4%) AND lower(u.intrash) = lower(?5) AND u != ?6 AND u.status = ?7")
-    public Page<UfsUser> findAllByStatus(String actionStatus,Date from, Date to, String needle, String intrash,UfsUser user,Short status, Pageable pg);
+    public Page<UfsUser> findAllByStatus(String actionStatus, Date from, Date to, String needle, String intrash, UfsUser user, Short status, Pageable pg);
 
     @Query("SELECT u FROM #{#entityName} u WHERE  u.actionStatus like ?1% "
             + "AND u.creationDate BETWEEN ?2 AND ?3 AND "
             + "(lower(u.fullName) LIKE %?4% OR lower(u.phoneNumber) LIKE %?4% OR lower(u.email) LIKE %?4%) AND lower(u.intrash) = lower(?5) AND u != ?6 AND u.action = ?7")
-    public Page<UfsUser> findAllByAction(String actionStatus,Date from, Date to, String needle, String intrash,UfsUser user,String action, Pageable pg);
+    public Page<UfsUser> findAllByAction(String actionStatus, Date from, Date to, String needle, String intrash, UfsUser user, String action, Pageable pg);
 
     @Query("SELECT u FROM #{#entityName} u WHERE  u.actionStatus like ?1% "
             + "AND u.creationDate BETWEEN ?2 AND ?3 AND "
             + "(lower(u.fullName) LIKE %?4% OR lower(u.phoneNumber) LIKE %?4% OR lower(u.email) LIKE %?4%) AND lower(u.intrash) = lower(?5) AND u != ?6 AND u.userTypeId = ?7")
     Page<UfsUser> findAllByUserTypeId(String actionStatus, Date from, Date to, String toLowerCase, String no, UfsUser user, BigDecimal userTypeId, Pageable pg);
+
     @Procedure("REPLICATE_USER_INFO")
     void replicateUserInfo(@Param("userEmail") String email);
 }

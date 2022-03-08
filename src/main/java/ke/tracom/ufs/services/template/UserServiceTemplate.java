@@ -8,6 +8,7 @@ package ke.tracom.ufs.services.template;
 import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.exceptions.NotFoundException;
 import ke.axle.chassis.wrappers.ResponseWrapper;
+import ke.tracom.ufs.config.multitenancy.ThreadLocalStorage;
 import ke.tracom.ufs.entities.*;
 import ke.tracom.ufs.repositories.*;
 import ke.tracom.ufs.services.UserService;
@@ -60,7 +61,7 @@ public class UserServiceTemplate implements UserService {
 
 
     public UserServiceTemplate(OTPRepository otpRepo, PasswordEncoder passEncoder, UserRepository userRepo, AuthenticationRepository authRepo, UfsUserWorkgroupRepository userWorkgroupRepo, UfsUserWorkgroupRepository usrWorkgroup, UfsUserTypeRepository typeRepo, UserRepository urepo, PasswordGenerator gen, PasswordEncoder passwordEncoder, UfsAuthTypeRepository authtyperepo, FileStorageService fileStorageService,
-                               NotifyServiceTemplate notifyService, @Lazy UserWorkGroupService userWorkGroupService, @Lazy WorkGroupService workGroupService,@Lazy UserService userService) {
+                               NotifyServiceTemplate notifyService, @Lazy UserWorkGroupService userWorkGroupService, @Lazy WorkGroupService workGroupService, @Lazy UserService userService) {
         this.otpRepo = otpRepo;
         this.passEncoder = passEncoder;
         this.userRepo = userRepo;
@@ -74,9 +75,9 @@ public class UserServiceTemplate implements UserService {
         this.authtyperepo = authtyperepo;
         this.fileStorageService = fileStorageService;
         this.notifyService = notifyService;
-        this.userService=userService;
+        this.userService = userService;
         this.userWorkGroupService = userWorkGroupService;
-        this.workGroupService=workGroupService;
+        this.workGroupService = workGroupService;
     }
 
     @Override
@@ -132,6 +133,7 @@ public class UserServiceTemplate implements UserService {
 
         return userRepo.findByUserId(id);
     }
+
     @Override
     public UfsUser findByEmail(String email) {
         return userRepo.findByEmail(email);
@@ -168,8 +170,8 @@ public class UserServiceTemplate implements UserService {
                 String password = gen.generateRandomPassword();
 
                 UfsAuthentication auth = authRepo.findByuserId(isThere.getUserId());
-                System.out.println("User Object>>>>>  "+isThere);
-                System.out.println("Authentication record == null "+(auth == null));
+                System.out.println("User Object>>>>>  " + isThere);
+                System.out.println("Authentication record == null " + (auth == null));
                 auth.setPassword(passwordEncoder.encode(password));
                 auth.setPasswordStatus(AppConstants.STATUS_EXPIRED);
                 authRepo.save(auth);
@@ -184,7 +186,7 @@ public class UserServiceTemplate implements UserService {
                 userWorkgroupList.forEach(ufsUserWorkgroup -> {
                     BigDecimal workGroupId = ufsUserWorkgroup.getGroupId();
                     String workGroupName = workGroupService.findWorkgroupById(workGroupId.longValue()).getGroupName();
-                    if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)){
+                    if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)) {
                         userService.replicateUserInfo(isThere.getEmail());
                     }
                 });
@@ -236,7 +238,11 @@ public class UserServiceTemplate implements UserService {
 
     @Override
     @Async
-    public void replicateUserInfo(String email) {userRepo.replicateUserInfo(email);}
+    public void replicateUserInfo(String email) {
+        System.out.println(">>>>>>>>>>>> Replicating user info: procedure calling >>>> tenant id >>>> " + ThreadLocalStorage.getTenantName());
+        userRepo.replicateUserInfo(email);
+    }
+
     @Override
     public UfsAuthentication saveAuthentication(UfsAuthentication authentication) {
         return authRepo.save(authentication);
