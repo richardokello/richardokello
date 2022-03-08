@@ -8,15 +8,15 @@ package ke.tracom.ufs.services.template;
 import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.exceptions.NotFoundException;
 import ke.axle.chassis.wrappers.ResponseWrapper;
-import ke.tracom.ufs.entities.UfsAuthentication;
-import ke.tracom.ufs.entities.UfsOtp;
-import ke.tracom.ufs.entities.UfsOtpCategory;
-import ke.tracom.ufs.entities.UfsUser;
+import ke.tracom.ufs.entities.*;
 import ke.tracom.ufs.repositories.*;
 import ke.tracom.ufs.services.UserService;
+import ke.tracom.ufs.services.UserWorkGroupService;
+import ke.tracom.ufs.services.WorkGroupService;
 import ke.tracom.ufs.utils.AppConstants;
 import ke.tracom.ufs.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -54,10 +54,13 @@ public class UserServiceTemplate implements UserService {
     private final UfsAuthTypeRepository authtyperepo;
     private final FileStorageService fileStorageService;
     private final NotifyServiceTemplate notifyService;
+    private final UserWorkGroupService userWorkGroupService;
+    private final WorkGroupService workGroupService;
+    private final UserService userService;
 
 
     public UserServiceTemplate(OTPRepository otpRepo, PasswordEncoder passEncoder, UserRepository userRepo, AuthenticationRepository authRepo, UfsUserWorkgroupRepository userWorkgroupRepo, UfsUserWorkgroupRepository usrWorkgroup, UfsUserTypeRepository typeRepo, UserRepository urepo, PasswordGenerator gen, PasswordEncoder passwordEncoder, UfsAuthTypeRepository authtyperepo, FileStorageService fileStorageService,
-                               NotifyServiceTemplate notifyService) {
+                               NotifyServiceTemplate notifyService, @Lazy UserWorkGroupService userWorkGroupService, @Lazy WorkGroupService workGroupService,@Lazy UserService userService) {
         this.otpRepo = otpRepo;
         this.passEncoder = passEncoder;
         this.userRepo = userRepo;
@@ -71,6 +74,9 @@ public class UserServiceTemplate implements UserService {
         this.authtyperepo = authtyperepo;
         this.fileStorageService = fileStorageService;
         this.notifyService = notifyService;
+        this.userService=userService;
+        this.userWorkGroupService = userWorkGroupService;
+        this.workGroupService=workGroupService;
     }
 
     @Override
@@ -162,6 +168,8 @@ public class UserServiceTemplate implements UserService {
                 String password = gen.generateRandomPassword();
 
                 UfsAuthentication auth = authRepo.findByuserId(isThere.getUserId());
+                System.out.println("User Object>>>>>  "+isThere);
+                System.out.println("Authentication record == null "+(auth == null));
                 auth.setPassword(passwordEncoder.encode(password));
                 auth.setPasswordStatus(AppConstants.STATUS_EXPIRED);
                 authRepo.save(auth);
@@ -171,10 +179,18 @@ public class UserServiceTemplate implements UserService {
                 isThere.setStatus(AppConstants.STATUS_ACTIVE);
                 urepo.save(isThere);
 
+                // replicate user information if the user belongs to superuser workgroup
+                List<UfsUserWorkgroup> userWorkgroupList = userWorkGroupService.findAllByUserId(isThere.getUserId());
+                userWorkgroupList.forEach(ufsUserWorkgroup -> {
+                    BigDecimal workGroupId = ufsUserWorkgroup.getGroupId();
+                    String workGroupName = workGroupService.findWorkgroupById(workGroupId.longValue()).getGroupName();
+                    if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)){
+                        userService.replicateUserInfo(isThere.getEmail());
+                    }
+                });
                 this.notifyService.sendEmail(auth.getUsername(), "LOGIN CREDENTIALS", "Use the following credentials to login: Username : " + auth.getUsername() + " \n \nPassword : " + password);
                 //todo uncomment this.notifyService.sendSms(auth.getUser().getPhoneNumber(), "Use the following credentials to login: Username : " + auth.getUsername() + " \n \nPassword : " + password);
             }
-
         });
     }
 
@@ -219,9 +235,10 @@ public class UserServiceTemplate implements UserService {
     }
 
     @Override
+    @Async
+    public void replicateUserInfo(String email) {userRepo.replicateUserInfo(email);}
+    @Override
     public UfsAuthentication saveAuthentication(UfsAuthentication authentication) {
         return authRepo.save(authentication);
     }
-
-
 }

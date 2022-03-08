@@ -53,6 +53,7 @@ public interface UserService {
     public UfsAuthentication findByuserId(Long userId);
 
     public UfsAuthentication findByauthenticationId(Long id);
+    public void replicateUserInfo(String email);
 
     public UfsAuthentication saveAuthentication(UfsAuthentication authentication);
 
