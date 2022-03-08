@@ -5,6 +5,7 @@
  */
 package ke.tracom.ufs.services.template;
 
+import com.netflix.discovery.converters.Auto;
 import ke.axle.chassis.exceptions.ExpectationFailed;
 import ke.axle.chassis.exceptions.NotFoundException;
 import ke.axle.chassis.wrappers.ResponseWrapper;
@@ -16,6 +17,7 @@ import ke.tracom.ufs.services.UserWorkGroupService;
 import ke.tracom.ufs.services.WorkGroupService;
 import ke.tracom.ufs.utils.AppConstants;
 import ke.tracom.ufs.utils.PasswordGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -26,7 +28,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -59,9 +63,14 @@ public class UserServiceTemplate implements UserService {
     private final WorkGroupService workGroupService;
     private final UserService userService;
 
+    @Autowired
+    DataSource dataSource;
 
-    public UserServiceTemplate(OTPRepository otpRepo, PasswordEncoder passEncoder, UserRepository userRepo, AuthenticationRepository authRepo, UfsUserWorkgroupRepository userWorkgroupRepo, UfsUserWorkgroupRepository usrWorkgroup, UfsUserTypeRepository typeRepo, UserRepository urepo, PasswordGenerator gen, PasswordEncoder passwordEncoder, UfsAuthTypeRepository authtyperepo, FileStorageService fileStorageService,
-                               NotifyServiceTemplate notifyService, @Lazy UserWorkGroupService userWorkGroupService, @Lazy WorkGroupService workGroupService, @Lazy UserService userService) {
+
+    public UserServiceTemplate(OTPRepository otpRepo, PasswordEncoder passEncoder, UserRepository userRepo, AuthenticationRepository authRepo, UfsUserWorkgroupRepository userWorkgroupRepo,
+                               UfsUserWorkgroupRepository usrWorkgroup, UfsUserTypeRepository typeRepo, UserRepository urepo, PasswordGenerator gen, PasswordEncoder passwordEncoder,
+                               UfsAuthTypeRepository authtyperepo, FileStorageService fileStorageService, NotifyServiceTemplate notifyService, @Lazy UserWorkGroupService userWorkGroupService,
+                               @Lazy WorkGroupService workGroupService, @Lazy UserService userService) {
         this.otpRepo = otpRepo;
         this.passEncoder = passEncoder;
         this.userRepo = userRepo;
@@ -239,7 +248,12 @@ public class UserServiceTemplate implements UserService {
     @Override
     @Async
     public void replicateUserInfo(String email) {
-        System.out.println(">>>>>>>>>>>> Replicating user info: procedure calling >>>> tenant id >>>> " + ThreadLocalStorage.getTenantName());
+        try {
+            System.out.println(">>>>>>>>>>>> Replicating user info: procedure calling >>>> tenant id >>>> " + ThreadLocalStorage.getTenantName()
+             + " >>>>> schema " + dataSource.getConnection().getSchema());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         userRepo.replicateUserInfo(email);
     }
 
