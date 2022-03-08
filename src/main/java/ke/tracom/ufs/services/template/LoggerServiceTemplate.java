@@ -9,7 +9,9 @@ import ke.tracom.ufs.wrappers.IsInitiatorWrapper;
 import ke.tracom.ufs.wrappers.LogExtras;
 import ke.tracom.ufs.wrappers.LogWrapper;
 import lombok.extern.apachecommons.CommonsLog;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -43,13 +45,13 @@ public class LoggerServiceTemplate implements LoggerService {
     //    @Autowired
     RestTemplate restTemplate;
 
-    public LoggerServiceTemplate(LogExtras extras, Executor executor, RestTemplate restTemplate) {
+    public LoggerServiceTemplate(LogExtras extras, @Qualifier("asyncExecutor") Executor executor, RestTemplateBuilder restTemplate) {
         this.extras = extras;
-        this.restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add((request, body, execution) -> {
-            System.out.println(request.getURI());
-            return execution.execute(request, body);
-        });
+        this.restTemplate = restTemplate.build();
+//        restTemplate.getInterceptors().add((request, body, execution) -> {
+//            System.out.println(request.getURI());
+//            return execution.execute(request, body);
+//        });
         this.executor = executor;
     }
 
@@ -73,6 +75,9 @@ public class LoggerServiceTemplate implements LoggerService {
                 ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
                         .getRequest();
 
+        System.out.println("From executor service " + Thread.currentThread().getName() + " >>>> Tenant set >>>> " + ThreadLocalStorage.getTenantName());
+
+
         executor.execute(() -> {
             HttpHeaders headers = new HttpHeaders();
             Enumeration<String> headerNames = req.getHeaderNames();
@@ -92,6 +97,13 @@ public class LoggerServiceTemplate implements LoggerService {
 //            restTemplate.exchange(url + "ufs-logger-service/api/v1/logger/log", HttpMethod.POST, request, LogWrapper.class);
         });
     }
+
+//    private void sendLog(LogWrapper log) {
+//        executor.execute(() -> {
+//            System.out.println("From executor service " + Thread.currentThread().getName() + " >>>> Tenant set >>>> " + ThreadLocalStorage.getTenantName());
+//            restTemplate.postForEntity(url + "ufs-logger-service/api/v1/logger/log", log, LogWrapper.class);
+//        });
+//    }
 
     @Override
     public void log(String description, String entity, Object entityId, Long userId, String activity, String activityStatus, String notes) {

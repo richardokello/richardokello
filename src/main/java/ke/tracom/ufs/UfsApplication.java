@@ -75,17 +75,17 @@ public class UfsApplication {
         return converter;
     }
 
-    @Bean
-    @Primary
-    public Executor asyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2);
-        executor.setMaxPoolSize(2);
-        executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("UFS-THREAD");
-        executor.initialize();
-        return executor;
-    }
+//    @Bean
+//    @Primary
+//    public Executor asyncExecutor() {
+//        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+//        executor.setCorePoolSize(2);
+//        executor.setMaxPoolSize(2);
+//        executor.setQueueCapacity(500);
+//        executor.setThreadNamePrefix("UFS-THREAD");
+//        executor.initialize();
+//        return executor;
+//    }
 
     /**
      * Fetch the tenant json file containing the database configurations
