@@ -172,7 +172,7 @@ public class UserServiceTemplate implements UserService {
                 urepo.save(isThere);
 
                 this.notifyService.sendEmail(auth.getUsername(), "LOGIN CREDENTIALS", "Use the following credentials to login: Username : " + auth.getUsername() + " \n \nPassword : " + password);
-                this.notifyService.sendSms(auth.getUser().getPhoneNumber(), "Use the following credentials to login: Username : " + auth.getUsername() + " \n \nPassword : " + password);
+                //todo uncomment this.notifyService.sendSms(auth.getUser().getPhoneNumber(), "Use the following credentials to login: Username : " + auth.getUsername() + " \n \nPassword : " + password);
             }
 
         });
