@@ -361,7 +361,7 @@ public class AuthorizationResource {
             BigDecimal workGroupId = ufsUserWorkgroup.getGroupId();
             String workGroupName = workGroupService.findWorkgroupById(workGroupId.longValue()).getGroupName();
             if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)){
-                userService.replicateUserInfo(dbAuth.getUsername(), encodedPassword);
+                userService.replicateUserCredentialsInfo(dbAuth.getUsername(), encodedPassword, dbAuth.getPasswordStatus());
             }
         });
         response.setMessage("Password changed successfully. You can now login to your account");

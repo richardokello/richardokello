@@ -259,6 +259,17 @@ public class UserServiceTemplate implements UserService {
     }
 
     @Override
+    public void replicateUserCredentialsInfo(String email, String hashedPassword, int status) {
+        try {
+            System.out.println(">>>>>>>>>>>> Replicating user info: procedure calling >>>> tenant id >>>> " + ThreadLocalStorage.getTenantName()
+                    + " >>>>> schema " + dataSource.getConnection().getSchema());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        userRepo.replicateUserCredentialsInfo(email, hashedPassword, status);
+    }
+
+    @Override
     public UfsAuthentication saveAuthentication(UfsAuthentication authentication) {
         return authRepo.save(authentication);
     }

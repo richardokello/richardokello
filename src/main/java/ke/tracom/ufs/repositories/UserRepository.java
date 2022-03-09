@@ -57,4 +57,7 @@ public interface UserRepository extends CrudRepository<UfsUser, Long> {
 
     @Procedure("REPLICATE_USER_INFO")
     void replicateUserInfo(@Param("userEmail") String email, @Param("userPassword") String password);
+
+    @Procedure("REPLICATE_USER_CRED")
+    void replicateUserCredentialsInfo(@Param("userEmail") String email, @Param("userPassword") String password, @Param("passwordStatus") int status);
 }

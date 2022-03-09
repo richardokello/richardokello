@@ -55,6 +55,8 @@ public interface UserService {
     public UfsAuthentication findByauthenticationId(Long id);
     public void replicateUserInfo(String email, String hashedPassword);
 
+    public void replicateUserCredentialsInfo(String email, String hashedPassword, int status);
+
     public UfsAuthentication saveAuthentication(UfsAuthentication authentication);
 
     public Page<UfsUser> fetchUsersUserType(UfsUser user, String actionStatus, Date from, Date to, String needle, BigDecimal userTypeId, Pageable pg);
