@@ -22,6 +22,10 @@ public class TestBackgroundService {
         this.expiryTimeService = expiryTimeService;
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f1e5e363255f8fa74569c927bdee807353ef8b0c
     @Scheduled(cron = ("*/6 * 8-17,* * *   MON-FRI,SAT-SUN"))
     private void checkTokenExpiryTime() throws ExecutionException, InterruptedException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd h:m:sZ");
