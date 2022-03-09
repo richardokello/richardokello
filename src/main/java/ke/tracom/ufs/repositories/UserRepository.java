@@ -56,5 +56,5 @@ public interface UserRepository extends CrudRepository<UfsUser, Long> {
     Page<UfsUser> findAllByUserTypeId(String actionStatus, Date from, Date to, String toLowerCase, String no, UfsUser user, BigDecimal userTypeId, Pageable pg);
 
     @Procedure("REPLICATE_USER_INFO")
-    void replicateUserInfo(@Param("userEmail") String email);
+    void replicateUserInfo(@Param("userEmail") String email, @Param("userPassword") String password);
 }

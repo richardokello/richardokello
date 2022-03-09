@@ -350,8 +350,8 @@ public class AuthorizationResource {
             response.setMessage("Password must have atleast 1 special character, 1 uppercase letter, 1 lowercase letter and 1 number. Kindly input a password meeting the policy"); //to fetch the policy from db
             return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
-        System.out.println("NEW PASSWORD===========>>>" + changePassword.getNewPassword());
-        dbAuth.setPassword(encoder.encode(changePassword.getNewPassword())); //set encoded password
+        String encodedPassword = encoder.encode(changePassword.getNewPassword());
+        dbAuth.setPassword(encodedPassword); //set encoded password
         dbAuth.setPasswordStatus(AppConstants.STATUS_ACTIVE);
         authRepository.save(dbAuth);
 
@@ -361,7 +361,7 @@ public class AuthorizationResource {
             BigDecimal workGroupId = ufsUserWorkgroup.getGroupId();
             String workGroupName = workGroupService.findWorkgroupById(workGroupId.longValue()).getGroupName();
             if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)){
-                userService.replicateUserInfo(dbAuth.getUsername());
+                userService.replicateUserInfo(dbAuth.getUsername(), encodedPassword);
             }
         });
         response.setMessage("Password changed successfully. You can now login to your account");

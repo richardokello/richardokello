@@ -182,7 +182,6 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
 
     }
 
-
     @Override
     @Transactional
     public ResponseEntity<ResponseWrapper<UfsUser>> create(@Valid @RequestBody UfsUser ufsUser) {
@@ -197,7 +196,6 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
             return new ResponseEntity<>(wrapper,HttpStatus.BAD_REQUEST);
         }
         ufsUser.setStatus(AppConstants.STATUS_EXPIRED);
-
         ResponseEntity<ResponseWrapper<UfsUser>> response = super.create(ufsUser);
 
         password = gen.generateRandomPassword();

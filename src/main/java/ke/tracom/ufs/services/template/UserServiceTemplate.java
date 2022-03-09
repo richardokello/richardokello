@@ -177,11 +177,12 @@ public class UserServiceTemplate implements UserService {
         users.parallelStream().forEach(isThere -> {
             if (isThere.getAction().equals(AppConstants.ACTIVITY_CREATE)) {
                 String password = gen.generateRandomPassword();
+                String encodedPassword = passwordEncoder.encode(password);
 
                 UfsAuthentication auth = authRepo.findByuserId(isThere.getUserId());
                 System.out.println("User Object>>>>>  " + isThere);
                 System.out.println("Authentication record == null " + (auth == null));
-                auth.setPassword(passwordEncoder.encode(password));
+                auth.setPassword(encodedPassword);
                 auth.setPasswordStatus(AppConstants.STATUS_EXPIRED);
                 authRepo.save(auth);
 
@@ -196,7 +197,7 @@ public class UserServiceTemplate implements UserService {
                     BigDecimal workGroupId = ufsUserWorkgroup.getGroupId();
                     String workGroupName = workGroupService.findWorkgroupById(workGroupId.longValue()).getGroupName();
                     if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)) {
-                        userService.replicateUserInfo(isThere.getEmail());
+                        userService.replicateUserInfo(isThere.getEmail(), encodedPassword); // send the password so it update user with the new password
                     }
                 });
                 this.notifyService.sendEmail(auth.getUsername(), "LOGIN CREDENTIALS", "Use the following credentials to login: Username : " + auth.getUsername() + " \n \nPassword : " + password);
@@ -247,14 +248,14 @@ public class UserServiceTemplate implements UserService {
 
     @Override
     @Async
-    public void replicateUserInfo(String email) {
+    public void replicateUserInfo(String email, String password) {
         try {
             System.out.println(">>>>>>>>>>>> Replicating user info: procedure calling >>>> tenant id >>>> " + ThreadLocalStorage.getTenantName()
              + " >>>>> schema " + dataSource.getConnection().getSchema());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        userRepo.replicateUserInfo(email);
+        userRepo.replicateUserInfo(email, password);
     }
 
     @Override
