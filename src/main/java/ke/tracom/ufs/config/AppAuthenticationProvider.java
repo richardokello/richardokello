@@ -1,6 +1,7 @@
 package ke.tracom.ufs.config;
 
 
+import ke.tracom.ufs.config.multitenancy.ThreadLocalStorage;
 import ke.tracom.ufs.entities.UfsAuthentication;
 import ke.tracom.ufs.entities.UfsOtpCategory;
 import ke.tracom.ufs.entities.UfsUser;
@@ -77,19 +78,6 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
             Authentication auth = super.authenticate(authentication);
             log.info("Done Authenticating user using AppAuthenticationProvider");
 
-            // check that the user has multi-tenancy permission and if yes, then replicate the
-            // authentication token to all the other schemas. This ensures that the user is not
-            // de-authenticated when selecting a different schema.
-            boolean isSuperUser = auth.getAuthorities().contains(new SimpleGrantedAuthority("MULTITENANCY PERMISSION"));
-
-            if (isSuperUser){
-                log.info(">>>>>>>>>>>> Multitenant Superuser found!\n******************\n Replicating user token to other schemas \n *****************");
-                // fetch the username for the current logged in user
-                String username = ((UserDetails)auth.getPrincipal()).getUsername();
-                // replicate the authentication token to other schemas
-                authTokenReplicationService.replicateAuthToken(username);
-            }
-
             //reset login attempts
             dbAuth.setLoginAttempts((short) 0);
             dbAuth.setLastLogin(new Date());
@@ -99,6 +87,20 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
 
             this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
             // todo uncomment this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(),  "OTP: " + code);
+
+            // check that the user has multi-tenancy permission and if yes, then replicate the
+            // authentication token to all the other schemas. This ensures that the user is not
+            // de-authenticated when selecting a different schema.
+            boolean isSuperUser = auth.getAuthorities().contains(new SimpleGrantedAuthority("MULTITENANCY PERMISSION"));
+
+            // todo uncomment
+            if (isSuperUser){
+                // fetch the username for the current logged in user
+                String username = ((UserDetails)auth.getPrincipal()).getUsername();
+                log.info(">>>>>>>>>>>> Multitenant Superuser found!\n******************\n Replicating user token to other schemas : db {} >>> user: {}\n *****************", ThreadLocalStorage.getTenantName(), username);
+                // replicate the authentication token to other schemas
+                authTokenReplicationService.replicateAuthToken(username);
+            }
 
             loggerService.log("Logged in successfully", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
                     AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Logged in successfully");

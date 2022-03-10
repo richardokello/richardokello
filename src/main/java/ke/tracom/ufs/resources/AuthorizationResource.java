@@ -130,7 +130,6 @@ public class AuthorizationResource {
             countyId = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getCountyId();
         }
         try {
-
             UfsUser ufsUser = userRepository.findByuserId(Long.valueOf(user.getUserId()));
             if (ufsUser.getStatus() == AppConstants.STATUS_LOCKED) {
                 throw new LockedException("Account is locked");
@@ -150,6 +149,7 @@ public class AuthorizationResource {
             // check for multi-tenant superuser role.
             boolean isSuperUser = a.getAuthorities().contains(new SimpleGrantedAuthority("MULTITENANCY PERMISSION"));
 
+            // todo uncomment
             if (isSuperUser){
                 System.err.println("** found multi-tenant superuser. Replicating authentication token...");
                 // get the username of the authenticated user.
@@ -157,6 +157,7 @@ public class AuthorizationResource {
                 // replicate the authentication token to other schemas
                 authTokenReplicationService.replicateAuthToken(username);
             }
+
             OtpResponse data = new OtpResponse();
             data.permissions = a.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
             data.userDetails = user;

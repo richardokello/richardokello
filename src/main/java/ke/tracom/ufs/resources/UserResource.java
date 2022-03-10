@@ -196,6 +196,7 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
             return new ResponseEntity<>(wrapper,HttpStatus.BAD_REQUEST);
         }
         ufsUser.setStatus(AppConstants.STATUS_EXPIRED);
+        ufsUser.setIntrash(AppConstants.INTRASH_NO);
         ResponseEntity<ResponseWrapper<UfsUser>> response = super.create(ufsUser);
 
         password = gen.generateRandomPassword();
@@ -206,6 +207,7 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
         ufsAuthentication.setUsername(ufsUser.getEmail());
         ufsAuthentication.setPassword(passwordEncoder.encode(password));
         ufsAuthentication.setPasswordStatus(AppConstants.STATUS_EXPIRED);
+        ufsAuthentication.setIntrash(AppConstants.INTRASH_NO);
         ufsAuthentication.setAuthenticationTypeId(authTypeRepo.findByAuthenticationType(AppConstants.AUTH_TYPE_PASSWORD).getTypeId());
         urepo.saveAuthentication(ufsAuthentication);
 
@@ -216,6 +218,7 @@ public class UserResource extends ChasisResource<UfsUser, Long, UfsEdittedRecord
                 UfsUserWorkgroup usrworkgroup = new UfsUserWorkgroup();
                 usrworkgroup.setUserId(ufsUser.getUserId());
                 usrworkgroup.setGroupId(id);
+                usrworkgroup.setIntrash(AppConstants.INTRASH_NO);
                 usrworkgroups.add(usrworkgroup);
 
             });
