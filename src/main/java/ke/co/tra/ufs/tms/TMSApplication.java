@@ -23,6 +23,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
@@ -43,10 +44,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 /**
@@ -132,17 +130,17 @@ public class TMSApplication {
                 = new MappingJackson2HttpMessageConverter(mapper);
         return converter;
     }
-
-    @Bean
-    public Executor asyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2);
-        executor.setMaxPoolSize(2);
-        executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("TMS-THREAD");
-        executor.initialize();
-        return executor;
-    }
+//
+//    @Bean
+//    public Executor asyncExecutor() {
+//        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+//        executor.setCorePoolSize(2);
+//        executor.setMaxPoolSize(2);
+//        executor.setQueueCapacity(500);
+//        executor.setThreadNamePrefix("TMS-THREAD");
+//        executor.initialize();
+//        return executor;
+//    }
 
     @Bean
     @Primary
@@ -198,6 +196,7 @@ public class TMSApplication {
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
         interceptors.add((request, body, execution) -> {
             HttpHeaders headers = request.getHeaders();
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             headers.add("X-TenantID", ThreadLocalStorage.getTenantName());
             headers.add("X-Language", ThreadLocalStorage.getTenantName());
             return execution.execute(request, body);
@@ -205,7 +204,7 @@ public class TMSApplication {
 
         interceptors.add((request, body, execution) -> {
             HttpHeaders headers = request.getHeaders();
-            headers.forEach((key, value) -> System.out.println("Rest Template Header " + key + " : " + value));
+            headers.forEach((key, value) -> System.out.println("Rest Template Header >>>>>>>>>> " + key + " : " + value));
             return execution.execute(request, body);
         });
         RestTemplate template = new RestTemplate();

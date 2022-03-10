@@ -22,7 +22,7 @@ public class TenantNameInterceptor extends HandlerInterceptorAdapter {
         String tenantName = request.getHeader("X-TenantID");
         String language = request.getHeader("X-Language");
 
-        System.err.println("^^^^^^^^ Language choosen"+language);
+        System.err.println("^^^^^^^^ Language chosen "+language);
 
         // Always set the Tenant Name, so we avoid leaking Tenants between Threads even in the scenario, when no
         // Tenant is given. I do this because if somehow the afterCompletion Handler isn't called the Tenant Name
