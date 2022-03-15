@@ -371,8 +371,10 @@ public class DeviceServiceTemplate implements DeviceService {
 
     @Override
     public void updateWhitelistBySerialSync(String serialNo,String status) {
+        log.info(">>>> Updating device {} with status {} >>>> ", serialNo, serialNo);
         short value = (short)Integer.parseInt(status);
         TmsWhitelist whitelist = whitelistRepo.findByserialNoAndIntrash(serialNo, AppConstants.NO);
+        log.info(">>>> Updating device {} with status {} >>>> is null {}", serialNo, serialNo, Objects.nonNull(whitelist));
         if (Objects.nonNull(whitelist)) {
             whitelist.setAssigned(value);
             whitelistRepo.save(whitelist);

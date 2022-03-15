@@ -279,7 +279,6 @@ public class OnboardingResource {
             createSchedule(onboardWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
         }
         deviceService.updateWhitelistBySerialSync(savedTmsDevice.getSerialNo(),AppConstants.ASSIGN_PENDING_APPROVAL);
-
         response.setData(tmsDevice);
         loggerService.logCreate("Creating new Device", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
         response.setCode(201);
