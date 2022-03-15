@@ -198,7 +198,7 @@ public class TMSApplication {
             HttpHeaders headers = request.getHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             headers.add("X-TenantID", ThreadLocalStorage.getTenantName());
-            headers.add("X-Language", ThreadLocalStorage.getTenantName());
+            headers.add("X-Language", ThreadLocalStorage.getLanguage());
             return execution.execute(request, body);
         });
 

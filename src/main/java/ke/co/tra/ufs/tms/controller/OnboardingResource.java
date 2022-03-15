@@ -123,8 +123,6 @@ public class OnboardingResource {
         ResponseWrapper response = new ResponseWrapper();
         String outletName = null;
         String merchantName = null;
-
-
         if (validation.hasErrors()) {
             loggerService.logCreate("Creating new Device failed due to validation errors", SharedMethods.getEntityName(TmsDevice.class), onboardWrapper.getSerialNo(), AppConstants.STATUS_FAILED);
             response.setCode(400);
@@ -132,7 +130,6 @@ public class OnboardingResource {
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
-
 
         if (onboardWrapper.getTmsDeviceTidsMids() != null) {
             Set<String> tids = onboardWrapper.getTmsDeviceTidsMids().stream().map(TmsDeviceTidsMids::getTid).collect(Collectors.toSet());
@@ -157,8 +154,6 @@ public class OnboardingResource {
             response.setData(SharedMethods.getFieldMapErrors(validation));
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
         }
-
-
         tmsDevice.setModelId(deviceService.getModel(onboardWrapper.getModelId()));
         tmsDevice.setPartNumber(onboardWrapper.getPartNumber());
         tmsDevice.setDeviceTypeId(onboardWrapper.getDeviceTypeId());
@@ -179,7 +174,6 @@ public class OnboardingResource {
             response.setCode(ex.getHttpStatus().value());
             return new ResponseEntity(response, ex.getHttpStatus());
         }
-
         if (Objects.nonNull(onboardWrapper.getOutletIds()) || onboardWrapper.getOutletIds() != null) {
 
             outletName = customerOutletService.findByOutletId(onboardWrapper.getOutletIds().longValue()).getOutletName();
@@ -201,8 +195,6 @@ public class OnboardingResource {
         tmsDevice.setIntrash(AppConstants.NO);
         tmsDevice = deviceService.saveDevice(tmsDevice);
         TmsDevice savedTmsDevice = tmsDevice;
-
-
         List<TmsDeviceSimcardWrapper> deviceSims = new ArrayList<>();
         /*Saving SimDetails*/
         if (Objects.nonNull(onboardWrapper.getTmsDeviceSimcards()) && onboardWrapper.getTmsDeviceSimcards().size() > 0) {
@@ -283,18 +275,15 @@ public class OnboardingResource {
 
         }
 
-
         if (onboardWrapper.getAppId() != null || onboardWrapper.getMasterProfileId() != null) {
             createSchedule(onboardWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
         }
+        deviceService.updateWhitelistBySerialSync(savedTmsDevice.getSerialNo(),AppConstants.ASSIGN_PENDING_APPROVAL);
 
         response.setData(tmsDevice);
         loggerService.logCreate("Creating new Device", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
         response.setCode(201);
-
         this.terminalHistoryService.saveHistory(new UfsTerminalHistory(tmsDevice.getSerialNo(), AppConstants.ACTIVITY_ASSIGN_DEVICE, "Terminal Assigned Successfully with TIDS:" + String.join(";", tids) + " And Device Sim Details: " + new ObjectMapper().writeValueAsString(deviceSims), loggerService.getUser(), AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
-
-
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
@@ -427,7 +416,7 @@ public class OnboardingResource {
 
         List<String> tids = new ArrayList<>();
 
-        if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && onboardWrapper.getTmsDeviceTidsMids().size() > 0) {
+        if (Objects.nonNull(onboardWrapper.getTmsDeviceTidsMids()) && !onboardWrapper.getTmsDeviceTidsMids().isEmpty()) {
             onboardWrapper.getTmsDeviceTidsMids().forEach(obj -> {
                 TmsDeviceTidsMids tmsDeviceTidMids = new TmsDeviceTidsMids();
                 tmsDeviceTidMids.setDeviceIds(savedTmsDevice.getDeviceId().longValue());
@@ -444,7 +433,7 @@ public class OnboardingResource {
                 deviceService.saveDeviceTids(tmsDeviceTidMids);
             });
         }
-        //save the tids
+        //semi colon separated list of tids
         tmsDevice.setTid(String.join(";", tids));
         deviceService.saveDevice(tmsDevice);
 
@@ -454,13 +443,13 @@ public class OnboardingResource {
         List<UfsCustomerOwners> ufsCustomerOwnerz = customerOwnerService.findByCustomerId(customer.getId());
 
         Long ownerId = null;
-        if (ufsCustomerOwnerz.size() > 0) {
+        if (!ufsCustomerOwnerz.isEmpty()) {
             ownerId = ufsCustomerOwnerz.get(0).getId();
         }
 
         List<UfsContactPerson> contactPersons = contactPersonService.getAllContactPersonByCustomerId(new BigDecimal(customer.getId()));
         Long contactPersonId = null;
-        if (contactPersons.size() > 0) {
+        if (!contactPersons.isEmpty()) {
             contactPersonId = contactPersons.get(0).getId();
         }
 
@@ -508,7 +497,6 @@ public class OnboardingResource {
             }
         }
 
-
         if (onboardWrapper.getAppId() != null || onboardWrapper.getMasterProfileId() != null) {
             createSchedule(onboardWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
         }
@@ -522,7 +510,7 @@ public class OnboardingResource {
 
     private void saveAllSelectedOptions(BigDecimal deviceId, Set<BigDecimal> deviceOptionsIds) {
         // save device options
-        if (Objects.nonNull(deviceOptionsIds) && deviceOptionsIds.size() > 0) {
+        if (Objects.nonNull(deviceOptionsIds) && !deviceOptionsIds.isEmpty()) {
             List<ParDeviceSelectedOptions> selectedOptions = deviceOptionsIds.stream()
                     .map(option -> {
                         ParDeviceSelectedOptions deviceOptions = new ParDeviceSelectedOptions();

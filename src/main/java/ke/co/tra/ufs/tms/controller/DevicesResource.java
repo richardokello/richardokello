@@ -256,7 +256,7 @@ public class DevicesResource {
      */
     private void processApproveNew(TmsDevice entity, String notes) throws ExpectationFailed {
         //set Whitelisted device to assigned
-        deviceService.updateWhitelistBySerialSync(entity.getSerialNo());
+        deviceService.updateWhitelistBySerialSync(entity.getSerialNo(),AppConstants.ASSIGNED);
 
         loggerService.logApprove("Done approving new Device serial (" + entity.getSerialNo() + ")",
                 SharedMethods.getEntityName(TmsDevice.class), entity.getDeviceId(), AppConstants.STATUS_COMPLETED, notes);

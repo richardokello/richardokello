@@ -10,7 +10,7 @@ public class ThreadLocalStorage {
     }
 
     public static String getTenantName() {
-        System.err.printf("Fetching active tenant id [%s] >>>%n", tenant.get());
+        System.err.printf("Fetching active tenant id [%s]%n", tenant.get());
         return tenant.get() == null ? "0" : tenant.get();
     }
 
