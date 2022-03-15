@@ -500,7 +500,7 @@ public class OnboardingResource {
             createSchedule(onboardWrapper, tmsDevice, "/devices/" + tmsDevice.getDeviceId() + "/");
         }
         this.terminalHistoryService.saveHistory(new UfsTerminalHistory(tmsDevice.getSerialNo(), AppConstants.ACTIVITY_ASSIGN_DEVICE, "Terminal Assigned Successfully with TIDS:" + String.join(";", tids) + " And Device Sim Details: " + new ObjectMapper().writeValueAsString(deviceSims), loggerService.getUser(), AppConstants.STATUS_UNAPPROVED, loggerService.getFullName()));
-
+        deviceService.updateWhitelistBySerialSync(savedTmsDevice.getSerialNo(),AppConstants.ASSIGN_PENDING_APPROVAL);
         response.setData(tmsDevice);
         loggerService.logCreate("Creating new Device", SharedMethods.getEntityName(TmsDevice.class), tmsDevice.getDeviceId(), AppConstants.STATUS_COMPLETED);
         response.setCode(201);
