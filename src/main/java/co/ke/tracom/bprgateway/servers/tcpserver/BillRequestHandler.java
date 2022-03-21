@@ -111,7 +111,7 @@ public class BillRequestHandler {
         socket.write(outBuffer);
     }
 
-    public void validation(String requestString, NetSocket socket)
+    public AcademicBridgeValidation validation(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         CustomObjectMapper mapper = new CustomObjectMapper();
         AcademicBridgeValidation posResponse = null;
@@ -333,11 +333,10 @@ public class BillRequestHandler {
             break;
 
         }
-
-
-
-        writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
-
+        if(!(socket ==null)) {
+            writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
+        }
+        return posResponse;
     }
 
     private void writeResponseToTCPChannel(NetSocket socket, String s) {
@@ -359,7 +358,7 @@ public class BillRequestHandler {
     }
 
 
-    public void billPayment(String requestString, NetSocket socket)
+    public BillPaymentResponse billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         //Accadermic bill payment
         AuthenticateAgentResponse authenticateAgentResponse = null;
@@ -599,8 +598,11 @@ public class BillRequestHandler {
         }
 
         Buffer outBuffer = Buffer.buffer();
-        outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
-        socket.write(outBuffer);
+        if(!(socket ==null)){
+            outBuffer.appendString(mapper.writeValueAsString(billPaymentResponse));
+            socket.write(outBuffer);
+        }
+        return billPaymentResponse;
     }
 
     private BillPaymentResponse getBillPaymentResponse() {
