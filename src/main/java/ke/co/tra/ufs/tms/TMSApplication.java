@@ -9,16 +9,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import ke.co.tra.ufs.tms.config.ParseJsonFile;
-import ke.co.tra.ufs.tms.config.multitenancy.MultiTenantDynamicTenantAwareRoutingSource;
-import ke.co.tra.ufs.tms.config.multitenancy.TenantAwareRoutingSource;
-import ke.co.tra.ufs.tms.config.multitenancy.ThreadLocalStorage;
+import ke.co.tra.ufs.tms.config.multitenancy.*;
 import ke.co.tra.ufs.tms.service.SysConfigService;
 import ke.co.tra.ufs.tms.utils.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -27,13 +29,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+import org.springframework.jdbc.support.DatabaseStartupValidator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
@@ -43,9 +46,10 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.*;
-import java.util.concurrent.Executor;
+import java.util.stream.Stream;
 
 /**
  * @author Owori Juma
@@ -54,10 +58,12 @@ import java.util.concurrent.Executor;
 @EnableAsync
 @EnableScheduling
 @EnableEurekaClient
+@EnableConfigurationProperties(MultiTenantDbConfigProperties.class)
 public class TMSApplication {
 
-    //    @Autowired
-//    private DataSource dataSource;
+    @Autowired
+    MultiTenantDbConfigProperties multiTenantDbConfigProperties;
+
     @Value("${baseUrl}")
     private String baseUrl;
 
@@ -78,7 +84,7 @@ public class TMSApplication {
                 System.out.printf(tenantJson);
                 System.err.printf("An error occurred on datasource configuration, tenant json file is null after passing file");
             }
-            MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(tenantJson);
+            MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(getDatasourceConfigs());
             Map<Object, Object> tenants = routingSource.getTenants();
             dataSource.setTargetDataSources(tenants);
             dataSource.afterPropertiesSet();
@@ -89,6 +95,27 @@ public class TMSApplication {
             System.exit(0);
         }
         return dataSource;
+    }
+
+
+    public MultiTenantDatabaseConfiguration[] getDatasourceConfigs() {
+        MultiTenantDatabaseConfiguration[] configs = new MultiTenantDatabaseConfiguration[multiTenantDbConfigProperties.getTenants().length];
+
+        for (int i = 0; i < multiTenantDbConfigProperties.getTenants().length; i++) {
+            MultiTenantDatabaseConfiguration config = new MultiTenantDatabaseConfiguration(
+                    multiTenantDbConfigProperties.getTenants()[i],
+                    multiTenantDbConfigProperties.getUrl(),
+                    multiTenantDbConfigProperties.getUsers()[i],
+                    multiTenantDbConfigProperties.getDataSourceClassName(),
+                    multiTenantDbConfigProperties.getPassword()[i],
+                    (multiTenantDbConfigProperties.getDefaultValue() == i)
+            );
+            configs[i] = config;
+        }
+
+        System.out.println("configurations " + Arrays.toString(configs));
+
+        return configs;
     }
 
     @Bean

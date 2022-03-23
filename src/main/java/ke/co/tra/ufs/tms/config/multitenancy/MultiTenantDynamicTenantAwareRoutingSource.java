@@ -8,36 +8,20 @@ import java.util.stream.Collectors;
 
 public class MultiTenantDynamicTenantAwareRoutingSource {
 
-    private final String filename;
-    private final ObjectMapper objectMapper;
     private final Map<Object, Object> tenants;
 
-    public MultiTenantDynamicTenantAwareRoutingSource(String filename) {
-        this(filename, new ObjectMapper());
+    public MultiTenantDynamicTenantAwareRoutingSource(MultiTenantDatabaseConfiguration[] configs) {
+        this.tenants = getDataSources(configs);
     }
 
-    public MultiTenantDynamicTenantAwareRoutingSource(String filename, ObjectMapper objectMapper) {
-        this.filename = filename;
-        this.objectMapper = objectMapper;
-        this.tenants = getDataSources();
-    }
-
-    private Map<Object, Object> getDataSources() {
+    private Map<Object, Object> getDataSources(MultiTenantDatabaseConfiguration[] configs) {
         // Deserialize the JSON:
-        MultiTenantDatabaseConfiguration[] configurations = getDatabaseConfigurations();
         // Now create a Lookup Table:
         return Arrays
-                .stream(configurations)
+                .stream(configs)
                 .collect(Collectors.toMap(MultiTenantDatabaseConfiguration::getTenant, this::buildDataSource));
     }
 
-    private MultiTenantDatabaseConfiguration[] getDatabaseConfigurations() {
-        try {
-            return objectMapper.readValue(filename, MultiTenantDatabaseConfiguration[].class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private HikariDataSource buildDataSource(MultiTenantDatabaseConfiguration configuration) {
         HikariDataSource dataSource = new HikariDataSource();

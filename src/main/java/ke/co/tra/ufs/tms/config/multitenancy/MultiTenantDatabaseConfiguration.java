@@ -76,4 +76,16 @@ public class MultiTenantDatabaseConfiguration {
     public int hashCode() {
         return Objects.hash(tenant, url, user, dataSourceClassName, password);
     }
+
+    @Override
+    public String toString() {
+        return "MultiTenantDatabaseConfiguration{" +
+                "tenant='" + tenant + '\'' +
+                ", url='" + url + '\'' +
+                ", user='" + user + '\'' +
+                ", dataSourceClassName='" + dataSourceClassName + '\'' +
+                ", password='" + password + '\'' +
+                ", defaultSource=" + defaultSource +
+                '}';
+    }
 }
