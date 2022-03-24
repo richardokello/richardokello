@@ -6,11 +6,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.zaxxer.hikari.HikariDataSource;
 import ke.tracom.ufs.config.FileStorageProperties;
 import ke.tracom.ufs.config.ParseJsonFile;
-import ke.tracom.ufs.config.multitenancy.MultiTenantDynamicTenantAwareRoutingSource;
-import ke.tracom.ufs.config.multitenancy.TenantAwareRoutingSource;
-import ke.tracom.ufs.config.multitenancy.ThreadLocalStorage;
+import ke.tracom.ufs.config.multitenancy.*;
 import ke.tracom.ufs.utils.AppConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -48,6 +47,8 @@ import java.util.concurrent.Executor;
 @EnableConfigurationProperties({FileStorageProperties.class})
 public class UfsApplication {
 
+    @Autowired
+    MultiTenantDbConfigProperties multiTenantDbConfigProperties;
     public static void main(String[] args) {
         SpringApplication.run(UfsApplication.class, args);
     }
@@ -75,6 +76,8 @@ public class UfsApplication {
         return converter;
     }
 
+
+
 //    @Bean
 //    @Primary
 //    public Executor asyncExecutor() {
@@ -94,28 +97,34 @@ public class UfsApplication {
      */
     @Bean
     public DataSource dataSource() {
-        ParseJsonFile parser =  new ParseJsonFile();
         AbstractRoutingDataSource dataSource = new TenantAwareRoutingSource();
-        String tenantJson = null;
-        try {
-            tenantJson = parser.parseJsonFile(AppConstants.TENANT_JSON_FILE_NAME).toString();
-            if (tenantJson == null){
-                System.out.printf(tenantJson);
-                System.err.printf("An error occurred on datasource configuration, tenant json file is null after passing file");
-            }
-            MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(tenantJson);
-            Map<Object, Object> tenants = routingSource.getTenants();
 
-            dataSource.setTargetDataSources(tenants);
-            dataSource.afterPropertiesSet();
-        }catch (Exception e){
-            e.printStackTrace();
-            System.out.printf(tenantJson);
-            System.err.printf("An error occurred on datasource configuration");
-            System.exit(0);
+        MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(getDatasourceConfigs());
+        Map<Object, Object> tenants = routingSource.getTenants();
 
-        }
+        dataSource.setTargetDataSources(tenants);
+        dataSource.afterPropertiesSet();
         return dataSource;
+    }
+
+    public MultiTenantDatabaseConfiguration[] getDatasourceConfigs() {
+        MultiTenantDatabaseConfiguration[] configs = new MultiTenantDatabaseConfiguration[multiTenantDbConfigProperties.getTenants().length];
+
+        for (int i = 0; i < multiTenantDbConfigProperties.getTenants().length; i++) {
+            MultiTenantDatabaseConfiguration config = new MultiTenantDatabaseConfiguration(
+                    multiTenantDbConfigProperties.getTenants()[i],
+                    multiTenantDbConfigProperties.getUrl(),
+                    multiTenantDbConfigProperties.getUsers()[i],
+                    multiTenantDbConfigProperties.getDataSourceClassName(),
+                    multiTenantDbConfigProperties.getPassword()[i],
+                    (multiTenantDbConfigProperties.getDefaultValue() == i)
+            );
+            configs[i] = config;
+        }
+
+        System.out.println("configurations " + Arrays.toString(configs));
+
+        return configs;
     }
 
     @Bean
