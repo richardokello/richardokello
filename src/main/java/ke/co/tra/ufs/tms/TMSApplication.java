@@ -75,25 +75,11 @@ public class TMSApplication {
 
     @Bean
     public DataSource dataSource() {
-        ParseJsonFile parser = new ParseJsonFile();
         AbstractRoutingDataSource dataSource = new TenantAwareRoutingSource();
-        String tenantJson = null;
-        try {
-            tenantJson = parser.parseJsonFile(AppConstants.TENANT_JSON_FILE_NAME).toString();
-            if (tenantJson == null) {
-                System.out.printf(tenantJson);
-                System.err.printf("An error occurred on datasource configuration, tenant json file is null after passing file");
-            }
-            MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(getDatasourceConfigs());
-            Map<Object, Object> tenants = routingSource.getTenants();
-            dataSource.setTargetDataSources(tenants);
-            dataSource.afterPropertiesSet();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.printf(tenantJson);
-            System.err.printf("An error occurred on datasource configuration");
-            System.exit(0);
-        }
+        MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(getDatasourceConfigs());
+        Map<Object, Object> tenants = routingSource.getTenants();
+        dataSource.setTargetDataSources(tenants);
+        dataSource.afterPropertiesSet();
         return dataSource;
     }
 
