@@ -44,7 +44,7 @@ import java.util.concurrent.Executor;
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableEurekaClient
 @EnableAsync
-@EnableConfigurationProperties({FileStorageProperties.class})
+@EnableConfigurationProperties({FileStorageProperties.class, MultiTenantDbConfigProperties.class})
 public class UfsApplication {
 
     @Autowired
@@ -98,10 +98,8 @@ public class UfsApplication {
     @Bean
     public DataSource dataSource() {
         AbstractRoutingDataSource dataSource = new TenantAwareRoutingSource();
-
         MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(getDatasourceConfigs());
         Map<Object, Object> tenants = routingSource.getTenants();
-
         dataSource.setTargetDataSources(tenants);
         dataSource.afterPropertiesSet();
         return dataSource;
@@ -122,7 +120,7 @@ public class UfsApplication {
             configs[i] = config;
         }
 
-        System.out.println("configurations " + Arrays.toString(configs));
+        System.out.println("Database configs >>>>  " + Arrays.toString(configs));
 
         return configs;
     }
