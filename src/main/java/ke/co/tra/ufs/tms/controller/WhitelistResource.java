@@ -87,7 +87,7 @@ public class WhitelistResource extends ChasisResourceLocal<TmsWhitelist> {
     public ResponseEntity<ResponseWrapper> create(@Valid WhitelistWrapper payload, HttpServletRequest request) {
         ResponseWrapper response = new ResponseWrapper();
         //check if model exists
-        UfsDeviceModel model = this.deviceService.getModel(payload.getModelId());
+        UfsDeviceModel model = this.deviceService.getModel(payload.getModelIds());
 
         if (model == null) {
             response.setCode(404);

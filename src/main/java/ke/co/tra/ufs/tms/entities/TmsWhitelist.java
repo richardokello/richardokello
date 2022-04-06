@@ -26,11 +26,9 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import ke.axle.chassis.annotations.Filter;
-import ke.axle.chassis.annotations.ModifiableField;
-import ke.axle.chassis.annotations.Searchable;
+import ke.co.tra.ufs.tms.utils.annotations.ModifiableField;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * @author tracom9

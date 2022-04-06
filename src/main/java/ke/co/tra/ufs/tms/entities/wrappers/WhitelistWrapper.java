@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class WhitelistWrapper {
 
     @NotNull
-    private BigDecimal modelId;
+    private BigDecimal modelIds;
     //    @NotNull
 //    @Size(min = 1, max = 50)
     private String serialNo;
