@@ -54,7 +54,7 @@ public class TmsDeviceParam implements Serializable {
     @Column(name = "PARAM_ID")
     private BigDecimal paramId;
     @Size(max = 4000)
-    @Column(name = "\"VALUES\"")
+    @Column(name = "\"VALUE\"")
     private String values;
     @JoinColumn(name = "DEVICE_ID", referencedColumnName = "DEVICE_ID")
     @ManyToOne
