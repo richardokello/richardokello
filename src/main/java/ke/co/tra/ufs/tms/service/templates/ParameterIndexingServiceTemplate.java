@@ -2,11 +2,9 @@ package ke.co.tra.ufs.tms.service.templates;
 
 import ke.co.tra.ufs.tms.entities.ParGlobalConfigIndices;
 import ke.co.tra.ufs.tms.entities.ParMenuIndices;
-import ke.co.tra.ufs.tms.entities.ParReceiptIndices;
 import ke.co.tra.ufs.tms.entities.wrappers.ParameterCreateRequest;
 import ke.co.tra.ufs.tms.repository.ParGlobalConfigIndexingRepository;
 import ke.co.tra.ufs.tms.repository.ParMenuIndexingRepository;
-import ke.co.tra.ufs.tms.repository.ParReceiptIndicesRepository;
 import ke.co.tra.ufs.tms.service.ParameterIndexingService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,12 +19,10 @@ public class ParameterIndexingServiceTemplate implements ParameterIndexingServic
 
     private final ParMenuIndexingRepository parMenuIndexingRepository;
     private final ParGlobalConfigIndexingRepository parGlobalConfigIndexingRepository;
-    private final ParReceiptIndicesRepository parReceiptIndicesRepository;
 
-    public ParameterIndexingServiceTemplate(ParMenuIndexingRepository parMenuIndexingRepository, ParGlobalConfigIndexingRepository parGlobalConfigIndexingRepository, ParReceiptIndicesRepository parReceiptIndicesRepository) {
+    public ParameterIndexingServiceTemplate(ParMenuIndexingRepository parMenuIndexingRepository, ParGlobalConfigIndexingRepository parGlobalConfigIndexingRepository) {
         this.parMenuIndexingRepository = parMenuIndexingRepository;
         this.parGlobalConfigIndexingRepository = parGlobalConfigIndexingRepository;
-        this.parReceiptIndicesRepository = parReceiptIndicesRepository;
     }
 
     @Override
@@ -92,33 +88,6 @@ public class ParameterIndexingServiceTemplate implements ParameterIndexingServic
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<BigDecimal> saveAllReceipts(ParameterCreateRequest<ParReceiptIndices> request) {
-        // get all indices -- check whether cast is possible
-        BigDecimal customerType = BigDecimal.valueOf((int) request.getCategory());
-        List<ParReceiptIndices> indices = parReceiptIndicesRepository.findAllByCustomerTypeId(customerType, Sort.by(Sort.Direction.ASC, "menuItem"));
-
-        PriorityQueue<ParReceiptIndices> queue = new PriorityQueue<>(indices);
-        PriorityQueue<ParReceiptIndices> newQueue = new PriorityQueue<>(request.getIndices());
-
-
-        while (!queue.isEmpty()) {
-            ParReceiptIndices old = queue.remove();
-            ParReceiptIndices newItem = newQueue.remove(); // TODO consider a case where menu is not approved and its id is less than
-
-            old.setReceiptIndex(newItem.getReceiptIndex());
-        }
-
-        // save the old indices
-        parReceiptIndicesRepository.saveAll(indices);
-
-        // save the remaining new items
-        Iterable<ParReceiptIndices> savedIndices = parReceiptIndicesRepository.saveAll(newQueue);
-
-        return StreamSupport.stream(savedIndices.spliterator(), false)
-                .map(ParReceiptIndices::getReceiptItemId)
-                .collect(Collectors.toList());
-    }
 
 //    @Override
 //    public List<BigDecimal> saveAllConfigs(ParameterCreateRequest<ParGlobalConfigIndices> request) {
