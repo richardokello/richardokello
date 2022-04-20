@@ -13,28 +13,21 @@ import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAg
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.Data;
 import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
-import co.ke.tracom.bprgateway.web.switchparameters.entities.XSwitchParameter;
-import co.ke.tracom.bprgateway.web.switchparameters.repository.XSwitchParameterRepository;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
+import co.ke.tracom.bprgateway.web.wasac.data.WascWaterTxnLog;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
-import co.ke.tracom.bprgateway.web.wasac.data.payment.WasacPaymentRequest;
 import co.ke.tracom.bprgateway.web.wasac.data.payment.WasacPaymentResponse;
-import co.ke.tracom.bprgateway.web.wasac.data.WascWaterTxnLog;
 import co.ke.tracom.bprgateway.web.wasac.repository.WascWaterTxnLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,7 +35,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -163,10 +155,10 @@ public class WASACService {
         //if (transactionDataList != null && transactionDataList.size() > 0) {
         */
         String meterNo = transactionDataList.get(0).getValue();
-        String account = transactionDataList.get(1).getValue();
-        Long amount = Long.parseLong(transactionDataList.get(2).getValue());
-        String description = transactionDataList.get(3).getValue();
-        String customerName = transactionDataList.get(4).getValue();
+        String account = "";//transactionDataList.get(1).getValue();
+        Long amount = Long.valueOf(transactionDataList.get(1).getValue());
+        String description = transactionDataList.get(2).getValue();
+        String customerName = transactionDataList.get(3).getValue();
        /* } else {
             //meterNo = "211610021";
             account = agentAuthData.getAccountNumber();
@@ -183,7 +175,7 @@ public class WASACService {
         waterTxnLog.setTid(request.getCredentials().getTid());
         waterTxnLog.setCreationDate(new Date());
 
-        String tot24str = getT24OFS(meterNo, account, amount, customerName, description, agentAuthData.getTid(), agentAuthData.getMid());
+        String tot24str = getT24OFS(meterNo, amount, customerName, description, agentAuthData.getTid(), agentAuthData.getMid());
 
 
         T24TXNQueue tot24 = new T24TXNQueue();
@@ -261,7 +253,7 @@ public class WASACService {
     }
 
     //construct t24 OFS message string
-    private String getT24OFS(String meterNo, String Account, Long Amount, String customerName, String description, String terminalId,
+    private String getT24OFS(String meterNo,  Long Amount, String customerName, String description, String terminalId,
                              String mid) {
         String t24UserName = getT24UserName();
         String t24Password = getT24Password();
@@ -282,9 +274,7 @@ public class WASACService {
                         + "TRANSACTION.TYPE::=ACWB,BPR.ID.NUMBER::="
                         + meterNo
                         + ","
-                        + "DEBIT.ACCT.NO::="
-                        + Account
-                        + ","
+
                         + "DEBIT.CURRENCY::=RWF,"
                         + "ORDERING.BANK::=BNK,"
                         + "DEBIT.VALUE.DATE::="
@@ -424,14 +414,16 @@ public class WASACService {
                 response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(
-                        tot24, validationRequest.getTnxType(), "WASC ACCOUNT VALIDATION", 0, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
-            } else {
+                        tot24, "WASC ACCOUNT VALIDATION ", "1200", 0, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
+            }
+            else {
                 validationData.add(addValidationResponse("T24failnarration", tot24.getT24failnarration()));
                 validationData.add(addValidationResponse("Action code", "135"));
                 response = getAcademicBridgeValidation(validationData, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.getReasonPhrase());
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(
-                        tot24, validationRequest.getTnxType(), "WASC ACCOUNT VALIDATION", 0, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
+                        tot24, "WASC ACCOUNT VALIDATION", "1200", 0, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
+               // tot24, validationRequest.getTnxType(), "WASC ACCOUNT VALIDATION", 0, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
             }
 
 

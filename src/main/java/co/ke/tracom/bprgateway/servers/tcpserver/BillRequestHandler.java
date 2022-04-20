@@ -25,10 +25,10 @@ import co.ke.tracom.bprgateway.web.eucl.dto.response.PaymentResponseData;
 import co.ke.tracom.bprgateway.web.eucl.service.EUCLService;
 import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
+import co.ke.tracom.bprgateway.web.ltss.data.LTSSRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;
-import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionRequest;
-import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionResponse;
+import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.LTSSPaymentResponse;
 import co.ke.tracom.bprgateway.web.ltss.service.LtssService;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
@@ -313,6 +313,10 @@ public class BillRequestHandler {
                     nationalIDValidationRequest.setIdentification(genericRequest.getValue());
                 }
                 NationalIDValidationResponse nationalIDValidationResponse = ltssService.validateNationalID(nationalIDValidationRequest);
+                if (nationalIDValidationResponse.getName().isEmpty()&& nationalIDValidationResponse.getIdentification().isEmpty()){
+                    response.setResponseCode("05");
+                    response.setResponseMessage("No Response from NID API");
+                }
                 if (!nationalIDValidationResponse.getName().isBlank() && !nationalIDValidationResponse.getIdentification().isBlank()){
                     response.setResponseCode("00");
                     response.setResponseMessage("Customer data fetched successfully!");
@@ -359,7 +363,7 @@ public class BillRequestHandler {
 
 
     public BillPaymentResponse billPayment(String requestString, NetSocket socket)
-            throws JsonProcessingException, UnprocessableEntityException {
+            throws JsonProcessingException, UnprocessableEntityException, InvalidAgentCredentialsException {
         //Accadermic bill payment
         AuthenticateAgentResponse authenticateAgentResponse = null;
         HashMap<String, String> payment = new HashMap();
@@ -518,9 +522,11 @@ public class BillRequestHandler {
                 break;
             //Ejo Heza contributions
             case "05.1":
+            case "05.2":
             {
-                PaymentContributionRequest paymentContributionRequest = new PaymentContributionRequest();
-                if (paymentRequest.getData().size()==0){
+                LTSSRequest paymentContributionRequest = new LTSSRequest();
+              //  if (paymentRequest.getData().size()==0)
+                if(data.isEmpty()){
                     billPaymentResponse.setResponseCode("05");
                     billPaymentResponse.setResponseMessage("Transaction data missing");
                 }
@@ -532,15 +538,16 @@ public class BillRequestHandler {
                     paymentContributionRequest.setDescription("Ejo Heza contribution payment");
                     paymentContributionRequest.setIntermediary("Tracom Services Limited");
                     //Generate RRn
-                    paymentContributionRequest.setExtReferenceNo(RRNGenerator.getInstance("EH").getRRN());
+                    paymentContributionRequest.setExtRefNo(RRNGenerator.getInstance("EH").getRRN());
 
                     NationalIDValidationRequest nationalIDValidationRequest = new NationalIDValidationRequest();
                     nationalIDValidationRequest.setIdentification(paymentRequest.getData().get(0).getValue());
-                    paymentContributionRequest.setBeneficiary(nationalIDValidationRequest);
+                   // paymentContributionRequest.setBeneficiary(nationalIDValidationRequest);
+                    paymentContributionRequest.setIdentification(nationalIDValidationRequest.getIdentification());
 
-                    PaymentContributionResponse paymentContributionResponse = ltssService.sendPaymentContribution(paymentContributionRequest);
-
-                    if (paymentContributionResponse.getRefNo().isBlank()){
+                    LTSSPaymentResponse paymentContributionResponse = ltssService.makeContributionPayment(paymentContributionRequest);
+                    System.out.println("paymentContributionResponse ============ " + paymentContributionResponse);
+                    if (paymentContributionResponse.getData().getRefNo().isBlank()){
                         billPaymentResponse.setResponseCode("05");
                         billPaymentResponse.setResponseMessage("Transaction failed. Try again later!");
                     }
@@ -552,42 +559,42 @@ public class BillRequestHandler {
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("identification")
-                                        .value(paymentContributionResponse.getBeneficiary().getIdentification())
+                                        .value(paymentContributionResponse.getData().getBeneficiary().getIdentification())
                                         .build());
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("name")
-                                        .value(paymentContributionResponse.getBeneficiary().getName())
+                                        .value(paymentContributionResponse.getData().getBeneficiary().getName())
                                         .build());
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("amount")
-                                        .value(paymentContributionResponse.getAmount())
+                                        .value(paymentContributionResponse.getData().getAmount())
                                         .build());
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("intermediary")
-                                        .value(paymentContributionResponse.getIntermediary())
+                                        .value(paymentContributionResponse.getData().getIntermediary())
                                         .build());
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("extReferenceNo")
-                                        .value(paymentContributionResponse.getExtReferenceNo())
+                                        .value(paymentContributionResponse.getData().getExtReferenceNo())
                                         .build());
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("refNo")
-                                        .value(paymentContributionResponse.getRefNo())
+                                        .value(paymentContributionResponse.getData().getRefNo())
                                         .build());
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("paymentDate")
-                                        .value(paymentContributionResponse.getPaymentDate().toString())
+                                        .value(paymentContributionResponse.getData().getPaymentDate().toString())
                                         .build());
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("description")
-                                        .value(paymentContributionResponse.getDescription())
+                                        .value(paymentContributionResponse.getData().getDescription())
                                         .build());
 
                         billPaymentResponse.setData(transactionData);
@@ -595,6 +602,8 @@ public class BillRequestHandler {
                 }
             }
             break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + paymentRequest.getSvcCode());
         }
 
         Buffer outBuffer = Buffer.buffer();
