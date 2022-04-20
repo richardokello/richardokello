@@ -1,11 +1,12 @@
 package co.ke.tracom.bprgateway.web.ltss.data.paymentContribution;
 
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.GenericRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class PaymentContributionRequest {
+public class PaymentContributionRequest extends GenericRequest {
   @ApiModelProperty(name = "Beneficiary", value = "Payment beneficiary", required = true)
   private NationalIDValidationRequest beneficiary;
 
@@ -27,4 +28,6 @@ public class PaymentContributionRequest {
   private String extReferenceNo;
 
   private String paymentDate;
+  private String identification;
+  private  String phone;
 }

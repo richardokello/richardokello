@@ -28,7 +28,7 @@ public class BillPaymentRequest {
   private String creditAccount;
   private String senderName;
   private String mobileNumber;
-  private double amount;
+  private long amount;
   private int schoolId;
 
   private String schoolName;
@@ -39,5 +39,7 @@ public class BillPaymentRequest {
   private String field;
   private String value;
   private Credentials credentials;
+
+
 
 }

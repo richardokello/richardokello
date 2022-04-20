@@ -7,6 +7,7 @@ import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiOperation;
 import io.vertx.core.net.NetSocket;
@@ -60,7 +61,7 @@ public class BillMenuController {
 
     @ApiOperation(value = "biller payment", response = BillPaymentRequest.class)
     @PostMapping(value = "api/billpayment")
-    public ResponseEntity<?>dynamicPayment( @RequestBody Object paybills) throws JsonProcessingException {
+    public ResponseEntity<?>dynamicPayment( @RequestBody Object paybills) throws JsonProcessingException, InvalidAgentCredentialsException {
         NetSocket socket=null;
         CustomObjectMapper objectMapper = new CustomObjectMapper();
         String str=  objectMapper.writeValueAsString(paybills);

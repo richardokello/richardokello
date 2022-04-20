@@ -374,6 +374,7 @@ public class BillRequestHandler {
         log.info("BILL PAYMENT REQUEST OBJECT: {}", paymentRequest);
 
         List<TransactionData> data = paymentRequest.getData();
+        System.out.println("data = ======================" + data);
 
         //EUCL bill payment
         EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder().build();
@@ -524,8 +525,13 @@ public class BillRequestHandler {
             case "05.1":
             case "05.2":
             {
-                LTSSRequest paymentContributionRequest = new LTSSRequest();
-              //  if (paymentRequest.getData().size()==0)
+                LTSSRequest ltssRequest = new LTSSRequest();
+                ltssRequest.setCredentials(paymentRequest.getCredentials());
+                NationalIDValidationRequest request=new NationalIDValidationRequest();
+
+                LTSSPaymentResponse paymentContributionResponse;
+
+                //  if (paymentRequest.getData().size()==0)
                 if(data.isEmpty()){
                     billPaymentResponse.setResponseCode("05");
                     billPaymentResponse.setResponseMessage("Transaction data missing");
@@ -533,25 +539,29 @@ public class BillRequestHandler {
                 else
                 {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    paymentContributionRequest.setPaymentDate(formatter.format(new Date()));
-                    paymentContributionRequest.setAmount(paymentRequest.getData().get(1).getValue());
-                    paymentContributionRequest.setDescription("Ejo Heza contribution payment");
-                    paymentContributionRequest.setIntermediary("Tracom Services Limited");
+                    ltssRequest.setPaymentDate(formatter.format(new Date()));
+                    ltssRequest.setAmount(paymentRequest.getData().get(1).getValue());
+                    ltssRequest.setDescription("Ejo Heza contribution payment");
+                    ltssRequest.setIntermediary("Tracom Services Limited");
                     //Generate RRn
-                    paymentContributionRequest.setExtRefNo(RRNGenerator.getInstance("EH").getRRN());
-
+                    ltssRequest.setExtRefNo(RRNGenerator.getInstance("EH").getRRN());
+                    ltssRequest.setBeneficiary(ltssRequest.getBeneficiary());
+                    NationalIDValidationResponse response=new NationalIDValidationResponse();
                     NationalIDValidationRequest nationalIDValidationRequest = new NationalIDValidationRequest();
                     nationalIDValidationRequest.setIdentification(paymentRequest.getData().get(0).getValue());
-                   // paymentContributionRequest.setBeneficiary(nationalIDValidationRequest);
-                    paymentContributionRequest.setIdentification(nationalIDValidationRequest.getIdentification());
+                    nationalIDValidationRequest.setName(paymentRequest.getData().get(1).getValue());
+                    System.out.println("nationalIDValidationRequest = " + nationalIDValidationRequest);
 
-                    LTSSPaymentResponse paymentContributionResponse = ltssService.makeContributionPayment(paymentContributionRequest);
-                    System.out.println("paymentContributionResponse ============ " + paymentContributionResponse);
-                    if (paymentContributionResponse.getData().getRefNo().isBlank()){
+
+
+                    ltssRequest.setIdentification(nationalIDValidationRequest.getIdentification());
+
+                     paymentContributionResponse = ltssService.makeContributionPayment(ltssRequest);
+
+                    if (paymentContributionResponse.getData().getRefNo().isEmpty()) {
                         billPaymentResponse.setResponseCode("05");
                         billPaymentResponse.setResponseMessage("Transaction failed. Try again later!");
-                    }
-                    else {
+                    } else {
                         billPaymentResponse.setResponseCode("00");
                         billPaymentResponse.setResponseMessage("Transaction completed successfully!");
 
@@ -559,12 +569,12 @@ public class BillRequestHandler {
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("identification")
-                                        .value(paymentContributionResponse.getData().getBeneficiary().getIdentification())
+                                        .value(paymentRequest.getData().get(0).getValue())
                                         .build());
                         transactionData.add(
                                 TransactionData.builder()
                                         .name("name")
-                                        .value(paymentContributionResponse.getData().getBeneficiary().getName())
+                                        .value(response.getName())
                                         .build());
                         transactionData.add(
                                 TransactionData.builder()

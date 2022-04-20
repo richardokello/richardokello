@@ -16,4 +16,6 @@ public class LTSSResponse {
   private String intermediary;
   private Date datetime;
   private String status;
+    String rrn;
+  String t24Reference;
 }

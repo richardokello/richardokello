@@ -122,13 +122,6 @@
               "order": 1
             },
             {
-              "label": "Account Number",
-              "type": "numeric",
-              "length": 20,
-              "validated": false,
-              "order": 2
-            },
-            {
               "label": "Amount",
               "type": "numeric",
               "length": 20,
@@ -167,7 +160,7 @@
           "fields": [
             {
               "label": "Amount",
-              "type": "alphanumeric",
+              "type": "numeric",
               "length": 20,
               "validated": false,
               "order": 1
@@ -196,7 +189,7 @@
           "fields": [
             {
               "label": "Amount",
-              "type": "alphanumeric",
+              "type": "numeric",
               "length": 20,
               "validated": false,
               "order": 1
@@ -321,27 +314,70 @@
       ],
       "fields": []
     },
+
     {
       "name": "Ejo Heza",
-      "hasSubMenu": false,
-      "svcCode": "05.1",
-      "submenu": [],
-      "fields": [
+      "hasSubMenu": true,
+      "svcCode": "05",
+      "submenu": [
         {
-          "label": "Customer National ID",
-          "type": "alphanumeric",
-          "length": 16,
-          "validated": true,
-          "order": 1
+          "name": "Customer National ID",
+          "hasSubMenu":false,
+          "svcCode": "05.1",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Customer National ID",
+              "type": "alphanumeric",
+              "length": 16,
+              "validated": true,
+              "order": 1
+            }
+
+          ]
         },
         {
-          "label": "Amount",
-          "type": "numeric",
-          "length": 12,
-          "validated": false,
-          "order": 2
+          "name": "Make Payment",
+          "hasSubMenu": false,
+          "svcCode": "05.2",
+          "submenu": [],
+          "fields": [
+
+            {
+              "label": "amount",
+              "type": "numeric",
+              "length": "12",
+              "validated": false,
+              "order": 3
+            }
+          ]
+        },
+        {
+          "name": "Register Subscribers",
+          "hasSubMenu": false,
+          "svcCode": "05.2",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "billNumber",
+              "type": "alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "amount",
+              "type": "numeric",
+              "length": "12",
+              "validated": false,
+              "order": 3
+            }
+          ]
         }
-      ]
+      ],
+      "fields": []
     }
+
+
   ]
 }

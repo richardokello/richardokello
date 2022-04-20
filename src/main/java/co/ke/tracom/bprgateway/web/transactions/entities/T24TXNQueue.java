@@ -159,4 +159,7 @@ public class T24TXNQueue implements Serializable {
     private String tokenNo;
     private String unitsKw;
     private String meterLocation;
+    @Column(name = "IDENTIFICATION")
+    private String identification;
+
 }

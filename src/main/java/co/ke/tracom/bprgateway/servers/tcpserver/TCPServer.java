@@ -4,6 +4,7 @@ import co.ke.tracom.bprgateway.servers.tcpserver.dto.GenericRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.TcpResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
+import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.vertx.core.Vertx;
@@ -75,9 +76,7 @@ public class TCPServer {
                     default:
                       throw new UnprocessableEntityException("Entity cannot be processed");
                   }
-                } catch (JsonProcessingException
-                    | UnprocessableEntityException
-                    | NullPointerException e) {
+                } catch (JsonProcessingException | UnprocessableEntityException | NullPointerException | InvalidAgentCredentialsException e) {
                   e.printStackTrace();
                   TcpResponse response = new TcpResponse();
                   response.setMessage("Bad request: " + e.getMessage());

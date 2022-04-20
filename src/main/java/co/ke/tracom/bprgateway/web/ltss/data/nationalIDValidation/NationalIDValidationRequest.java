@@ -11,4 +11,5 @@ public class NationalIDValidationRequest {
       value = "Subscriber's national ID number (16)",
       required = true)
   private String identification;
+  private String name;
 }

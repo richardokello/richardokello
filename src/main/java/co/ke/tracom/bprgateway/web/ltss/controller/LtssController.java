@@ -1,13 +1,14 @@
 package co.ke.tracom.bprgateway.web.ltss.controller;
 
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
+import co.ke.tracom.bprgateway.web.ltss.data.LTSSRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.checkPayment.CheckPaymentRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.checkPayment.CheckPaymentResponse;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.nationalIDValidation.NationalIDValidationResponse;
 import co.ke.tracom.bprgateway.web.ltss.data.newSubscriber.NewSubscriberRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.newSubscriber.NewSubscriberResponse;
-import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionRequest;
+import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.LTSSPaymentResponse;
 import co.ke.tracom.bprgateway.web.ltss.data.paymentContribution.PaymentContributionResponse;
 import co.ke.tracom.bprgateway.web.ltss.service.LtssService;
 import io.swagger.annotations.ApiOperation;
@@ -25,7 +26,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequestMapping(
-    name = "/api/ltss",
+    value = "/api/ltss",
     produces = {"application/json"})
 @RequiredArgsConstructor
 public class LtssController {
@@ -44,10 +45,10 @@ public class LtssController {
       value = "Sends a payment contribution",
       response = PaymentContributionResponse.class)
   @PostMapping("/payment/contribution")
-  public ResponseEntity<?> sendPayment(@RequestBody PaymentContributionRequest request) {
+  public ResponseEntity<?> sendPayment(@RequestBody LTSSRequest request) {
     log.info("LTSS REQUEST DATA - SEND PAYMENT CONTRIBUTION: {}", request);
-    request.setExtReferenceNo(RRNGenerator.getInstance("EH").getRRN());
-    PaymentContributionResponse responseEntity = ltssService.sendPaymentContribution(request);
+    request.setExtRefNo(RRNGenerator.getInstance("EH").getRRN());
+    LTSSPaymentResponse responseEntity = ltssService.makeContributionPayment(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
 

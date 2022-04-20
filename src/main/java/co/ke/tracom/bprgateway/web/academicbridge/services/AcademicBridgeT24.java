@@ -77,7 +77,6 @@ public class AcademicBridgeT24 {
 
         if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
 
-
             //return extractChargesFromResponse(validationReferenceNo, tot24);
              return student;
 
@@ -85,7 +84,7 @@ public class AcademicBridgeT24 {
            // student=null;
         }
 
-        return student;//kelvin to do fix this bug
+        return student;
     }
 
     private T24TXNQueue prepareT24Transaction(String transactionRRN, Data agentAuthData, String configuredSendMoneySuspenseAccount, String tot24str, String tid,String mti) {

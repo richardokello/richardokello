@@ -71,6 +71,7 @@ public class TransactionService {
 
 
     public void updateT24TransactionDTO(T24TXNQueue tot24) {
+        log.info(String.valueOf(tot24));
         t24TXNQueueRepository.save(tot24);
     }
 
