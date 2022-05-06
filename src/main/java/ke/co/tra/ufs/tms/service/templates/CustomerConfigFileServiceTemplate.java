@@ -7,6 +7,7 @@ import ke.co.tra.ufs.tms.repository.*;
 import ke.co.tra.ufs.tms.service.CustomerConfigFileService;
 import ke.co.tra.ufs.tms.service.CustomerOutletService;
 import ke.co.tra.ufs.tms.service.FileExtensionRepository;
+import ke.co.tra.ufs.tms.service.SysConfigService;
 import ke.co.tra.ufs.tms.utils.AppConstants;
 import ke.co.tra.ufs.tms.utils.SharedMethods;
 import lombok.extern.apachecommons.CommonsLog;
@@ -28,10 +29,12 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
     private final TmsDeviceTidMidRepository tmsDeviceTidMidRepository;
     private final CurrencyRepository currencyRepository;
 
+    private final SysConfigService sysConfigService;
+
 
     public CustomerConfigFileServiceTemplate(TmsDeviceRepository tmsDeviceRepository, FileExtensionRepository fileExtensionRepository, LoggerServiceVersion loggerService,
                                              SharedMethods sharedMethods, ParCustomerConfigIndicesRepository configIndicesRepository,
-                                             ParDeviceOptionsIndicesRepository parDeviceOptionsIndicesRepository, ParDeviceSelectedOptionsRepository parDeviceSelectedOptionsRepository, CustomerOutletService outletService, TmsDeviceTidMidRepository tmsDeviceTidMidRepository, CurrencyRepository currencyRepository) {
+                                             ParDeviceOptionsIndicesRepository parDeviceOptionsIndicesRepository, ParDeviceSelectedOptionsRepository parDeviceSelectedOptionsRepository, CustomerOutletService outletService, TmsDeviceTidMidRepository tmsDeviceTidMidRepository, CurrencyRepository currencyRepository, SysConfigService sysConfigService) {
         super(fileExtensionRepository, loggerService, sharedMethods);
         this.tmsDeviceRepository = tmsDeviceRepository;
         this.configIndicesRepository = configIndicesRepository;
@@ -40,6 +43,7 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
         this.outletService = outletService;
         this.tmsDeviceTidMidRepository = tmsDeviceTidMidRepository;
         this.currencyRepository = currencyRepository;
+        this.sysConfigService = sysConfigService;
     }
 
     @Override
@@ -70,12 +74,12 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
             log.error("Entity Names=>" + parentIndex.getConfig().getEntityName());
             switch (parentIndex.getConfig().getEntityName()) {
                 case CUSTOMER:
-                    if(parentIndex.getConfig().getKeyName().equals(AppConstants.CRDB_BILLER_PREFIX)){
+                    if (parentIndex.getConfig().getKeyName().equals(AppConstants.CRDB_BILLER_PREFIX)) {
                         Gson gson = new Gson();
-                        if(customer.getOrgData() != null){
+                        if (customer.getOrgData() != null) {
                             InstitutionWrapper institutionWrapper = gson.fromJson(customer.getOrgData(), InstitutionWrapper.class);
                             return institutionWrapper.getOrgPrefix().replaceAll("\"", "");
-                        }else{
+                        } else {
                             return null;
                         }
                     }
@@ -127,14 +131,16 @@ public class CustomerConfigFileServiceTemplate extends ParFileService implements
                     return getParamValue(parentIndex.getConfig().getKeyName(), UfsGeographicalRegion.class, outlet.getGeographicalRegionId());
                 case OUTLET:
                     UfsCustomerType ufsCustomerType = customer.getCustomerType();
-                    if(ufsCustomerType.getName().equalsIgnoreCase(AppConstants.CRDB_HOSPITAL_CUSTOMER_TYPE) &&
-                            parentIndex.getConfig().getKeyName().equalsIgnoreCase(AppConstants.CRDB_CUSTOMER_OUTLET_KEY_NAME)){
+                    if (ufsCustomerType.getName().equalsIgnoreCase(AppConstants.CRDB_HOSPITAL_CUSTOMER_TYPE) &&
+                            parentIndex.getConfig().getKeyName().equalsIgnoreCase(AppConstants.CRDB_CUSTOMER_OUTLET_KEY_NAME)) {
 
-                       String businessName = getParamValue(AppConstants.CRDB_CUSTOMER_KEY_NAME, UfsCustomer.class, customer);
-                       String outletName = getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomerOutlet.class, outlet);
-                       return new StringBuilder().append(businessName).append("-").append(outletName).toString();
+                        String businessName = getParamValue(AppConstants.CRDB_CUSTOMER_KEY_NAME, UfsCustomer.class, customer);
+                        String outletName = getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomerOutlet.class, outlet);
+                        return new StringBuilder().append(businessName).append("-").append(outletName).toString();
                     }
                     return getParamValue(parentIndex.getConfig().getKeyName(), UfsCustomerOutlet.class, outlet);
+                case SYS_CONFIG:
+                    return sysConfigService.findByEntityAndParameter(AppConstants.ENTITY_GLOBAL_INTEGRATION, parentIndex.getConfig().getKeyName()).getValue();
                 default:
                     return "";
             }

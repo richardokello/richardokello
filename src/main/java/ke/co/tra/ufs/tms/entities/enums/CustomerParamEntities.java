@@ -6,5 +6,6 @@ public enum CustomerParamEntities {
     TID_MID,
     CURRENCY,
     DEVICE_OPTIONS,
-    LOCATION
+    LOCATION,
+    SYS_CONFIG
 }
