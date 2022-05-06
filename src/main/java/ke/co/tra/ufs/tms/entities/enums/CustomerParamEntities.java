@@ -7,5 +7,5 @@ public enum CustomerParamEntities {
     CURRENCY,
     DEVICE_OPTIONS,
     LOCATION,
-    SYS_CONFIG
+    SYS_CONFIG, SYS_CONFIGxs
 }
