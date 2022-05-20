@@ -12,6 +12,7 @@ import ke.tracom.ufs.utils.exceptions.DataExistsException;
 import ke.tracom.ufs.utils.exceptions.PasswordExpiryException;
 import ke.tracom.ufs.utils.exceptions.RunTimeBadRequest;
 import ke.tracom.ufs.utils.CustomEntry;
+import ke.tracom.ufs.utils.exceptions.UserAlreadyLoggedInException;
 import org.apache.tomcat.util.http.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -277,5 +278,14 @@ public class ExceptionTranslator {
         response.setCode(HttpStatus.NOT_IMPLEMENTED.value());
         response.setMessage("Sorry the requested resource is not yet implemented");
         return new ResponseEntity(response, HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @ExceptionHandler(UserAlreadyLoggedInException.class)
+    public ResponseEntity<ResponseWrapper> userALreadyLoggedIn(UserAlreadyLoggedInException ex) {
+        log.debug("Unsupported exception: ", ex);
+        ResponseWrapper response = new ResponseWrapper();
+        response.setCode(HttpStatus.UNAUTHORIZED.value());
+        response.setMessage(ex.getMessage());
+        return new ResponseEntity(response, HttpStatus.UNAUTHORIZED);
     }
 }

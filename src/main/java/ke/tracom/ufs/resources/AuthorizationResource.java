@@ -396,4 +396,12 @@ public class AuthorizationResource {
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
+    public ResponseEntity<ResponseWrapper<OtpResponse>> logout(Authentication auth) {
+        ResponseWrapper response = new ResponseWrapper();
+        OAuth2Authentication a = (OAuth2Authentication) auth;
+        tokenStore.removeAccessToken(tokenStore.getAccessToken(a));
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
 }
