@@ -71,7 +71,7 @@ public class BillRequestHandler {
         CustomObjectMapper mapper = new CustomObjectMapper();
         /* Parse request string into bill menu request object */
         BillMenuRequest billMenuRequest = mapper.readValue(requestString, BillMenuRequest.class);
-        log.info("BILL MENU REQUEST DATA: {}", requestString);
+      //  log.info("BILL MENU REQUEST DATA: {}", requestString);
         String tnxType = billMenuRequest.getTnxType();
 
         if (tnxType != null && tnxType.equals("fetch-menu")) {
@@ -117,7 +117,7 @@ public class BillRequestHandler {
         AcademicBridgeValidation posResponse = null;
 
         ValidationRequest genericRequest = mapper.readValue(requestString, ValidationRequest.class);
-        log.info("Validation REQUEST OBJECT: {}", genericRequest);
+    //    log.info("Validation REQUEST OBJECT: {}", genericRequest);
 
         List<TransactionData> data = genericRequest.getData();
         //List<TransactionData> data = genericRequest.getCredentials().getData();
@@ -371,10 +371,10 @@ public class BillRequestHandler {
         CustomObjectMapper mapper = new CustomObjectMapper();
 
         BillPaymentRequest paymentRequest = mapper.readValue(requestString, BillPaymentRequest.class);
-        log.info("BILL PAYMENT REQUEST OBJECT: {}", paymentRequest);
+      //  log.info("BILL PAYMENT REQUEST OBJECT: {}", paymentRequest);
 
         List<TransactionData> data = paymentRequest.getData();
-        System.out.println("data = ======================" + data);
+       // System.out.println("data = ======================" + data);
 
         //EUCL bill payment
         EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder().build();
@@ -681,7 +681,7 @@ public class BillRequestHandler {
         CustomObjectMapper mapper = new CustomObjectMapper();
 
         VisionFundRequest fundRequest = mapper.readValue(requestString, VisionFundRequest.class);
-        log.info("VISION FUND REQUEST OBJECT: {}", fundRequest);
+       // log.info("VISION FUND REQUEST OBJECT: {}", fundRequest);
 
         VisionFundResponse fundResponse = new VisionFundResponse();
         List<TransactionData> data = fundRequest.getData();
@@ -701,7 +701,7 @@ public class BillRequestHandler {
                 depositRequest.setCredentials(fundRequest.getCredentials());
                 depositRequest.setTnxType(fundRequest.getTnxType());
 
-                log.error("<<<<\n[\nVISION FUND ACCOUNT DEPOSIT REQUEST OBJECT: \n{}\n]", depositRequest);
+               // log.error("<<<<\n[\nVISION FUND ACCOUNT DEPOSIT REQUEST OBJECT: \n{}\n]", depositRequest);
 
                 AccountDepositResponse depositResponse = visionFundService.makeDeposit(depositRequest);
                 fundResponse.setResponseMessage(depositResponse.getResponseString());

@@ -1,8 +1,6 @@
 package co.ke.tracom.bprgateway.core.tracomchannels.json;
 
 import co.ke.tracom.bprgateway.core.tracomchannels.CustomHTTPCommunicationInterface;
-import co.ke.tracom.bprgateway.web.mobicash.data.MobiCashRequest;
-import co.ke.tracom.bprgateway.web.mobicash.data.authentication.AuthenticationRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -47,10 +45,10 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
 
     System.err.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
     logger.info(
-        "SERVICE REQUEST : {} {} {}",
+        "SERVICE REQUEST : {} {}",
         uriComponents,
-        httpEntity.getHeaders(),
-        httpEntity.getBody());
+        httpEntity.getHeaders()
+        );
     ResponseEntity<String> responseEntity =
         restTemplate.exchange(uriComponents.toString(), HttpMethod.POST, httpEntity, String.class);
     logger.info("SERVICE RESPONSE : {} {}", responseEntity.getHeaders(), responseEntity.getBody());
@@ -76,8 +74,7 @@ public class RestHTTPService implements CustomHTTPCommunicationInterface {
     logger.info(
             "SERVICE REQUEST : {} {} {}",
             uriComponents.toString(),
-            httpEntity.getHeaders(),
-            httpEntity.getBody());
+            httpEntity.getHeaders());
     ResponseEntity<String> responseEntity =
             restTemplate.exchange(uriComponents.toString(), HttpMethod.POST, httpEntity, String.class);
     logger.info("SERVICE RESPONSE : {} {}", responseEntity.getHeaders(), responseEntity.getBody());

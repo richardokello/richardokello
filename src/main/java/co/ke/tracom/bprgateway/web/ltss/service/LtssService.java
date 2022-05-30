@@ -156,12 +156,12 @@ public class LtssService {
   @SneakyThrows
 public LTSSPaymentResponse makeContributionPayment(LTSSRequest ltssRequest)  {
 
-      System.out.println("ltssRequest = ========" + ltssRequest);
-      System.out.println("ltssRequest = ========" + ltssRequest.getCredentials());
-      System.out.println("ltssRequest = ========" + ltssRequest.getCredentials().getPassword());
-      System.out.println("ltssRequest.getAmount() = " + ltssRequest.getAmount());
+//      System.out.println("ltssRequest = ========" + ltssRequest);
+//      System.out.println("ltssRequest = ========" + ltssRequest.getCredentials());
+//      System.out.println("ltssRequest = ========" + ltssRequest.getCredentials().getPassword());
+//      System.out.println("ltssRequest.getAmount() = " + ltssRequest.getAmount());
       LTSSPaymentResponse paymentResponse=new LTSSPaymentResponse();
-      System.out.println("paymentResponse = " + paymentResponse);
+   //   System.out.println("paymentResponse = " + paymentResponse);
 //    AuthenticateAgentResponse authenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(
 //            new MerchantAuthInfo(paymentContributionRequest.getCredentials().getUsername(),paymentContributionRequest.getCredentials().getPassword())
 //    );
@@ -277,7 +277,7 @@ String formartedOFS= String.format("%04d", bareOFS.length()) + bareOFS;
 
       t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
      transactionService.updateT24TransactionDTO(tot24);
-      System.out.println(".Gateway ref.. " + t24refRRN + " txn queued for t24 posting !!");
+     // System.out.println(".Gateway ref.. " + t24refRRN + " txn queued for t24 posting !!");
 
 
       String errorMessage =
