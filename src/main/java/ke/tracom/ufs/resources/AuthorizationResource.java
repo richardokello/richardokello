@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -158,7 +159,7 @@ public class AuthorizationResource {
                 }
             }
 
-            loggerService.log("OTP verified successfully", UfsAuthentication.class.getSimpleName(), authRepository.findByusernameIgnoreCase(a.getName()).getAuthenticationId(), user.getUserId(),
+            loggerService.log("OTP verified successfully", UfsOtp.class.getSimpleName(), null, user.getUserId(),
                     AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "OTP verified successfully");
 
             return new ResponseEntity(response, HttpStatus.OK);
@@ -230,7 +231,7 @@ public class AuthorizationResource {
             this.notifyService.sendSms(dbAuth.getUser().getPhoneNumber(), "OTP: " + code);
         } catch (Exception e) {
             String error = "OTP Resend failed due to smtp/mail server configurations";
-            loggerService.log(error, UfsAuthentication.class.getSimpleName(), null, null,
+            loggerService.log(error, UfsOtp.class.getSimpleName(), null, null,
                     AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, error);
             response.setMessage(error);
             return new ResponseEntity(error + " " + e.getMessage(), HttpStatus.MULTI_STATUS);
@@ -303,9 +304,6 @@ public class AuthorizationResource {
         //to check password meets policy
         if (accService.isPasswordValid(reset.getNewPassword(), dbAuth.getUser()) == false) {
             response.setCode(400);
-            loggerService.log("Changing Password Failed,Password Requirements Not Met", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
-                    AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Password Requirements Not Met");
-
             return new ResponseEntity(response, HttpStatus.FORBIDDEN);
 
         }
@@ -436,6 +434,7 @@ public class AuthorizationResource {
         loggerService.log("Logged out successfully", UfsAuthentication.class.getSimpleName(), ufsAuthentication.getAuthenticationId(), ufsAuthentication.getUserId(),
                 AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Logged out successfully");
 
+        response.setMessage("Logged out successfully");
         return new ResponseEntity(response, HttpStatus.OK);
     }
 }

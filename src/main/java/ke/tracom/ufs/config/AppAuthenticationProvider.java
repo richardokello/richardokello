@@ -15,6 +15,7 @@ import ke.tracom.ufs.repositories.OTPRepository;
 import ke.tracom.ufs.services.CustomUserService;
 import ke.tracom.ufs.utils.AppConstants;
 import ke.tracom.ufs.utils.exceptions.UserAlreadyLoggedInException;
+import ke.tracom.ufs.wrappers.LogExtras;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,6 +57,7 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
     private TokenStore tokenStore;
     private HttpServletRequest request;
     private final AuditLogService auditLogService;
+    private final LogExtras extras;
 
     @Value("${client_id}")
     private String client_id;
@@ -63,7 +65,7 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
     public AppAuthenticationProvider(@Qualifier("userDetailsServiceTemplate") UserDetailsService userDetailsService,
                                      AuthenticationRepository authRepository, PasswordEncoder passwordEncoder,
                                      UserRepository userRepository, OTPRepository otpRepository, @Qualifier("commonUserService") CustomUserService userService, NotifyServiceTemplate notifyService,
-                                     LoggerServiceTemplate loggerService, SysConfigService configService, TokenStore tokenStore, HttpServletRequest request, AuditLogService auditLogService) {
+                                     LoggerServiceTemplate loggerService, SysConfigService configService, TokenStore tokenStore, HttpServletRequest request, AuditLogService auditLogService, LogExtras extras) {
         super();
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
@@ -71,6 +73,7 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
         this.tokenStore = tokenStore;
         this.request = request;
         this.auditLogService = auditLogService;
+        this.extras = extras;
         super.setUserDetailsService(userDetailsService);
         this.authRepository = authRepository;
         super.setPasswordEncoder(passwordEncoder);
@@ -89,7 +92,7 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
             Collection<OAuth2AccessToken> accesToken = tokenStore.findTokensByClientIdAndUserName(client_id, authentication.getName());
             List<OAuth2AccessToken> activeToken = accesToken.stream().filter(token -> !token.isExpired()).collect(Collectors.toList());
             if (activeToken.size() > 0) {
-                String ip = getIpAddress();
+                String ip = extras.getIpAddress();
                 String source = org.thymeleaf.util.StringUtils.abbreviate(request.getHeader("user-agent"), 100);
 
                 List<UfsAuditLog> audits = auditLogService.findByUserIdAndIpAndSource(dbAuth.getUserId().toString(), AppConstants.STATUS_COMPLETED, AppConstants.ACTIVITY_AUTHENTICATION, source, ip);
@@ -159,16 +162,4 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
         }
     }
 
-    private String getIpAddress() {
-        String remoteAddr = "";
-
-        if (request != null) {
-            remoteAddr = request.getHeader("X-FORWARDED-FOR");
-            log.error("IP Remote : " + remoteAddr);
-            if (remoteAddr == null || "".equals(remoteAddr)) {
-                remoteAddr = request.getRemoteAddr();
-            }
-        }
-        return remoteAddr;
-    }
 }
