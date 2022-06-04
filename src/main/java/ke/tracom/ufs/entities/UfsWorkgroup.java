@@ -6,6 +6,7 @@
 package ke.tracom.ufs.entities;
 
 import ke.axle.chassis.annotations.*;
+import ke.axle.chassis.enums.ModifiableFieldType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -43,6 +44,7 @@ public class UfsWorkgroup implements Serializable {
     @Column(name = "GROUP_NAME")
     @Searchable
     @EntityName
+    @ModifiableQueryField
     private String groupName;
     @Size(max = 100)
     @Searchable
@@ -95,6 +97,7 @@ public class UfsWorkgroup implements Serializable {
 
     @Transient
     @ModifiableField
+    @ModifiableChildEntityField(entityName = UfsRole.class, modifiableType = ModifiableFieldType.QUERY)
     private List<Long> workgroupRolesIds;
 
     public UfsWorkgroup() {

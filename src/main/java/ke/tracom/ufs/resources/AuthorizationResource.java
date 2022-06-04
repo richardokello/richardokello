@@ -158,6 +158,9 @@ public class AuthorizationResource {
                 }
             }
 
+            loggerService.log("OTP verified successfully", UfsAuthentication.class.getSimpleName(), authRepository.findByusernameIgnoreCase(a.getName()).getAuthenticationId(), user.getUserId(),
+                    AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "OTP verified successfully");
+
             return new ResponseEntity(response, HttpStatus.OK);
         } catch (NotFoundException ex) {
 
@@ -233,6 +236,9 @@ public class AuthorizationResource {
             return new ResponseEntity(error + " " + e.getMessage(), HttpStatus.MULTI_STATUS);
         }
         response.setMessage("OTP resent successfully");
+        loggerService.log("OTP resent successfully", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
+                AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "OTP resent successfully");
+
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
@@ -261,6 +267,8 @@ public class AuthorizationResource {
                 return new ResponseEntity(error + " " + e.getMessage(), HttpStatus.MULTI_STATUS);
             }
 
+            loggerService.log("Password reset successfully ", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
+                    AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Password reset successfully");
             response.setMessage("Password reset successfully. Check your email for new credentials");
 
             return new ResponseEntity(response, HttpStatus.OK);
@@ -268,6 +276,9 @@ public class AuthorizationResource {
         }
         response.setCode(404);
         response.setMessage("Provided email address doesnt exist. Check if the email provided is correct");
+        loggerService.log("Password Reset Failed,Provided Email doesnt exist "+email, UfsAuthentication.class.getSimpleName(), null, null,
+                AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Provided Email doesnt exist");
+
         return new ResponseEntity(response, HttpStatus.OK);
 
     }
@@ -282,6 +293,9 @@ public class AuthorizationResource {
         if (!encoder.matches(reset.getOldPassword(), dbAuth.getPassword())) { //password matches
             response.setCode(400);
             response.setMessage("Invalid Old Password");
+            loggerService.log("Changing Password Failed,Invalid Old Password Provided", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
+                    AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Invalid Old Password");
+
             return new ResponseEntity(response, HttpStatus.FORBIDDEN);
 
         }
@@ -289,6 +303,9 @@ public class AuthorizationResource {
         //to check password meets policy
         if (accService.isPasswordValid(reset.getNewPassword(), dbAuth.getUser()) == false) {
             response.setCode(400);
+            loggerService.log("Changing Password Failed,Password Requirements Not Met", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
+                    AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Password Requirements Not Met");
+
             return new ResponseEntity(response, HttpStatus.FORBIDDEN);
 
         }
@@ -296,9 +313,9 @@ public class AuthorizationResource {
         authRepository
                 .save(dbAuth);
 
-//        this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
         response.setMessage("Password reset successfully. You can now login to your account");
-//        loggerService.log("Generating OTP for user {}", dbAuth.getUsername());
+        loggerService.log("Password changed successfully ", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
+                AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Password changed successfully");
 
         return new ResponseEntity(response, HttpStatus.OK);
 
@@ -314,6 +331,8 @@ public class AuthorizationResource {
         if (dbAuth == null) {
             response.setCode(404);
             response.setMessage("Provided Email doesnt exist");
+            loggerService.log("Changing First Time Password Failed,Provided Email doesnt exist "+changePaasowrd.getEmail(), UfsAuthentication.class.getSimpleName(), null, null,
+                    AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Provided Email doesnt exist");
 
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
 
@@ -323,12 +342,20 @@ public class AuthorizationResource {
         if (!encoder.matches(changePaasowrd.getOldPassword(), dbAuth.getPassword())) {
             response.setCode(400);
             response.setMessage("Invalid Old Password");
+
+            loggerService.log("Changing First Time Password Failed,Invalid Old Password Provided", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
+                    AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Invalid Old Password");
+
             return new ResponseEntity(response, HttpStatus.FORBIDDEN);
 
         }
         if (accService.isPasswordValid(changePaasowrd.getNewPassword(), dbAuth.getUser()) == false) { //to check password meets policy
             response.setCode(400);
             response.setMessage("Password must have atleast 1 special character, 1 uppercase letter, 1 lowercase letter and 1 number. Kindly input a password meeting the policy"); //to fetch the policy from db
+
+            loggerService.log("Changing First Time Password Failed,Password Requirements Not Met", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
+                    AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Password Requirements Not Met");
+
             return new ResponseEntity(response, HttpStatus.FORBIDDEN);
         }
         System.out.println("NEW PASSWORD===========>>>" + changePaasowrd.getNewPassword());
@@ -336,9 +363,11 @@ public class AuthorizationResource {
         dbAuth.setPasswordStatus(AppConstants.STATUS_ACTIVE);
         authRepository.save(dbAuth);
 
-//        this.notifyService.sendEmail(dbAuth.getUsername(), "One Time Password", "OTP: " + code);
         response.setMessage("Password changed successfully. You can now login to your account");
-//        loggerService.log("Generating OTP for user {}", dbAuth.getUsername());
+
+        loggerService.log("First Time Password changed successfully ", UfsAuthentication.class.getSimpleName(), dbAuth.getAuthenticationId(), dbAuth.getUserId(),
+                AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "First Time Password changed successfully");
+
 
         return new ResponseEntity(response, HttpStatus.OK);
 
@@ -402,6 +431,11 @@ public class AuthorizationResource {
         ResponseWrapper response = new ResponseWrapper();
         OAuth2Authentication a = (OAuth2Authentication) auth;
         tokenStore.removeAccessToken(tokenStore.getAccessToken(a));
+
+        UfsAuthentication ufsAuthentication = authRepository.findByusernameIgnoreCase(a.getName());
+        loggerService.log("Logged out successfully", UfsAuthentication.class.getSimpleName(), ufsAuthentication.getAuthenticationId(), ufsAuthentication.getUserId(),
+                AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Logged out successfully");
+
         return new ResponseEntity(response, HttpStatus.OK);
     }
 }
