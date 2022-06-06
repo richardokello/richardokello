@@ -15,8 +15,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
+
 @Entity(name = "PAR_DEVICE_OPTIONS")
 public class ParDeviceOptions {
 //
@@ -66,10 +65,92 @@ public class ParDeviceOptions {
     @Column(name = "INTRASH", insertable = false)
     private String intrash;
 
-    @OneToMany(mappedBy = "deviceOptions")
+    @JsonIgnore
+    @OneToMany(mappedBy = "deviceOptions",fetch = FetchType.LAZY)
     private List<ParDeviceSelectedOptions> selectedOptions;
 
-    @JsonIgnore
+
     @OneToOne(mappedBy = "option")
+    @JsonIgnore
     private ParDeviceOptionsIndices optionsIndex;
+
+    public BigDecimal getId() {
+        return id;
+    }
+
+    public void setId(BigDecimal id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Short getIsAllowed() {
+        return isAllowed;
+    }
+
+    public void setIsAllowed(Short isAllowed) {
+        this.isAllowed = isAllowed;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getActionStatus() {
+        return actionStatus;
+    }
+
+    public void setActionStatus(String actionStatus) {
+        this.actionStatus = actionStatus;
+    }
+
+    public String getIntrash() {
+        return intrash;
+    }
+
+    public void setIntrash(String intrash) {
+        this.intrash = intrash;
+    }
+
+    public List<ParDeviceSelectedOptions> getSelectedOptions() {
+        return selectedOptions;
+    }
+
+    public void setSelectedOptions(List<ParDeviceSelectedOptions> selectedOptions) {
+        this.selectedOptions = selectedOptions;
+    }
+
+    public ParDeviceOptionsIndices getOptionsIndex() {
+        return optionsIndex;
+    }
+
+    public void setOptionsIndex(ParDeviceOptionsIndices optionsIndex) {
+        this.optionsIndex = optionsIndex;
+    }
 }
