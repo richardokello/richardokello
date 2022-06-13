@@ -82,6 +82,8 @@ public class AppConstants {
     public static final String PARAMETER_SPECIAL_CHAR_NUMBER = "specialCharacter";
     public static final String PARAMETER_UPPERCASE_NUMBER = "upperCase";
     public static final String PARAMETER_LOWERCASE_NUMBER = "lowerCase";
+    public static final String PARAMETER_UFS_LICENSE_KEY = "ufsLicenseKey";
+    public static final String PARAMETER_UFS_LICENSE_KEY_NOTIFICATION = "ufsLicenseKeyNotification";
     public static final String PARAMETER_SCAPI_URL = "scapiUrl";
     public static final String PARAMETER_SCAPI_USERNAME = "scapiUsername";
     public static final String PARAMETER_SCAPI_PASSWORD = "scapiPassword";

@@ -9,4 +9,6 @@ import java.util.List;
 public interface AuditLogService {
 
     public Page<UfsAuditLog> findByActivityTypeAndStatusNot(String activityType, String status, Pageable pg);
+    List<UfsAuditLog> findByUserIdAndIpAndSource(String userId, String status, String activityType, String source, String ipAddress);
+
 }

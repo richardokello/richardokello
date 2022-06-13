@@ -6,6 +6,7 @@
 package ke.tracom.ufs.entities;
 
 import ke.axle.chassis.annotations.*;
+import ke.axle.chassis.enums.ModifiableFieldType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -60,6 +61,7 @@ public class UfsRole implements Serializable {
     @ModifiableField
     @Column(name = "ROLE_NAME")
     @EntityName
+    @ModifiableQueryField
     private String roleName;
     @Size(max = 100)
     @Searchable
@@ -103,6 +105,7 @@ public class UfsRole implements Serializable {
 
     @Transient
     @ModifiableField
+    @ModifiableChildEntityField(entityName = UfsEntityPermission.class, modifiableType = ModifiableFieldType.QUERY)
     private Set<Long> permissions;
 
     public UfsRole() {

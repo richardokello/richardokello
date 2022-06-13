@@ -1,7 +1,10 @@
 package ke.tracom.ufs.wrappers;
 
 import ke.tracom.ufs.entities.UfsAuthentication;
+import ke.tracom.ufs.entities.UfsUser;
 import ke.tracom.ufs.repositories.AuthenticationRepository;
+import ke.tracom.ufs.repositories.UserRepository;
+import ke.tracom.ufs.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,24 +12,27 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 
 @Service
 public class LogExtras {
 
-    @Value("${baseUrl}")
-    private String url;
     @Value("${client-id}")
     private String clientId;
     @Autowired
     AuthenticationRepository urepo;
     private final HttpServletRequest request;
+    private final UserService userService;
+
     private String fullname;
 
 
-    public LogExtras(HttpServletRequest request) {
+    public LogExtras(HttpServletRequest request, UserService userService) {
         this.request = request;
+        this.userService = userService;
     }
 
 
@@ -67,9 +73,17 @@ public class LogExtras {
             username = principal.toString();
         }
         UfsAuthentication userAuth = urepo.findByusernameIgnoreCase(username);
-        fullname = userAuth.getUser().getFullName();
+        Optional<UfsUser> ufsUser  = userService.findById(userAuth.getUserId());
+        if(ufsUser.isPresent()){
+            this.setFullname(ufsUser.get().getFullName());
+
+        }
         return userAuth.getUserId();
 
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public String getFullName() {

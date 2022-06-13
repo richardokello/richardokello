@@ -1,12 +1,13 @@
 package ke.tracom.ufs.config;
 
-
 import ke.tracom.ufs.config.multitenancy.ThreadLocalStorage;
+import ke.tracom.ufs.entities.UfsAuditLog;
 import ke.tracom.ufs.entities.UfsAuthentication;
 import ke.tracom.ufs.entities.UfsOtpCategory;
 import ke.tracom.ufs.entities.UfsUser;
 import ke.tracom.ufs.repositories.UserRepository;
 import ke.tracom.ufs.services.AuthTokenReplication;
+import ke.tracom.ufs.services.AuditLogService;
 import ke.tracom.ufs.services.SysConfigService;
 import ke.tracom.ufs.services.template.LoggerServiceTemplate;
 import ke.tracom.ufs.services.template.NotifyServiceTemplate;
@@ -14,10 +15,12 @@ import ke.tracom.ufs.repositories.AuthenticationRepository;
 import ke.tracom.ufs.repositories.OTPRepository;
 import ke.tracom.ufs.services.CustomUserService;
 import ke.tracom.ufs.utils.AppConstants;
-import ke.tracom.ufs.utils.enums.MessageType;
+import ke.tracom.ufs.utils.exceptions.UserAlreadyLoggedInException;
+import ke.tracom.ufs.wrappers.LogExtras;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
@@ -29,12 +32,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.PrintStream;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional(noRollbackFor = {BadCredentialsException.class})
@@ -50,15 +57,27 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
     private final UserDetailsService userDetailsService;
     private final SysConfigService configService;
     private final AuthTokenReplication authTokenReplicationService;
+    private TokenStore tokenStore;
+    private HttpServletRequest request;
+    private final AuditLogService auditLogService;
+    private final LogExtras extras;
+
+    @Value("${client_id}")
+    private String client_id;
 
     public AppAuthenticationProvider(@Qualifier("userDetailsServiceTemplate") UserDetailsService userDetailsService,
                                      AuthenticationRepository authRepository, PasswordEncoder passwordEncoder,
                                      UserRepository userRepository, OTPRepository otpRepository, @Qualifier("commonUserService") CustomUserService userService, NotifyServiceTemplate notifyService,
-                                     LoggerServiceTemplate loggerService,AuthTokenReplication authTokenReplicationService, SysConfigService configService) {
+
+                                     LoggerServiceTemplate loggerService, SysConfigService configService,AuthTokenReplication authTokenReplicationService, TokenStore tokenStore, HttpServletRequest request, AuditLogService auditLogService, LogExtras extras) {
         super();
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
         this.configService = configService;
+        this.tokenStore = tokenStore;
+        this.request = request;
+        this.auditLogService = auditLogService;
+        this.extras = extras;
         super.setUserDetailsService(userDetailsService);
         this.authRepository = authRepository;
         super.setPasswordEncoder(passwordEncoder);
@@ -75,6 +94,23 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
         String lockedError = "Sorry account is locked";
         UfsAuthentication dbAuth = authRepository.findByusername(authentication.getName());
         try {
+            Collection<OAuth2AccessToken> accesToken = tokenStore.findTokensByClientIdAndUserName(client_id, authentication.getName());
+            List<OAuth2AccessToken> activeToken = accesToken.stream().filter(token -> !token.isExpired()).collect(Collectors.toList());
+            if (activeToken.size() > 0) {
+                String ip = extras.getIpAddress();
+                String source = org.thymeleaf.util.StringUtils.abbreviate(request.getHeader("user-agent"), 100);
+
+                List<UfsAuditLog> audits = auditLogService.findByUserIdAndIpAndSource(dbAuth.getUserId().toString(), AppConstants.STATUS_COMPLETED, AppConstants.ACTIVITY_AUTHENTICATION, source, ip);
+                log.error("Other IP===>{}", ip);
+                log.error("Other Source===>{}", source);
+                log.error("Other userId===>{}", dbAuth.getUserId().toString());
+                log.error("Other Logs===>{}", audits.size());
+                if (audits.size() < 1)
+                    loggerService.log("Another user with same credentials has already logged into the system", UfsAuthentication.class.getSimpleName(), null, null,
+                            AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Another user with same credentials already logged in");
+                throw new UserAlreadyLoggedInException("Another user with same credentials has already logged into the system");
+
+            }
             Authentication auth = super.authenticate(authentication);
             log.info("Done Authenticating user using AppAuthenticationProvider");
 
