@@ -669,7 +669,7 @@ public class BillRequestHandler {
 
         BillPaymentResponse billPaymentResponse =
                 BillPaymentResponse.builder()
-                        .responseCode("09")
+                        .responseCode("098")
                         .responseMessage("No Agent account found")
                         .data(null)
 

@@ -55,8 +55,16 @@ public class BillMenuController {
         String str=  objectMapper.writeValueAsString(validate);
         //   log.info("converted string >>>>>>>>>>>{}",str);
         AcademicBridgeValidation response=billRequestHandler.validation(str,socket);
-        // return new ResponseEntity<>(response , HttpStatus.OK);
-        return ResponseEntity.ok().body(response);
+        if(response==null||!response.getResponseCode().equals(00))
+        {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+//        if(response==null){
+//
+//        }
+         return new ResponseEntity<>(response , HttpStatus.OK);
+        //return ResponseEntity.ok().body(response);
+       // return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ApiOperation(value = "biller payment", response = BillPaymentRequest.class)
@@ -68,6 +76,10 @@ public class BillMenuController {
         //log.info("converted string >>>>>>>>>>>{}",str);
         BillPaymentResponse response=billRequestHandler.billPayment(str,socket);
         // return new ResponseEntity<>(response , HttpStatus.OK);
+        if(response==null||!response.getResponseCode().equals(00))
+        {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
         return ResponseEntity.ok().body(response);
     }
 }

@@ -144,7 +144,7 @@ public class EUCLService {
                 response = MeterNoValidationResponse
                         .builder()
                         .status("98")
-                        .message(tot24narration)
+                        .message("EUCL Validation failed. Transaction [" + referenceNo + "] " )
                         .data(data)
                         .build();
                 return response;
