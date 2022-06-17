@@ -9,6 +9,9 @@ import ke.tracom.ufs.config.ParseJsonFile;
 import ke.tracom.ufs.config.multitenancy.*;
 import ke.tracom.ufs.utils.AppConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.jasypt.encryption.StringEncryptor;
+import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
+import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -49,6 +52,10 @@ public class UfsApplication {
 
     @Autowired
     MultiTenantDbConfigProperties multiTenantDbConfigProperties;
+
+    @Autowired
+    StringEncryptor jasyptStringEncryptor;
+
     public static void main(String[] args) {
         SpringApplication.run(UfsApplication.class, args);
     }
@@ -76,6 +83,23 @@ public class UfsApplication {
         return converter;
     }
 
+    @Bean("jasyptStringEncryptor")
+    public StringEncryptor stringEncryptor() {
+        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        SimpleStringPBEConfig config = new SimpleStringPBEConfig();
+        config.setPassword("secret_key123456");
+        config.setAlgorithm("PBEWITHHMACSHA512ANDAES_256");
+        config.setKeyObtentionIterations("1000");
+        config.setPoolSize("1");
+        config.setProviderName("SunJCE");
+        config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
+        config.setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator");
+        config.setStringOutputType("base64");
+        encryptor.setConfig(config);
+
+        return encryptor;
+    }
+
 
 
 //    @Bean
@@ -98,7 +122,7 @@ public class UfsApplication {
     @Bean
     public DataSource dataSource() {
         AbstractRoutingDataSource dataSource = new TenantAwareRoutingSource();
-        MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(getDatasourceConfigs());
+        MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(getDatasourceConfigs(), stringEncryptor());
         Map<Object, Object> tenants = routingSource.getTenants();
         dataSource.setTargetDataSources(tenants);
         dataSource.afterPropertiesSet();
