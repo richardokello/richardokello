@@ -3,7 +3,11 @@ package ke.tracom.ufs;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import ke.tracom.ufs.config.FileStorageProperties;
+import org.jasypt.encryption.StringEncryptor;
+import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
+import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,6 +30,7 @@ import java.util.concurrent.Executor;
 @EnableEurekaClient
 @EnableAsync
 @EnableConfigurationProperties({FileStorageProperties.class})
+@EnableEncryptableProperties
 public class UfsApplication {
 
     public static void main(String[] args) {
@@ -64,5 +69,22 @@ public class UfsApplication {
         executor.setThreadNamePrefix("UFS-THREAD");
         executor.initialize();
         return executor;
+    }
+
+    @Bean("jasyptStringEncryptor")
+    public StringEncryptor stringEncryptor() {
+        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        SimpleStringPBEConfig config = new SimpleStringPBEConfig();
+        config.setPassword("secret_key123456");
+        config.setAlgorithm("PBEWITHHMACSHA512ANDAES_256");
+        config.setKeyObtentionIterations("1000");
+        config.setPoolSize("1");
+        config.setProviderName("SunJCE");
+        config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
+        config.setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator");
+        config.setStringOutputType("base64");
+        encryptor.setConfig(config);
+
+        return encryptor;
     }
 }
