@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import ke.co.tra.ufs.tms.service.SysConfigService;
+import org.jasypt.encryption.StringEncryptor;
+import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
+import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,5 +160,22 @@ public class TMSApplication {
         tokenService.setClientId("common_module_client");
         tokenService.setClientSecret("secret");
         return tokenService;
+    }
+
+    @Bean("jasyptStringEncryptor")
+    public StringEncryptor stringEncryptor() {
+        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        SimpleStringPBEConfig config = new SimpleStringPBEConfig();
+        config.setPassword("secret_key123456");
+        config.setAlgorithm("PBEWITHHMACSHA512ANDAES_256");
+        config.setKeyObtentionIterations("1000");
+        config.setPoolSize("1");
+        config.setProviderName("SunJCE");
+        config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
+        config.setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator");
+        config.setStringOutputType("base64");
+        encryptor.setConfig(config);
+
+        return encryptor;
     }
 }
