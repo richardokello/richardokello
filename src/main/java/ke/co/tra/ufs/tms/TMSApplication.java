@@ -8,6 +8,7 @@ package ke.co.tra.ufs.tms;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import ke.co.tra.ufs.tms.service.SysConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,7 @@ import java.util.concurrent.Executor;
 @EnableAsync
 @EnableScheduling
 @EnableEurekaClient
+@EnableEncryptableProperties
 public class TMSApplication {
 
     @Autowired
