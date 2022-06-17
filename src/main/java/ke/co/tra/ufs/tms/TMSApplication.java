@@ -73,7 +73,7 @@ public class TMSApplication {
     @Bean
     public DataSource dataSource() {
         AbstractRoutingDataSource dataSource = new TenantAwareRoutingSource();
-        MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(getDatasourceConfigs());
+        MultiTenantDynamicTenantAwareRoutingSource routingSource = new MultiTenantDynamicTenantAwareRoutingSource(getDatasourceConfigs(), stringEncryptor());
         Map<Object, Object> tenants = routingSource.getTenants();
         dataSource.setTargetDataSources(tenants);
         dataSource.afterPropertiesSet();
