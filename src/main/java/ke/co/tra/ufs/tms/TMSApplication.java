@@ -8,19 +8,19 @@ package ke.co.tra.ufs.tms;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import ke.co.tra.ufs.tms.config.ParseJsonFile;
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import ke.co.tra.ufs.tms.config.multitenancy.*;
 import ke.co.tra.ufs.tms.service.SysConfigService;
-import ke.co.tra.ufs.tms.utils.AppConstants;
+import org.jasypt.encryption.StringEncryptor;
+import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
+import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -29,10 +29,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
-import org.springframework.jdbc.support.DatabaseStartupValidator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -46,10 +44,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * @author Owori Juma
@@ -59,6 +55,7 @@ import java.util.stream.Stream;
 @EnableScheduling
 @EnableEurekaClient
 @EnableConfigurationProperties(MultiTenantDbConfigProperties.class)
+@EnableEncryptableProperties
 public class TMSApplication {
 
     @Autowired
@@ -223,5 +220,22 @@ public class TMSApplication {
         RestTemplate template = new RestTemplate();
         template.setInterceptors(interceptors);
         return template;
+    }
+
+    @Bean("jasyptStringEncryptor")
+    public StringEncryptor stringEncryptor() {
+        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        SimpleStringPBEConfig config = new SimpleStringPBEConfig();
+        config.setPassword("secret_key123456");
+        config.setAlgorithm("PBEWITHHMACSHA512ANDAES_256");
+        config.setKeyObtentionIterations("1000");
+        config.setPoolSize("1");
+        config.setProviderName("SunJCE");
+        config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
+        config.setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator");
+        config.setStringOutputType("base64");
+        encryptor.setConfig(config);
+
+        return encryptor;
     }
 }
