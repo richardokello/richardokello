@@ -9,4 +9,4 @@ ENV TZ=Africa/Nairobi
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #ENTRYPOINT java -Djava.security.egd=file:/dev/./urandom -jar /app.jar
-CMD ["/usr/bin/java", "-jar",  "/app.jar"]
+CMD ["/usr/bin/java", "-Djasypt.encryptor.password=secret_key123456","-jar",  "/app.jar"]
