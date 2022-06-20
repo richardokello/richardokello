@@ -65,6 +65,7 @@ public class LoggerServiceTemplate implements LoggerService {
 
 
     private void sendLog(LogWrapper logs) {
+        System.out.println(">>>>> called send logs >>>>> ");
         try {
             log.error("Data, =>" + new ObjectMapper().writeValueAsString(logs));
         } catch (JsonProcessingException e) {
@@ -89,21 +90,16 @@ public class LoggerServiceTemplate implements LoggerService {
                     headers.add(header, req.getHeader(header));
             }
 
+            // logger service only accept application/json
+            headers.set("Content-Type", "application/json");
             HttpEntity<LogWrapper> request = new HttpEntity<>(logs, headers);
             request.getHeaders().forEach((key, value) -> System.out.println("Header names >>>>> " + key + " >>> " + value));
             ThreadLocalStorage.setTenantName(headers.getFirst("X-TenantID"));
-            restTemplate.postForEntity(url + "ufs-logger-service/api/v1/logger/log", request, LogWrapper.class);
 
-//            restTemplate.exchange(url + "ufs-logger-service/api/v1/logger/log", HttpMethod.POST, request, LogWrapper.class);
+
+            restTemplate.postForEntity(url + "ufs-logger-service/api/v1/logger/log", request, LogWrapper.class);
         });
     }
-
-//    private void sendLog(LogWrapper log) {
-//        executor.execute(() -> {
-//            System.out.println("From executor service " + Thread.currentThread().getName() + " >>>> Tenant set >>>> " + ThreadLocalStorage.getTenantName());
-//            restTemplate.postForEntity(url + "ufs-logger-service/api/v1/logger/log", log, LogWrapper.class);
-//        });
-//    }
 
     @Override
     public void log(String description, String entity, Object entityId, Long userId, String activity, String activityStatus, String notes) {
