@@ -97,6 +97,9 @@ public class UfsApplication {
         config.setStringOutputType("base64");
         encryptor.setConfig(config);
 
+//        log.info("tz user >> {} pass >> {}", encryptor.encrypt("UFS_SUITE"), encryptor.encrypt("pass123"));
+//        log.info("br user >> {} pass >> {}", encryptor.encrypt("UFSBUR_SUITE"), encryptor.encrypt("UFSBUR"));
+
         return encryptor;
     }
 
