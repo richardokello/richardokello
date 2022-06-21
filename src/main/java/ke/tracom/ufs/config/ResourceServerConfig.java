@@ -31,10 +31,13 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     private final AuthenticationFilter authFilter;
     private final ResponseFilter responseFilter;
 
+    private final CustomLogoutHandler customLogoutHandler;
 
-    public ResourceServerConfig(TokenStore tokenStore, AccessDeniedHandler accessDeniedHandler) {
+
+    public ResourceServerConfig(TokenStore tokenStore, AccessDeniedHandler accessDeniedHandler, CustomLogoutHandler customLogoutHandler) {
         this.otpFilter = new OTPFilter(tokenStore);
         this.accessDeniedHandler = accessDeniedHandler;
+        this.customLogoutHandler = customLogoutHandler;
         authFilter = new AuthenticationFilter();
         responseFilter = new ResponseFilter();
     }
@@ -45,7 +48,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(HttpMethod.POST, "/change-password", "/reset-password/forgot-password", "/reset-password", "/gender", "/user-id", "/user/login-field-agent", "/change-password/first-time").permitAll()
-                .antMatchers("/gender", "/user-loggedin","/tenant-info").permitAll()
+                .antMatchers("/gender", "/user-loggedin", "/tenant-info").permitAll()
                 .antMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                         "/swagger-resources/**", "/v2/api-docs/**", "/images/**",
                         "/spring-security-rest/api/swagger-ui.html", "/encrypt", "/user/me").permitAll()
@@ -141,6 +144,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 //                .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler);
+//                .and()
+//                .logout()
+//                .logoutSuccessHandler(customLogoutHandler)
+//                .permitAll();
         //                .and().addFilterBefore(new WebSecurityCorsFilter(), ChannelProcessingFilter.class);
         ;
     }

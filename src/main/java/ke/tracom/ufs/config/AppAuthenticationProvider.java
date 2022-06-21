@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
@@ -105,8 +106,8 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
                 log.error("Other Source===>{}", source);
                 log.error("Other userId===>{}", dbAuth.getUserId().toString());
                 log.error("Other Logs===>{}", audits.size());
-                if (audits.size() < 1)
-                    loggerService.log("Another user with same credentials has already logged into the system", UfsAuthentication.class.getSimpleName(), null, null,
+               // if (audits.size() < 1)
+                    loggerService.log("Another user with same credentials has already logged into the system", UfsAuthentication.class.getSimpleName(), null, dbAuth.getUserId(),
                             AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Another user with same credentials already logged in");
                 throw new UserAlreadyLoggedInException("Another user with same credentials has already logged into the system");
 

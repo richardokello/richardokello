@@ -49,6 +49,7 @@ import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -72,6 +73,8 @@ public class AuthorizationResource {
     private final OTPRepository otpRepository;
     private final WorkGroupService workGroupService;
     private final UserWorkGroupService userWorkGroupService;
+
+    private final AuditLogService auditLogService;
     @Autowired
     UserAccountService accService;
     @Autowired
@@ -89,7 +92,7 @@ public class AuthorizationResource {
 
     public AuthorizationResource(TokenStore tokenStore, @Qualifier("mainUserService") UserService userService,
                                  UserRepository userRepository, LoggerServiceTemplate loggerService, PasswordEncoder encoder, CustomUserService customUserService, AuthenticationRepository authRepository,
-                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository, WorkGroupService workGroupService, UserWorkGroupService userWorkGroupService) {
+                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository, WorkGroupService workGroupService, UserWorkGroupService userWorkGroupService, AuditLogService auditLogService) {
         this.tokenStore = tokenStore;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -101,6 +104,7 @@ public class AuthorizationResource {
         this.otpRepository = otpRepository;
         this.workGroupService = workGroupService;
         this.userWorkGroupService = userWorkGroupService;
+        this.auditLogService = auditLogService;
     }
 
     //@RequestMapping("/test")
@@ -150,10 +154,10 @@ public class AuthorizationResource {
             boolean isSuperUser = a.getAuthorities().contains(new SimpleGrantedAuthority("MULTITENANCY PERMISSION"));
 
             // todo uncomment
-            if (isSuperUser){
+            if (isSuperUser) {
                 System.err.println("** found multi-tenant superuser. Replicating authentication token...");
                 // get the username of the authenticated user.
-                String username = ((UserDetails)a.getPrincipal()).getUsername();
+                String username = ((UserDetails) a.getPrincipal()).getUsername();
                 // replicate the authentication token to other schemas
                 authTokenReplicationService.replicateAuthToken(username);
             }
@@ -296,7 +300,7 @@ public class AuthorizationResource {
         }
         response.setCode(404);
         response.setMessage("Provided email address doesnt exist. Check if the email provided is correct");
-        loggerService.log("Password Reset Failed,Provided Email doesnt exist "+email, UfsAuthentication.class.getSimpleName(), null, null,
+        loggerService.log("Password Reset Failed,Provided Email doesnt exist " + email, UfsAuthentication.class.getSimpleName(), null, null,
                 AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Provided Email doesnt exist");
 
         return new ResponseEntity(response, HttpStatus.OK);
@@ -348,7 +352,7 @@ public class AuthorizationResource {
         if (dbAuth == null) {
             response.setCode(404);
             response.setMessage("Provided Email doesnt exist");
-            loggerService.log("Changing First Time Password Failed,Provided Email doesnt exist "+changePassword.getEmail(), UfsAuthentication.class.getSimpleName(), null, null,
+            loggerService.log("Changing First Time Password Failed,Provided Email doesnt exist " + changePassword.getEmail(), UfsAuthentication.class.getSimpleName(), null, null,
                     AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Provided Email doesnt exist");
 
             return new ResponseEntity(response, HttpStatus.NOT_FOUND);
@@ -384,7 +388,7 @@ public class AuthorizationResource {
         userWorkgroupList.forEach(ufsUserWorkgroup -> {
             BigDecimal workGroupId = ufsUserWorkgroup.getGroupId();
             String workGroupName = workGroupService.findWorkgroupById(workGroupId.longValue()).getGroupName();
-            if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)){
+            if (workGroupName.equalsIgnoreCase(AppConstants.SUPERVIEWER)) {
                 userService.replicateUserCredentialsInfo(dbAuth.getUsername(), encodedPassword, dbAuth.getPasswordStatus());
             }
         });
@@ -448,16 +452,33 @@ public class AuthorizationResource {
     }
 
     @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
-    public ResponseEntity<ResponseWrapper<OtpResponse>> logout(Authentication auth) {
+    public ResponseEntity<ResponseWrapper<OtpResponse>> logout(Authentication auth) throws InterruptedException {
         ResponseWrapper response = new ResponseWrapper();
         OAuth2Authentication a = (OAuth2Authentication) auth;
-        tokenStore.removeAccessToken(tokenStore.getAccessToken(a));
+        OAuth2AccessToken accessToken = tokenStore.getAccessToken(a);
+        tokenStore.removeAccessToken(accessToken);
+
 
         UfsAuthentication ufsAuthentication = authRepository.findByusernameIgnoreCase(a.getName());
-        loggerService.log("Logged out successfully", UfsAuthentication.class.getSimpleName(), ufsAuthentication.getAuthenticationId(), ufsAuthentication.getUserId(),
-                AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Logged out successfully");
+        // TODO this log causes race condition: check on UfsAuditLogRepository for more info - OpenID Connect should be implemented to resolve this issue
+//        loggerService.log("Logged out successfully", UfsAuthentication.class.getSimpleName(), ufsAuthentication.getAuthenticationId(), ufsAuthentication.getUserId(),
+//                AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Logged out successfully");
+
+        auditLogService.createLog(createNew(ufsAuthentication));
 
         response.setMessage("Logged out successfully");
         return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    private UfsAuditLog createNew(UfsAuthentication authentication) {
+        UfsAuditLog log = new UfsAuditLog();
+        log.setEntityId(authentication.getAuthenticationId().toString());
+        log.setUser(authentication.getUserId());
+        log.setEntityName(UfsAuthentication.class.getSimpleName());
+        log.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
+        log.setStatus(AppConstants.STATUS_COMPLETED);
+        log.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
+        log.setDescription("Logged out successfully");
+        return log;
     }
 }

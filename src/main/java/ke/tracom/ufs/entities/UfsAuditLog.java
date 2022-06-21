@@ -7,6 +7,7 @@ package ke.tracom.ufs.entities;
 
 import ke.axle.chassis.annotations.Filter;
 import ke.axle.chassis.annotations.Searchable;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -90,17 +91,29 @@ public class UfsAuditLog implements Serializable {
     private String intrash;
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
+    @GenericGenerator(
+            name = "UFS_AUDIT_LOG_SEQ",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "UFS_AUDIT_LOG_SEQ"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "0"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
+
+    @GeneratedValue(generator = "UFS_AUDIT_LOG_SEQ")
     @Column(name = "LOG_ID")
     private BigDecimal logId;
-    @Column(name = "OCCURENCE_TIME")
-    @Temporal(TemporalType.TIMESTAMP)
     @Filter(isDateRange = true)
+    @Column(name = "OCCURENCE_TIME", insertable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date occurenceTime;
-    @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
+    @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", insertable = false, updatable = false)
     @ManyToOne
     private UfsUser userId;
+
+    @Column(name = "USER_ID")
+    private Long user;
 
     public UfsAuditLog() {
     }
@@ -245,8 +258,18 @@ public class UfsAuditLog implements Serializable {
         return intrash;
     }
 
+    public Long getUser() {
+        return user;
+    }
+
+    public void setUser(Long user) {
+        this.user = user;
+    }
+
     public void setIntrash(String intrash) {
         this.intrash = intrash;
     }
+
+
 
 }
