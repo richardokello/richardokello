@@ -6,6 +6,7 @@
 package ke.tracom.ufs.entities;
 
 import ke.axle.chassis.annotations.*;
+import ke.axle.chassis.enums.ModifiableFieldType;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -49,6 +50,7 @@ public class UfsUser implements Serializable {
     @Filter
     @Searchable
     @EntityName
+    @ModifiableQueryField
     private String fullName;
     @Size(max = 255)
     @Column(name = "AVATAR")
@@ -143,6 +145,7 @@ public class UfsUser implements Serializable {
 
     @Transient
     @ModifiableField
+    @ModifiableChildEntityField(entityName = UfsWorkgroup.class, modifiableType = ModifiableFieldType.QUERY)
     private List<BigDecimal> workgroupIds;
 
 
