@@ -5,12 +5,12 @@ import co.ke.tracom.bprgateway.servers.tcpserver.BillRequestHandler;
 import co.ke.tracom.bprgateway.servers.tcpserver.data.academicBridge.AcademicBridgeValidation;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentRequest;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.ValidationRequest;
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
 import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiOperation;
-import io.vertx.core.net.NetSocket;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,35 +49,33 @@ public class BillMenuController {
 
     @ApiOperation(value = "biller validation", response = AcademicBridgeValidation.class)
     @PostMapping(value = "api/validations")
-    public ResponseEntity<?>dynamicValidation( @RequestBody Object validate) throws JsonProcessingException {
-        NetSocket socket=null;
-        CustomObjectMapper objectMapper = new CustomObjectMapper();
-        String str=  objectMapper.writeValueAsString(validate);
-        //   log.info("converted string >>>>>>>>>>>{}",str);
-        AcademicBridgeValidation response=billRequestHandler.validation(str,socket);
-        if(response==null||!response.getResponseCode().equals(00))
-        {
+    public ResponseEntity<AcademicBridgeValidation>dynamicValidation(@RequestBody ValidationRequest validate) throws JsonProcessingException {
+        //NetSocket socket=null;
+//        CustomObjectMapper objectMapper = new CustomObjectMapper();
+//        String str =  objectMapper.writeValueAsString(validate);
+
+        AcademicBridgeValidation response=
+                billRequestHandler.validation(validate, null);
+        if(response.getResponseCode()==null||!response.getResponseCode().equals("00"))
+        {response.setResponseMessage("No response from the server");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
-//        if(response==null){
-//
-//        }
-         return new ResponseEntity<>(response , HttpStatus.OK);
-        //return ResponseEntity.ok().body(response);
-       // return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        // return new ResponseEntity<>(response , HttpStatus.OK);
+        return ResponseEntity.ok().body(response);
+
     }
 
     @ApiOperation(value = "biller payment", response = BillPaymentRequest.class)
     @PostMapping(value = "api/billpayment")
     public ResponseEntity<?>dynamicPayment( @RequestBody Object paybills) throws JsonProcessingException, InvalidAgentCredentialsException {
-        NetSocket socket=null;
+        //NetSocket socket=null;
         CustomObjectMapper objectMapper = new CustomObjectMapper();
         String str=  objectMapper.writeValueAsString(paybills);
-        //log.info("converted string >>>>>>>>>>>{}",str);
-        BillPaymentResponse response=billRequestHandler.billPayment(str,socket);
+        BillPaymentResponse response;
+        response = billRequestHandler.billPayment(str, null);
         // return new ResponseEntity<>(response , HttpStatus.OK);
-        if(response==null||!response.getResponseCode().equals(00))
-        {
+        if(response==null||!response.getResponseCode().equals("00"))
+        {response.setResponseMessage("No response from the server");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
         return ResponseEntity.ok().body(response);

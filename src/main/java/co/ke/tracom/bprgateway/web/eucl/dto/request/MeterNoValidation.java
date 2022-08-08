@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MeterNoValidation {
     private String amount;
-    private String phoneNo;
+//    private String phoneNo;
     private String meterNo;
     private MerchantAuthInfo credentials;
 }

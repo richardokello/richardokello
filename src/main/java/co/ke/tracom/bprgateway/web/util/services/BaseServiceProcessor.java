@@ -31,18 +31,14 @@ public class BaseServiceProcessor {
     private final TransactionService transactionService;
 
 
-//@Value("${merchant.account.validation}")
- @Value("http://localhost:8787/authenticate/password-validation")
+    @Value("${merchant.account.validation}")
+    //@Value("http://localhost:8787/authenticate/password-validation")
     private String agentValidationUrl;
 
 
- //@Value("http://192.168.24.30:8787/authenticate/agent-deposit")
-  @Value("http://localhost:8787/authenticate/agent-deposit")
+    @Value("http://192.168.24.30:8787/authenticate/agent-deposit")
+    //@Value("http://localhost:8787/authenticate/agent-deposit")
     private String agentDepositValidationUrl;
-
-    //@Value("http://192.168.24.30:8787/authenticate/authenticate-agent")
-    @Value("http://localhost:8787/authenticate/authenticate-agent")
- private String agentpasswordValidationUrl;
 
     private final TransactionLimitManagerRepository transactionLimitManagerRepository;
     public final RestHTTPService restHTTPService;
@@ -50,8 +46,8 @@ public class BaseServiceProcessor {
     public AuthenticateAgentResponse authenticateAgentUsernamePassword(MerchantAuthInfo merchantAuthInfo) throws InvalidAgentCredentialsException, InterServiceCommunicationException {
         ResponseEntity<String> stringResponseEntity ;
         try {
-            stringResponseEntity = restHTTPService.postRequest(merchantAuthInfo, agentpasswordValidationUrl);
-            log.info("Response status from URL[" + agentpasswordValidationUrl + "]" + stringResponseEntity.getStatusCode());
+            stringResponseEntity = restHTTPService.postRequest(merchantAuthInfo, agentValidationUrl);
+            log.info("Response status from URL[" + agentValidationUrl + "]" + stringResponseEntity.getStatusCode());
         } catch (Exception e) {
             e.printStackTrace();
             throw new InterServiceCommunicationException("Inter-service communication error. Please try again!");

@@ -1,0 +1,371 @@
+{
+  "billMenus": [
+    {
+      "name": "Academic Bridge",
+      "hasSubMenu": true,
+      "svcCode": "01",
+      "submenu": [
+        {
+          "name": "Check Student Details",
+          "hasSubMenu": false,
+          "svcCode": "01.1",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "billNumber",
+              "type": "numeric",
+              "length": 12,
+              "validated": true,
+              "order": 1
+            }
+          ]
+        },
+        {
+          "name": "Make Payment",
+          "hasSubMenu": false,
+          "svcCode": "01.2",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "billNumber",
+              "type": "numeric",
+              "length": 12,
+              "validated": true,
+              "order": 1
+            },
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": "12",
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Sender Name",
+              "type": "alphanumeric",
+              "length": 20,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Mobile Number",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Credit Account",
+              "type": "alphanumeric",
+              "length": 15,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "schoolId",
+              "type": "numeric",
+              "length": 10,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "schoolName",
+              "type": "alphanumeric",
+              "length": 25,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Student Name",
+              "type": "alphanumeric",
+              "length": 20,
+              "validated": false,
+              "order": 5
+            }
+
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "name": "WASAC",
+      "hasSubMenu": true,
+      "svcCode": "02",
+      "submenu": [
+        {
+          "name": "Get Customer Profile",
+          "hasSubMenu": false,
+          "svcCode": "02.1",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Customer ID",
+              "type": "numeric",
+              "length": 15,
+              "validated": true,
+              "order": 1
+            }
+          ]
+        },
+        {
+          "name": "Make Payment",
+          "hasSubMenu": false,
+          "svcCode": "02.2",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Customer ID",
+              "type": "numeric",
+              "length": 20,
+              "validated": true,
+              "order": 1
+            },
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": 20,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Description",
+              "type": "alphanumeric",
+              "length": 160,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Customer Name",
+              "type": "alphanumeric",
+              "length": 60,
+              "validated": false,
+              "order": 5
+            }
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "name": "EUCL",
+      "hasSubMenu": true,
+      "svcCode": "03",
+      "submenu": [
+        {
+          "name": "Validate Meter Number",
+          "hasSubMenu": false,
+          "svcCode": "03.1",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": 20,
+              "validated": false,
+              "order": 1
+            },
+
+            {
+              "label": "Meter number",
+              "type": "numeric",
+              "length": 12,
+              "validated": true,
+              "order": 3
+            }
+          ]
+        },
+        {
+          "name": "Make Payment",
+          "hasSubMenu": false,
+          "svcCode": "03.2",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": 20,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Mobile number",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 2
+            },
+            {
+              "label": "Meter number",
+              "type": "numeric",
+              "length": 12,
+              "validated": true,
+              "order": 3
+            }
+
+          ]
+        }
+      ],
+      "fields": []
+    },
+    {
+      "name": "Vision Fund",
+      "hasSubMenu": true,
+      "svcCode": "04",
+      "submenu": [
+        {
+          "name": "Deposit",
+          "hasSubMenu": false,
+          "svcCode": "04.1",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Mobile number",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Account number",
+              "type": "numeric",
+              "length": 20,
+              "validated": true,
+              "order": 2
+            },
+            {
+              "label": "National ID",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 4
+            }
+          ]
+        },
+        {
+          "name": "Withdrawal",
+          "hasSubMenu": false,
+          "svcCode": "04.2",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Token number",
+              "type": "alphanumeric",
+              "length": 20,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "Legal ID",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 2
+            },
+            {
+              "label": "Amount",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 3
+            },
+            {
+              "label": "Mobile number",
+              "type": "numeric",
+              "length": 12,
+              "validated": false,
+              "order": 4
+            },
+            {
+              "label": "Account number",
+              "type": "numeric",
+              "length": 20,
+              "validated": false,
+              "order": 5
+            },
+            {
+              "label": "Customer Name",
+              "type": "alphanumeric",
+              "length": 30,
+              "validated": false,
+              "order": 6
+            }
+          ]
+        }
+      ],
+      "fields": []
+    },
+
+    {
+      "name": "Ejo Heza",
+      "hasSubMenu": true,
+      "svcCode": "05",
+      "submenu": [
+        {
+          "name": "Customer National ID",
+          "hasSubMenu":false,
+          "svcCode": "05.1",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "Customer National ID",
+              "type": "alphanumeric",
+              "length": 16,
+              "validated": true,
+              "order": 1
+            }
+
+          ]
+        },
+        {
+          "name": "Make Payment",
+          "hasSubMenu": false,
+          "svcCode": "05.2",
+          "submenu": [],
+          "fields": [
+
+            {
+              "label": "amount",
+              "type": "numeric",
+              "length": "12",
+              "validated": false,
+              "order": 3
+            }
+          ]
+        },
+        {
+          "name": "Register Subscribers",
+          "hasSubMenu": false,
+          "svcCode": "05.2",
+          "submenu": [],
+          "fields": [
+            {
+              "label": "billNumber",
+              "type": "alphanumeric",
+              "length": 12,
+              "validated": false,
+              "order": 1
+            },
+            {
+              "label": "amount",
+              "type": "numeric",
+              "length": "12",
+              "validated": false,
+              "order": 3
+            }
+          ]
+        }
+      ],
+      "fields": []
+    }
+
+
+  ]
+}

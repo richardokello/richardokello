@@ -115,10 +115,13 @@ public class AcademicBridgeT24 {
                 + ","
                 + "DEBIT.CURRENCY::=RWF,"
 
-                + "ORDERING.BANK::=BNK,CREDIT.ACCT.NO::="
+                + "ORDERING.BANK::=BNK,"
+                +
+                "CREDIT.ACCT.NO::="
                 + creditAcc
                 + ","
-                + "CREDIT.CURRENCY::=RWF,CREDIT.AMOUNT::="
+                + "CREDIT.CURRENCY::=RWF" +
+                ",CREDIT.AMOUNT::="
                 + amount  //check for extra decimal
 
                 + ","
@@ -128,18 +131,28 @@ public class AcademicBridgeT24 {
                 + "MOBILE.NO::="
                 + phone
                 + ","
-                + "CHANNEL::=OTH,AB.SCHOOL.ID::="
+                + "CHANNEL::=OTH" +
+                ",AB.SCHOOL.ID::="
                 + schoolId
                 + ","
                 + "AB.SCHL.NAME::="
                 + schoolName
-
                 + ","
                 + "AB.STU.NAME::="
                 + studentName
                 + ","
                 + "AB.BILL.NO::="
-                + billNumber;
+                + billNumber
+                +","
+                +"PAYMENT.DETAILS:1:1:="
+                + billNumber
+                +","
+                +"PAYMENT.DETAILS:1:2:="
+                +schoolName
+                +","
+                +"PAYMENT.DETAILS:1:3:="
+                +studentName;
+
     }
 
 

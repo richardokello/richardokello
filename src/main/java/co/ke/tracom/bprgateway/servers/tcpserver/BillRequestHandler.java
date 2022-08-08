@@ -111,40 +111,33 @@ public class BillRequestHandler {
         socket.write(outBuffer);
     }
 
-    public AcademicBridgeValidation validation(String requestString, NetSocket socket)
+    public AcademicBridgeValidation validation(ValidationRequest genericRequest, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         CustomObjectMapper mapper = new CustomObjectMapper();
-        AcademicBridgeValidation posResponse = null;
-
-        ValidationRequest genericRequest = mapper.readValue(requestString, ValidationRequest.class);
+//  genericRequest = mapper.readValue(requestString, ValidationRequest.class);
     //    log.info("Validation REQUEST OBJECT: {}", genericRequest);
 
         List<TransactionData> data = genericRequest.getData();
-        //List<TransactionData> data = genericRequest.getCredentials().getData();
-        //System.out.println(""+data.get(0).getValue());
 
-        CustomerProfileResponse customerProfileResponse = null;
-        MeterNoValidation meterNoValidation=new MeterNoValidation();
-        MeterNoValidationResponse meterNoValidationResponse=new MeterNoValidationResponse();
-        List<TransactionData> validationData = new ArrayList<>();
+
+        CustomerProfileResponse customerProfileResponse =new CustomerProfileResponse();
+     //   MeterNoValidation meterNoValidation=new MeterNoValidation();
+       // MeterNoValidationResponse meterNoValidationResponse=new MeterNoValidationResponse();
+       // List<TransactionData> validationData = new ArrayList<>();
         AcademicBridgeValidation response = AcademicBridgeValidation.builder().build();
 
-        MeterNoValidationResponse euclValidationResponse = MeterNoValidationResponse.builder().build();
+        MeterNoValidationResponse euclValidationResponse;
         MeterNoValidation euclValidation = new MeterNoValidation();
 
 
-        String billNumber = null;
-
-        switch (genericRequest.getSvcCode() /*genericRequest.getCredentials().getSvcCode()*/) {
+        switch (genericRequest.getSvcCode()) {
 
             case "01.1":
-                //Validation Academic bridge
             case "01.2":
 
-                if (genericRequest.getField().equalsIgnoreCase("billNumber")) {
+                if (genericRequest.getField()!=null&&genericRequest.getField().equalsIgnoreCase("billNumber")) {
 
                     customerProfileResponse = (academicBridgeT24Service.validateStudentId(genericRequest.getValue()));
-                    billNumber = genericRequest.getValue();
                     List<TransactionData> transactionData = new ArrayList<>();
 
                     if(customerProfileResponse != null && customerProfileResponse.getData().getSchool_ide()>1) {
@@ -197,15 +190,18 @@ public class BillRequestHandler {
                         );
                         response.setData(transactionData);
 
+
                     }
 
 
 
                 } else {
                     log.info("Wrong svc code and field combination :" + genericRequest.getField());
-                    customerProfileResponse.setData(null);
+
+
                     customerProfileResponse.setMessage("Wrong svc code and field name combination");
                     customerProfileResponse.setStatus("09");
+                    customerProfileResponse.setData(null);
                 }
                 break;
 
@@ -240,7 +236,7 @@ public class BillRequestHandler {
                             )
                     );
                     euclValidation.setMeterNo(meterNo);
-                    euclValidation.setPhoneNo(phoneNumber);
+                    //euclValidation.setPhoneNo(phoneNumber);
                     String requestRefNo = RRNGenerator.getInstance("EV").getRRN();
                     euclValidationResponse = euclService.validateEUCLMeterNo(euclValidation, requestRefNo);
 
@@ -340,7 +336,7 @@ public class BillRequestHandler {
         if(!(socket ==null)) {
             writeResponseToTCPChannel(socket, mapper.writeValueAsString(response));
         }
-        return posResponse;
+        return response;
     }
 
     private void writeResponseToTCPChannel(NetSocket socket, String s) {
@@ -365,7 +361,7 @@ public class BillRequestHandler {
     public BillPaymentResponse billPayment(String requestString, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException, InvalidAgentCredentialsException {
         //Accadermic bill payment
-        AuthenticateAgentResponse authenticateAgentResponse = null;
+        AuthenticateAgentResponse authenticateAgentResponse;
         HashMap<String, String> payment = new HashMap();
         BillPaymentResponse billPaymentResponse = new BillPaymentResponse();
         CustomObjectMapper mapper = new CustomObjectMapper();
@@ -393,6 +389,7 @@ public class BillRequestHandler {
                     ii++;
 
                 }
+                System.out.println("payment request+++++++++++ " + payment);
                 MerchantAuthInfo auth = new MerchantAuthInfo();
                 auth.setUsername(paymentRequest.getCredentials().getUsername());
                 auth.setPassword(paymentRequest.getCredentials().getPassword());
@@ -403,10 +400,10 @@ public class BillRequestHandler {
 
                     String OFS = academicBridgeT24Service.bootstrapAcademicBridgePaymentOFSMsg(
                             authenticateAgentResponse.getData().getAccountNumber(),
-                            payment.get("creditAccount"),
-                            Double.parseDouble(payment.get("amount")),
-                            payment.get("senderName"),
-                            payment.get("mobileNumber"),
+                            payment.get("Credit Account"),
+                            Double.parseDouble(payment.get("Amount")),
+                            payment.get("Sender Name"),
+                            payment.get("Mobile Number"),
                             payment.get("schoolId"),
                             payment.get("schoolName"),
                             payment.get("studentName"),
@@ -614,6 +611,7 @@ public class BillRequestHandler {
             break;
             default:
                 throw new IllegalStateException("Unexpected value: " + paymentRequest.getSvcCode());
+
         }
 
         Buffer outBuffer = Buffer.buffer();
@@ -637,9 +635,9 @@ public class BillRequestHandler {
                         .value(RRNGenerator.getInstance("BP").getRRN())
                         .build());
         data.add(TransactionData.builder().name("Amount").value("15,004").build());
-        data.add(TransactionData.builder().name("Paid To").value("Tracom Academy").build());
-        data.add(TransactionData.builder().name("customer Name").value("Paul Wainaina").build());
-        data.add(TransactionData.builder().name("Student No").value("COM/0510/10").build());
+        data.add(TransactionData.builder().name("PaidTo").value("Tracom Academy").build());
+        data.add(TransactionData.builder().name("customerName").value("Paul Wainaina").build());
+        data.add(TransactionData.builder().name("StudentNo").value("COM/0510/10").build());
 
         data.add(TransactionData.builder().name("Type Of Payment").value("Tuition").build());
 
@@ -803,36 +801,36 @@ public class BillRequestHandler {
                     System.out.println("Response data setting");
                     data.add(
                             TransactionData.builder()
-                                    .name("Client Post Name")
+                                    .name("ClientPostName")
                                     .value("POSTest").build());
                     data.add(
-                            TransactionData.builder().name("Debit Customer").value(list.get(0).getDebitCustomer()).build());
+                            TransactionData.builder().name("DebitCustomer").value(list.get(0).getDebitCustomer()).build());
                     data.add(
-                            TransactionData.builder().name("Ordering Bank").value(String.valueOf(list.get(0).getOrderingBank())).build());
+                            TransactionData.builder().name("OrderingBank").value(String.valueOf(list.get(0).getOrderingBank())).build());
                     data.add(
-                            TransactionData.builder().name("AB Student name").value(list.get(0).getAbStudentName()).build());
+                            TransactionData.builder().name("ABStudentName").value(list.get(0).getAbStudentName()).build());
                     data.add(
-                            TransactionData.builder().name("BPR Sender Name").value(list.get(0).getBprSenderName()).build());
+                            TransactionData.builder().name("BPRSenderName").value(list.get(0).getBprSenderName()).build());
                     data.add(
-                            TransactionData.builder().name("Charge Amount").value(list.get(0).getLocalCahrgeAmount()).build());
+                            TransactionData.builder().name("ChargeAmount").value(list.get(0).getLocalCahrgeAmount()).build());
                     data.add(
-                            TransactionData.builder().name("AB School Id").value(list.get(0).getAbSchoolId()).build());
+                            TransactionData.builder().name("ABSchoolId").value(list.get(0).getAbSchoolId()).build());
                     data.add(
-                            TransactionData.builder().name("Credit Amount").value(list.get(0).getCreditAmount()).build());
+                            TransactionData.builder().name("CreditAmount").value(list.get(0).getCreditAmount()).build());
                     data.add(
-                            TransactionData.builder().name("Biller Id").value(list.get(0).getBillerId()).build());
+                            TransactionData.builder().name("BillerId").value(list.get(0).getBillerId()).build());
                     data.add(
-                            TransactionData.builder().name("AB School Name").value(list.get(0).getAbSchoolName()).build());
+                            TransactionData.builder().name("ABSchoolName").value(list.get(0).getAbSchoolName()).build());
                     data.add(
-                            TransactionData.builder().name("Mobile No").value(list.get(0).getMobileNo()).build());
+                            TransactionData.builder().name("MobileNo").value(list.get(0).getMobileNo()).build());
                     data.add(
                             TransactionData.builder().name("DateTime").value(list.get(0).getDateTime()).build());
                     data.add(
-                            TransactionData.builder().name("Debit Account").value(list.get(0).getDebitAcctNo()).build());
+                            TransactionData.builder().name("DebitAccount").value(list.get(0).getDebitAcctNo()).build());
                    /* data.add(
                             TransactionData.builder().name("Credit Their Ref").value(list.get(0).getCreditTheirRef()).build());*/
                     data.add(
-                            TransactionData.builder().name("Bill No").value(list.get(0).getAbBillNo()).build());
+                            TransactionData.builder().name("BillNo").value(list.get(0).getAbBillNo()).build());
                     /*data.add(
                             TransactionData.builder().name("Delivery Out Ref").value(list.get(0).getDeliveryOutRef()).build());*/
                     tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
@@ -846,10 +844,10 @@ public class BillRequestHandler {
                 } else {
                     data.add(
                             TransactionData.builder()
-                                    .name("Client Post Name")
+                                    .name("ClientPostName")
                                     .value("POSTest").build());
                     data.add(
-                            TransactionData.builder().name("No data").value("Something went wrong during the transaction").build());
+                            TransactionData.builder().name("Nodata").value("Something went wrong during the transaction").build());
                     tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
 
                     tot24.setCreditacctno(null);
@@ -864,10 +862,10 @@ public class BillRequestHandler {
                 System.out.println("Transaction not successful >> "+list.get(0).getT24responsecode());
                 data.add(
                         TransactionData.builder()
-                                .name("Client Post Name")
+                                .name("ClientPostName")
                                 .value("POSTest").build());
                 data.add(
-                        TransactionData.builder().name("No data").value(list.get(0).getError()).build());
+                        TransactionData.builder().name("Nodata").value(list.get(0).getError()).build());
 
                 amount = "0";
                 processingStatus = "10";
@@ -879,10 +877,10 @@ public class BillRequestHandler {
             tot24.setT24responsecode("-1");
             data.add(
                     TransactionData.builder()
-                            .name("Client Post Name")
+                            .name("ClientPostName")
                             .value("POSTest").build());
             data.add(
-                    TransactionData.builder().name("No data").value(list.get(0).getError()).build());
+                    TransactionData.builder().name("Nodata").value(list.get(0).getError()).build());
 
             amount = "0";
             processingStatus = "10";

@@ -42,7 +42,8 @@ public class EUCLService {
 
         AuthenticateAgentResponse optionalAuthenticateAgentResponse = null;
         T24TXNQueue tot24 = new T24TXNQueue();
-        try{optionalAuthenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        try{
+            optionalAuthenticateAgentResponse=baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         }
         catch (InvalidAgentCredentialsException e)
@@ -70,7 +71,7 @@ public class EUCLService {
 
             Long amount = Long.valueOf(request.getAmount());
             String meterNo = request.getMeterNo();
-            String phone = request.getPhoneNo();
+            //String phone = request.getPhoneNo();
             String EUCLBranch = xSwitchParameterService.fetchXSwitchParamValue("DEFAULT_EUCL_BRANCH");
             String newt24tem =
                     "0000AENQUIRY.SELECT,,"
@@ -356,7 +357,7 @@ public class EUCLService {
             log.info("EUCL transaction [" + transactionReferenceNo + "] failed. Error " + e.getMessage());
             return EUCLPaymentResponse.builder()
                     .status("098")
-                    .message("EUCL transaction failed. An exception occurred")
+                    .message("EUCL transaction failed. An error occurred")
                     .data(paymentResponseData).build();
         }
     }

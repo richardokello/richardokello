@@ -17,5 +17,5 @@ public class AcademicBridgeValidation {
   private String responseMessage;
 
   @JsonProperty("data")
-  private List<TransactionData> data = null;
+  private List<TransactionData> data;
 }

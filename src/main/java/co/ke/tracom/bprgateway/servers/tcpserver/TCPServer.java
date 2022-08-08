@@ -1,9 +1,9 @@
 package co.ke.tracom.bprgateway.servers.tcpserver;
 
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.GenericRequest;
-import co.ke.tracom.bprgateway.servers.tcpserver.dto.TcpResponse;
-import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
 import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.TcpResponse;
+import co.ke.tracom.bprgateway.servers.tcpserver.dto.ValidationRequest;
+import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
 import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.UnprocessableEntityException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -51,13 +51,19 @@ public class TCPServer {
         socket -> {
           socket.handler(
               buffer -> {
+
                 CustomObjectMapper mapper = new CustomObjectMapper();
                 try {
-                  //socket.close();
                   String requestPayload = buffer.toString().trim();
-                  GenericRequest genericRequest =
-                      mapper.readValue(requestPayload, GenericRequest.class);
-                  log.info("GENERIC REQUEST OBJECT: {}", genericRequest);
+//                 if(!requestPayload.startsWith("{")) {
+//                    int index = requestPayload.indexOf("{");
+//                   String substring = requestPayload.substring(index);
+//                   requestPayload=substring;
+//                  }
+                  System.out.println("requestPayload = >>>>>" + requestPayload);
+                  ValidationRequest genericRequest =
+                      mapper.readValue(requestPayload, ValidationRequest.class);
+                 // log.info("GENERIC REQUEST OBJECT: {}", genericRequest);
                   String transactionType = genericRequest.getTnxType();
                   log.info("Transaction Type: {}", transactionType);
                   switch (transactionType) {
@@ -65,7 +71,7 @@ public class TCPServer {
                       billRequestHandler.menu(requestPayload, billMenuService, socket);
                       break;
                     case "validation":
-                      billRequestHandler.validation(requestPayload, socket);
+                      billRequestHandler.validation(genericRequest, socket);
                       break;
                     case "bill-payment":
                       billRequestHandler.billPayment(requestPayload, socket);

@@ -13,22 +13,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ValidationRequest {
-  @JsonProperty("bill")
-  private String bill;
-
-  @JsonProperty("tnxType")
-  private String tnxType;  // valida
-
-  @JsonProperty("credentials")
-  private Credentials credentials;
+public class ValidationRequest extends GenericRequest {
 
   @JsonProperty("data")
   private List<TransactionData> data = new ArrayList<>();
-
-  @JsonProperty("svcCode")
-  private String svcCode;
-
 
   @JsonProperty("field")
   private String field;
