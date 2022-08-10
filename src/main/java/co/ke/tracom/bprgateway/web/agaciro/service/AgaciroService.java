@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class AgaciroService {
+public static final String agaciroServiceResponse="AGACIRO SERVICE RESPONSE: {}";
 
   private final CustomObjectMapper mapper = new CustomObjectMapper();
 
@@ -86,7 +87,7 @@ public class AgaciroService {
               getInstitutionByNameRequest.getPassword(),
               getInstitutionByNameRequest.getInstitutionName());
       String results = restHTTPService.sendGetRequest(agaciroBaseURL + requestURL);
-      log.info("AGACIRO SERVICE RESPONSE: {}", results);
+      log.info(agaciroServiceResponse, results);
       institution = mapper.readValue(results, InstitutionByNameResponse.class);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -115,7 +116,7 @@ public class AgaciroService {
               getInstitutionByCodeRequest.getPassword(),
               getInstitutionByCodeRequest.getInstitutionCode());
       String results = restHTTPService.sendGetRequest(requestURL);
-      log.info("AGACIRO SERVICE RESPONSE: {}", results);
+      log.info(agaciroServiceResponse, results);
       institution = mapper.readValue(results, InstitutionByCodeResponse.class);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -143,7 +144,7 @@ public class AgaciroService {
               validateNIDRequest.getPassword(),
               validateNIDRequest.getNid());
       String results = restHTTPService.sendGetRequest(agaciroBaseURL + requestURL);
-      log.info("AGACIRO SERVICE RESPONSE: {}", results);
+      log.info(agaciroServiceResponse, results);
       response = mapper.readValue(results, ValidateNIDResponse.class);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -166,7 +167,8 @@ public class AgaciroService {
       ResponseEntity<String> response =
           restHTTPService.postRequest(
               getPaymentNotificationRequest, agaciroBaseURL + paymentNotificationURL);
-      log.info("AGACIRO SERVICE RESPONSE: {}", response);
+      log.info(agaciroServiceResponse,
+              response);
       paymentNotification = mapper.readValue(response.getBody(), PaymentNotificationResponse.class);
     } catch (Exception ex) {
       ex.printStackTrace();

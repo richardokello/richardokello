@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class TigopesaService {
-
+private final static String tigopesaServiceResponse="TIGOPESA SERVICE RESPONSE: {}";
   private final XMLHttpService xmlHttpService;
 
   // Todo: set base url once provided (not available in the docs)
@@ -43,7 +43,7 @@ public class TigopesaService {
     try {
       ResponseEntity<String> response =
           xmlHttpService.post(paymentRequest, baseURL + requestURL, String.class);
-      log.info("TIGOPESA SERVICE RESPONSE: {}", response);
+      log.info(tigopesaServiceResponse, response);
       XmlMapper mapper = new XmlMapper();
       paymentResponse = mapper.readValue(response.getBody(), BillPaymentResponse.class);
     } catch (Exception ex) {
@@ -66,7 +66,7 @@ public class TigopesaService {
     try {
       ResponseEntity<String> response =
           xmlHttpService.post(checkBalanceRequest, baseURL + requestURL, String.class);
-      log.info("TIGOPESA SERVICE RESPONSE: {}", response);
+      log.info(tigopesaServiceResponse, response);
       XmlMapper mapper = new XmlMapper();
       checkBalanceResponse = mapper.readValue(response.getBody(), CheckBalanceResponse.class);
     } catch (Exception ex) {
@@ -91,7 +91,7 @@ public class TigopesaService {
     try {
       ResponseEntity<String> response =
           xmlHttpService.post(transactionStatusRequest, baseURL + requestURL, String.class);
-      log.info("TIGOPESA SERVICE RESPONSE: {}", response);
+      log.info(tigopesaServiceResponse, response);
       XmlMapper mapper = new XmlMapper();
       transactionStatusResponse =
           mapper.readValue(response.getBody(), TransactionStatusResponse.class);
@@ -118,7 +118,7 @@ public class TigopesaService {
           xmlHttpService.post(walletPaymentRequest, baseURL + requestURL, String.class);
       XmlMapper mapper = new XmlMapper();
       walletPaymentResponse = mapper.readValue(response.getBody(), WalletPaymentResponse.class);
-      log.info("TIGOPESA SERVICE RESPONSE: {}", walletPaymentResponse);
+      log.info(tigopesaServiceResponse, walletPaymentResponse);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);

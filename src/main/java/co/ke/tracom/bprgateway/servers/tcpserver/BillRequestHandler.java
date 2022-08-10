@@ -61,7 +61,7 @@ public class BillRequestHandler {
     private final AcademicBridgeT24 academicBridgeT24Service;
     private final TransactionService transactionService;
     private final BaseServiceProcessor baseServiceProcessor;
-
+    private final static String billMenuRequestData="BILL MENU REQUEST DATA: {}";
     private final VisionFundService visionFundService;
     private String billNumber;
 
@@ -78,11 +78,11 @@ public class BillRequestHandler {
             BillMenuResponse billMenuResponse = null;
             if (billMenuRequest.getLang().equalsIgnoreCase("en")) {
                 billMenuResponse = billMenusService.fetchEnglishMenus();
-                log.info("BILL MENU REQUEST DATA: {}", billMenuResponse.toString());
+                log.info(billMenuRequestData, billMenuResponse.toString());
                 writeResponseToTCPChannel(socket, mapper.writeValueAsString(billMenuResponse));
             } else if (billMenuRequest.getLang().equalsIgnoreCase("rw")) {
                 billMenuResponse = billMenusService.fetchKinyarwandaMenus();
-                log.info("BILL MENU REQUEST DATA: {}", billMenuResponse.toString());
+                log.info(billMenuRequestData, billMenuResponse.toString());
                 writeResponseToTCPChannel(socket, mapper.writeValueAsString(billMenuResponse));
             }
 
@@ -135,7 +135,7 @@ public class BillRequestHandler {
             case "01.1":
             case "01.2":
 
-                if (genericRequest.getField()!=null&&genericRequest.getField().equalsIgnoreCase("billNumber")) {
+                if (genericRequest.getField()!=null&&genericRequest.getField().equalsIgnoreCase("Student Registration ID Number")) {
 
                     customerProfileResponse = (academicBridgeT24Service.validateStudentId(genericRequest.getValue()));
                     List<TransactionData> transactionData = new ArrayList<>();
@@ -407,7 +407,7 @@ public class BillRequestHandler {
                             payment.get("schoolId"),
                             payment.get("schoolName"),
                             payment.get("studentName"),
-                            payment.get("billNumber")
+                            payment.get("Student Registration ID Number")
 
                     );
 

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class MobiCashService {
 
   private final CustomObjectMapper mapper = new CustomObjectMapper();
-
+  private static final String mobicashServiceResponse="MOBICASH SERVICE RESPONSE: {}";
   private final RestHTTPService restHTTPService;
 
   @Value("http://server:port")
@@ -51,7 +51,7 @@ public class MobiCashService {
       String requestURL = baseURL + authRequestURL;
       ResponseEntity<String> response =
           restHTTPService.postRequest(authenticationRequest, requestURL);
-      log.info("MOBICASH SERVICE RESPONSE: {}", response);
+      log.info(mobicashServiceResponse, response);
       authenticationResponse = mapper.readValue(response.getBody(), AuthenticationResponse.class);
       accessToken = authenticationResponse.getAccess_token();
     } catch (Exception ex) {
@@ -76,7 +76,7 @@ public class MobiCashService {
       String requestURL = baseURL + agentDetailsURL;
       ResponseEntity<String> response =
           restHTTPService.postRequest(agentDetailsRequest, requestURL);
-      log.info("MOBICASH SERVICE RESPONSE: {}", response);
+      log.info(mobicashServiceResponse, response);
       agentDetailsResponse = mapper.readValue(response.getBody(), AgentDetailsResponse.class);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -100,7 +100,7 @@ public class MobiCashService {
       paymentRequest.setAuthorization(accessToken);
       String requestURL = baseURL + creditAccountURL;
       ResponseEntity<String> response = restHTTPService.postRequest(paymentRequest, requestURL);
-      log.info("MOBICASH SERVICE RESPONSE: {}", response);
+      log.info(mobicashServiceResponse, response);
       paymentResponse = mapper.readValue(response.getBody(), MobicashPaymentResponse.class);
     } catch (Exception ex) {
       ex.printStackTrace();

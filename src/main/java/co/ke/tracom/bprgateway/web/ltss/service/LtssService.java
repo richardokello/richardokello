@@ -40,7 +40,7 @@ import java.util.Formatter;
 public class LtssService {
 
   private final CustomObjectMapper mapper = new CustomObjectMapper();
-
+private static final String ltlssServiceResponse="LTSS SERVICE RESPONSE: {}";
 
   private final RestHTTPService restHttpService;
   private final BaseServiceProcessor baseServiceProcessor;
@@ -78,7 +78,7 @@ public class LtssService {
       String requestURL = ltssBaseUrl + nationalIdValidationUrl;
       //String requestURL = "http://197.243.10.68:8080/ltss-integration-service/pservice/ltssservice/validateSubscriber";
       ResponseEntity<String> response = restHttpService.postLTSSRequest(validationRequest, requestURL);
-      log.info("LTSS SERVICE RESPONSE: {}", response);
+      log.info(ltlssServiceResponse, response);
       System.out.println("response = " + response);
 
       validationResponse = mapper.readValue(response.getBody(), NationalIDValidationResponse.class);
@@ -106,7 +106,7 @@ public class LtssService {
       String requestURL = ltssBaseUrl + paymentContributionUrl;
       ResponseEntity<String> response =
           restHttpService.postLTSSRequest(paymentContributionRequest, requestURL);
-      log.info("LTSS SERVICE RESPONSE: {}", response);
+      log.info(ltlssServiceResponse, response);
       paymentContributionResponse =
           mapper.readValue(response.getBody(), PaymentContributionResponse.class);
     } catch (Exception ex) {
@@ -360,7 +360,7 @@ String formartedOFS= String.format("%04d", bareOFS.length()) + bareOFS;
       String requestURL = ltssBaseUrl + checkPaymentByRefNoUrl;
       response = restHttpService.postLTSSRequest(checkPaymentRequest, requestURL);
       checkPaymentResponse = mapper.readValue(response.getBody(), CheckPaymentResponse.class);
-      log.info("LTSS SERVICE RESPONSE: {}", response);
+      log.info(ltlssServiceResponse, response);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
@@ -396,7 +396,7 @@ String formartedOFS= String.format("%04d", bareOFS.length()) + bareOFS;
       String requestURL = ltssBaseUrl + registerNewSubscriberURL;
       ResponseEntity<String> response =
           restHttpService.postLTSSRequest(newSubscriberRequest, requestURL);
-      log.info("LTSS SERVICE RESPONSE: {}", newSubscriberResponse);
+      log.info(ltlssServiceResponse, newSubscriberResponse);
       newSubscriberResponse = mapper.readValue(response.getBody(), NewSubscriberResponse.class);
 
     } catch (Exception ex) {

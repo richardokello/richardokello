@@ -105,7 +105,6 @@ public class AcademicBridgeService {
       String results = restHTTPService.sendGetRequest(baseUrl + requestURL);
       response = mapper.readValue(results, AcademicBridgeResponse.class);
       log.info("ACADEMIC BRIDGE RESPONSE: {}", response);
-      System.out.println("ACADEMIC BRIDGE RESPONSE: {}" + response);
     } catch (Exception ex) {
       ex.printStackTrace();
       logError(ex);
