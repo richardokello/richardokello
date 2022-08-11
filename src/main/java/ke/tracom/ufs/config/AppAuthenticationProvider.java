@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -103,7 +104,12 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
                 if (audits.size() < 1)
                     loggerService.log("Another user with same credentials has already logged into the system", UfsAuthentication.class.getSimpleName(), null, null,
                             AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Another user with same credentials already logged in");
-                throw new UserAlreadyLoggedInException("Another user with same credentials has already logged into the system");
+                    //assumption is that access token will always be one
+                    StringBuilder stringBuilder = new StringBuilder("Another user with same credentials has already logged into the system ")
+                            .append("[")
+                            .append(activeToken.get(0).getValue())
+                            .append("]");
+                throw new UserAlreadyLoggedInException(stringBuilder.toString());
 
             }
             Authentication auth = super.authenticate(authentication);

@@ -2,6 +2,8 @@ package ke.tracom.ufs.config;
 
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tracom.ufs.utils.exceptions.RunTimeBadRequest;
+import ke.tracom.ufs.utils.exceptions.UserAlreadyLoggedInException;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -50,7 +52,14 @@ public class CustomExceptionTranslator implements WebResponseExceptionTranslator
 	                response.setCode(HttpStatus.LOCKED.value());
 	                response.setMessage("Sorry account locked");
 	                return new ResponseEntity(response, HttpStatus.LOCKED);
-	            }else {
+	            }else if(e.getMessage().startsWith("Another user with same credentials has already logged into the system")){
+					response.setCode(HttpStatus.IM_USED.value());
+					response.setMessage("Another user with same credentials has already logged into the system");
+					String accessToken = StringUtils.substringBetween(e.getMessage(), "[", "]");
+					data.put("error_description", accessToken);
+					response.setData(data);
+					return new ResponseEntity(response, HttpStatus.IM_USED);
+				}else {
 	                response.setMessage(ie.getMessage());
 	            }
 	            response.setCode(ie.getHttpErrorCode());
@@ -58,7 +67,7 @@ public class CustomExceptionTranslator implements WebResponseExceptionTranslator
 	        } else if (e instanceof OAuth2Exception) {
 	            OAuth2Exception oauthException = (OAuth2Exception) e;
 	            response.setCode(oauthException.getHttpErrorCode());
-	            response.setMessage("Please provide valid cradentials");
+	            response.setMessage("Please provide valid credentials");
 	            data.put("error", oauthException.getOAuth2ErrorCode());
 	            data.put("error_description", oauthException.getMessage());
 	            response.setData(data);
