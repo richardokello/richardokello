@@ -70,7 +70,7 @@ public class WASACService {
      * email: clients email phone: clients' fixed phone personnalid: National ID branch: WASAC branch
      * balance: Due balance meterid: Water Meter Number customerid: Unique customer identifier
      *
-     * @param profileRequest
+     * param profileRequest
      */
     public CustomerProfileResponse fetchCustomerProfile(CustomerProfileRequest profileRequest) {
         CustomerProfileResponse profileResponse =
@@ -93,23 +93,7 @@ public class WASACService {
         return profileResponse;
     }
 
-    public void fetchProfile() {
 
-
-        List<TransactionData> data = new ArrayList<>();
-        data.add(TransactionData.builder().name("schoolName").value("Tracom Academy").build());
-        data.add(TransactionData.builder().name("schoolAccountNo").value("115627393").build());
-        data.add(TransactionData.builder().name("schoolaccountName").value("Tracom Academy").build());
-        data.add(TransactionData.builder().name("StudentReg").value("COM/0510/10").build());
-        data.add(TransactionData.builder().name("TypeOfPayment").value("Tuition").build());
-
-        AcademicBridgeValidation response =
-                AcademicBridgeValidation.builder()
-                        .responseCode("00")
-                        .responseMessage("Transaction processed successfully")
-                        .data(data)
-                        .build();
-    }
 
 
     @SneakyThrows
@@ -120,8 +104,7 @@ public class WASACService {
                         .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
         BillPaymentResponse billPaymentResponse;
         List<TransactionData> transactionData = new ArrayList<>();
-        //try {
-        //payment impl
+
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(
                 new MerchantAuthInfo(request.getCredentials().getUsername(), request.getCredentials().getPassword()));
 
@@ -133,20 +116,10 @@ public class WASACService {
         }
         Data agentAuthData = authenticateAgentResponse.getData();
 
-
-        //extracting data from the request payload
         List<TransactionData> transactionDataList = request.getData();
-        //BeanUtils.copyProperties(request.getData(),transactionDataList);
-        //List<TransactionData> transactionDataList = request.getCredentials().getData();
 
-        /* String meterNo="211610021";
-        String account;
-        Long amount;
-        String description="",customerName = "";
-        //if (transactionDataList != null && transactionDataList.size() > 0) {
-        */
         String meterNo = transactionDataList.get(0).getValue();
-        String account = "";//transactionDataList.get(1).getValue();
+        String account = "";
         Long amount = Long.valueOf(transactionDataList.get(1).getValue());
         String description = transactionDataList.get(2).getValue();
         String customerName = transactionDataList.get(3).getValue();
@@ -156,7 +129,7 @@ public class WASACService {
 
         waterTxnLog.setAmount(String.valueOf(amount));
         waterTxnLog.setCustomerName(customerName);
-        waterTxnLog.setMeterNo(/*profileResponse1Data.getMeterid()*/meterNo);
+        waterTxnLog.setMeterNo(meterNo);
         waterTxnLog.setPosRef(request.getCredentials().getSerialNumber());
         waterTxnLog.setMid(agentAuthData.getMid());
         waterTxnLog.setTid(request.getCredentials().getTid());
@@ -188,7 +161,7 @@ public class WASACService {
 
         System.out.println(".Gateway ref.. " + RRN + " txn queued for t24 posting !!");
 
-        String accname = tot24.getCustomerName() == null ? "" : tot24.getCustomerName();
+
         String errorMessage =
                 tot24.getT24failnarration() == null ? "" : tot24.getT24failnarration();
         if (errorMessage.isEmpty()) {
@@ -340,11 +313,9 @@ public class WASACService {
                             + ",BPR.ENQ.WASAC.GET.DET,CUSTOMER.NO:EQ="
                             + meterNo;
 
-            // TRANS.TYPE.ID:EQ= BALENQ
             String tot24str = String.format("%04d", newt24tem.length()) + newt24tem;
 
             String t24ref = RRNGenerator.getInstance("BP").getRRN();
-            boolean postingsuccesst24 = false;
 
             // create a table or function to generate T24 messages
             T24TXNQueue tot24 = new T24TXNQueue();
@@ -355,7 +326,6 @@ public class WASACService {
             tot24.setGatewayref(t24ref);
             tot24.setPostedstatus("0");
             tot24.setProcode("500000");
-            //tot24.setTxnmti("1100");
             tot24.setTid(agentAuthData.getTid());
 
             final String t24Ip = getT24Ip();
@@ -363,13 +333,12 @@ public class WASACService {
 
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
 
-          //  System.out.println(">>>>> processing transaction >>>>> ");
 
             transactionService.updateT24TransactionDTO(tot24);
 
                System.out.println("transaction response >>>>>> " + tot24);
             String responseCode = tot24.getT24responsecode() == null ? "" : tot24.getT24responsecode();
-            if (tot24.getT24failnarration() == null && !responseCode.equals("3") /*(&& !responseCode.equals(""))*/) {
+            if (tot24.getT24failnarration() == null && !responseCode.equals("3") ) {
 
                 var wasacT24ValidationResponse = new WasacT24ValidationResponse();
                 String ofsResponse =tot24.getResponseleg();
@@ -393,7 +362,8 @@ public class WASACService {
                 validationData.add(addValidationResponse("Balance", wasacT24ValidationResponse.getOutstandingBalance()));
 
 
-                response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
+                response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
+                        AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(
                         tot24, "WASC ACCOUNT VALIDATION ", "1200", 0, "000", agentAuthData.getTid(), agentAuthData.getMid());
@@ -405,7 +375,7 @@ public class WASACService {
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(
                         tot24, "WASC ACCOUNT VALIDATION", "1200", 0, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
-               // tot24, validationRequest.getTnxType(), "WASC ACCOUNT VALIDATION", 0, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
+
             }
 
 
