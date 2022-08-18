@@ -11,7 +11,6 @@ import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationRequ
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationResponse;
 import co.ke.tracom.bprgateway.web.VisionFund.service.VisionFundService;
 import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
-import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeService;
 import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeT24;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
@@ -58,12 +57,13 @@ import java.util.stream.Collectors;
 public class BillRequestHandler {
     private final WASACService wasacService;
     private final EUCLService euclService;
+    private static final String NO_DATA="Nodata";
+    private static final String CLIENT_POST_NAME= "ClientPostName";
     private final AcademicBridgeT24 academicBridgeT24Service;
     private final TransactionService transactionService;
     private final BaseServiceProcessor baseServiceProcessor;
     private final static String billMenuRequestData="BILL MENU REQUEST DATA: {}";
     private final VisionFundService visionFundService;
-    private String billNumber;
 
     private final LtssService ltssService;
     public void menu(String requestString, BillMenusService billMenusService, NetSocket socket)
@@ -71,11 +71,10 @@ public class BillRequestHandler {
         CustomObjectMapper mapper = new CustomObjectMapper();
         /* Parse request string into bill menu request object */
         BillMenuRequest billMenuRequest = mapper.readValue(requestString, BillMenuRequest.class);
-      //  log.info("BILL MENU REQUEST DATA: {}", requestString);
         String tnxType = billMenuRequest.getTnxType();
 
         if (tnxType != null && tnxType.equals("fetch-menu")) {
-            BillMenuResponse billMenuResponse = null;
+            BillMenuResponse billMenuResponse;
             if (billMenuRequest.getLang().equalsIgnoreCase("en")) {
                 billMenuResponse = billMenusService.fetchEnglishMenus();
                 log.info(billMenuRequestData, billMenuResponse.toString());
@@ -92,38 +91,16 @@ public class BillRequestHandler {
         }
     }
 
-    public void academicBridge(
-            String requestString, AcademicBridgeService academicBridgeService, NetSocket socket)
-            throws JsonProcessingException {
 
-        List<TransactionData> data = new ArrayList<>();
-        data.add(TransactionData.builder().name("school name").value("Tracom Academy").build());
-        data.add(TransactionData.builder().name("school Account No").value("115627393").build());
-        data.add(TransactionData.builder().name("school account name").value("Tracom Academy").build());
-        data.add(TransactionData.builder().name("Student Reg").value("COM/0510/10").build());
-        data.add(TransactionData.builder().name("Type Of Payment").value("Tuition").build());
-
-        AcademicBridgeValidation response = getAcademicBridgeValidation(data, "00", "Transaction processed successfully");
-
-        Buffer outBuffer = Buffer.buffer();
-        CustomObjectMapper mapper = new CustomObjectMapper();
-        outBuffer.appendString(mapper.writeValueAsString(response));
-        socket.write(outBuffer);
-    }
 
     public AcademicBridgeValidation validation(ValidationRequest genericRequest, NetSocket socket)
             throws JsonProcessingException, UnprocessableEntityException {
         CustomObjectMapper mapper = new CustomObjectMapper();
-//  genericRequest = mapper.readValue(requestString, ValidationRequest.class);
-    //    log.info("Validation REQUEST OBJECT: {}", genericRequest);
 
         List<TransactionData> data = genericRequest.getData();
 
 
         CustomerProfileResponse customerProfileResponse =new CustomerProfileResponse();
-     //   MeterNoValidation meterNoValidation=new MeterNoValidation();
-       // MeterNoValidationResponse meterNoValidationResponse=new MeterNoValidationResponse();
-       // List<TransactionData> validationData = new ArrayList<>();
         AcademicBridgeValidation response = AcademicBridgeValidation.builder().build();
 
         MeterNoValidationResponse euclValidationResponse;
