@@ -11,7 +11,6 @@ import co.ke.tracom.bprgateway.servers.tcpserver.dto.TransactionData;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.ValidationRequest;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.Data;
-import co.ke.tracom.bprgateway.web.agenttransactions.services.AgentTransactionService;
 import co.ke.tracom.bprgateway.web.switchparameters.XSwitchParameterService;
 import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
@@ -29,7 +28,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,15 +49,10 @@ public class WASACService {
     @Value("${wasac.customer-profile.request-suffix-url}")
     private String WASACProfileURL;
 
-    @Value("${wasac.payment.advise-url}")
-    private String WASACSPaymentAdviseURL;
-
 
     private final XSwitchParameterService xSwitchParameterService;
     private final BaseServiceProcessor baseServiceProcessor;
-    private final AgentTransactionService agentTransactionService;
 
-    private CustomerProfileResponse profileResponse1;
     private final T24Channel t24Channel;
     private final TransactionService transactionService;
 
@@ -68,7 +61,6 @@ public class WASACService {
 
     private final UtilityService utilityService;
 
-    private final RestTemplate restTemplate;
 
     /**
      * Fetch customer data given Customer ID from remote API. URL:
@@ -86,8 +78,7 @@ public class WASACService {
                         .status(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value()).build();
         try {
             String requestURL = WASACBaseURL + "/" + profileRequest.getCustomerId() + WASACProfileURL;
-            //CustomerProfileResponse forObject = restTemplate.getForObject(requestURL, CustomerProfileResponse.class);
-            String results = restHTTPService.sendGetOKHTTPRequest(requestURL);
+              String results = restHTTPService.sendGetOKHTTPRequest(requestURL);
             log.info("WASAC SERVICE RESPONSE: {}", results);
             profileResponse =
                     mapper.readValue(results, CustomerProfileResponse.class);
@@ -95,7 +86,6 @@ public class WASACService {
 
             profileResponse.setMessage("Customer profile fetched successfully");
 
-            //profileResponse1 = profileResponse;
         } catch (Exception e) {
             e.printStackTrace();
             logError(e);
@@ -160,11 +150,7 @@ public class WASACService {
         Long amount = Long.valueOf(transactionDataList.get(1).getValue());
         String description = transactionDataList.get(2).getValue();
         String customerName = transactionDataList.get(3).getValue();
-       /* } else {
-            //meterNo = "211610021";
-            account = agentAuthData.getAccountNumber();
-            amount = 1500L;
-        }*/
+
 
         String RRN = RRNGenerator.getInstance("BP").getRRN();
 
@@ -187,7 +173,7 @@ public class WASACService {
         tot24.setTxnchannel("PC");
         tot24.setGatewayref(RRN);
         tot24.setPostedstatus("0");
-        //tot24.setProcode("460001");
+
         tot24.setTid(agentAuthData.getTid());
         tot24.setDebitacctno(account);
         tot24.setTotalchargeamt("0.0");
@@ -221,11 +207,8 @@ public class WASACService {
                 transactionData.add(addValidationResponse("gatewayReference", RRN));
                 transactionData.add(addValidationResponse("T24Reference", tot24.getT24reference()));
                 transactionData.add(addValidationResponse("name", customerName));
-                //transactionData.add(addValidationResponse("Token No", tot24.getTokenNo()));
-                //transactionData.add(addValidationResponse("Units", tot24.getUnitsKw()));tot24.getBaladvise();
                 transactionData.add(addValidationResponse("CustomerNo", meterNo));
 
-                //transactionData.add(addValidationResponse("Action code", "000"));
                 transactionData.add(addValidationResponse("Amount", tot24.getAmountcredited()));
                 transactionData.add(addValidationResponse("ChargeAmount", tot24.getTotalchargeamt()));
 
@@ -342,12 +325,6 @@ public class WASACService {
             String meterNo = "";
 
 
-            //if transaction data has been sent
-//            if (validationRequest.getData().size() > 0) {
-//                meterNo = validationRequest.getData().get(0).getValue();
-//            }else{
-//                meterNo = validationRequest.getValue();
-//            }
             if(!validationRequest.getData().isEmpty()){
                 meterNo=validationRequest.getData().get(0).getValue();
             }
