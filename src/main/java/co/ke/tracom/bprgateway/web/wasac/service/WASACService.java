@@ -252,9 +252,17 @@ public class WASACService {
                         + "CREDIT.CURRENCY::=RWF,"
                         + "PAYMENT.DETAILS:1:1="
                         + description
-                        +","+
-                        //"WATER BILL PAYMENT," +
+                        +","
+                        +
                         "PAYMENT.DETAILS:2:1="
+                        + customerName
+                        +","
+                        +
+                        "PAYMENT.DETAILS:3:1="
+                        + customerName
+                        +","
+                        +
+                        "PAYMENT.DETAILS:4:1="
                         + terminalId
                         + " "
                         + mid
