@@ -104,12 +104,8 @@ public class AppAuthenticationProvider extends DaoAuthenticationProvider {
                 if (audits.size() < 1)
                     loggerService.log("Another user with same credentials has already logged into the system", UfsAuthentication.class.getSimpleName(), null, null,
                             AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.ACTIVITY_STATUS_FAILED, "Another user with same credentials already logged in");
-                    //assumption is that access token will always be one
-                    StringBuilder stringBuilder = new StringBuilder("Another user with same credentials has already logged into the system ")
-                            .append("[")
-                            .append(activeToken.get(0).getValue())
-                            .append("]");
-                throw new UserAlreadyLoggedInException(stringBuilder.toString());
+                String token = activeToken.get(0).getValue();
+                throw new UserAlreadyLoggedInException("Another user with same credentials has already logged into the system ,"+token);
 
             }
             Authentication auth = super.authenticate(authentication);

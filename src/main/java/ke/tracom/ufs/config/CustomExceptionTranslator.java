@@ -2,8 +2,6 @@ package ke.tracom.ufs.config;
 
 import ke.axle.chassis.wrappers.ResponseWrapper;
 import ke.tracom.ufs.utils.exceptions.RunTimeBadRequest;
-import ke.tracom.ufs.utils.exceptions.UserAlreadyLoggedInException;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -52,14 +50,7 @@ public class CustomExceptionTranslator implements WebResponseExceptionTranslator
 	                response.setCode(HttpStatus.LOCKED.value());
 	                response.setMessage("Sorry account locked");
 	                return new ResponseEntity(response, HttpStatus.LOCKED);
-	            }else if(e.getMessage().startsWith("Another user with same credentials has already logged into the system")){
-					response.setCode(HttpStatus.IM_USED.value());
-					response.setMessage("Another user with same credentials has already logged into the system");
-					String accessToken = StringUtils.substringBetween(e.getMessage(), "[", "]");
-					data.put("error_description", accessToken);
-					response.setData(data);
-					return new ResponseEntity(response, HttpStatus.IM_USED);
-				}else {
+	            }else {
 	                response.setMessage(ie.getMessage());
 	            }
 	            response.setCode(ie.getHttpErrorCode());
