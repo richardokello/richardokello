@@ -135,7 +135,7 @@ public class WASACService {
         waterTxnLog.setTid(request.getCredentials().getTid());
         waterTxnLog.setCreationDate(new Date());
 
-        String tot24str = getT24OFS(meterNo, amount, customerName, description, agentAuthData.getTid(), agentAuthData.getMid(), agentAuthData.getAccountNumber());
+        String tot24str = getT24OFS(meterNo, amount, customerName, agentAuthData.getTid(), agentAuthData.getMid(), agentAuthData.getAccountNumber());
 
 
         T24TXNQueue tot24 = new T24TXNQueue();
@@ -210,7 +210,7 @@ public class WASACService {
     }
 
     //construct t24 OFS message string
-    private String getT24OFS(String meterNo,  Long Amount, String customerName, String description, String terminalId,
+    private String getT24OFS(String meterNo,  Long Amount, String customerName, String terminalId,
                              String mid, String accountNo) {
         String t24UserName = getT24UserName();
         String t24Password = getT24Password();
@@ -251,7 +251,7 @@ public class WASACService {
                         + ","
                         + "CREDIT.CURRENCY::=RWF,"
                         + "PAYMENT.DETAILS:1:1="
-                        + description
+                        +"WATER BILL PAYMENT"
                         +","
                         +
                         "PAYMENT.DETAILS:2:1="
@@ -259,7 +259,7 @@ public class WASACService {
                         +","
                         +
                         "PAYMENT.DETAILS:3:1="
-                        + customerName
+                        + meterNo
                         +","
                         +
                         "PAYMENT.DETAILS:4:1="

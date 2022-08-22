@@ -344,13 +344,13 @@ public class BillRequestHandler {
         CustomObjectMapper mapper = new CustomObjectMapper();
 
         BillPaymentRequest paymentRequest = mapper.readValue(requestString, BillPaymentRequest.class);
-      //  log.info("BILL PAYMENT REQUEST OBJECT: {}", paymentRequest);
+
 
         List<TransactionData> data = paymentRequest.getData();
-       // System.out.println("data = ======================" + data);
+
 
         //EUCL bill payment
-        EUCLPaymentResponse euclPaymentResponse = EUCLPaymentResponse.builder().build();
+        EUCLPaymentResponse euclPaymentResponse;
         EUCLPaymentRequest euclPaymentRequest = new EUCLPaymentRequest();
 
 
@@ -392,31 +392,16 @@ public class BillRequestHandler {
                     billPaymentResponse = getResponse(billPaymentResponse,authenticateAgentResponse,payment.get("creditAccount"));
                 } catch (InvalidAgentCredentialsException e) {
                     billPaymentResponse = bootStrapNoAgentAccount();
-                    e.printStackTrace();
+
                 }
 
 
                 break;
 
 
-
-            /*if(!data.isEmpty()){
-                String amount= data.get(0).getValue();
-                String phoneNumber=data.get(1).getValue();
-                String meterNo = data.size()>2? data.get(2).getValue():"00";
-                String meterLocation= data.size()>3 ?data.get(3).getValue():"No location";
-
-
-                euclPaymentRequest.setAmount(amount);
-                euclPaymentRequest.setCredentials(new MerchantAuthInfo(paymentRequest.getCredentials().getUsername(),
-                        paymentRequest.getCredentials().getPassword()));
-
-            }
-            break;*/
-
             //WASAC bill payment
             case "02.2":
-                //billPaymentResponse = getBillPaymentResponse();
+
                 if (paymentRequest.getBill() == null){
                    paymentRequest.setBill("bill");
                 }
@@ -504,8 +489,6 @@ public class BillRequestHandler {
                 NationalIDValidationRequest request=new NationalIDValidationRequest();
 
                 LTSSPaymentResponse paymentContributionResponse;
-
-                //  if (paymentRequest.getData().size()==0)
                 if(data.isEmpty()){
                     billPaymentResponse.setResponseCode("05");
                     billPaymentResponse.setResponseMessage("Transaction data missing");
@@ -656,7 +639,6 @@ public class BillRequestHandler {
         CustomObjectMapper mapper = new CustomObjectMapper();
 
         VisionFundRequest fundRequest = mapper.readValue(requestString, VisionFundRequest.class);
-       // log.info("VISION FUND REQUEST OBJECT: {}", fundRequest);
 
         VisionFundResponse fundResponse = new VisionFundResponse();
         List<TransactionData> data = fundRequest.getData();
@@ -675,8 +657,6 @@ public class BillRequestHandler {
 
                 depositRequest.setCredentials(fundRequest.getCredentials());
                 depositRequest.setTnxType(fundRequest.getTnxType());
-
-               // log.error("<<<<\n[\nVISION FUND ACCOUNT DEPOSIT REQUEST OBJECT: \n{}\n]", depositRequest);
 
                 AccountDepositResponse depositResponse = visionFundService.makeDeposit(depositRequest);
                 fundResponse.setResponseMessage(depositResponse.getResponseString());
@@ -697,9 +677,7 @@ public class BillRequestHandler {
                 log.error("[\nVISION FUND ACCOUNT DEPOSIT RESPONSE OBJECT: \n{}\n]\n>>>>", fundResponse);
             }
             break;
-            /*
-             * Cash Withdrawal
-             * */
+
             case "04.2": {
                 CashWithdrawalRequest withdrawalRequest = new CashWithdrawalRequest();
                 withdrawalRequest.setToken(data.get(0).getValue());
@@ -736,9 +714,6 @@ public class BillRequestHandler {
             break;
         }
 
-        /*Buffer outBuffer = Buffer.buffer();
-        outBuffer.appendString(mapper.writeValueAsString(fundResponse));
-        socket.write(outBuffer);*/
         return fundResponse;
     }
 
@@ -746,10 +721,10 @@ public class BillRequestHandler {
     private BillPaymentResponse getResponse(BillPaymentResponse billPaymentResponse,
                                             AuthenticateAgentResponse authenticateAgentResponse,
                                             String account){
-        BillPaymentResponse response= null;
+        BillPaymentResponse response;
         T24TXNQueue tot24 = new T24TXNQueue();
-        String processingStatus = null;
-        String amount = "0";
+        String processingStatus;
+        String amount;
 
 
         List<TransactionData> data = new ArrayList<>();
@@ -804,14 +779,10 @@ public class BillRequestHandler {
                             TransactionData.builder().name("DateTime").value(list.get(0).getDateTime()).build());
                     data.add(
                             TransactionData.builder().name("DebitAccount").value(list.get(0).getDebitAcctNo()).build());
-                   /* data.add(
-                            TransactionData.builder().name("Credit Their Ref").value(list.get(0).getCreditTheirRef()).build());*/
-                    data.add(
+                      data.add(
                             TransactionData.builder().name("BillNo").value(list.get(0).getAbBillNo()).build());
-                    /*data.add(
-                            TransactionData.builder().name("Delivery Out Ref").value(list.get(0).getDeliveryOutRef()).build());*/
-                    tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
-                    // tot24.setT24reference("Ref123");
+                      tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
+
                     tot24.setCreditacctno(account);
                     amount = list.get(0).getCreditAmount();
 
@@ -865,9 +836,6 @@ public class BillRequestHandler {
 
         }
 
-        /*Buffer outBuffer = Buffer.buffer();
-        CustomObjectMapper mappe = new CustomObjectMapper();
-        outBuffer.appendString(mappe.writeValueAsString(billPaymentResponse));*/
 
 
         try {

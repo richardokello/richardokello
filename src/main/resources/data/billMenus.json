@@ -123,20 +123,6 @@
               "order": 3
             },
             {
-              "label": "Description",
-              "type": "alphanumeric",
-              "length": 160,
-              "validated": false,
-              "order": 4
-            },
-            {
-              "label": "Customer Name",
-              "type": "alphanumeric",
-              "length": 60,
-              "validated": false,
-              "order": 5
-            },
-            {
               "label": "Agent Pin",
               "type": "alphanumeric",
               "length": 10,
