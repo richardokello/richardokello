@@ -145,11 +145,6 @@ public class BillRequestHandler {
                                 .build()
                         );
                         transactionData.add(TransactionData.builder()
-                                .name("StudentName")
-                                .value(customerProfileResponseData.getStudent_name())
-                                .build()
-                        );
-                        transactionData.add(TransactionData.builder()
                                 .name("SchoolId")
                                 .value(String.valueOf(customerProfileResponseData.getSchool_ide()))
                                 .build()
@@ -201,8 +196,8 @@ public class BillRequestHandler {
                 //Extract data from validation request object to local variables only when some data has been sent
                 if (!data.isEmpty()){
                     String amount= data.get(0).getValue();
-                    String phoneNumber=data.get(1).getValue();
-                    String meterNo = data.size()>2? data.get(2).getValue():"00";
+                //    String phoneNumber=data.get(1).getValue();
+                    String meterNo = data.size()>1? data.get(1).getValue():"00";
                     String meterLocation= data.size()>3 ?data.get(3).getValue():"No location";
 
                     euclValidation.setAmount(amount);
@@ -213,7 +208,7 @@ public class BillRequestHandler {
                             )
                     );
                     euclValidation.setMeterNo(meterNo);
-                    //euclValidation.setPhoneNo(phoneNumber);
+
                     String requestRefNo = RRNGenerator.getInstance("EV").getRRN();
                     euclValidationResponse = euclService.validateEUCLMeterNo(euclValidation, requestRefNo);
 
@@ -224,12 +219,9 @@ public class BillRequestHandler {
 
                     List<TransactionData> euclTransactionData = new ArrayList<>();
                     MeterNoData euclValidationResponseData = euclValidationResponse.getData();
-                    euclTransactionData.add(TransactionData.builder().name("accountName").value(euclValidationResponseData.getAccountName())
-                            .build());
-                    euclTransactionData.add(TransactionData.builder().name("meterNo").value(euclValidationResponseData.getMeterNo()).build());
-                    euclTransactionData.add(TransactionData.builder().name("meterLocation").value(euclValidationResponseData.getMeterLocation())
-                            .build());
-                    euclTransactionData.add(TransactionData.builder().name("rrn").value(euclValidationResponseData.getRrn()).build());
+
+                    euclTransactionData.add(TransactionData.builder().name("Meter number").value(euclValidationResponseData.getMeterNo()).build());
+                 //  euclTransactionData.add(TransactionData.builder().name("rrn").value(euclValidationResponseData.getRrn()).build());
 
                     response.setData(euclTransactionData);
                 }
@@ -379,11 +371,11 @@ public class BillRequestHandler {
                             authenticateAgentResponse.getData().getAccountNumber(),
                             payment.get("Credit Account"),
                             Double.parseDouble(payment.get("Amount")),
-                            payment.get("Sender Name"),
+                            payment.get("Payer's Name"),
                             payment.get("Mobile Number"),
                             payment.get("schoolId"),
                             payment.get("schoolName"),
-                            payment.get("studentName"),
+                            payment.get("Student Name"),
                             payment.get("Student Registration ID Number")
 
                     );

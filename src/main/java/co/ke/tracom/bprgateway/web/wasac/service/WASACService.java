@@ -121,8 +121,7 @@ public class WASACService {
         String meterNo = transactionDataList.get(0).getValue();
         String account = "";
         Long amount = Long.valueOf(transactionDataList.get(1).getValue());
-        String description = transactionDataList.get(2).getValue();
-        String customerName = transactionDataList.get(3).getValue();
+        String customerName = transactionDataList.get(2).getValue();
 
 
         String RRN = RRNGenerator.getInstance("BP").getRRN();
@@ -265,9 +264,8 @@ public class WASACService {
                         "PAYMENT.DETAILS:4:1="
                         + terminalId
                         + " "
-                        + mid
-                        + " "
-                        + waterBankBranch;
+                        + mid;
+
 
         return String.format("%04d", t24.length()) + t24;
     }

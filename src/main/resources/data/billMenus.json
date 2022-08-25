@@ -41,7 +41,7 @@
             },
             {
               "label": "Credit Account",
-              "type": "alphanumeric",
+              "type": "numeric",
               "length": 15,
               "validated": false,
               "order": 5
@@ -168,7 +168,7 @@
               "order": 1
             },
             {
-              "label": "Mobile number",
+              "label": "Mobile Number",
               "type": "numeric",
               "length": 12,
               "validated": false,
