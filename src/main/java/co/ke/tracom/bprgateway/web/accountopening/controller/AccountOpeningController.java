@@ -4,7 +4,6 @@ import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.web.accountopening.dto.request.AccountOpeningRequest;
 import co.ke.tracom.bprgateway.web.accountopening.dto.request.NIDValidationRequest;
 import co.ke.tracom.bprgateway.web.accountopening.dto.response.AccountOpeningResponse;
-import co.ke.tracom.bprgateway.web.accountopening.dto.response.NIDData;
 import co.ke.tracom.bprgateway.web.accountopening.dto.response.NIDValidationResponse;
 import co.ke.tracom.bprgateway.web.accountopening.service.NIDValidationService;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +27,7 @@ public class AccountOpeningController {
             value = "Return validation details for national ID",
             response = NIDValidationResponse.class)
     @PostMapping(value = "/nid-validation")
-    public ResponseEntity<?> NIDValidation(@RequestBody NIDValidationRequest request) {
+    public ResponseEntity<NIDValidationResponse> NIDValidation(@RequestBody NIDValidationRequest request) {
 
         String referenceNo = RRNGenerator.getInstance("NV").getRRN();
         NIDValidationResponse response = nidValidationService.validateNationalID(request, referenceNo);
@@ -39,7 +38,7 @@ public class AccountOpeningController {
             value = "Create ",
             response = AccountOpeningResponse.class)
     @PostMapping(value = "/create-customer")
-    public ResponseEntity<?> OpenCustomerAccount(@RequestBody AccountOpeningRequest request) {
+    public ResponseEntity<AccountOpeningResponse> OpenCustomerAccount(@RequestBody AccountOpeningRequest request) {
         AccountOpeningResponse response = AccountOpeningResponse
                 .builder()
                 .status("01")

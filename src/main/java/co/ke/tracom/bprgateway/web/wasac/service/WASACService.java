@@ -62,14 +62,13 @@ public class WASACService {
     private final UtilityService utilityService;
 
 
-    /**
+    /*
      * Fetch customer data given Customer ID from remote API. URL:
-     * https://dev.api.wasac.rw/<customerid>/profile
+     * <a href="https://dev.api.wasac.rw/">...</a><customerid>/profile
      *
      * <p>postname: client postname name: client name zone: zone(location) mobile: mobile phone number
      * email: clients email phone: clients' fixed phone personnalid: National ID branch: WASAC branch
      * balance: Due balance meterid: Water Meter Number customerid: Unique customer identifier
-     *
      * param profileRequest
      */
     public CustomerProfileResponse fetchCustomerProfile(CustomerProfileRequest profileRequest) {
@@ -99,9 +98,6 @@ public class WASACService {
     @SneakyThrows
     public BillPaymentResponse payWaterBill(BillPaymentRequest request) {
         WascWaterTxnLog waterTxnLog = new WascWaterTxnLog();
-        WasacPaymentResponse paymentResponse =
-                new WasacPaymentResponse()
-                        .setStatus(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value());
         BillPaymentResponse billPaymentResponse;
         List<TransactionData> transactionData = new ArrayList<>();
 
@@ -215,7 +211,7 @@ public class WASACService {
         String t24Password = getT24Password();
         String euclBankBranch = getDefaultBranch();
 
-        String waterBankBranch = "RW0010593"; // todo get from bpr functions
+        // todo get from bpr functions
         String accountDetails = "22"; // todo get bank branch == is same as bank branch from enquiry leg
         String schoolID="22";
         // create t24 string
@@ -301,7 +297,7 @@ public class WASACService {
 
             String euclBankBranch = getDefaultBranch();
 
-            String meterNo = "";
+            String meterNo;
 
 
             if(!validationRequest.getData().isEmpty()){
@@ -387,7 +383,7 @@ public class WASACService {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+
             response.setResponseCode("500");
             response.setResponseMessage(e.getMessage());
         }
@@ -428,8 +424,8 @@ public class WASACService {
     private void insertWascTxnLogs(WascWaterTxnLog wascWaterTxnLog) {
         try {
             repository.save(wascWaterTxnLog);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
+
         }
     }
 
@@ -471,6 +467,7 @@ public class WASACService {
     }
 
     @lombok.Data
+    static
     class WasacT24ValidationResponse{
         private String customerNo;
         private String customerName;

@@ -23,7 +23,7 @@ public class BPRBranchService {
             throw new BankBranchException("Error fetching bank branch details. Invalid account used.");
         }
 
-        String branchCode = "";
+        String branchCode;
         if (account.toUpperCase().startsWith("RWF")) {
             branchCode = "0" + account.substring(account.length() - 3);
         } else {

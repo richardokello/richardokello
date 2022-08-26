@@ -2,6 +2,7 @@ package co.ke.tracom.bprgateway.web.sendmoney.services;
 
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Random;
 @Component
 public class BPRCreditCardNumberGenerator {
 
-    private static Random random = new Random(System.currentTimeMillis());
+    private static final Random random = new SecureRandom();
 
     /**
      * Generates a random valid credit card number. For more information about

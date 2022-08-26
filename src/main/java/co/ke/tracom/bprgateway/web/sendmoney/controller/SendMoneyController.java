@@ -23,7 +23,7 @@ public class SendMoneyController {
 
     @ApiOperation(value = "Send Money Transaction", response = SendMoneyResponse.class)
     @PostMapping(value = "/pc/customer/send-money")
-    public ResponseEntity<?> sendMoneyTransaction(@Valid @RequestBody SendMoneyRequest request) throws InvalidAgentCredentialsException {
+    public ResponseEntity<SendMoneyResponse> sendMoneyTransaction(@Valid @RequestBody SendMoneyRequest request) throws InvalidAgentCredentialsException {
         String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
         SendMoneyResponse response = sendMoneyService.processSendMoneyRequest(request, transactionRRN);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -31,7 +31,7 @@ public class SendMoneyController {
 
     @ApiOperation(value = "Receive Money Transaction", response = SendMoneyResponse.class)
     @PostMapping(value = "/pc/customer/receive-money")
-    public ResponseEntity<?> receiveMoneyTransaction(@Valid @RequestBody ReceiveMoneyRequest request) {
+    public ResponseEntity<SendMoneyResponse> receiveMoneyTransaction(@Valid @RequestBody ReceiveMoneyRequest request) {
         String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
         SendMoneyResponse response = sendMoneyService.processReceiveMoneyRequest(request, transactionRRN);
         return new ResponseEntity<>(response, HttpStatus.OK);

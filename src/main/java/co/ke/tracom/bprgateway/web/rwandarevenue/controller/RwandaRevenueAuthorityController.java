@@ -3,9 +3,7 @@ package co.ke.tracom.bprgateway.web.rwandarevenue.controller;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests.RRAPaymentRequest;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.requests.RRATINValidationRequest;
-import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponse;
-import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRAPaymentResponseData;
 import co.ke.tracom.bprgateway.web.rwandarevenue.dto.responses.RRATINValidationResponse;
 import co.ke.tracom.bprgateway.web.rwandarevenue.services.RRAService;
 import io.swagger.annotations.ApiOperation;
@@ -17,9 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +28,7 @@ public class RwandaRevenueAuthorityController {
             value = "Return validation details for customer RRA TIN Number",
             response = RRATINValidationResponse.class)
     @PostMapping(value = "/validate-tin")
-    public ResponseEntity<?> validateRRATIN(@RequestBody RRATINValidationRequest request) {
+    public ResponseEntity<RRATINValidationResponse> validateRRATIN(@RequestBody RRATINValidationRequest request) {
         String transactionRRN =  RRNGenerator.getInstance("RV").getRRN();
         RRATINValidationResponse response = rraService.validateCustomerTIN(request, transactionRRN);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -43,7 +38,7 @@ public class RwandaRevenueAuthorityController {
             value = "Make payment against tax declaration amount",
             response = RRAPaymentResponse.class)
     @PostMapping(value = "/rra-payment")
-    public ResponseEntity<?> RRAPaymentRequest(@RequestBody RRAPaymentRequest request) {
+    public ResponseEntity<RRAPaymentResponse> RRAPaymentRequest(@RequestBody RRAPaymentRequest request) {
         String transactionRRN =  RRNGenerator.getInstance("RP").getRRN();
         RRAPaymentResponse response = rraService.processRRAPayment(request, transactionRRN);
         return new ResponseEntity<>(response, HttpStatus.OK);

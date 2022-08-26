@@ -43,14 +43,13 @@ public static final String agaciroServiceResponse="AGACIRO SERVICE RESPONSE: {}"
   @Value("/api/bank_payments/PaymentNotification")
   private String paymentNotificationURL;
 
-  /**
+  /*
    * Returns a list of all registered institutions in Agaciro Contribution System
-   *
-   * @param getInstitutionsRequest
-   * @return A list of all registered institutions
+   * param getInstitutionsRequest
+   * return A list of all registered institutions
    */
   public InstitutionsResponse getInstitutions(InstitutionsRequest getInstitutionsRequest) {
-    InstitutionsResponse institutions = new InstitutionsResponse();
+    InstitutionsResponse institutions;
 
     try {
       String requestURL =
@@ -71,13 +70,12 @@ public static final String agaciroServiceResponse="AGACIRO SERVICE RESPONSE: {}"
 
   /**
    * Returns details of an institution based on name
-   *
-   * @param getInstitutionByNameRequest
-   * @return details of institution that matches name
+   * param getInstitutionByNameRequest
+   * eturn details of institution that matches name
    */
   public InstitutionByNameResponse getInstitutionByName(
       InstitutionByNameRequest getInstitutionByNameRequest) {
-    InstitutionByNameResponse institution = null;
+    InstitutionByNameResponse institution;
 
     try {
       String requestURL =
@@ -100,13 +98,12 @@ public static final String agaciroServiceResponse="AGACIRO SERVICE RESPONSE: {}"
 
   /**
    * Returns details of an institution based on institution code
-   *
-   * @param getInstitutionByCodeRequest
-   * @return
+   * param getInstitutionByCodeRequest
+   * return
    */
   public InstitutionByCodeResponse getInstitutionByCode(
       InstitutionByCodeRequest getInstitutionByCodeRequest) {
-    InstitutionByCodeResponse institution = null;
+    InstitutionByCodeResponse institution;
 
     try {
       String requestURL =
@@ -134,7 +131,7 @@ public static final String agaciroServiceResponse="AGACIRO SERVICE RESPONSE: {}"
    * @return response showing whether given NID is valid
    */
   public ValidateNIDResponse validateNID(ValidateNIDRequest validateNIDRequest) {
-    ValidateNIDResponse response = null;
+    ValidateNIDResponse response;
 
     try {
       String requestURL =
@@ -156,8 +153,8 @@ public static final String agaciroServiceResponse="AGACIRO SERVICE RESPONSE: {}"
   }
 
   /**
-   * @param getPaymentNotificationRequest
-   * @return
+   * param getPaymentNotificationRequest
+   * return
    */
   public PaymentNotificationResponse sendPaymentNotification(
       PaymentNotificationRequest getPaymentNotificationRequest) {

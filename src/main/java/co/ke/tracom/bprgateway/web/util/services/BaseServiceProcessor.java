@@ -56,11 +56,11 @@ public class BaseServiceProcessor {
         // Objects.requireNonNull(stringResponseEntity, "Inter-service communication error. Please try again------>that!");
 
         String body = stringResponseEntity.getBody();
-        AuthenticateAgentResponse authenticateAgentResponse = null;
+        AuthenticateAgentResponse authenticateAgentResponse;
         try {
             authenticateAgentResponse = new ObjectMapper().readValue(body, AuthenticateAgentResponse.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+
             throw new InvalidAgentCredentialsException("Agent credentials validation failed.");
         }
 
@@ -68,7 +68,10 @@ public class BaseServiceProcessor {
             return authenticateAgentResponse;
         } else {
             System.out.println("authenticateAgentResponse = " + authenticateAgentResponse);
+            authenticateAgentResponse.setMessage("Agent credentials validation failed");
+            authenticateAgentResponse.setCode(401);
             throw new InvalidAgentCredentialsException("Agent credentials validation failed");
+
 
         }
     }

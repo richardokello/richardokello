@@ -39,6 +39,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
@@ -49,9 +50,6 @@ import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.M
 @Service
 public class IremboService {
 
-    private final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
-    private final String VALIDATE_URI = "/api/v1/clients/validateBill";
-
     private final AgentTransactionService agentTransactionService;
     private final BaseServiceProcessor baseServiceProcessor;
     private final BPRBranchService bprBranchService;
@@ -61,9 +59,9 @@ public class IremboService {
     private final IremboPaymentNotificationsRepository iremboPaymentNotificationsRepository;
 
     @SneakyThrows
-    public IremboBillNoValidationResponse validateIremboBillNo(BillNumberValidationRequest request, String transactionRefNo) {
+    public IremboBillNoValidationResponse validateIremboBillNo(BillNumberValidationRequest request) {
         // Validate agent credentials
-        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+        baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         HttpURLConnection httpConnection = null;
         try {
@@ -80,12 +78,12 @@ public class IremboService {
             SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
             String content_type = "application/json";
             String content_MD5 = "";
-            String uri = VALIDATE_URI;
+            String uri = "/api/v1/clients/validateBill";
 
             Date date2 = new Date();
             sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
             String gmtdate = sdf.format(date2);
-            String gmtdatefinal = gmtdate.substring(0, 3).toUpperCase() + gmtdate.substring(3, gmtdate.length());
+            String gmtdatefinal = gmtdate.substring(0, 3).toUpperCase() + gmtdate.substring(3);
             String canonical_str = content_type + "," + content_MD5 + "," + uri + "," + gmtdatefinal;
             String hmac = calculateRFC2104HMACBase64(canonical_str, IREMBOPIVOTSECRETKEY);
             URL targetUrl = new URL(IREMBOGATEWAYVALIDATEURL);
@@ -123,7 +121,7 @@ public class IremboService {
 
 
                 String dname = (ires.getBillDetails().getCustomerName() == null
-                        || ires.getBillDetails().getCustomerName() == "") ? ires.getBillDetails().getRraAccountName()
+                        || Objects.equals(ires.getBillDetails().getCustomerName(), "")) ? ires.getBillDetails().getRraAccountName()
                         : ires.getBillDetails().getCustomerName();
 
                 String mobile = (ires.getBillDetails().getMobile() == null
@@ -179,7 +177,9 @@ public class IremboService {
                     .data(null)
                     .build();
         } finally {
-            httpConnection.disconnect();
+            if (httpConnection != null) {
+                httpConnection.disconnect();
+            }
         }
 
         return null;
@@ -187,6 +187,7 @@ public class IremboService {
 
     public String calculateRFC2104HMACBase64(String data, String key)
             throws SignatureException, NoSuchAlgorithmException, InvalidKeyException {
+        String HMAC_SHA1_ALGORITHM = "HmacSHA1";
         Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
         mac.init(new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM));
         byte[] rawHmac = mac.doFinal(data.getBytes());
@@ -215,17 +216,15 @@ public class IremboService {
             }
 
 
-            String branchname = bprBranches.getCompanyName();
             String irembocharges = clientPaymentConfirmationValidate(authenticateAgentResponse.getData().getAccountNumber(), branchId, request, transactionRefNo);
             long irembochargeslong = Long.parseLong(irembocharges);
 
             String channel = "Channel";
-            String txnref = transactionRefNo;
 
             String amountf4 = request.getAmount();
             long iremboamt = Long.parseLong(amountf4);
             long agentAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
-            System.out.printf("\n\nIrembo ref %s  irembo amt %s , Charges %s , agent balance %s \n\n", txnref, iremboamt,
+            System.out.printf("\n\nIrembo ref %s  irembo amt %s , Charges %s , agent balance %s \n\n", transactionRefNo, iremboamt,
                     irembochargeslong, agentAccountBalance);
 
             if (agentAccountBalance < iremboamt + irembochargeslong) {
@@ -247,7 +246,7 @@ public class IremboService {
             String irembOFS = "0000AFUNDS.TRANSFER,IREMBO/I/PROCESS/0/0," + "" + MASKED_T24_USERNAME + "/" + MASKED_T24_PASSWORD + "/"
                     + branchId + ",," + "TRANSACTION.TYPE::=ACTY," + "DEBIT.ACCT.NO::=" + authenticateAgentResponse.getData().getAccountNumber()
                     + ",DEBIT.AMOUNT::=" + iremboamt + "," + "CREDIT.ACCT.NO::=" + irembocashaccount + ","
-                    + "DEBIT.CURRENCY::=RWF,TCM.REF::=" + txnref + ","
+                    + "DEBIT.CURRENCY::=RWF,TCM.REF::=" + transactionRefNo + ","
                     + "PAYMENT.DETAILS:1:= " + paymentdetail1.trim() + ","
                     + "PAYMENT.DETAILS:2:=" + paymentdetail2.trim() + ","
                     + "PAYMENT.DETAILS:3:=" + paymentdetail3.trim();
@@ -255,7 +254,7 @@ public class IremboService {
             String tot24str = String.format("%04d", irembOFS.length()) + irembOFS;
 
             System.out.println("CHANNEL :" + channel);
-            System.out.println("TXNREF :" + txnref);
+            System.out.println("TXNREF :" + transactionRefNo);
             System.out.println("TID :" + tid);
 
 
@@ -263,7 +262,7 @@ public class IremboService {
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
             tot24.setTxnchannel(channel);
-            tot24.setGatewayref(txnref);
+            tot24.setGatewayref(transactionRefNo);
             tot24.setPostedstatus("0");
             tot24.setTid(tid);
             tot24.setProcode("470000");

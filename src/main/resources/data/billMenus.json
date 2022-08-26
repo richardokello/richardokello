@@ -53,20 +53,7 @@
               "validated": false,
               "order": 5
             },
-            {
-              "label": "schoolName",
-              "type": "alphanumeric",
-              "length": 25,
-              "validated": false,
-              "order": 5
-            },
-            {
-              "label": "Student Name",
-              "type": "alphanumeric",
-              "length": 20,
-              "validated": false,
-              "order": 5
-            },
+
             {
               "label": "Agent Pin",
               "type": "alphanumeric",
@@ -150,7 +137,7 @@
       "fields": []
     },
     {
-      "name": "EUCL",
+      "name": "EUCL Electricity",
       "hasSubMenu": true,
       "svcCode": "03",
       "submenu": [

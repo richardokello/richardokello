@@ -21,6 +21,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_USERNAME;
 
@@ -46,7 +48,7 @@ public class AgentTransactionService {
         T24TXNQueue tot24 = new T24TXNQueue();
         AgentTransactionResponse response = new AgentTransactionResponse();
         // Validate agent credentials
-        AuthenticateAgentResponse authenticateAgentDepositResponse=null;
+        AuthenticateAgentResponse authenticateAgentDepositResponse;
 
 
         // validate amount limits
@@ -343,8 +345,8 @@ public class AgentTransactionService {
                     "AgentValidation","FAILED","ipAddress");
         }
 
-        response.setUsername(authenticateAgentResponse.getData().getUsername());
-        response.setNames(authenticateAgentResponse.getData().getNames());
+        response.setUsername(authenticateAgentResponse != null ? authenticateAgentResponse.getData().getUsername() : null);
+        response.setNames(Objects.requireNonNull(authenticateAgentResponse).getData().getNames());
         response.setBusinessName(authenticateAgentResponse.getData().getBusinessName());
         response.setLocation(authenticateAgentResponse.getData().getLocation());
         response.setTid(authenticateAgentResponse.getData().getTid());
@@ -444,7 +446,7 @@ public class AgentTransactionService {
                         MASKED_T24_PASSWORD,
                         recipientAccountBranchID,
                         recipientAgentAccountNo,
-                        String.valueOf(request.getAmount()),
+                        request.getAmount(),
                         authenticateAgentResponse.getData().getAccountNumber(),
                         transactionReferenceNo,
                         utilityService.sanitizePaymentDetails(firstPaymentDetails.trim(), "Agent Float Withdrawal"),

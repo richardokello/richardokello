@@ -5,8 +5,6 @@ import co.ke.tracom.bprgateway.web.irembo.dto.request.BillNumberValidationReques
 import co.ke.tracom.bprgateway.web.irembo.dto.request.IremboBillPaymentRequest;
 import co.ke.tracom.bprgateway.web.irembo.dto.response.IremboBillNoValidationResponse;
 import co.ke.tracom.bprgateway.web.irembo.dto.response.IremboPaymentResponse;
-import co.ke.tracom.bprgateway.web.irembo.dto.response.IremboPaymentResponseData;
-import co.ke.tracom.bprgateway.web.irembo.dto.response.IremboValidationData;
 import co.ke.tracom.bprgateway.web.irembo.service.IremboService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +28,9 @@ public class IremboController {
             value = "Return validation details for bill number",
             response = IremboBillNoValidationResponse.class)
     @PostMapping(value = "/bill-validation")
-    public ResponseEntity<?> MeterNoValidation(@RequestBody BillNumberValidationRequest request) {
+    public ResponseEntity<IremboBillNoValidationResponse> MeterNoValidation(@RequestBody BillNumberValidationRequest request) {
         String transactionRefNo = RRNGenerator.getInstance("IV").getRRN();
-        IremboBillNoValidationResponse response = iremboService.validateIremboBillNo(request, transactionRefNo);
+        IremboBillNoValidationResponse response = iremboService.validateIremboBillNo(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -40,7 +38,7 @@ public class IremboController {
             value = "Irembo bill payment",
             response = IremboPaymentResponse.class)
     @PostMapping(value = "/bill-payment")
-    public ResponseEntity<?> iremboBillPayment(@RequestBody IremboBillPaymentRequest request) {
+    public ResponseEntity<IremboPaymentResponse> iremboBillPayment(@RequestBody IremboBillPaymentRequest request) {
         String transactionRefNo = RRNGenerator.getInstance("IV").getRRN();
         IremboPaymentResponse response = iremboService.processPayment(request, transactionRefNo);
         return new ResponseEntity<>(response, HttpStatus.OK);

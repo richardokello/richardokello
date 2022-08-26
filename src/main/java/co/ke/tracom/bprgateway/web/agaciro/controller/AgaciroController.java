@@ -27,7 +27,7 @@ public class AgaciroController {
       response = InstitutionsResponse.class,
       responseContainer = "List")
   @GetMapping("/institutions")
-  public ResponseEntity<?> getInstitutions(
+  public ResponseEntity<InstitutionsResponse> getInstitutions(
       @ApiParam(value = "Request object", required = true) @RequestBody
           InstitutionsRequest request) {
     log.info(
@@ -42,7 +42,7 @@ public class AgaciroController {
       value = "Returns details of an institution based on name",
       response = InstitutionByNameResponse.class)
   @GetMapping("/institutions/name")
-  public ResponseEntity<?> getInstitutionByName(@RequestBody InstitutionByNameRequest request) {
+  public ResponseEntity<InstitutionByNameResponse> getInstitutionByName(@RequestBody InstitutionByNameRequest request) {
     log.info("AGACIRO REQUEST DATA - GET INSTITUTION BY NAME: {}", request);
     InstitutionByNameResponse responseEntity = agaciroService.getInstitutionByName(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
@@ -52,7 +52,7 @@ public class AgaciroController {
       value = "Returns details of an institution based on institution's code",
       response = InstitutionByCodeResponse.class)
   @GetMapping("/institutions/code")
-  public ResponseEntity<?> getInstitutionByCode(@RequestBody InstitutionByCodeRequest request) {
+  public ResponseEntity<InstitutionByCodeResponse> getInstitutionByCode(@RequestBody InstitutionByCodeRequest request) {
     log.info("AGACIRO REQUEST DATA - GET INSTITUTION BY CODE: {}", request);
     InstitutionByCodeResponse responseEntity = agaciroService.getInstitutionByCode(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
@@ -60,7 +60,7 @@ public class AgaciroController {
 
   @ApiOperation(value = "Returns registered NID from NIDA", response = ValidateNIDResponse.class)
   @GetMapping("/NID")
-  public ResponseEntity<?> validateNID(@RequestBody ValidateNIDRequest request) {
+  public ResponseEntity<ValidateNIDResponse> validateNID(@RequestBody ValidateNIDRequest request) {
     ValidateNIDResponse responseEntity = agaciroService.validateNID(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
   }
@@ -69,7 +69,7 @@ public class AgaciroController {
       value = "Sends a payment notification to the Agaciro System",
       response = ValidateNIDResponse.class)
   @PostMapping("/paymentNotification")
-  public ResponseEntity<?> sendPaymentNotification(
+  public ResponseEntity<PaymentNotificationResponse> sendPaymentNotification(
       @RequestBody PaymentNotificationRequest request) {
     PaymentNotificationResponse responseEntity = agaciroService.sendPaymentNotification(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);

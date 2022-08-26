@@ -6,7 +6,6 @@ import co.ke.tracom.bprgateway.core.tracomchannels.tcp.dto.BankAccountValidation
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.web.accountvalidation.data.BPRAccountValidationRequest;
 import co.ke.tracom.bprgateway.web.accountvalidation.data.BPRAccountValidationResponse;
-import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -28,8 +27,8 @@ public class AccountValidationService {
     private final BaseServiceProcessor baseServiceProcessor;
 
     @SneakyThrows
-    public BPRAccountValidationResponse processBankAccountValidation(BPRAccountValidationRequest request, String rrn) {
-        AuthenticateAgentResponse optionalAuthenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+    public BPRAccountValidationResponse processBankAccountValidation(BPRAccountValidationRequest request) {
+   baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
         String accountValidationRequest =
                 "0000AENQUIRY.SELECT,," + MASKED_T24_USERNAME + "/" + MASKED_T24_PASSWORD +

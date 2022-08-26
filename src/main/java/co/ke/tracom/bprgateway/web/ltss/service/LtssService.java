@@ -4,7 +4,6 @@ import co.ke.tracom.bprgateway.core.config.CustomObjectMapper;
 import co.ke.tracom.bprgateway.core.tracomchannels.json.RestHTTPService;
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
-import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.Data;
 import co.ke.tracom.bprgateway.web.exceptions.custom.ExternalHTTPRequestException;
 import co.ke.tracom.bprgateway.web.ltss.data.LTSSRequest;
 import co.ke.tracom.bprgateway.web.ltss.data.checkPayment.CheckPaymentRequest;
@@ -186,7 +185,7 @@ paymentResponse.setStatus("489");
 paymentResponse.setMessage("failed authentication");
       }
 
-      Data agentAuthData = authenticateAgentResponse.getData();
+
 
     T24TXNQueue tot24 = new T24TXNQueue();
       NationalIDValidationResponse validationResponse= new NationalIDValidationResponse(); //.builder().build();
@@ -198,22 +197,19 @@ paymentResponse.setMessage("failed authentication");
 
       String mid= authenticateAgentResponse.getData().getMid();
       String tid=authenticateAgentResponse.getData().getTid();
-      Long amount= Long.valueOf(ltssRequest.getAmount());
+      long amount= Long.parseLong(ltssRequest.getAmount());
       String amounts=ltssRequest.getAmount();
-      String name = authenticateAgentResponse.getData().getNames();
       String t24UserName = getUsername();
       String t24Password = getPassword();
       String euclBankBranch = getDefaultBranch();
 
 //formattjng to get the month name
-    Formatter fmt = new Formatter();
+    Formatter fmt;
     Calendar cal = Calendar.getInstance();
     fmt = new Formatter();
     fmt.format("%tB ", cal);
 
  String senderName= validationResponse.getName();
-      String debitAcc="403456719410123";
-      String curreCode="RWF";
       String payment1="EJOHEZA FOR "+fmt;
       String payment2= tid+mid;
       String payment3="LTSS PAYMENT AT AGENT";
@@ -298,7 +294,7 @@ String formartedOFS= String.format("%04d", bareOFS.length()) + bareOFS;
               ltssResponse.setExtReferenceNo(t24refRRN );
               ltssResponse.setRefNo(t24refRRN);
 
-              paymentResponse=new LTSSPaymentResponse().builder()
+              paymentResponse= LTSSPaymentResponse.builder()
                       .status("00")
                       .message("succesfull payment Transaction")
                       .data(ltssResponse)
@@ -319,9 +315,9 @@ String formartedOFS= String.format("%04d", bareOFS.length()) + bareOFS;
 
       } else {
           transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EJO HEZA", "1200",
-                  Double.valueOf(ltssRequest.getAmount()), "135",
+                  Double.parseDouble(ltssRequest.getAmount()), "135",
                   authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
-          return LTSSPaymentResponse.builder().build().builder()
+          return LTSSPaymentResponse.builder()
                   .status("135")
                   .message(tot24.getT24failnarration().replace("\"", ""))
                   .data(null).build();

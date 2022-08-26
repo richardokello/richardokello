@@ -35,7 +35,7 @@ public class LtssController {
 
   @ApiOperation(value = "Validates National ID", response = NationalIDValidationResponse.class)
   @PostMapping("/subscriber/validate")
-  public ResponseEntity<?> validateNationalID(@RequestBody NationalIDValidationRequest request) {
+  public ResponseEntity<NationalIDValidationResponse> validateNationalID(@RequestBody NationalIDValidationRequest request) {
     log.info("LTSS REQUEST DATA - VALIDATE NATIONAL ID: {}", request);
     NationalIDValidationResponse responseEntity = ltssService.validateNationalID(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
@@ -45,7 +45,7 @@ public class LtssController {
       value = "Sends a payment contribution",
       response = PaymentContributionResponse.class)
   @PostMapping("/payment/contribution")
-  public ResponseEntity<?> sendPayment(@RequestBody LTSSRequest request) {
+  public ResponseEntity<LTSSPaymentResponse> sendPayment(@RequestBody LTSSRequest request) {
     log.info("LTSS REQUEST DATA - SEND PAYMENT CONTRIBUTION: {}", request);
     request.setExtRefNo(RRNGenerator.getInstance("EH").getRRN());
     LTSSPaymentResponse responseEntity = ltssService.makeContributionPayment(request);
@@ -54,7 +54,7 @@ public class LtssController {
 
   @ApiOperation(value = "Checks payment by reference number")
   @PostMapping("/payment/check")
-  public ResponseEntity<?> checkPayment(@RequestBody CheckPaymentRequest request) {
+  public ResponseEntity<CheckPaymentResponse> checkPayment(@RequestBody CheckPaymentRequest request) {
     log.info("LTSS REQUEST DATA - CHECK PAYMENT: {}", request);
     CheckPaymentResponse checkPaymentResponse = ltssService.checkPaymentByRefNo(request);
     return new ResponseEntity<>(checkPaymentResponse, Objects.requireNonNull(HttpStatus.resolve(Integer.parseInt(checkPaymentResponse.getStatus()))));
@@ -62,7 +62,7 @@ public class LtssController {
 
   @ApiOperation(value = "Registers a new subscriber", response = NewSubscriberResponse.class)
   @PostMapping("/subscriber/register")
-  public ResponseEntity<?> registerSubscriber(@RequestBody NewSubscriberRequest request) {
+  public ResponseEntity<NewSubscriberResponse> registerSubscriber(@RequestBody NewSubscriberRequest request) {
     log.info("LTSS REQUEST DATA - REGISTER SUBSCRIBER: {}", request);
     NewSubscriberResponse responseEntity = ltssService.registerNewSubscriber(request);
     return new ResponseEntity<>(responseEntity, Objects.requireNonNull(HttpStatus.resolve(Integer.parseInt(responseEntity.getStatus()))));

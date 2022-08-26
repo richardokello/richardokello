@@ -1,4 +1,5 @@
 package co.ke.tracom.bprgateway.web.academicbridge.services;
+
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.Data;
@@ -7,7 +8,6 @@ import co.ke.tracom.bprgateway.web.t24communication.services.T24Channel;
 import co.ke.tracom.bprgateway.web.transactions.entities.T24TXNQueue;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.TransactionISO8583ProcessingCode;
-import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
 import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
 import lombok.SneakyThrows;
@@ -26,35 +26,27 @@ public class AcademicBridgeT24 {
     private final T24Channel t24Channel;
     public static final String MASKED_T24_USERNAME = "########U";
     public static final String MASKED_T24_PASSWORD = "########A";
-    private final BaseServiceProcessor baseServiceProcessor;
     private final UtilityService utilityService;
 
-    public AcademicBridgeT24(XSwitchParameterService xSwitchParameterService, TransactionService transactionService, T24Channel t24Channel, BaseServiceProcessor baseServiceProcessor, UtilityService utilityService) {
+    public AcademicBridgeT24(XSwitchParameterService xSwitchParameterService, TransactionService transactionService, T24Channel t24Channel, UtilityService utilityService) {
         this.xSwitchParameterService = xSwitchParameterService;
         this.transactionService = transactionService;
         this.t24Channel = t24Channel;
-        this.baseServiceProcessor = baseServiceProcessor;
         this.utilityService = utilityService;
     }
 
     @SneakyThrows
     public CustomerProfileResponse validateStudentId(String billNumber)  {
-       // System.out.println("bill number "+billNumber);
 
-        CustomerProfileResponse student = new CustomerProfileResponse();
-      //  String sendMoneyOFSMsg = "0000AENQUIRY.SELECT,,INPUTT/321321/RW0010400,BPR.ACB.GET.DET.AGB,BILL.NO:EQ=1001190067-1";
-       // String sendMoneyOFSMsg = "0000AFUNDS.TRANSFER,BPR.ACB.PAY.AGB/I/PROCESS,INPUTT/123123/RW0010461,,TRANSACTION.TYPE::=ACAB,DEBIT.ACCT.NO::=593412948060277,DEBIT.CURRENCY::=RWF,ORDERING.BANK::=BNK,CREDIT.ACCT.NO::=408430683210261,CREDIT.CURRENCY::=RWF,CREDIT.AMOUNT::=2000,BPR.SENDER.NAME::=TINASHE TEST,MOBILE.NO::=0789379839,AB.SCHOOL.ID::=1614240687,AB.SCHL.NAME::=DEMO SCHOOL,AB.STU.NAME::=GABRIEL IMANIKUZWE,AB.BILL.NO::=1001190067-1";
-       // String sendMoneyOFSMsg = "0000AENQUIRY.SELECT,,RAJ001/123456/RW0010400,BPR.VFR.GET.DAT,ACCT.NO:EQ=102036384750101,MOBILE.NO:EQ=250788894696";
-        String sendMoneyOFSMsg = bootstrapAcademicBridgeGetDetailsOFSMsg(billNumber);
-       // System.out.println("OFS : "+sendMoneyOFSMsg);
 
+        CustomerProfileResponse student;
+
+         String sendMoneyOFSMsg = bootstrapAcademicBridgeGetDetailsOFSMsg(billNumber);
         String tot24str = String.format("%04d", sendMoneyOFSMsg.length()) + sendMoneyOFSMsg;
         Data agentAuthData = new Data();
         String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
-        //agentAuthData.setAccountNumber("1236544");
         T24TXNQueue tot24 = prepareT24Transaction(transactionRRN,
                 agentAuthData,
-                "1452365214",
                 tot24str, "12369854","1200");
 
 
@@ -77,17 +69,17 @@ public class AcademicBridgeT24 {
 
         if (tot24.getT24responsecode().equalsIgnoreCase("1")) {
 
-            //return extractChargesFromResponse(validationReferenceNo, tot24);
+
              return student;
 
         }else {
-           // student=null;
+            student.setMessage("No student data");
         }
 
         return student;
     }
 
-    private T24TXNQueue prepareT24Transaction(String transactionRRN, Data agentAuthData, String configuredSendMoneySuspenseAccount, String tot24str, String tid,String mti) {
+    private T24TXNQueue prepareT24Transaction(String transactionRRN, Data agentAuthData, String tot24str, String tid, String mti) {
         T24TXNQueue tot24 = new T24TXNQueue();
         tot24.setTid(tid);//needed in validation?
         tot24.setRequestleg(tot24str);//our custom request
@@ -98,7 +90,7 @@ public class AcademicBridgeT24 {
         tot24.setGatewayref(transactionRRN);
         tot24.setProcode(TransactionISO8583ProcessingCode.EUCL_BILL.getCode());//send money and validate
         tot24.setDebitacctno(agentAuthData.getAccountNumber());//validation any nned for this
-        tot24.setCreditacctno(configuredSendMoneySuspenseAccount);// and this
+        tot24.setCreditacctno("1452365214");// and this
         tot24.setTxnmti(mti);
         tot24.setT24responsecode("1");
         return tot24;
@@ -107,8 +99,6 @@ public class AcademicBridgeT24 {
     public String bootstrapAcademicBridgePaymentOFSMsg(String debitAcc, String creditAcc, double amount, String sender,
                                                        String phone, String schoolId, String schoolName, String studentName,
                                                        String billNumber) {
-       // return "0000AFUNDS.TRANSFER,BPR.ACB.PAY.AGB/I/PROCESS,INPUTT/123123/RW0010461,,TRANSACTION.TYPE::=ACAB,DEBIT.ACCT.NO::="
-
 
         return "0000AFUNDS.TRANSFER,BPR.ACB.PAY.AGB/I/PROCESS,"+getT24UserName()+"/"+getT24Password()+"/RW0010461,,TRANSACTION.TYPE::=ACAB,DEBIT.ACCT.NO::="
                 + debitAcc
@@ -157,23 +147,20 @@ public class AcademicBridgeT24 {
 
 
     private String bootstrapAcademicBridgeGetDetailsOFSMsg(String billNumber) {
-       // return "0000AENQUIRY.SELECT,,INPUTT/321321/RW0010400,BPR.ACB.GET.DET.AGB,BILL.NO:EQ="+ billNumber;
-        return "0000AENQUIRY.SELECT,,"+getT24UserName()+"/"+getT24Password()+"/RW0010400,BPR.ACB.GET.DET.AGB,BILL.NO:EQ="+billNumber;
+         return "0000AENQUIRY.SELECT,,"+getT24UserName()+"/"+getT24Password()+"/RW0010400,BPR.ACB.GET.DET.AGB,BILL.NO:EQ="+billNumber;
     }
 
 
 
 
     public BillPaymentResponse academicBridgePayment(String billNumber){
-        BillPaymentResponse student = new BillPaymentResponse();
-        String sendMoneyOFSMsg = billNumber;
-        String tot24str = String.format("%04d", sendMoneyOFSMsg.length()) + sendMoneyOFSMsg;
+        BillPaymentResponse student;
+        String tot24str = String.format("%04d", billNumber.length()) + billNumber;
         Data agentAuthData = new Data();
         String transactionRRN = RRNGenerator.getInstance("SM").getRRN();
 
         T24TXNQueue tot24 = prepareT24Transaction(transactionRRN,
                 agentAuthData,
-                "1452365214",
                 tot24str, "12369854","1300");
 
 
@@ -185,7 +172,7 @@ public class AcademicBridgeT24 {
 
         log.info("Ip {} and  port {}",t24Ip,t24Port);
         student = t24Channel.processAcademicBridgePaymentToT24(t24Ip, Integer.parseInt(t24Port), tot24);
-        //transactionService.updateT24TransactionDTO(tot24);
+
 
         System.err.printf(
                 "Send Money Charges Request : Transaction %s has been queued for T24 Processing. %n",
@@ -199,7 +186,6 @@ public class AcademicBridgeT24 {
             log.info("request successful >>>>");
 
 
-            //return extractChargesFromResponse(validationReferenceNo, tot24);
             return student;
 
         }

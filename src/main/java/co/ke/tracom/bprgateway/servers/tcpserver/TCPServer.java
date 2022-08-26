@@ -48,59 +48,53 @@ public class TCPServer {
   public void addRequestHandlers() {
     System.err.println("TCP Server adding connection handler...");
     server.connectHandler(
-        socket -> {
-          socket.handler(
-              buffer -> {
+        socket -> socket.handler(
+            buffer -> {
 
-                CustomObjectMapper mapper = new CustomObjectMapper();
-                try {
-                  String requestPayload = buffer.toString().trim();
-//                 if(!requestPayload.startsWith("{")) {
-//                    int index = requestPayload.indexOf("{");
-//                   String substring = requestPayload.substring(index);
-//                   requestPayload=substring;
-//                  }
-                  System.out.println("requestPayload = >>>>>" + requestPayload);
-                  ValidationRequest genericRequest =
-                      mapper.readValue(requestPayload, ValidationRequest.class);
-                 // log.info("GENERIC REQUEST OBJECT: {}", genericRequest);
-                  String transactionType = genericRequest.getTnxType();
-                  log.info("Transaction Type: {}", transactionType);
-                  switch (transactionType) {
-                    case "fetch-menu":
-                      billRequestHandler.menu(requestPayload, billMenuService, socket);
-                      break;
-                    case "validation":
-                      billRequestHandler.validation(genericRequest, socket);
-                      break;
-                    case "bill-payment":
-                      billRequestHandler.billPayment(requestPayload, socket);
-                      break;
-                    case "bill-status":
-                      billRequestHandler.billStatus(requestPayload, socket);
-                      break;
-                    default:
-                      throw new UnprocessableEntityException("Entity cannot be processed");
-                  }
-                } catch (JsonProcessingException | UnprocessableEntityException | NullPointerException | InvalidAgentCredentialsException e) {
-                  e.printStackTrace();
-                  TcpResponse response = new TcpResponse();
-                  response.setMessage("Bad request: " + e.getMessage());
-                  response.setStatus(400);
-                  Buffer outBuffer = Buffer.buffer();
-                  try {
-                    outBuffer.appendString(mapper.writeValueAsString(response));
-                    socket.write(outBuffer);
-                  } catch (JsonProcessingException ex) {
-                    ex.printStackTrace();
-                    log.error("TCP SERVER ERROR: {}", ex.getMessage());
-                    socket.write(ex.getMessage());
-                  }
-                } finally {
-                  socket.close();
+              CustomObjectMapper mapper = new CustomObjectMapper();
+              try {
+                String requestPayload = buffer.toString().trim();
+
+                System.out.println("requestPayload = >>>>>" + requestPayload);
+                ValidationRequest genericRequest =
+                    mapper.readValue(requestPayload, ValidationRequest.class);
+               // log.info("GENERIC REQUEST OBJECT: {}", genericRequest);
+                String transactionType = genericRequest.getTnxType();
+                log.info("Transaction Type: {}", transactionType);
+                switch (transactionType) {
+                  case "fetch-menu":
+                    billRequestHandler.menu(requestPayload, billMenuService, socket);
+                    break;
+                  case "validation":
+                    billRequestHandler.validation(genericRequest, socket);
+                    break;
+                  case "bill-payment":
+                    billRequestHandler.billPayment(requestPayload, socket);
+                    break;
+                  case "bill-status":
+                    billRequestHandler.billStatus(socket);
+                    break;
+                  default:
+                    throw new UnprocessableEntityException("Entity cannot be processed");
                 }
-              });
-        });
+              } catch (JsonProcessingException | UnprocessableEntityException | NullPointerException | InvalidAgentCredentialsException e) {
+                e.printStackTrace();
+                TcpResponse response = new TcpResponse();
+                response.setMessage("Bad request: " + e.getMessage());
+                response.setStatus(400);
+                Buffer outBuffer = Buffer.buffer();
+                try {
+                  outBuffer.appendString(mapper.writeValueAsString(response));
+                  socket.write(outBuffer);
+                } catch (JsonProcessingException ex) {
+                  ex.printStackTrace();
+                  log.error("TCP SERVER ERROR: {}", ex.getMessage());
+                  socket.write(ex.getMessage());
+                }
+              } finally {
+                socket.close();
+              }
+            }));
 
     System.err.println("TCP Server connection handler added successfully...");
   }

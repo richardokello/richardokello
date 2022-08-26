@@ -56,11 +56,16 @@ public class BillMenuController {
 
         AcademicBridgeValidation response=
                 billRequestHandler.validation(validate, null);
-        if(response.getResponseCode()==null||!response.getResponseCode().equals("00"))
+        if(response.getResponseCode()==null)
         {response.setResponseMessage("No response from the server");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
-        // return new ResponseEntity<>(response , HttpStatus.OK);
+        if(!response.getResponseCode().equals("00")) {
+            response.setResponseMessage("Validation failed");
+            response.setResponseCode("401");
+
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }// return new ResponseEntity<>(response , HttpStatus.OK);
         return ResponseEntity.ok().body(response);
 
     }
@@ -73,7 +78,7 @@ public class BillMenuController {
         String str=  objectMapper.writeValueAsString(paybills);
         BillPaymentResponse response;
         response = billRequestHandler.billPayment(str, null);
-        // return new ResponseEntity<>(response , HttpStatus.OK);
+
         if(response==null||!response.getResponseCode().equals("00"))
         {response.setResponseMessage("No response from the server");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);

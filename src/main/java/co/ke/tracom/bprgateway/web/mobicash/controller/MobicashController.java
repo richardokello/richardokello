@@ -37,7 +37,7 @@ public class MobicashController {
       value = "Returns a dynamic token to be used for subsequent requests",
       response = AuthenticationResponse.class)
   @PostMapping("/oauth/token")
-  public ResponseEntity<?> requestToken(@RequestBody AuthenticationRequest request) {
+  public ResponseEntity<AuthenticationResponse> requestToken(@RequestBody AuthenticationRequest request) {
     log.info("MOBICASH REQUEST DATA - AUTHENTICATION: {}", request);
     AuthenticationResponse responseEntity = mobiCashService.authRequest(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
@@ -45,7 +45,7 @@ public class MobicashController {
 
   @ApiOperation(value = "Returns agent details", response = AgentDetailsResponse.class)
   @PostMapping("/agent")
-  public ResponseEntity<?> getAgentDetails(@RequestBody AgentDetailsRequest request) {
+  public ResponseEntity<AgentDetailsResponse> getAgentDetails(@RequestBody AgentDetailsRequest request) {
     log.info("MOBICASH REQUEST DATA - AGENT DETAILS: {}", request);
     AgentDetailsResponse responseEntity = mobiCashService.getAgentDetails(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);
@@ -55,7 +55,7 @@ public class MobicashController {
       value = "Credits a specific Mobicash account",
       response = AgentDetailsResponse.class)
   @PostMapping("/account")
-  public ResponseEntity<?> creditAccount(@RequestBody MobicashPaymentRequest request) {
+  public ResponseEntity<MobicashPaymentResponse> creditAccount(@RequestBody MobicashPaymentRequest request) {
     log.info("MOBICASH REQUEST DATA - ACCOUNT CREDIT: {}", request);
     MobicashPaymentResponse responseEntity = mobiCashService.sendPayment(request);
     return new ResponseEntity<>(responseEntity, HttpStatus.OK);

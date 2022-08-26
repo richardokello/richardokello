@@ -48,6 +48,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Objects;
 import java.util.Optional;
 
 import static co.ke.tracom.bprgateway.web.t24communication.services.T24Channel.MASKED_T24_PASSWORD;
@@ -69,9 +70,8 @@ public class RRAService {
 
     @SneakyThrows
     public RRATINValidationResponse validateCustomerTIN(RRATINValidationRequest request, String transactionRRN) {
-        AuthenticateAgentResponse optionalAuthenticateAgentResponse = null;
         try {
-            optionalAuthenticateAgentResponse= baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
+          baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
         }catch (InvalidAgentCredentialsException e){
             transactionService.saveFailedUserPasswordTransactions("Failed Logins PC module transactions","Agent logins",request.getCredentials().getUsername(),
                     "AgentValidation","FAILED","ipAddress");
@@ -120,7 +120,7 @@ public class RRAService {
 
             HttpResponse response = httpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
-            String retrnedxml = null;
+            String retrnedxml;
 
             // Check if the server responded
             if (entity != null) {
@@ -189,7 +189,7 @@ public class RRAService {
                             xmlJSONObj.getJSONObject("TO_BANK").getJSONObject("DECLARATION");
                     System.err.println("response" + xmlJSONObj_DECLARATION.toString(4));
                     Object RRA_REF_OBJ = xmlJSONObj_DECLARATION.get("RRA_REF");
-                    String RRA_REF = "";
+                    String RRA_REF;
                     if (RRA_REF_OBJ instanceof Long || RRA_REF_OBJ instanceof Integer) {
                         long intToUse = ((Number) RRA_REF_OBJ).longValue();
                         RRA_REF = intToUse + "";
@@ -198,7 +198,7 @@ public class RRAService {
                     }
                     int DEC_ID = xmlJSONObj_DECLARATION.getInt("DEC_ID");
                     Object TINOBJ = xmlJSONObj_DECLARATION.get("TIN");
-                    String TIN = "";
+                    String TIN;
                     if (TINOBJ instanceof Long || TINOBJ instanceof Integer) {
                         long intToUse = ((Number) TINOBJ).longValue();
                         TIN = intToUse + "";
@@ -213,7 +213,7 @@ public class RRAService {
                             xmlJSONObj_DECLARATION.getString("TAX_PAYER_NAME") == null
                                     ? ""
                                     : xmlJSONObj_DECLARATION.getString("TAX_PAYER_NAME");
-                    Long AMOUNT_TO_PAY = xmlJSONObj_DECLARATION.getLong("AMOUNT_TO_PAY");
+                    long AMOUNT_TO_PAY = xmlJSONObj_DECLARATION.getLong("AMOUNT_TO_PAY");
                     int TAX_TYPE_NO = xmlJSONObj_DECLARATION.getInt("TAX_TYPE_NO");
                     String TAX_TYPE_DESC =
                             xmlJSONObj_DECLARATION.getString("TAX_TYPE_DESC") == null
@@ -301,25 +301,22 @@ public class RRAService {
         System.err.println("ID = " + id);
         System.err.println("rrapass = " + rrapass);
 
-        String body =
-                "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://WS.epay.rra.rw\">\n"
-                        + "   <soapenv:Header/>\n"
-                        + "   <soapenv:Body>\n"
-                        + "      <ws:getDec>\n"
-                        + "         <ws:userID>"
-                        + id
-                        + "</ws:userID>\n"
-                        + "         <ws:userPassword>"
-                        + rrapass
-                        + "</ws:userPassword>\n"
-                        + "         <ws:RRA_ref>"
-                        + rwandaRevenueAuthorityTIN
-                        + "</ws:RRA_ref>\n"
-                        + "      </ws:getDec>\n"
-                        + "   </soapenv:Body>\n"
-                        + "</soapenv:Envelope>";
-
-        return body;
+        return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"http://WS.epay.rra.rw\">\n"
+                + "   <soapenv:Header/>\n"
+                + "   <soapenv:Body>\n"
+                + "      <ws:getDec>\n"
+                + "         <ws:userID>"
+                + id
+                + "</ws:userID>\n"
+                + "         <ws:userPassword>"
+                + rrapass
+                + "</ws:userPassword>\n"
+                + "         <ws:RRA_ref>"
+                + rwandaRevenueAuthorityTIN
+                + "</ws:RRA_ref>\n"
+                + "      </ws:getDec>\n"
+                + "   </soapenv:Body>\n"
+                + "</soapenv:Envelope>";
     }
 
     @SneakyThrows
@@ -448,7 +445,7 @@ public class RRAService {
             final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");
             final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT");
             log.info("Fetched port and ip success, ip {}, port {}", (t24Ip != null), (t24Port != null));
-            t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
+            t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(Objects.requireNonNull(t24Port)), tot24);
 
             transactionService.updateT24TransactionDTO(tot24);
 

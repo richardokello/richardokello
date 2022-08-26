@@ -40,12 +40,11 @@ public class MobiCashService {
 
   /**
    * Obtains and sets access authentication token from remote API
-   *
-   * @param authenticationRequest
-   * @return AuthenticationResponse authentication details
+   * param authenticationRequest
+   * return AuthenticationResponse authentication details
    */
   public AuthenticationResponse authRequest(AuthenticationRequest authenticationRequest) {
-    AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+    AuthenticationResponse authenticationResponse;
 
     try {
       String requestURL = baseURL + authRequestURL;
@@ -64,8 +63,7 @@ public class MobiCashService {
 
   /**
    * Retrieves agent details using phone number or agent mcash ID
-   *
-   * @param agentDetailsRequest
+   * param agentDetailsRequest
    * @return AgentDetailsResponse agent details
    */
   public AgentDetailsResponse getAgentDetails(AgentDetailsRequest agentDetailsRequest) {
@@ -89,8 +87,7 @@ public class MobiCashService {
 
   /**
    * Credits a specific MobiCash account
-   *
-   * @param paymentRequest
+   *param paymentRequest
    * @return PaymentResponse payment response object
    */
   public MobicashPaymentResponse sendPayment(MobicashPaymentRequest paymentRequest) {

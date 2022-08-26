@@ -21,7 +21,7 @@ public class BulkPaymentController {
             value = "Upload batch file with send money request",
             response = BulkPaymentResponse.class)
     @PostMapping(value = "/payment", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> purchaseElectricity(
+    public ResponseEntity<BulkPaymentResponse> purchaseElectricity(
             @RequestParam String merchantId,
             @RequestParam String password,
             @RequestParam MultipartFile file

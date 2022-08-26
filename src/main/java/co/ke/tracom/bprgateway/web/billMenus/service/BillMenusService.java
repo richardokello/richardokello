@@ -40,7 +40,6 @@ public class BillMenusService {
       CustomObjectMapper mapper = new CustomObjectMapper();
       billMenuResponse = mapper.readValue(jsonAsStream, BillMenuResponse.class);
     } catch (Exception ex) {
-      ex.printStackTrace();
       log.error("BILL MENU SERVICE: {}", ex.getMessage());
       throw new ExternalHTTPRequestException("Error fetching bill menus");
     }
