@@ -44,7 +44,7 @@ public class WasacController {
       value = "Post payment details to WASAC. Username and password needed for authentication",
       response = WasacPaymentResponse.class)
   @PostMapping("/payment")
-  public ResponseEntity<?> creditAccount(
+  public ResponseEntity<BillPaymentResponse> creditAccount(
       @ApiParam(value = "Payment details", required = true) @RequestBody
               BillPaymentRequest request) {
 
