@@ -355,6 +355,7 @@ public class WASACService {
                     wasacT24ValidationResponse.setMeterNo(responseFields[2].replace('"', ' ').trim());
                     wasacT24ValidationResponse.setBranchNo(responseFields[3].replace('"', ' ').trim());
                     wasacT24ValidationResponse.setOutstandingBalance(responseFields[4].replace('"', ' ').trim());
+                    wasacT24ValidationResponse.setRrn(tot24.getGatewayref());
                 }
                 validationData.add(addValidationResponse("ClientPostName", channel));
                 validationData.add(addValidationResponse("Name", wasacT24ValidationResponse.getCustomerName()));
@@ -362,7 +363,7 @@ public class WASACService {
                 validationData.add(addValidationResponse("BranchNo", wasacT24ValidationResponse.getBranchNo()));
                 validationData.add(addValidationResponse("CustomerId", wasacT24ValidationResponse.getCustomerNo()));
                 validationData.add(addValidationResponse("Balance", wasacT24ValidationResponse.getOutstandingBalance()));
-
+                validationData.add(addValidationResponse("rrn", wasacT24ValidationResponse.getRrn()));
 
                 response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
                         AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
@@ -474,6 +475,7 @@ public class WASACService {
         private String meterNo;
         private String branchNo;
         private String outstandingBalance;
+        private String rrn;
     }
 
 }

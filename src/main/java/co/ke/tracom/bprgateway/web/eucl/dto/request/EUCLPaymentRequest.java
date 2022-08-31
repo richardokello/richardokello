@@ -14,4 +14,15 @@ public class EUCLPaymentRequest {
     private String meterNo;
     private String phoneNo;
     private String meterLocation;
+
+  public void validatedAmount()
+  {
+      Long amount=Long.parseLong(this.amount);
+      if (this.amount.isEmpty()){
+          throw new RuntimeException("amount cannot be null");
+      }
+      if (100>amount&& amount>20000000){
+          throw new RuntimeException("amount out of limit");
+      }
+  }
 }

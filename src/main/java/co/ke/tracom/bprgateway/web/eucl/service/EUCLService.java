@@ -72,7 +72,6 @@ public class EUCLService {
 
             long amount = Long.parseLong(request.getAmount());
             String meterNo = request.getMeterNo();
-            //String phone = request.getPhoneNo();
             String EUCLBranch = xSwitchParameterService.fetchXSwitchParamValue("DEFAULT_EUCL_BRANCH");
             String newt24tem =
                     "0000AENQUIRY.SELECT,,"
@@ -130,9 +129,7 @@ public class EUCLService {
 
             } else {
                 MeterNoValidationResponse response;
-                String tot24narration=tot24.getT24failnarration()==null?"no response":tot24.getT24failnarration().replace("\"", "");
-                //String tot24Isnull = Objects.isNull(tot24.getT24failnarration())?"response has no fail narration":tot24.getT24failnarration().replace("\"", "");
-                MeterNoData data = MeterNoData.builder()
+                String tot24narration=tot24.getT24failnarration()==null?"no response":tot24.getT24failnarration().replace("\"", "");MeterNoData data = MeterNoData.builder()
                         .rrn(referenceNo)
                         .build();
 
@@ -186,10 +183,15 @@ public class EUCLService {
                   "AgentValidation","FAILED","ipAddress");
         }
 
-
         T24TXNQueue tot24 = new T24TXNQueue();
         EUCLElectricityTxnLogs elecTxnLogs = new EUCLElectricityTxnLogs();
         try {
+
+
+            Long EUCL_TRANSACTION_LIMIT_ID = 8L;
+            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, Double.parseDouble(request.getAmount()));
+
+
 
             elecTxnLogs.setAmount(request.getAmount());
             String channel = "PC";
@@ -202,6 +204,7 @@ public class EUCLService {
             String mid = authenticateAgentResponse.getData().getUsername();
 
             long amount = Long.parseLong(request.getAmount());
+
 
             String euclBranch = xSwitchParameterService.fetchXSwitchParamValue("DEFAULT_EUCL_BRANCH");
 

@@ -132,22 +132,22 @@ public class BillRequestHandler {
                         GetStudentDetailsResponse customerProfileResponseData = customerProfileResponse.getData();
                         transactionData.add(TransactionData.builder()
                                 .name("Billnumber")
-                                .value(customerProfileResponseData.getStudent_reg_number())
+                                .value(customerProfileResponseData.getStudent_reg_number().trim())
                                 .build()
                         );
                         transactionData.add(TransactionData.builder()
                                 .name("StudentName")
-                                .value(customerProfileResponseData.getStudent_name())
+                                .value(customerProfileResponseData.getStudent_name().trim())
                                 .build()
                         );
                         transactionData.add(TransactionData.builder()
                                 .name("SchoolName")
-                                .value(customerProfileResponseData.getSchool_name())
+                                .value(customerProfileResponseData.getSchool_name().trim())
                                 .build()
                         );
                         transactionData.add(TransactionData.builder()
                                 .name("SchoolAccount")
-                                .value(customerProfileResponseData.getSchool_account_number())
+                                .value(customerProfileResponseData.getSchool_account_number().trim())
                                 .build()
                         );
                         transactionData.add(TransactionData.builder()
@@ -223,9 +223,12 @@ public class BillRequestHandler {
 
                     List<TransactionData> euclTransactionData = new ArrayList<>();
                     MeterNoData euclValidationResponseData = euclValidationResponse.getData();
-
-                    euclTransactionData.add(TransactionData.builder().name("Meter number").value(euclValidationResponseData.getMeterNo()).build());
-                 //  euclTransactionData.add(TransactionData.builder().name("rrn").value(euclValidationResponseData.getRrn()).build());
+                    euclTransactionData.add(TransactionData.builder().name("accountName").value(euclValidationResponseData.getAccountName())
+                            .build());
+                    euclTransactionData.add(TransactionData.builder().name("meterNo").value(euclValidationResponseData.getMeterNo()).build());
+                    euclTransactionData.add(TransactionData.builder().name("meterLocation").value(euclValidationResponseData.getMeterLocation())
+                            .build());
+                    euclTransactionData.add(TransactionData.builder().name("rrn").value(euclValidationResponseData.getRrn()).build());
 
                     response.setData(euclTransactionData);
                 }
