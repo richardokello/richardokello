@@ -124,6 +124,9 @@ public class EUCLService {
                         .data(data)
                         .build();
                 log.info("EUCL Validation successful. Transaction [" + referenceNo + "] ");
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EUCL ELECTRICITY", "1200",
+                        Double.parseDouble(request.getAmount()), "000",
+                        optionalAuthenticateAgentResponse.getData().getTid(), optionalAuthenticateAgentResponse.getData().getMid());
 
                 return response;
 
