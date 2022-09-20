@@ -1,7 +1,5 @@
-- 👋 Hi, I’m Richard Okello
-- 👀 I’m interested in programming 
-- 🌱 I’m currently learning devops 
-- 💞️ I’m looking to collaborate on ...
+- 👋 Hi, I’m Richard Okello 
+- Am a software developer with experinec in java spring boot, laravel and angular.
 - 📫 you can reach me on okellorichard93@gmail.com
 
 <!---
