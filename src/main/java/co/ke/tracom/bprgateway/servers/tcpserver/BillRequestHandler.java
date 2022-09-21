@@ -61,7 +61,7 @@ public class BillRequestHandler {
     private final AcademicBridgeT24 academicBridgeT24Service;
     private final TransactionService transactionService;
     private final BaseServiceProcessor baseServiceProcessor;
-    private final static String billMenuRequestData="BILL MENU REQUEST DATA: {}";
+    private final static String BILL_MENU_REQUEST_DATA="BILL MENU REQUEST DATA: {}";
     private final VisionFundService visionFundService;
 
     private final LtssService ltssService;
@@ -76,11 +76,11 @@ public class BillRequestHandler {
             BillMenuResponse billMenuResponse;
             if (billMenuRequest.getLang().equalsIgnoreCase("en")) {
                 billMenuResponse = billMenusService.fetchEnglishMenus();
-                log.info(billMenuRequestData, billMenuResponse.toString());
+                log.info(BILL_MENU_REQUEST_DATA, billMenuResponse.toString());
                 writeResponseToTCPChannel(socket, mapper.writeValueAsString(billMenuResponse));
             } else if (billMenuRequest.getLang().equalsIgnoreCase("rw")) {
                 billMenuResponse = billMenusService.fetchKinyarwandaMenus();
-                log.info(billMenuRequestData, billMenuResponse.toString());
+                log.info(BILL_MENU_REQUEST_DATA, billMenuResponse.toString());
                 writeResponseToTCPChannel(socket, mapper.writeValueAsString(billMenuResponse));
             }
 
@@ -131,27 +131,27 @@ public class BillRequestHandler {
 
                         GetStudentDetailsResponse customerProfileResponseData = customerProfileResponse.getData();
                         transactionData.add(TransactionData.builder()
-                                .name("Billnumber")
+                                .name("Student Id")
                                 .value(customerProfileResponseData.getStudent_reg_number().trim())
                                 .build()
                         );
                         transactionData.add(TransactionData.builder()
-                                .name("StudentName")
+                                .name("Student Name")
                                 .value(customerProfileResponseData.getStudent_name().trim())
                                 .build()
                         );
                         transactionData.add(TransactionData.builder()
-                                .name("SchoolName")
+                                .name("School Name")
                                 .value(customerProfileResponseData.getSchool_name().trim())
                                 .build()
                         );
                         transactionData.add(TransactionData.builder()
-                                .name("SchoolAccount")
+                                .name("School Account")
                                 .value(customerProfileResponseData.getSchool_account_number().trim())
                                 .build()
                         );
                         transactionData.add(TransactionData.builder()
-                                .name("SchoolId")
+                                .name("School Id")
                                 .value(String.valueOf(customerProfileResponseData.getSchool_ide()))
                                 .build()
                         );
@@ -203,6 +203,7 @@ public class BillRequestHandler {
                     String amount= data.get(0).getValue();
                 //    String phoneNumber=data.get(1).getValue();
                     String meterNo = data.size()>1? data.get(1).getValue():"00";
+                    String source=data.get(2).getValue();
 
                     euclValidation.setAmount(amount);
                     euclValidation.setCredentials(
@@ -212,7 +213,7 @@ public class BillRequestHandler {
                             )
                     );
                     euclValidation.setMeterNo(meterNo);
-
+                    euclValidation.setSource(source);
                     String requestRefNo = RRNGenerator.getInstance("EV").getRRN();
                     euclValidationResponse = euclService.validateEUCLMeterNo(euclValidation, requestRefNo);
 
@@ -223,10 +224,10 @@ public class BillRequestHandler {
 
                     List<TransactionData> euclTransactionData = new ArrayList<>();
                     MeterNoData euclValidationResponseData = euclValidationResponse.getData();
-                    euclTransactionData.add(TransactionData.builder().name("accountName").value(euclValidationResponseData.getAccountName())
+                    euclTransactionData.add(TransactionData.builder().name("Account Name").value(euclValidationResponseData.getAccountName())
                             .build());
-                    euclTransactionData.add(TransactionData.builder().name("meterNo").value(euclValidationResponseData.getMeterNo()).build());
-                    euclTransactionData.add(TransactionData.builder().name("meterLocation").value(euclValidationResponseData.getMeterLocation())
+                    euclTransactionData.add(TransactionData.builder().name("Meter No").value(euclValidationResponseData.getMeterNo()).build());
+                    euclTransactionData.add(TransactionData.builder().name("Meter Location").value(euclValidationResponseData.getMeterLocation())
                             .build());
 
                     response.setData(euclTransactionData);
@@ -352,6 +353,7 @@ public class BillRequestHandler {
                     ii++;
 
                 }
+              String sources=paymentRequest.getSource();
                 System.out.println("payment request+++++++++++ " + payment);
                 MerchantAuthInfo auth = new MerchantAuthInfo();
                 auth.setUsername(paymentRequest.getCredentials().getUsername());
@@ -364,13 +366,14 @@ public class BillRequestHandler {
                     String OFS = academicBridgeT24Service.bootstrapAcademicBridgePaymentOFSMsg(
                             authenticateAgentResponse.getData().getAccountNumber(),
                             payment.get("Credit Account"),
-                            Double.parseDouble(payment.get("Amount")),
+                            Double.valueOf(payment.get("Amount")),
                             payment.get("Payer's Name"),
                             payment.get("Mobile Number"),
-                            payment.get("schoolId"),
-                            payment.get("SchoolName"),
-                            payment.get("StudentName"),
-                            payment.get("Student Registration ID Number")
+                            Integer.parseInt(payment.get("schoolId")),
+                            payment.get("School Name"),
+                            payment.get("Student Name"),
+                            payment.get("Student Registration ID Number"),
+                            payment.get("source")
 
                     );
 
@@ -411,6 +414,7 @@ public class BillRequestHandler {
                     String phoneNo = data.get(1).getValue();
                     String meterNo = data.size()>2? data.get(2).getValue():"00";
                     String meterLocation= data.size()>3 ?data.get(3).getValue():"No location";
+                    String source =data.size()>4? data.get(4).getValue():data.get(3).getValue();
 
                     euclPaymentRequest.setAmount(amount);
                     euclPaymentRequest.setCredentials(
@@ -422,7 +426,7 @@ public class BillRequestHandler {
                     euclPaymentRequest.setMeterNo(meterNo);
                     euclPaymentRequest.setPhoneNo(phoneNo);
                     euclPaymentRequest.setMeterLocation(meterLocation);
-
+                    euclPaymentRequest.setSource(source);
                     String requestRefNo = RRNGenerator.getInstance("EV").getRRN();
 
                     euclPaymentResponse = euclService.purchaseEUCLTokens(euclPaymentRequest, requestRefNo);
@@ -436,13 +440,13 @@ public class BillRequestHandler {
                     PaymentResponseData euclPaymentResponseData = euclPaymentResponse.getData();
                     ueclTransactionData.add(TransactionData.builder().name("t24Reference")
                             .value(euclPaymentResponseData.getT24Reference()).build());
-                    ueclTransactionData.add(TransactionData.builder().name("token")
+                    ueclTransactionData.add(TransactionData.builder().name("TOKENS")
                             .value(euclPaymentResponseData.getToken()).build());
-                    ueclTransactionData.add(TransactionData.builder().name("unitsInKW")
+                    ueclTransactionData.add(TransactionData.builder().name("UNITSInKW")
                             .value(euclPaymentResponseData.getUnitsInKW()).build());
-
                     ueclTransactionData.add(TransactionData.builder().name("charges")
                             .value(euclPaymentResponseData.getCharges()).build());
+                    //ueclTransactionData.add(TransactionData.builder().name("RRN").value(euclPaymentResponseData.getRrn()).build());
 
                     //Set transaction data
                     billPaymentResponse.setData(ueclTransactionData);
@@ -700,7 +704,7 @@ public class BillRequestHandler {
         T24TXNQueue tot24 = new T24TXNQueue();
         String processingStatus;
         String amount;
-
+        //tot24.setTxnchannel();
 
         List<TransactionData> data = new ArrayList<>();
         if(billPaymentResponse.getResponseMessage().equalsIgnoreCase("No Agent account found")){
@@ -726,24 +730,30 @@ public class BillRequestHandler {
 
                 if (!list.isEmpty()) {
                     System.out.println("Response data setting");
+                    data.add(
+                            TransactionData.builder().name("Payer's Name").value(list.get(0).getBprSenderName()).build());
                   data.add(
-                            TransactionData.builder().name("ABStudentName").value(list.get(0).getAbStudentName()).build());
+                            TransactionData.builder().name("Student Name").value(list.get(0).getAbStudentName()).build());
                     data.add(
-                            TransactionData.builder().name("BPRSenderName").value(list.get(0).getBprSenderName()).build());
+                            TransactionData.builder().name("Student ID").value(list.get(0).getAbBillNo()).build());
                     data.add(
-                            TransactionData.builder().name("ChargeAmount").value(list.get(0).getLocalCahrgeAmount()).build());
+                            TransactionData.builder().name("School Name").value(list.get(0).getAbSchoolName()).build());
                     data.add(
-                            TransactionData.builder().name("ABSchoolName").value(list.get(0).getAbSchoolName()).build());
-                      data.add(
-                            TransactionData.builder().name("BillNo").value(list.get(0).getAbBillNo()).build());
-                      tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
+                            TransactionData.builder().name("Charge Amount").value(list.get(0).getLocalCahrgeAmount()).build());
+                    data.add(TransactionData.builder().name("Amount").value(list.get(0).getCreditAmount()).build());
+                    tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
 
+                    data.add(TransactionData.builder().name("T24Reference").value(list.get(0).getT24reference()).build());
                     tot24.setCreditacctno(account);
                     amount = list.get(0).getCreditAmount();
 
                     response = getAcademicBridgePayment(data, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
 
                     processingStatus = "000";
+                    transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "ACADEMIC BRIDGE", "1200",
+                            Double.parseDouble(amount), processingStatus,
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());//Replace with actual data after successfull login credentials fro POS
+
                 } else {
                     data.add(
                             TransactionData.builder()
@@ -785,23 +795,10 @@ public class BillRequestHandler {
             data.add(
                     TransactionData.builder().name(NO_DATA).value(list.get(0).getError()).build());
 
-            amount = "0";
-            processingStatus = "10";
             response = getAcademicBridgePayment(data, AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.value(), AppConstants.ACADEMIC_BRIDGE_PAYMENT_EXTERNAL_SERVER_ERROR.getReasonPhrase());
 
         }
 
-
-
-        try {
-            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "ACADEMIC BRIDGE", "1200",
-                    Double.parseDouble(amount), processingStatus,
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());//Replace with actua data after successfull login credentials fro POS
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
 
         log.error("[\nACADEMIC BRIDGE PAYMENT RESPONSE : \n{}\n]\n>>>>", response);
 

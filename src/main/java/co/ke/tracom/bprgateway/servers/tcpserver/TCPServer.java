@@ -12,12 +12,15 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
 import io.vertx.core.net.NetServerOptions;
+import io.vertx.core.net.NetSocket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This server handles TCP requests for any given bill and dispatches them to an appropriate handler
@@ -26,89 +29,114 @@ import javax.annotation.PostConstruct;
 @Component
 @RequiredArgsConstructor
 public class TCPServer {
-  private NetServer server;
+    private NetServer server;
 
-  private final BillMenusService billMenuService;
-  private final BillRequestHandler billRequestHandler;
+    private final BillMenusService billMenuService;
+    private final BillRequestHandler billRequestHandler;
 
-  @Value("${tcp.server.port}")
-  private String port;
+    @Value("${tcp.server.port}")
+    private String port;
 
-  @PostConstruct
-  public void initializeTCPServer() {
+    @PostConstruct
+    public void initializeTCPServer() {
 
-    Vertx vertx = Vertx.vertx();
-    NetServerOptions options = new NetServerOptions().setPort(Integer.parseInt(port));
-    VertxOptions options1 = new VertxOptions();
-    options1.setBlockedThreadCheckInterval(1000*60*60);
-    server = vertx.createNetServer(options);
-    start();
-  }
+        Vertx vertx = Vertx.vertx();
+        NetServerOptions options = new NetServerOptions().setPort(Integer.parseInt(port));
+        VertxOptions options1 = new VertxOptions();
+        options1.setBlockedThreadCheckInterval(1000 * 60 * 60);
+        server = vertx.createNetServer(options);
+        start();
+    }
 
-  public void addRequestHandlers() {
-    System.err.println("TCP Server adding connection handler...");
-    server.connectHandler(
-        socket -> socket.handler(
-            buffer -> {
+    public void addRequestHandlers() {
+        System.err.println("TCP Server adding connection handler...");
+        server.connectHandler(
+                socket ->
+                {
+                    AtomicReference<Buffer> finalBuffer = new AtomicReference<>(Buffer.buffer());
+                    AtomicInteger finalSize = new AtomicInteger(0);
+                    socket.handler(
+                            buffer -> {
+                                finalBuffer.get().appendBuffer(buffer);
+                                if (finalSize.get() == 0) {
+                                    //We are on the first request
+                                    finalSize.set(Integer.parseInt(buffer.getString(0, 4)));
 
-              CustomObjectMapper mapper = new CustomObjectMapper();
-              try {
-                String requestPayload = buffer.toString().trim();
+                                }
 
-                System.out.println("requestPayload = >>>>>" + requestPayload);
-                ValidationRequest genericRequest =
+                                if (finalBuffer.get().length() == finalSize.get()) {
+                                    String realBuffer = finalBuffer.get().getString(4, finalBuffer.get().length());
+
+                                    processBuffer(socket, Buffer.buffer(realBuffer));
+//
+                                }
+
+                            });
+
+                });
+
+        System.err.println("TCP Server connection handler added successfully...");
+    }
+
+    private void processBuffer(NetSocket socket, Buffer buffer) {
+        CustomObjectMapper mapper = new CustomObjectMapper();
+        try {
+            String requestPayload = buffer.toString().trim();
+
+           // log.info("requestPayload = >>>>>" + requestPayload);
+            ValidationRequest genericRequest =
                     mapper.readValue(requestPayload, ValidationRequest.class);
-               // log.info("GENERIC REQUEST OBJECT: {}", genericRequest);
-                String transactionType = genericRequest.getTnxType();
-                log.info("Transaction Type: {}", transactionType);
-                switch (transactionType) {
-                  case "fetch-menu":
+            log.info("GENERIC REQUEST OBJECT: {}", genericRequest);
+            String transactionType = genericRequest.getTnxType();
+            log.info("Transaction Type: {}", transactionType);
+            switch (transactionType) {
+                case "fetch-menu":
                     billRequestHandler.menu(requestPayload, billMenuService, socket);
                     break;
-                  case "validation":
+                case "validation":
                     billRequestHandler.validation(genericRequest, socket);
                     break;
-                  case "bill-payment":
+                case "bill-payment":
                     billRequestHandler.billPayment(requestPayload, socket);
                     break;
-                  case "bill-status":
+                case "bill-status":
                     billRequestHandler.billStatus(socket);
                     break;
-                  default:
+                default:
                     throw new UnprocessableEntityException("Entity cannot be processed");
-                }
-              } catch (JsonProcessingException | UnprocessableEntityException | NullPointerException | InvalidAgentCredentialsException e) {
-                e.printStackTrace();
-                TcpResponse response = new TcpResponse();
-                response.setMessage("Bad request: " + e.getMessage());
-                response.setStatus(400);
-                Buffer outBuffer = Buffer.buffer();
-                try {
-                  outBuffer.appendString(mapper.writeValueAsString(response));
-                  socket.write(outBuffer);
-                } catch (JsonProcessingException ex) {
-                  ex.printStackTrace();
-                  log.error("TCP SERVER ERROR: {}", ex.getMessage());
-                  socket.write(ex.getMessage());
-                }
-              } finally {
-                socket.close();
-              }
-            }));
+            }
+        } catch (JsonProcessingException | UnprocessableEntityException | NullPointerException |
+                 InvalidAgentCredentialsException e) {
+            e.printStackTrace();
+            TcpResponse response = new TcpResponse();
+            response.setMessage("Bad request: " + e.getMessage());
+            response.setStatus(400);
+            Buffer outBuffer = Buffer.buffer();
+            try {
+                outBuffer.appendString(mapper.writeValueAsString(response));
+                socket.write(outBuffer);
+            } catch (JsonProcessingException ex) {
+                ex.printStackTrace();
+                log.error("TCP SERVER ERROR: {}", ex.getMessage());
+                socket.write(ex.getMessage());
+            }
+        } finally {
+            socket.close();
+        }
+    }
 
-    System.err.println("TCP Server connection handler added successfully...");
-  }
-
-  /** Sets up request handlers and starts the TCP server */
-  private void start() {
-    addRequestHandlers();
-    server.listen(
-        res -> {
-          if (res.succeeded()) {
-            log.info("TCP SERVER STARTED SUCCESSFULLY ON PORT: {}!", port);
-          } else {
-            log.error("TCP server failed to start!");
-          }
-        });
-  }
+    /**
+     * Sets up request handlers and starts the TCP server
+     */
+    private void start() {
+        addRequestHandlers();
+        server.listen(
+                res -> {
+                    if (res.succeeded()) {
+                        log.info("TCP SERVER STARTED SUCCESSFULLY ON PORT: {}!", port);
+                    } else {
+                        log.error("TCP server failed to start!");
+                    }
+                });
+    }
 }

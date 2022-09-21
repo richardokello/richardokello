@@ -116,8 +116,10 @@ public class WASACService {
 
         String meterNo = transactionDataList.get(0).getValue();
         String account = "";
+
         Long amount = Long.valueOf(transactionDataList.get(1).getValue());
         String customerName = transactionDataList.get(2).getValue();
+        String source=transactionDataList.get(3).getValue();
 
 
         String RRN = RRNGenerator.getInstance("BP").getRRN();
@@ -138,7 +140,7 @@ public class WASACService {
         tot24.setMeterno(meterNo);
         tot24.setRequestleg(tot24str);
         tot24.setStarttime(System.currentTimeMillis());
-        tot24.setTxnchannel("PC");
+        tot24.setTxnchannel(source);
         tot24.setGatewayref(RRN);
         tot24.setPostedstatus("0");
 
@@ -172,18 +174,19 @@ public class WASACService {
                 // todo set token respondent elecTxnLogs.setToken_no(tot24.getTokenNo());
                 insertWascTxnLogs(waterTxnLog);
 
-                transactionData.add(addValidationResponse("gatewayReference", RRN));
+               // transactionData.add(addValidationResponse("RRN", RRN));
                 transactionData.add(addValidationResponse("T24Reference", tot24.getT24reference()));
-                transactionData.add(addValidationResponse("name", customerName));
+                //transactionData.add(addValidationResponse("name", customerName));
                 transactionData.add(addValidationResponse("CustomerNo", meterNo));
-
                 transactionData.add(addValidationResponse("Amount", tot24.getAmountcredited()));
                 transactionData.add(addValidationResponse("ChargeAmount", tot24.getTotalchargeamt()));
+
+
 
                 billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
                         AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());
 
-                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, request.getTnxType(), "0200", amount,
+                transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "WASAC PAYMENT", "0200", amount,
                         "000", agentAuthData.getTid(), agentAuthData.getMid());
             }
         } else {
@@ -192,7 +195,7 @@ public class WASACService {
             billPaymentResponse = getBillPaymentResponse(transactionData, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(),
                     AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.getReasonPhrase());
 
-            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, request.getTnxType(), "0200", amount, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(),
+            transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "WASAC PAYMENT", "0200", amount, AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(),
                     agentAuthData.getTid(), agentAuthData.getMid());
             waterTxnLog.setGatewayT24PostingStatus("0");
             insertWascTxnLogs(waterTxnLog);
@@ -298,7 +301,7 @@ public class WASACService {
             String euclBankBranch = getDefaultBranch();
 
             String meterNo;
-
+            String source=validationRequest.getData().get(1).getValue();
 
             if(!validationRequest.getData().isEmpty()){
                 meterNo=validationRequest.getData().get(0).getValue();
@@ -324,7 +327,8 @@ public class WASACService {
             tot24.setMeterno(meterNo);
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
-            tot24.setTxnchannel(channel);
+            //tot24.setTxnchannel(channel);
+            tot24.setTxnchannel(source);
             tot24.setGatewayref(t24ref);
             tot24.setPostedstatus("0");
             tot24.setProcode("500000");
@@ -359,11 +363,11 @@ public class WASACService {
                 }
                 validationData.add(addValidationResponse("ClientPostName", channel));
                 validationData.add(addValidationResponse("Name", wasacT24ValidationResponse.getCustomerName()));
-                validationData.add(addValidationResponse("MeterNo", wasacT24ValidationResponse.getMeterNo()));
+                validationData.add(addValidationResponse("Meter No", wasacT24ValidationResponse.getMeterNo()));
                 validationData.add(addValidationResponse("BranchNo", wasacT24ValidationResponse.getBranchNo()));
-                validationData.add(addValidationResponse("CustomerId", wasacT24ValidationResponse.getCustomerNo()));
+                validationData.add(addValidationResponse("Customer Id", wasacT24ValidationResponse.getCustomerNo()));
                 validationData.add(addValidationResponse("Balance", wasacT24ValidationResponse.getOutstandingBalance()));
-                validationData.add(addValidationResponse("rrn", wasacT24ValidationResponse.getRrn()));
+                //validationData.add(addValidationResponse("rrn", wasacT24ValidationResponse.getRrn()));
 
                 response = getAcademicBridgeValidation(validationData, AppConstants.TRANSACTION_SUCCESS_STANDARD.value(),
                         AppConstants.TRANSACTION_SUCCESS_STANDARD.getReasonPhrase());

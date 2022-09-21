@@ -35,6 +35,8 @@ public class EUCLService {
     private final XSwitchParameterService xSwitchParameterService;
     private final EUCLElectricityTxnLogsRepository euclElectricityTxnLogsRepository;
     private final TransactionLimitManagerService limitManagerService;
+
+
     @SneakyThrows
     public MeterNoValidationResponse validateEUCLMeterNo(MeterNoValidation request, String referenceNo) {
         // Validate agent credentials
@@ -93,7 +95,7 @@ public class EUCLService {
             // base 64 encode request in db
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
-            tot24.setTxnchannel(channel);
+            tot24.setTxnchannel(request.getSource());
             tot24.setGatewayref(referenceNo);
             tot24.setPostedstatus("0");
             tot24.setProcode("460001");
@@ -192,19 +194,20 @@ public class EUCLService {
 
 
             Long EUCL_TRANSACTION_LIMIT_ID = 8L;
-            TransactionLimitManagerService.TransactionLimit limitValid = limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, Double.parseDouble(request.getAmount()));
+            limitManagerService.isLimitValid(EUCL_TRANSACTION_LIMIT_ID, Double.parseDouble(request.getAmount()));
 
+            String TIDS= authenticateAgentResponse.getData().getTid();
 
 
             elecTxnLogs.setAmount(request.getAmount());
             String channel = "PC";
-            String tid = "PC";
-
+           // String tid = "PC";
+            String source=request.getSource();
             String meterNo = request.getMeterNo();
             String phone = request.getPhoneNo();
             String customerName = request.getPhoneNo();
             assert authenticateAgentResponse != null;
-            String mid = authenticateAgentResponse.getData().getUsername();
+            String mid = authenticateAgentResponse.getData().getMid();
 
             long amount = Long.parseLong(request.getAmount());
 
@@ -215,7 +218,7 @@ public class EUCLService {
             elecTxnLogs.setMeterno(meterNo);
             elecTxnLogs.setPosref(transactionReferenceNo);
             elecTxnLogs.setMid(mid);
-            elecTxnLogs.setTid(tid);
+            elecTxnLogs.setTid(TIDS);
 
             // create t24 string
             String t24 =
@@ -242,7 +245,7 @@ public class EUCLService {
                             + ","
                             + "PAYMENT.DETAILS:1:1=ELECTRICITY PAYMENT BY USER,"
                             + "PAYMENT.DETAILS:2:="
-                            + tid
+                            + TIDS
                             + " "
                             + mid
                             + ","
@@ -261,12 +264,12 @@ public class EUCLService {
             tot24.setStarttime(System.currentTimeMillis());
             //TODO Define this in enum
             tot24.setTxnmti("1200");
-            tot24.setTxnchannel(channel);
+            tot24.setTxnchannel(source);
             tot24.setGatewayref(transactionReferenceNo);
             tot24.setPostedstatus("0");
             //TODO Define this in enum
             tot24.setProcode("460001");
-            tot24.setTid(tid);
+            tot24.setTid(TIDS);
             tot24.setDebitacctno(authenticateAgentResponse.getData().getAccountNumber());
 
             final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP");

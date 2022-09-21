@@ -43,7 +43,7 @@ public class TransactionService {
                         .setT24PosRef(tot24.getGatewayref()) // RRN
                         .setT24Reference(tot24.getT24reference())
                         .setT24ResponseCode(processingStatus)
-                        .setTxnType("Pc Module");
+                        .setTxnType(tot24.getTxnchannel());
 
         allTransactionsRepository.save(allTransactions);
     }

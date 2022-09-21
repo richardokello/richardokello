@@ -84,7 +84,6 @@ public class AcademicBridgeT24 {
         tot24.setTid(tid);//needed in validation?
         tot24.setRequestleg(tot24str);//our custom request
         tot24.setStarttime(System.currentTimeMillis());
-
         String channel = "1510";//what channel
         tot24.setTxnchannel(channel);
         tot24.setGatewayref(transactionRRN);
@@ -96,9 +95,9 @@ public class AcademicBridgeT24 {
         return tot24;
     }
 
-    public String bootstrapAcademicBridgePaymentOFSMsg(String debitAcc, String creditAcc, double amount, String sender,
-                                                       String phone, String schoolId, String schoolName, String studentName,
-                                                       String billNumber) {
+    public String bootstrapAcademicBridgePaymentOFSMsg(String debitAcc, String creditAcc, Double amount, String sender,
+                                                       String phone, Integer schoolId, String schoolName, String studentName,
+                                                       String billNumber, String source) {
 
         return "0000AFUNDS.TRANSFER,BPR.ACB.PAY.AGB/I/PROCESS,"+getT24UserName()+"/"+getT24Password()+"/RW0010461,,TRANSACTION.TYPE::=ACAB,DEBIT.ACCT.NO::="
                 + debitAcc

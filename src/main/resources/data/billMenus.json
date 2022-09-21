@@ -21,7 +21,7 @@
             {
               "label": "Amount",
               "type": "numeric",
-              "length": "12",
+              "length": 10,
               "validated": false,
               "order": 3
             },
@@ -35,7 +35,7 @@
             {
               "label": "Mobile Number",
               "type": "numeric",
-              "length": 12,
+              "length": 10,
               "validated": false,
               "order": 5
             },
@@ -154,19 +154,20 @@
               "validated": false,
               "order": 1
             },
+
+            {
+              "label": "Meter number",
+              "type": "numeric",
+              "length": 13,
+              "validated": true,
+              "order": 3
+            },
             {
               "label": "Mobile Number",
               "type": "numeric",
               "length": 12,
               "validated": false,
               "order": 2
-            },
-            {
-              "label": "Meter number",
-              "type": "numeric",
-              "length": 12,
-              "validated": true,
-              "order": 3
             },
             {
               "label": "Agent Pin",
@@ -195,7 +196,7 @@
             {
               "label": "Meter number",
               "type": "numeric",
-              "length": 12,
+              "length": 13,
               "validated": true,
               "order": 3
             }

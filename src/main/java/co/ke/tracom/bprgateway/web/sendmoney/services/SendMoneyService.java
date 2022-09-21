@@ -82,7 +82,7 @@ public class SendMoneyService {
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
         T24TXNQueue toT24 = new T24TXNQueue();
 
-        AuthenticateAgentResponse authenticateAgentResponse = null;
+        AuthenticateAgentResponse authenticateAgentResponse ;
 
         try {
             authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());

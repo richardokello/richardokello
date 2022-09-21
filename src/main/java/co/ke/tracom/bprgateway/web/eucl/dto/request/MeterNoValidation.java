@@ -12,5 +12,6 @@ public class MeterNoValidation {
     private String amount;
 //    private String phoneNo;
     private String meterNo;
+    private String source;
     private MerchantAuthInfo credentials;
 }

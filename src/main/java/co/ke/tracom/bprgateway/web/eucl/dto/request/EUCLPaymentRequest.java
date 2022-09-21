@@ -14,6 +14,7 @@ public class EUCLPaymentRequest {
     private String meterNo;
     private String phoneNo;
     private String meterLocation;
+    private String source;
 
   public void validatedAmount()
   {
