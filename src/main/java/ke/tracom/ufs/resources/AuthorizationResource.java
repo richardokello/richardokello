@@ -71,10 +71,14 @@ public class AuthorizationResource {
     private final AuthenticationRepository authRepository;
     private final NotifyServiceTemplate notifyService;
     private final OTPRepository otpRepository;
+
     private final WorkGroupService workGroupService;
     private final UserWorkGroupService userWorkGroupService;
 
     private final AuditLogService auditLogService;
+
+    private final OauthAccessTokenRepository oauthAccessTokenRepository;
+
     @Autowired
     UserAccountService accService;
     @Autowired
@@ -92,7 +96,7 @@ public class AuthorizationResource {
 
     public AuthorizationResource(TokenStore tokenStore, @Qualifier("mainUserService") UserService userService,
                                  UserRepository userRepository, LoggerServiceTemplate loggerService, PasswordEncoder encoder, CustomUserService customUserService, AuthenticationRepository authRepository,
-                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository, WorkGroupService workGroupService, UserWorkGroupService userWorkGroupService, AuditLogService auditLogService) {
+                                 NotifyServiceTemplate notifyService, OTPRepository otpRepository, WorkGroupService workGroupService, UserWorkGroupService userWorkGroupService, AuditLogService auditLogService,OauthAccessTokenRepository oauthAccessTokenRepository) {
         this.tokenStore = tokenStore;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -105,6 +109,7 @@ public class AuthorizationResource {
         this.workGroupService = workGroupService;
         this.userWorkGroupService = userWorkGroupService;
         this.auditLogService = auditLogService;
+        this.oauthAccessTokenRepository = oauthAccessTokenRepository;
     }
 
     //@RequestMapping("/test")
@@ -470,6 +475,7 @@ public class AuthorizationResource {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+
     private UfsAuditLog createNew(UfsAuthentication authentication) {
         UfsAuditLog log = new UfsAuditLog();
         log.setEntityId(authentication.getAuthenticationId().toString());
@@ -480,5 +486,20 @@ public class AuthorizationResource {
         log.setActivityType(AppConstants.ACTIVITY_AUTHENTICATION);
         log.setDescription("Logged out successfully");
         return log;
+    }
+    @Transactional
+    @RequestMapping(value = "/user/logout/login-time", method = RequestMethod.POST)
+    @ApiOperation(value = "Logout user at login", notes = "Used when --logout-- is used. "
+            + "Fetches user by email, clears already logged in user token")
+    public ResponseEntity<ResponseWrapper> logoutDuringLogin(@RequestParam("email") String email) {
+        ResponseWrapper response = new ResponseWrapper();
+        oauthAccessTokenRepository.deleteAllByUsername(email);
+
+        UfsAuthentication ufsAuthentication = authRepository.findByusernameIgnoreCase(email);
+        loggerService.log("Logged out successfully", UfsAuthentication.class.getSimpleName(), ufsAuthentication.getAuthenticationId(), ufsAuthentication.getUserId(),
+                AppConstants.ACTIVITY_AUTHENTICATION, AppConstants.STATUS_COMPLETED, "Logged out successfully");
+
+        response.setMessage("Logged out successfully.Please Login again");
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 }

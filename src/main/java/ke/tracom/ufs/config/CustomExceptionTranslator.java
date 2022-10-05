@@ -58,7 +58,7 @@ public class CustomExceptionTranslator implements WebResponseExceptionTranslator
 	        } else if (e instanceof OAuth2Exception) {
 	            OAuth2Exception oauthException = (OAuth2Exception) e;
 	            response.setCode(oauthException.getHttpErrorCode());
-	            response.setMessage("Please provide valid cradentials");
+	            response.setMessage("Please provide valid credentials");
 	            data.put("error", oauthException.getOAuth2ErrorCode());
 	            data.put("error_description", oauthException.getMessage());
 	            response.setData(data);

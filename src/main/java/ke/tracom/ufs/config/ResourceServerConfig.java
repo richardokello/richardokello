@@ -46,9 +46,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers(HttpMethod.POST, "/change-password", "/reset-password/forgot-password", "/reset-password", "/gender", "/user-id", "/user/login-field-agent", "/change-password/first-time").permitAll()
-                .antMatchers("/gender", "/user-loggedin", "/tenant-info").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/change-password", "/reset-password/forgot-password", "/reset-password", "/gender", "/user-id", "/user/login-field-agent", "/change-password/first-time","/user/logout/login-time").permitAll()
+                .antMatchers("/gender", "/user-loggedin").permitAll()
+
                 .antMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                         "/swagger-resources/**", "/v2/api-docs/**", "/images/**",
                         "/spring-security-rest/api/swagger-ui.html", "/encrypt", "/user/me").permitAll()
