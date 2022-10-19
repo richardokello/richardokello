@@ -486,10 +486,9 @@ public class DevicesResource {
                     loggerService.logUpdate("Successfully declined tasks on (Serial Number: " + device.getSerialNo() + ")", SharedMethods.getEntityName(TmsDevice.class), id, AppConstants.STATUS_DECLINED);
                 } else {
                     loggerService.logUpdate("Failed to decline record (Serial Number: " + device.getSerialNo() + "). Record doesn't have approve actions",
-                            SharedMethods.getEntityName(UfsDeviceMake.class), id, AppConstants.STATUS_FAILED);
+                            SharedMethods.getEntityName(TmsDevice.class), id, AppConstants.STATUS_FAILED);
                     errors.add(message.setMessage(AppConstants.NO_APPROPRIATE_ACTION));
                 }
-                device.setActionStatus(AppConstants.STATUS_DECLINED);
                 deviceService.saveDevice(device);
             } catch (ExpectationFailed ex) {
                 errors.add(ex.getMessage());
