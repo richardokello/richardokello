@@ -316,7 +316,7 @@ String formartedOFS= String.format("%04d", bareOFS.length()) + bareOFS;
       } else {
           transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "EJO HEZA", "1200",
                   Double.parseDouble(ltssRequest.getAmount()), "135",
-                  authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                  authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
           return LTSSPaymentResponse.builder()
                   .status("135")
                   .message(tot24.getT24failnarration().replace("\"", ""))

@@ -22,7 +22,7 @@ public class TransactionService {
     private  final AuditLogsRepository auditLogsRepository;
 
     public void saveCardLessTransactionToAllTransactionTable(T24TXNQueue tot24, String transactionType, String MTI,
-                                                             double amount, String processingStatus, String TID, String MID) {
+                                                             double amount, String processingStatus, String TID, String MID,String message,String token) {
         AllTransactions allTransactions =
                 new AllTransactions()
                         .setField000(MTI) // Transaction type
@@ -43,7 +43,10 @@ public class TransactionService {
                         .setT24PosRef(tot24.getGatewayref()) // RRN
                         .setT24Reference(tot24.getT24reference())
                         .setT24ResponseCode(processingStatus)
-                        .setTxnType(tot24.getTxnchannel());
+                        .setTxnType(tot24.getTxnchannel())
+                        .setToken(token)
+                        .setMessage(message);
+
 
         allTransactionsRepository.save(allTransactions);
     }

@@ -16,6 +16,7 @@ public class SendMoneyRequest {
     private String senderNationalIDType;
     private String recipientMobileNo;
     private double amount;
+    private int count;
     private MerchantAuthInfo credentials;
 
 }

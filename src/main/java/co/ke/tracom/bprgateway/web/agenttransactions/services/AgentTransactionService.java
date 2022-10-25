@@ -87,7 +87,7 @@ public class AgentTransactionService {
             transactionService.saveCardLessTransactionToAllTransactionTable(
                     tot24, "AGENT FLOAT DEPOSIT", "1200",
                     agentTransactionRequest.getAmount(), "117",
-                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid(),"","");
             log.info(
                     "Agent Float Deposit:[Failed] Transaction " + transactionReferenceNo + " failed. Error message: Insufficient agent balance %n");
             response.setStatus("117");
@@ -102,7 +102,7 @@ public class AgentTransactionService {
             transactionService.saveCardLessTransactionToAllTransactionTable(
                     tot24, "AGENT FLOAT DEPOSIT", "1200",
                     agentTransactionRequest.getAmount(), "061",
-                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid(),"agent deposti","");
             response.setStatus("061");
             response.setMessage("Amount should be between "+ limitValid.getLower()+ " and " + limitValid.getUpper());
             return response ;
@@ -144,7 +144,7 @@ public class AgentTransactionService {
             transactionService.saveCardLessTransactionToAllTransactionTable(
                     tot24, "AGENT FLOAT DEPOSIT", "1200",
                     agentTransactionRequest.getAmount(), "065",
-                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid(),"Agent validation","");
             log.info("Agent float deposit transaction [" + transactionReferenceNo + "] failed. Error: Agent branch details could not be verified.");
 
             response.setStatus("065");
@@ -160,7 +160,7 @@ public class AgentTransactionService {
             transactionService.saveCardLessTransactionToAllTransactionTable(
                     tot24, "AGENT FLOAT DEPOSIT", "1200",
                     agentTransactionRequest.getAmount(), "003",
-                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid(),"Missing branch details","");
 
             System.out.printf(
                     "Agent Float Deposit:[Failed] Transaction %s failed. Error message: Missing branch details for recipient agent. %n",
@@ -205,7 +205,8 @@ public class AgentTransactionService {
         tot24.setRequestleg(tot24str);
         tot24.setStarttime(System.currentTimeMillis());
 
-        String channel = "1510";
+        //String channel = "1510";
+        String channel="PC MODULE";
         tot24.setTxnchannel(channel);
 
         tot24.setGatewayref(transactionReferenceNo);
@@ -252,7 +253,7 @@ public class AgentTransactionService {
             transactionService.saveCardLessTransactionToAllTransactionTable(
                     tot24, "AGENT FLOAT DEPOSIT", "1200",
                     agentTransactionRequest.getAmount(), "000",
-                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid(),"Agent Float Deposit","");
 
             response.setT24Reference(tot24.getT24reference());
             response.setRrn(transactionReferenceNo);
@@ -265,7 +266,7 @@ public class AgentTransactionService {
             transactionService.saveCardLessTransactionToAllTransactionTable(
                     tot24, "AGENT FLOAT DEPOSIT", "1200",
                     agentTransactionRequest.getAmount(), ""+response.getStatus()+"",
-                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid());
+                    authenticateAgentDepositResponse.getData().getTid(), authenticateAgentDepositResponse.getData().getMid(),"Agent Float Deposit","");
             System.out.printf(
                     "Agent Float Deposit:[Error] Transaction %s processing failed. Error message: Transaction failed at T24 %n",
                     transactionReferenceNo);
@@ -295,7 +296,7 @@ public class AgentTransactionService {
         T24Transaction.setRequestleg(tot24str);
         T24Transaction.setStarttime(System.currentTimeMillis());
 
-        T24Transaction.setTxnchannel("PC");
+        T24Transaction.setTxnchannel("PC Module");
 
         String transactionReferenceNo = RRNGenerator.getInstance("AD").getRRN();
         T24Transaction.setGatewayref(transactionReferenceNo);
@@ -371,7 +372,7 @@ public class AgentTransactionService {
 
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
                     request.getAmount(), "117",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Agent Float Withdrawal","");
             System.out.printf(
                     "Agent Float Withdrawal:[Failed] Transaction %s failed. Error message: Insufficient balance for POS Agent. %n",
                     transactionReferenceNo);
@@ -386,7 +387,7 @@ public class AgentTransactionService {
         if (!limitValid.isValid()) {
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
                     request.getAmount(), "061",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Agent Float withdrawal","");
             response.setStatus("061");
             response.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
             return response;
@@ -398,7 +399,7 @@ public class AgentTransactionService {
 
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
                     request.getAmount(), "003",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Agent Float withdrawal","");
             System.out.printf(
                     "Agent Float Withdrawal:[Failed] Transaction %s failed. Error message: Missing branch details for recipient agent. %n",
                     transactionReferenceNo);
@@ -459,7 +460,7 @@ public class AgentTransactionService {
         tot24.setStarttime(System.currentTimeMillis());
 
         //TODO check the channel information
-        String channel = "1510";
+        String channel = "PC Module";
         tot24.setTxnchannel(channel);
 
         tot24.setGatewayref(transactionReferenceNo);
@@ -508,7 +509,7 @@ public class AgentTransactionService {
 
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
                     request.getAmount(), "000",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Agent Float Withdrawal","");
         } else {
             System.out.printf(
                     "Agent Float withdrawal:[Error] Transaction %s processing failed. Error message: Transaction failed at T24 %n",
@@ -523,7 +524,7 @@ public class AgentTransactionService {
 
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT FLOAT WITHDRAWAL", "1200",
                     request.getAmount(), "908",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Agent Float withdrawal","");
         }
         transactionService.updateT24TransactionDTO(tot24);
 

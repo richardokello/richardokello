@@ -108,9 +108,9 @@ public class NIDValidationService {
         System.out.println("~~~~~~~~~~~~Start NIDs RWANDA Request~~~~~~~~~~~~~~~~");
         System.out.println("~~~~ NIDS DOCUMENT NUMBER : " + documentNo);
         String reqxml = bootstrapNIDPayload(documentNo);
-        HttpURLConnection con;
-        DataOutputStream wr;
-        BufferedReader in;
+      //  HttpURLConnection con;
+
+      //  BufferedReader in;
         int responseCode;
 
         String muReadTimeout = "10"; // set in configs
@@ -118,7 +118,7 @@ public class NIDValidationService {
 
         try {
             URL obj = new URL(NID_KYC_SERVICE_ENDPOINT);
-            con = (HttpURLConnection) obj.openConnection();
+            HttpURLConnection con = (HttpURLConnection)obj.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/xml");
             con.setUseCaches(false);
@@ -127,15 +127,19 @@ public class NIDValidationService {
             con.setReadTimeout(Integer.parseInt(muConnectTimeout) * 1000);
             con.setDefaultUseCaches(false);
             con.setDoOutput(true);
-
-            wr = new DataOutputStream(con.getOutputStream());
+            DataOutputStream  wr = new DataOutputStream(con.getOutputStream());
             wr.writeBytes(reqxml);
             wr.flush();
             responseCode = con.getResponseCode();
             System.out.println(" \n NIDS ws Response status Code(HTTP) : "
                     + responseCode);
+
+            InputStream stream = con.getErrorStream();
+            if(stream==null) {
+                con.getInputStream();
+            }else {con.getErrorStream();}
             // if (String.valueOf(responseCode).trim().equalsIgnoreCase("200")) {
-            in = new BufferedReader(new InputStreamReader(
+            BufferedReader   in = new BufferedReader(new InputStreamReader(
                     con.getInputStream()));
             StringBuilder responseBuffer = new StringBuilder();
             String inputLine;

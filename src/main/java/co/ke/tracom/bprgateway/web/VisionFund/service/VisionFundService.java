@@ -5,7 +5,6 @@ import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.web.VisionFund.data.*;
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationRequest;
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationResponse;
-import co.ke.tracom.bprgateway.web.VisionFund.entity.VisionFund;
 import co.ke.tracom.bprgateway.web.VisionFund.repository.VisionFundRepository;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.Data;
@@ -16,7 +15,6 @@ import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
 import co.ke.tracom.bprgateway.web.util.data.MerchantAuthInfo;
 import co.ke.tracom.bprgateway.web.util.services.BaseServiceProcessor;
 import co.ke.tracom.bprgateway.web.util.services.UtilityService;
-import co.ke.tracom.bprgateway.web.wasac.data.customerprofile.CustomerProfileResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.time.Instant;
 import java.util.Date;
 
 @Slf4j
@@ -80,7 +77,7 @@ public class VisionFundService {
             if (t24TXNQueue.getBaladvise() == null) {
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(t24TXNQueue, enquiryRequest.getTnxType(), "0200", 0,
-                        AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid());
+                        AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value(), agentAuthData.getTid(), agentAuthData.getMid(),"","");
                 return BalanceEnquiryResponse.builder()
                         .responseCode(AppConstants.EXCEPTION_OCCURRED_ON_EXTERNAL_HTTP_REQUEST.value())
                         .responseString("Transaction failed! "+t24TXNQueue.getT24failnarration())
@@ -88,7 +85,7 @@ public class VisionFundService {
             } else {
                 try {
                     transactionService.saveCardLessTransactionToAllTransactionTable(t24TXNQueue, enquiryRequest.getTnxType(), "0200", 0,
-                            AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid());
+                            AppConstants.TRANSACTION_SUCCESS_STANDARD.value(), agentAuthData.getTid(), agentAuthData.getMid(),"","");
                     return BalanceEnquiryResponse.builder()
                             .responseCode(AppConstants.TRANSACTION_SUCCESS_STANDARD.value())
                             .txnDateTime(DateFormat.getDateInstance().parse(t24TXNQueue.getDatetime()))

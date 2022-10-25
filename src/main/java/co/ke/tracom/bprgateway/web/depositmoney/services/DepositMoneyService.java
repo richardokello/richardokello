@@ -66,7 +66,7 @@ public class DepositMoneyService {
             if (!limitValid.isValid()) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                         depositMoneyRequest.getAmount(), "061",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Agent Deposit","");
                 response.setStatus("061");
                 response.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
                 return response;
@@ -108,7 +108,7 @@ public class DepositMoneyService {
             if ( branch.getCompanyName()==null) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                         depositMoneyRequest.getAmount(), "65",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Agent Deposit","");
                 return response
                         .setStatus("65")
                         .setMessage("Agent branch details could not be verified. Kindly contact BPR customer care")
@@ -125,13 +125,13 @@ public class DepositMoneyService {
             long agentbalancelong = agentTransactionService.fetchAgentAccountBalanceOnly(agentFloatAccount);
             System.out.println("agentbalancelong ======== " + agentbalancelong);
 
-            String channel = "1510";
+            String channel = "PC Module";
             log.info("Customer Deposit: Transaction %s. Agent Balance=%s Deposit amount=%d "+
                     transactionRRN, agentbalancelong, depositMoneyRequest.getAmount());
             if (agentbalancelong < depositMoneyRequest.getAmount()) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                         depositMoneyRequest.getAmount(), "65",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Agent Deposit","");
                 System.out.printf(
                         "Customer Deposit: Transaction %s Failed. Agent does not have sufficient balance %n", transactionRRN);
                 return response
@@ -180,6 +180,8 @@ public class DepositMoneyService {
             tot24.setCreditacctno(customerAccount);
 
 
+
+
             final String t24Ip = xSwitchParameterService.fetchXSwitchParamValue("T24_IP") ;
             final String t24Port = xSwitchParameterService.fetchXSwitchParamValue("T24_PORT") ;
             t24Channel.processTransactionToT24(t24Ip, Integer.parseInt(t24Port), tot24);
@@ -223,7 +225,7 @@ public class DepositMoneyService {
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                         depositMoneyRequest.getAmount(), "000",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),depositMoneyRequest.getNarration(),"");
 
                 response.getData().setT24Reference(tot24.getT24reference());
                 response.getData().setRrn(transactionRRN);
@@ -244,7 +246,7 @@ public class DepositMoneyService {
 
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                         depositMoneyRequest.getAmount(), "098",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),depositMoneyRequest.getNarration(),"");
 
                 return response
                         .setStatus("098")
@@ -260,7 +262,7 @@ public class DepositMoneyService {
             e.printStackTrace();
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                     depositMoneyRequest.getAmount(), "409",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Invalid agent info","");
             return response
                     .setStatus("409")
                     .setMessage("Invalid Agent Validation information. Please try again!")
@@ -272,7 +274,7 @@ public class DepositMoneyService {
             e.printStackTrace();
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "AGENT DEPOSIT TO CUSTOMER", "1200",
                     depositMoneyRequest.getAmount(), "098",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Transaction failed","");
             return response
                     .setStatus("098")
                     .setMessage("Transaction failed processing")
@@ -285,7 +287,7 @@ public class DepositMoneyService {
                                  String proCode) {
 
         String depositChargeRRN = RRNGenerator.getInstance("DC").getRRN();
-        String channel = "Gateway";
+        String channel = "PC Module";
 
         String depositChargeOFS =
                 "0000AFUNDS.TRANSFER,"

@@ -6,7 +6,7 @@ import co.ke.tracom.bprgateway.web.academicbridge.data.paymentstatus.PaymentStat
 import co.ke.tracom.bprgateway.web.academicbridge.data.savepayment.SavePaymentRequest;
 import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsRequest;
 import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
-import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeService;
+import co.ke.tracom.bprgateway.servers.services.AcademicBridgeService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;

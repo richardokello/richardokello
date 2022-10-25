@@ -58,18 +58,17 @@ public class TCPServer {
                     socket.handler(
                             buffer -> {
                                 finalBuffer.get().appendBuffer(buffer);
-                                if (finalSize.get() == 0) {
+                                if (finalSize.get() == 0)
+                                   {
                                     //We are on the first request
                                     finalSize.set(Integer.parseInt(buffer.getString(0, 4)));
-
-                                }
-
-                                if (finalBuffer.get().length() == finalSize.get()) {
+                                   }
+                                if (finalBuffer.get().length() == finalSize.get())
+                                   {
                                     String realBuffer = finalBuffer.get().getString(4, finalBuffer.get().length());
-
                                     processBuffer(socket, Buffer.buffer(realBuffer));
 //
-                                }
+                                   }
 
                             });
 

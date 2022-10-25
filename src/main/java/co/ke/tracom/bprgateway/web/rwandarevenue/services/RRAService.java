@@ -347,7 +347,7 @@ public class RRAService {
                 transactionService.updateT24TransactionDTO(tot24);
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
                         request.getAmountToPay(), "065",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                 log.info("Agent float deposit transaction [" + transactionRRN + "] failed. Error: Agent branch details could not be verified.");
                 RRAPaymentResponseData datas = RRAPaymentResponseData.builder()
                         .rrn(transactionRRN)
@@ -363,7 +363,7 @@ public class RRAService {
                 transactionService.updateT24TransactionDTO(tot24);
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
                         request.getAmountToPay(), "065",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                 RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                         .rrn(transactionRRN)
                         .build();
@@ -380,14 +380,14 @@ public class RRAService {
                 transactionService.updateT24TransactionDTO(tot24);
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
                         request.getAmountToPay(), "065",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                 return RRAPaymentResponse.builder()
                         .status("065")
                         .message("Insufficient agent float balance.")
                         .data(null).build();
 
             }
-            String channel = "PC";
+            String channel = "PC Module";
             String sanitizedTaxPayerName = TAX_PAYER_NAME.length() > 49 ? TAX_PAYER_NAME.substring(0, 49) : TAX_PAYER_NAME;
 
             String RRAOFSMsg =
@@ -457,7 +457,7 @@ public class RRAService {
                 transactionService.updateT24TransactionDTO(tot24);
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
                         request.getAmountToPay(), "118",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"RRA PAYMENT","");
                 RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                         .T24Reference(t24ref)
                         .transactionCharges(0.0)
@@ -485,7 +485,7 @@ public class RRAService {
             transactionService.updateT24TransactionDTO(tot24);
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
                     request.getAmountToPay(), "118",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
             RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                     .rrn(transactionRRN)
                     .build();
@@ -513,7 +513,7 @@ public class RRAService {
             transactionService.updateT24TransactionDTO(tot24);
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
                     request.getAmountToPay(), "000",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"RRA PAYMENT","");
 
             RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                     .T24Reference(t24ref)
@@ -541,7 +541,7 @@ public class RRAService {
             transactionService.updateT24TransactionDTO(tot24);
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RRA", "1200",
                     request.getAmountToPay(), "098",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
             RRAPaymentResponseData data = RRAPaymentResponseData.builder()
                     .T24Reference(t24ref)
                     .transactionCharges(0.0)

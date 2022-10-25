@@ -1,4 +1,4 @@
-package co.ke.tracom.bprgateway.web.academicbridge.services;
+package co.ke.tracom.bprgateway.servers.services;
 
 import co.ke.tracom.bprgateway.core.tracomchannels.json.RestHTTPService;
 import co.ke.tracom.bprgateway.web.academicbridge.data.AcademicBridgeResponse;

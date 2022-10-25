@@ -18,4 +18,6 @@ public class SendMoneyResponseData  extends BaseResponseData {
     private String rrn;
     private String tid;
     private String mid;
+    private  String firstName;
+    private String surname;
 }

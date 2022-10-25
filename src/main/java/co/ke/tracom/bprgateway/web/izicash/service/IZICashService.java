@@ -79,7 +79,7 @@ public class IZICashService {
                 if (authenticateAgentResponse != null) {
                     transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
                             request.getAmount(), "061",
-                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                 }
                 responses.setStatus("061");
                 responses.setMessage("Amount should be between"+ limitValid.getLower()+ " and " + limitValid.getUpper());
@@ -105,7 +105,7 @@ try
                 assert authenticateAgentResponse != null;
                 transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
                         request.getAmount(), "091",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                 return IZICashResponse.builder()
                         .status("091")
                         .message("Transaction processing failed. Invalid mobile no length.")
@@ -240,7 +240,7 @@ try
                         log.info("IZICash withdrawal successful. " + iziCashResponse.toString());
                         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IZI CASH WITHDRAWAL", "1200",
                                 request.getAmount(), "000",
-                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;
                     } else {
@@ -261,7 +261,7 @@ try
 
                         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "IZI CASH WITHDRAWAL", "1200",
                                 request.getAmount(), "098",
-                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                         iziCashTxnLogs.setPassCode("*****");
                         iziCashTxnLogsRepository.save(iziCashTxnLogs);
                         return iziCashResponse;
@@ -280,7 +280,7 @@ try
 
                     transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
                             request.getAmount(), "118",
-                            Objects.requireNonNull(authenticateAgentResponse).getData().getTid(), authenticateAgentResponse.getData().getMid());
+                            Objects.requireNonNull(authenticateAgentResponse).getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                     return IZICashResponse.builder()
                             .data(null)
                             .status("118")
@@ -293,7 +293,7 @@ try
                 iziCashTxnLogsRepository.save(iziCashTxnLogs);
                 transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
                         request.getAmount(), "092",
-                        Objects.requireNonNull(authenticateAgentResponse).getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        Objects.requireNonNull(authenticateAgentResponse).getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                 return IZICashResponse.builder()
                         .data(null)
                         .status("092")
@@ -307,7 +307,7 @@ try
             e.printStackTrace();
             transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "IZI CASH WITHDRAWAL", "1200",
                     request.getAmount(), "908",
-                    Objects.requireNonNull(authenticateAgentResponse).getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    Objects.requireNonNull(authenticateAgentResponse).getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
             return IZICashResponse.builder()
                     .data(null)
                     .status("908")

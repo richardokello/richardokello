@@ -11,7 +11,7 @@ import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationRequ
 import co.ke.tracom.bprgateway.web.VisionFund.data.custom.CustomVerificationResponse;
 import co.ke.tracom.bprgateway.web.VisionFund.service.VisionFundService;
 import co.ke.tracom.bprgateway.web.academicbridge.data.studentdetails.GetStudentDetailsResponse;
-import co.ke.tracom.bprgateway.web.academicbridge.services.AcademicBridgeT24;
+import co.ke.tracom.bprgateway.servers.services.AcademicBridgeT24;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.billMenus.data.BillMenuResponse;
 import co.ke.tracom.bprgateway.web.billMenus.service.BillMenusService;
@@ -752,7 +752,7 @@ public class BillRequestHandler {
                     processingStatus = "000";
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "ACADEMIC BRIDGE", "1200",
                             Double.parseDouble(amount), processingStatus,
-                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());//Replace with actual data after successfull login credentials fro POS
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");//Replace with actual data after successfull login credentials fro POS
 
                 } else {
                     data.add(

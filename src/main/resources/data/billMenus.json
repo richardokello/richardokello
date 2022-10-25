@@ -39,20 +39,6 @@
               "validated": false,
               "order": 5
             },
-            {
-              "label": "Credit Account",
-              "type": "numeric",
-              "length": 15,
-              "validated": false,
-              "order": 5
-            },
-            {
-              "label": "schoolId",
-              "type": "numeric",
-              "length": 10,
-              "validated": false,
-              "order": 5
-            },
 
             {
               "label": "Agent Pin",

@@ -111,7 +111,7 @@ public class SendMoneyService {
             if (agentFloatAccountBalance < request.getAmount()) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "RECEIVE MONEY", "1200",
                         request.getAmount(), "117",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
                 return SendMoneyResponse.builder()
                         .status("117")
@@ -126,7 +126,7 @@ public class SendMoneyService {
             if (!limitValid.isValid()) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(toT24, SEND_MONEY_LABEL, "1200",
                         request.getAmount(), "061",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                 responses.setStatus("061");
                 responses.setMessage("Amount should be between" + limitValid.getLower() + " and " + limitValid.getUpper());
                 return responses;
@@ -173,7 +173,7 @@ public class SendMoneyService {
         }
         transactionService.saveCardLessTransactionToAllTransactionTable(toT24, SEND_MONEY_LABEL, "1200",
                 request.getAmount(), "116",
-                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
         return SendMoneyResponse.builder()
                 .status("116")
@@ -209,11 +209,11 @@ public class SendMoneyService {
             data.setCharges(Double.parseDouble(formattedCharge));
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
                     request.getAmount(), "000",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"Send Money","");
         } catch (Exception e) {
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
                     request.getAmount(), "098",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
             System.err.println(
                     "Unable to get charges for send money transaction reference " + transactionRRN);
             e.printStackTrace();
@@ -260,7 +260,7 @@ public class SendMoneyService {
                         "Card less vcard generation error for rrn " + transactionRRN);
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
                         request.getAmount(), "118",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
                 return SendMoneyResponse.builder()
                         .status("118")
                         .message("Transaction failed. Unable to generate virtual card. Please try again.")
@@ -272,7 +272,7 @@ public class SendMoneyService {
             log.info("=================================================" + e.getMessage());
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
                     request.getAmount(), "118",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
             return SendMoneyResponse.builder()
                     .status("118")
                     .message("Transaction failed. Please try again.")
@@ -406,7 +406,7 @@ public class SendMoneyService {
         String receiverMobile = request.getRecipientMobileNo();
 
         MoneySend ms = new MoneySend();
-        ms.setChannel("POS");
+        ms.setChannel("PC Module");
         ms.setAmount(String.valueOf(request.getAmount()));
         ms.setSendernumber(senderMobileNo);
         ms.setRecevernumber(receiverMobile);
@@ -458,7 +458,7 @@ public class SendMoneyService {
         sendMoneyResponseData.setLocation(agentAuthData.getLocation());
         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, SEND_MONEY_LABEL, "1200",
                 request.getAmount(), "098",
-                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
         return SendMoneyResponse.builder()
                 .status("098")
@@ -481,7 +481,7 @@ public class SendMoneyService {
         tot24.setRequestleg(tot24str);
         tot24.setStarttime(System.currentTimeMillis());
 
-        String channel = "1510";
+        String channel = "PC Module";
         tot24.setTxnchannel(channel);
         tot24.setGatewayref(transactionRRN);
         tot24.setProcode(TransactionISO8583ProcessingCode.SEND_MONEY.getCode());
@@ -589,7 +589,7 @@ public class SendMoneyService {
             T24TXNQueue tot24 = new T24TXNQueue();
             tot24.setRequestleg(tot24str);
             tot24.setStarttime(System.currentTimeMillis());
-            String channel = "PC";
+            String channel = "PC Module";
             tot24.setTxnchannel(channel);
             tot24.setGatewayref(validationReferenceNo);
             tot24.setPostedstatus("0");
@@ -733,7 +733,7 @@ public class SendMoneyService {
         if (agentFloatAccountBalance < request.getAmount()) {
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                     request.getAmount(), "117",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
             return SendMoneyResponse.builder()
                     .status("117")
@@ -748,21 +748,21 @@ public class SendMoneyService {
         if (!limitValid.isValid()) {
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                     request.getAmount(), "061",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
             responses.setStatus("061");
             responses.setMessage("Amount should be between" + limitValid.getLower() + " and " + limitValid.getUpper());
             return responses;
         }
 
-        String channel = "1510";
+        String channel = "PC Module";
         String sendMoneySuspense = xSwitchParameterService.fetchXSwitchParamValue(SEND_MONEY_SUSPENSE_ACC);
 
         // this must be set
         if (sendMoneySuspense.isEmpty()) {
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                     request.getAmount(), "098",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
             return SendMoneyResponse.builder()
                     .status("098")
@@ -784,7 +784,7 @@ public class SendMoneyService {
                             + sendMoneySuspense);
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                     request.getAmount(), "065",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
             return SendMoneyResponse.builder()
                     .status("065")
@@ -797,7 +797,7 @@ public class SendMoneyService {
         if (accountbranchid.isEmpty()) {
             transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                     request.getAmount(), "065",
-                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                    authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
             return SendMoneyResponse.builder()
                     .status("065")
@@ -817,7 +817,7 @@ public class SendMoneyService {
             if (optionalMoneySend.isEmpty()) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                         request.getAmount(), "139",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
                 return SendMoneyResponse.builder()
                         .status("139")
@@ -841,7 +841,7 @@ public class SendMoneyService {
                 log.info("Wrong receive amount entered, original {} - current {} ", sendMoneyTxn.getAmount(), request.getAmount());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                         request.getAmount(), "139",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
                 return SendMoneyResponse.builder()
                         .status("139")
@@ -862,7 +862,7 @@ public class SendMoneyService {
                     log.info("Send money token expired at {} ", formatter.format(new Date(sendMoneyTxn.getSendmoneytokenexpiretime())));
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                             request.getAmount(), "139",
-                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
                     return SendMoneyResponse.builder()
                             .status("139")
@@ -876,7 +876,7 @@ public class SendMoneyService {
                         log.info("Send money token expired at {} ", formatter.format(new Date(sendMoneyTxn.getSendmoneytokenexpiretime2())));
                         transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                                 request.getAmount(), "139",
-                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                                authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
                         return SendMoneyResponse.builder()
                                 .status("139")
@@ -892,7 +892,7 @@ public class SendMoneyService {
                             "Kindly try again after {} ", formatter.format(new Date(sendMoneyTxn.getSendmoneytokenexpiretime())));
                     transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                             request.getAmount(), "139",
-                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                            authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
                     return SendMoneyResponse.builder()
                             .status("139")
@@ -906,7 +906,7 @@ public class SendMoneyService {
             if (compareRequestTokenWithStoredToken(request, transactionRRN, sendMoneyTxn)) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                         request.getAmount(), "116",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
                 return SendMoneyResponse.builder()
                         .status("116")
@@ -998,7 +998,7 @@ public class SendMoneyService {
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                         request.getAmount(), "000",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
 
                 SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
@@ -1026,7 +1026,7 @@ public class SendMoneyService {
                 tot24.setT24reference(tot24.getT24reference());
                 transactionService.saveCardLessTransactionToAllTransactionTable(tot24, "RECEIVE MONEY", "1200",
                         request.getAmount(), "118",
-                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid());
+                        authenticateAgentResponse.getData().getTid(), authenticateAgentResponse.getData().getMid(),"","");
 
                 SendMoneyResponseData sendMoneyResponseData = SendMoneyResponseData.builder()
                         .T24Reference(tot24.getT24reference())

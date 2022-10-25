@@ -1,4 +1,4 @@
-package co.ke.tracom.bprgateway.web.academicbridge.services;
+package co.ke.tracom.bprgateway.servers.services;
 
 import co.ke.tracom.bprgateway.core.util.RRNGenerator;
 import co.ke.tracom.bprgateway.servers.tcpserver.dto.BillPaymentResponse;

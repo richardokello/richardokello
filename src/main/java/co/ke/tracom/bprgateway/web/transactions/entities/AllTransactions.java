@@ -64,6 +64,11 @@ public class AllTransactions implements java.io.Serializable {
     @Column(name = "FIELD123")
     private String field123;
 
+    @Column(name = "MESSAGE")
+    private String message;
+    @Column(name = "TOKEN")
+    private String token;
+
     public AllTransactions() {
     }
 
@@ -75,8 +80,20 @@ public class AllTransactions implements java.io.Serializable {
         this.transactionNumber = transactionNumber;
         return this;
     }
-
-
+public String getMessage(){
+        return message;
+}
+public AllTransactions setMessage(String message){
+        this.message=message;
+        return this;
+}
+public String getToken(){
+        return token;
+}
+public AllTransactions setToken(String token){
+        this.token=token;
+        return this;
+}
 
     public String getTxnType() {
         return txnType;
