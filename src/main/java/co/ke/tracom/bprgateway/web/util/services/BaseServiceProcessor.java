@@ -4,6 +4,7 @@ import co.ke.tracom.bprgateway.core.tracomchannels.json.RestHTTPService;
 import co.ke.tracom.bprgateway.web.agenttransactions.dto.response.AuthenticateAgentResponse;
 import co.ke.tracom.bprgateway.web.exceptions.custom.InterServiceCommunicationException;
 import co.ke.tracom.bprgateway.web.exceptions.custom.InvalidAgentCredentialsException;
+import co.ke.tracom.bprgateway.web.sendmoneyBulkpayment.data.AgentUsername;
 import co.ke.tracom.bprgateway.web.transactionLimits.entity.TransactionLimitManager;
 import co.ke.tracom.bprgateway.web.transactionLimits.repository.TransactionLimitManagerRepository;
 import co.ke.tracom.bprgateway.web.transactions.services.TransactionService;
@@ -39,6 +40,8 @@ public class BaseServiceProcessor {
     @Value("${merchant.userpassword.validation}")
     //@Value("http://localhost:8787/authenticate/agent-deposit")
     private String agentDepositValidationUrl;
+    @Value("http://localhost:8787/authenticate/username-validation")
+    private String agentUsernameValidationURL;
 
     private final TransactionLimitManagerRepository transactionLimitManagerRepository;
     public final RestHTTPService restHTTPService;
@@ -75,7 +78,26 @@ public class BaseServiceProcessor {
 
         }
     }
-
+public  AuthenticateAgentResponse bulkSendMoneyAuth(AgentUsername request) throws InvalidAgentCredentialsException {
+        ResponseEntity<String>response;
+        try{
+            response=restHTTPService.postRequest(request,agentUsernameValidationURL);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    String agentDepositbody = response.getBody();
+    AuthenticateAgentResponse authenticateAgentUsernameResponse;
+    try {
+        authenticateAgentUsernameResponse = new ObjectMapper().readValue(agentDepositbody, AuthenticateAgentResponse.class);
+    } catch (Exception j) {
+        throw new InvalidAgentCredentialsException("Agent deposit username validation failed");
+    }
+    if (authenticateAgentUsernameResponse.getCode() == 200 && response.getStatusCode().value() == 200) {
+        return authenticateAgentUsernameResponse;
+    } else {
+        throw new InvalidAgentCredentialsException("Agent username validation failed");
+    }
+}
 
     public AuthenticateAgentResponse authenticateAgentDepositUsername(MerchantcustomerInfoDeposit merchantAuthInfoAGentDepo) throws InvalidAgentCredentialsException, InterServiceCommunicationException {
         ResponseEntity<String> responseEntity;
@@ -83,7 +105,7 @@ public class BaseServiceProcessor {
             responseEntity = restHTTPService.postRequest(merchantAuthInfoAGentDepo, agentDepositValidationUrl);
             log.info("Response status from URL[" + agentDepositValidationUrl + " ] and the status is {}" + responseEntity.getBody());
         } catch (Exception j) {
-            j.printStackTrace();
+            //j.printStackTrace();
             throw new InterServiceCommunicationException("Inter-service communication =========error service validation failed. Please try again!");
 
         }

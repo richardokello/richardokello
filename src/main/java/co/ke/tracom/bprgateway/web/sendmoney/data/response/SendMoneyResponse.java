@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.concurrent.CompletableFuture;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SendMoneyResponse {
+public class SendMoneyResponse extends CompletableFuture<Void> {
     private String status;
     private String message;
     private SendMoneyResponseData data;

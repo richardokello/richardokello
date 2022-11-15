@@ -78,6 +78,7 @@ public class SendMoneyService {
     @Value("${vision-fund.token-expiry.configuration-name}")
     private String tokenConfigurationName;
 
+
     @SneakyThrows
     public SendMoneyResponse processSendMoneyRequest(SendMoneyRequest request, String transactionRRN) {
         T24TXNQueue toT24 = new T24TXNQueue();
@@ -87,8 +88,8 @@ public class SendMoneyService {
         try {
             authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
         } catch (InvalidAgentCredentialsException e) {
-//            transactionService.saveFailedPasswordTransactions(toT24, "SEND_MONEY_LABEL", "1200",request.getAmount(),
-//                   "117");
+       //    transactionService.saveFailedPasswordTransactions(toT24, "SEND_MONEY_LABEL", "1200",request.getAmount(),
+//                  "117");
             return new SendMoneyResponse("117", e.getMessage(), SendMoneyResponseData.builder().build());
 
         }
@@ -97,16 +98,10 @@ public class SendMoneyService {
         Data agentAuthData = authenticateAgentResponse.getData();
 
 
-        System.out.println("agentAuthData ===>>>>>>>>>>>>>>> " + agentAuthData);
-        System.out.println("agentAuthData.getAccountNumber() ==========>>>>>>>" + agentAuthData.getAccountNumber());
-
         long agentFloatAccountBalance = agentTransactionService.fetchAgentAccountBalanceOnly(agentAuthData.getAccountNumber());
         System.out.println("agentFloatAccountBalance =============== " + agentFloatAccountBalance);
 
         try {
-
-
-            long agentFloatAccountBalances = agentTransactionService.fetchAgentAccountBalanceOnly(authenticateAgentResponse.getData().getAccountNumber());
 
             if (agentFloatAccountBalance < request.getAmount()) {
                 transactionService.saveCardLessTransactionToAllTransactionTable(toT24, "RECEIVE MONEY", "1200",
@@ -183,11 +178,11 @@ public class SendMoneyService {
     }
 
     @SneakyThrows
-    private SendMoneyResponse processSuccessfulSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN,
-                                                                       Data agentAuthData, String branchAccountID,
-                                                                       String[] paymentDetails,
-                                                                       String nationalIdDocumentName, String tid,
-                                                                       T24TXNQueue tot24, AuthenticateAgentResponse authenticateAgentResponse) {
+    public SendMoneyResponse processSuccessfulSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN,
+                                                                      Data agentAuthData, String branchAccountID,
+                                                                      String[] paymentDetails,
+                                                                      String nationalIdDocumentName, String tid,
+                                                                      T24TXNQueue tot24, AuthenticateAgentResponse authenticateAgentResponse) {
         String senderMobileNo = request.getSenderMobileNo();
         String receiverMobile = request.getRecipientMobileNo();
 
@@ -442,7 +437,7 @@ public class SendMoneyService {
     long timeNow = now.toEpochMilli();
 
     @SneakyThrows
-    private SendMoneyResponse processFailedSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN, Data agentAuthData, String t24Reference) {
+    public SendMoneyResponse processFailedSendMoneyT24Transaction(SendMoneyRequest request, String transactionRRN, Data agentAuthData, String t24Reference) {
         T24TXNQueue tot24 = new T24TXNQueue();
         AuthenticateAgentResponse authenticateAgentResponse = baseServiceProcessor.authenticateAgentUsernamePassword(request.getCredentials());
 
@@ -475,7 +470,7 @@ public class SendMoneyService {
         transactionService.updateT24TransactionDTO(tot24);
     }
 
-    private T24TXNQueue prepareT24Transaction(String transactionRRN, Data agentAuthData, String configuredSendMoneySuspenseAccount, String tot24str, String tid) {
+    public T24TXNQueue prepareT24Transaction(String transactionRRN, Data agentAuthData, String configuredSendMoneySuspenseAccount, String tot24str, String tid) {
         T24TXNQueue tot24 = new T24TXNQueue();
         tot24.setTid(tid);
         tot24.setRequestleg(tot24str);
@@ -523,21 +518,21 @@ public class SendMoneyService {
                 + paymentDetails[2].trim();
     }
 
-    private void compareSenderRecipientMobileNumbers(String RRN, boolean sameMobileNo) {
+    public void compareSenderRecipientMobileNumbers(String RRN, boolean sameMobileNo) {
         if (sameMobileNo) {
             log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + RRN + "] failed. Sender mobile number and recipient mobile number are the same.");
             throw new InvalidMobileNumberException("Transaction failed. Sender mobile number and recipient mobile number are the same.");
         }
     }
 
-    private void validateMobileNumberLength(String RRN, int length) {
-        if (length != 10) {
+    public void validateMobileNumberLength(String RRN, int length) {
+        if (length != 9) {
             log.info(SEND_MONEY_TRANSACTION_LOG_LABEL + RRN + "] failed. Invalid mobile number length.");
             throw new InvalidMobileNumberException("Invalid mobile number length");
         }
     }
 
-    private void doesAgentHaveSufficientBalance(SendMoneyRequest request, String transactionRRN, Data agentAuthData, long agentFloatAccountBalance, String branchAccountID) {
+    public void doesAgentHaveSufficientBalance(SendMoneyRequest request, String transactionRRN, Data agentAuthData, long agentFloatAccountBalance, String branchAccountID) {
         long chargesLong = fetchSendMoneyTransactionCharges(agentAuthData.getAccountNumber(), branchAccountID, transactionRRN, request.getAmount());
         System.err.printf(
                 "%n Transaction %s T24 Charges (%d) and agent float account balance (%d) against send money amount (%f) %n",

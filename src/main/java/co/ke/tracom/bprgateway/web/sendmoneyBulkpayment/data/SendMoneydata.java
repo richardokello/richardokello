@@ -1,4 +1,4 @@
-package co.ke.tracom.bprgateway.web.sendmoneyBulkpayment;
+package co.ke.tracom.bprgateway.web.sendmoneyBulkpayment.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,5 +13,4 @@ public class SendMoneydata {
     private String senderNationalIDType;
     private String recipientMobileNo;
     private double amount;
-    private int count;
 }

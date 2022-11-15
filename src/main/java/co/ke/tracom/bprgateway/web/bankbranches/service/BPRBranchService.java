@@ -22,7 +22,7 @@ public class BPRBranchService {
             log.info("Fetch bank branch details error. Invalid debit account input :" + account);
             throw new BankBranchException("Error fetching bank branch details. Invalid account used.");
         }
-
+       // 408457748810186
         String branchCode;
         if (account.toUpperCase().startsWith("RWF")) {
             branchCode = "0" + account.substring(account.length() - 3);

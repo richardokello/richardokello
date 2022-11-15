@@ -31,6 +31,7 @@ public class AuthenticateAgentResponse {
     @JsonProperty("timestamp")
     private Long timestamp;
 
+
     @JsonProperty("code")
     public Integer getCode() {
         return code;
