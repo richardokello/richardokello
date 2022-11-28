@@ -10,7 +10,9 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  *
@@ -46,12 +48,18 @@ public class VwUfsAlltxns implements Serializable {
     @Size(max = 255)
     @Column(name = "PROCODE")
     private String procode;
+    @Size(max = 255)
+    @Column(name = "AUTHCODE")
+    private String authcode;
     @Size(max = 30)
     @Column(name = "TRANSACTIONTYPE")
     private String transactiontype;
     @Size(max = 255)
     @Column(name = "AMOUNT")
     private String amount;
+    @Size(max = 255)
+    @Column(name = "AMOUNT", insertable = false, updatable = false)
+    private Double trxAmount;
     @Size(max = 255)
     @Column(name = "STAN")
     private String stan;
@@ -183,5 +191,25 @@ public class VwUfsAlltxns implements Serializable {
     public void setTransactiondate(Date transactiondate) {
         this.transactiondate = transactiondate;
     }
-    
+    public Double getTrxAmount() {
+        if (Objects.nonNull(trxAmount)) {
+            DecimalFormat df = new DecimalFormat("0.00");  // Set your desired format here.
+            String amnt = df.format((trxAmount / 100));
+            Double dAmnt = Double.valueOf(amnt);
+            return dAmnt;
+        }
+        return 0.0;
+    }
+
+    public void setTrxAmount(Double trxAmount) {
+        this.trxAmount = trxAmount;
+    }
+
+    public String getAuthcode() {
+        return authcode;
+    }
+
+    public void setAuthcode(String authcode) {
+        this.authcode = authcode;
+    }
 }
