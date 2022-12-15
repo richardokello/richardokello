@@ -89,6 +89,9 @@ public class UfsUser implements Serializable {
     @Column(name = "DEPARTMENT_ID")
     private BigDecimal departmentIds;
 
+    @Column(name="CUSTOMER_ID")
+    private Long customerId;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GenericGenerator(
@@ -491,5 +494,13 @@ public class UfsUser implements Serializable {
 
     public void setCountyId(String countyId) {
         this.countyId = countyId;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }

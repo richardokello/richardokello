@@ -120,6 +120,7 @@ public class AuthorizationResource {
         CustomUserDetails user = (CustomUserDetails) a.getPrincipal();
         OAuth2AccessToken token = tokenStore.getAccessToken(a);
         String tenantIds = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getTenantIds();
+        String customerId = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getCustomerId().toString();
         String userType = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getUserType().getUserType();
         String countyId = null;
         if (Objects.nonNull(authRepository.findByusernameIgnoreCase(a.getName()).getUser().getCountyId())) {
@@ -146,6 +147,7 @@ public class AuthorizationResource {
             data.tenantIds = tenantIds;
             data.userType = userType;
             data.countyId = countyId;
+            data.customerId = customerId;
 
 
             response.setData(data);

@@ -28,4 +28,5 @@ public class OtpResponse {
     public String countyId;
 
     public String licenseMessage;
+    public String customerId;
 }
