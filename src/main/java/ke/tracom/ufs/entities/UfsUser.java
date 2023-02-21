@@ -142,7 +142,8 @@ public class UfsUser implements Serializable {
     @ModifiableField
     private List<BigDecimal> userWorkgroupIds;
 
-
+    @Column(name="CUSTOMER_ID")
+    private Long customerId;
     @Transient
     @ModifiableField
     @ModifiableChildEntityField(entityName = UfsWorkgroup.class, modifiableType = ModifiableFieldType.QUERY)
@@ -247,6 +248,10 @@ public class UfsUser implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+    public void setCustomerId(Long customerId){this.customerId=customerId;}
+    public Long getCustomerId(){
+        return customerId;
     }
 
     @XmlTransient
