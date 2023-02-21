@@ -135,6 +135,7 @@ public class AuthorizationResource {
         String tenantIds = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getTenantIds();
         String userType = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getUserType().getUserType();
         String countyId = null;
+        String customerId = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getCustomerId().toString();
         if (Objects.nonNull(authRepository.findByusernameIgnoreCase(a.getName()).getUser().getCountyId())) {
             countyId = authRepository.findByusernameIgnoreCase(a.getName()).getUser().getCountyId();
         }
@@ -173,6 +174,8 @@ public class AuthorizationResource {
             data.tenantIds = tenantIds;
             data.userType = userType;
             data.countyId = countyId;
+            data.customerId=customerId;
+
 
 
             response.setData(data);
