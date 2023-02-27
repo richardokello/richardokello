@@ -158,7 +158,7 @@ public class SharedMethods {
         }
 
         BufferedOutputStream stream
-                = new BufferedOutputStream(new FileOutputStream(new File(fileUrl)));
+                = new BufferedOutputStream(new FileOutputStream(fileUrl));
         stream.write(resource.getBytes());
         stream.close();
         return fileUrl;
