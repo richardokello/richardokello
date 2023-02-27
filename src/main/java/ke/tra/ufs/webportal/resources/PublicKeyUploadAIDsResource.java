@@ -48,5 +48,26 @@ public class PublicKeyUploadAIDsResource {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
+    @GetMapping("/getKeys")
+    ResponseEntity<List<CaPublicKeyData>>getAllKeys(){
+        try{
+            List<CaPublicKeyData>keysList=publicKeyUploadService.caPublicKeyDataList();
+            if(keysList.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(keysList, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @Transactional
+    @RequestMapping(method = RequestMethod.GET, path = "CAPublicKeys.csv")
+    public ModelAndView exportCAPublicKeys(HttpServletRequest request) {
+        CsvFlexView view;
+        String fileName = "Trained Agents Template";
+        view = new CsvFlexView(CaPublicKeyData.class, new ArrayList(),
+                fileName);
+        return new ModelAndView(view);
+    }
 }
